@@ -1,3 +1,4 @@
+'use client'
 import { motion } from 'framer-motion'
 import { LineChart, BarChart, PieChart } from 'lucide-react'
 
