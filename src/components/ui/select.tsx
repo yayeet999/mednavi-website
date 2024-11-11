@@ -1,87 +1,73 @@
-"use client"
+'use client'
+import { useState, useRef, useEffect } from 'react'
+import { ChevronDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
-import * as React from "react"
-import * as Select from "@radix-ui/react-select"
-import { Check, ChevronDown, ChevronUp } from "lucide-react"
+interface SelectProps {
+  value: string
+  onChange: (value: string) => void
+  options: { label: string; value: string }[]
+  placeholder?: string
+  className?: string
+}
 
-import { cn } from "@/lib/utils"
+export function Select({ value, onChange, options, placeholder = 'Select option', className }: SelectProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const selectRef = useRef<HTMLDivElement>(null)
 
-const SelectTrigger = React.forwardRef<
-  React.ElementRef<typeof Select.Trigger>,
-  React.ComponentPropsWithoutRef<typeof Select.Trigger>
->(({ className, children, ...props }, ref) => (
-  <Select.Trigger
-    ref={ref}
-    className={cn(
-      "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <Select.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
-    </Select.Icon>
-  </Select.Trigger>
-))
-SelectTrigger.displayName = Select.Trigger.displayName
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
 
-const SelectContent = React.forwardRef<
-  React.ElementRef<typeof Select.Content>,
-  React.ComponentPropsWithoutRef<typeof Select.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
-  <Select.Portal>
-    <Select.Content
-      ref={ref}
-      className={cn(
-        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        position === "popper" &&
-          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
-        className
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const selectedOption = options.find(option => option.value === value)
+
+  return (
+    <div className="relative" ref={selectRef}>
+      <button
+        type="button"
+        className={cn(
+          "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          className
+        )}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="truncate">
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <ChevronDown className={cn(
+          "h-4 w-4 opacity-50 transition-transform duration-200",
+          isOpen && "transform rotate-180"
+        )} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-1 rounded-md border bg-popover text-popover-foreground shadow-md">
+          <div className="p-1">
+            {options.map((option) => (
+              <button
+                key={option.value}
+                className={cn(
+                  "relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
+                  value === option.value && "bg-accent text-accent-foreground"
+                )}
+                onClick={() => {
+                  onChange(option.value)
+                  setIsOpen(false)
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
       )}
-      position={position}
-      {...props}
-    >
-      <Select.ScrollUpButton className="flex cursor-default items-center justify-center py-1">
-        <ChevronUp className="h-4 w-4" />
-      </Select.ScrollUpButton>
-      <Select.Viewport className="p-1">
-        {children}
-      </Select.Viewport>
-      <Select.ScrollDownButton className="flex cursor-default items-center justify-center py-1">
-        <ChevronDown className="h-4 w-4" />
-      </Select.ScrollDownButton>
-    </Select.Content>
-  </Select.Portal>
-))
-SelectContent.displayName = Select.Content.displayName
-
-const SelectItem = React.forwardRef<
-  React.ElementRef<typeof Select.Item>,
-  React.ComponentPropsWithoutRef<typeof Select.Item>
->(({ className, children, ...props }, ref) => (
-  <Select.Item
-    ref={ref}
-    className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      className
-    )}
-    {...props}
-  >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <Select.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </Select.ItemIndicator>
-    </span>
-
-    <Select.ItemText>{children}</Select.ItemText>
-  </Select.Item>
-))
-SelectItem.displayName = Select.Item.displayName
-
-export {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
+    </div>
+  )
 }
