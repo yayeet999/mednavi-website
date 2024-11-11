@@ -1,11 +1,16 @@
 'use client'
 import { motion } from 'framer-motion'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import * as Select from "@radix-ui/react-select"
-import { SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
+import { Select } from "@/components/ui/select"
 import { useState } from 'react'
 
-// Sample data unchanged...
+const timeFrameOptions = [
+  { label: 'Last 6 Months', value: 'monthly' },
+  { label: 'Quarterly', value: 'quarterly' },
+  { label: 'Yearly', value: 'yearly' }
+]
+
+// Sample data remains the same
 const monthlyData = [
   { month: 'Jan', started: 15, completed: 12 },
   { month: 'Feb', started: 18, completed: 14 },
@@ -90,16 +95,12 @@ export default function About() {
           >
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Invisalign Production</h3>
-              <Select.Root value={timeFrame} onValueChange={setTimeFrame}>
-                <SelectTrigger className="w-[180px]">
-                  <Select.Value placeholder="Select time frame" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="monthly">Last 6 Months</SelectItem>
-                  <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select.Root>
+              <Select
+                value={timeFrame}
+                onChange={setTimeFrame}
+                options={timeFrameOptions}
+                className="w-[180px]"
+              />
             </div>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
