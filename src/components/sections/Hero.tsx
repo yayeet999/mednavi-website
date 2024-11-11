@@ -5,8 +5,23 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { useInView } from 'react-intersection-observer'
 
+interface ParticleProps {
+  size?: number
+  color?: string
+  position: {
+    x: number
+    y: number
+  }
+}
+
+interface StatsCardProps {
+  number: string
+  label: string
+  delay?: number
+}
+
 // Particle component
-const Particle = ({ size = 2, color = '#1E3A8A', position }: any) => {
+const Particle = ({ size = 2, color = '#1E3A8A', position }: ParticleProps) => {
   const particleRef = useRef<HTMLDivElement>(null)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
 
@@ -44,8 +59,37 @@ const Particle = ({ size = 2, color = '#1E3A8A', position }: any) => {
   )
 }
 
-// Enhanced Hero component
-export default function EnhancedHero() {
+// Stats Card Component
+function StatsCard({ number, label, delay = 0 }: StatsCardProps) {
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+    triggerOnce: true
+  })
+
+  return (
+    <motion.div
+      ref={ref}
+      className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, delay }}
+      whileHover={{ scale: 1.05 }}
+    >
+      <motion.h3
+        className="text-4xl font-bold text-mednavi-blue mb-2"
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: 1, delay: delay + 0.2 }}
+      >
+        {number}
+      </motion.h3>
+      <p className="text-gray-600">{label}</p>
+    </motion.div>
+  )
+}
+
+// Main Hero component
+export default function Hero() {
   const [particles, setParticles] = useState<Array<{ x: number; y: number }>>([])
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 500], [0, -150])
@@ -142,34 +186,5 @@ export default function EnhancedHero() {
         </motion.div>
       </motion.div>
     </section>
-  )
-}
-
-// Stats Card Component
-function StatsCard({ number, label, delay = 0 }) {
-  const [ref, inView] = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  })
-
-  return (
-    <motion.div
-      ref={ref}
-      className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
-      initial={{ opacity: 0, y: 20 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay }}
-      whileHover={{ scale: 1.05 }}
-    >
-      <motion.h3
-        className="text-4xl font-bold text-mednavi-blue mb-2"
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 1, delay: delay + 0.2 }}
-      >
-        {number}
-      </motion.h3>
-      <p className="text-gray-600">{label}</p>
-    </motion.div>
   )
 }
