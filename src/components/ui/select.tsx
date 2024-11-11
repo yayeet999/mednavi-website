@@ -3,15 +3,20 @@ import { useState, useRef, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+interface SelectOption {
+  label: string
+  value: string
+}
+
 interface SelectProps {
   value: string
   onChange: (value: string) => void
-  options: { label: string; value: string }[]
-  placeholder?: string
+  options: SelectOption[]
   className?: string
+  placeholder?: string
 }
 
-export function Select({ value, onChange, options, placeholder = 'Select option', className }: SelectProps) {
+export function Select({ value, onChange, options, className, placeholder = 'Select option' }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const selectRef = useRef<HTMLDivElement>(null)
 
@@ -21,7 +26,6 @@ export function Select({ value, onChange, options, placeholder = 'Select option'
         setIsOpen(false)
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
@@ -29,38 +33,36 @@ export function Select({ value, onChange, options, placeholder = 'Select option'
   const selectedOption = options.find(option => option.value === value)
 
   return (
-    <div className="relative" ref={selectRef}>
+    <div className="relative inline-block" ref={selectRef}>
       <button
         type="button"
+        onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex h-10 w-full items-center justify-between rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-mednavi-blue focus:ring-offset-2",
           className
         )}
-        onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="truncate">
-          {selectedOption ? selectedOption.label : placeholder}
-        </span>
+        <span>{selectedOption?.label || placeholder}</span>
         <ChevronDown className={cn(
-          "h-4 w-4 opacity-50 transition-transform duration-200",
-          isOpen && "transform rotate-180"
+          "h-4 w-4 transition-transform",
+          isOpen && "rotate-180"
         )} />
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 rounded-md border bg-popover text-popover-foreground shadow-md">
-          <div className="p-1">
+        <div className="absolute z-50 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg">
+          <div className="py-1">
             {options.map((option) => (
               <button
                 key={option.value}
-                className={cn(
-                  "relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
-                  value === option.value && "bg-accent text-accent-foreground"
-                )}
                 onClick={() => {
                   onChange(option.value)
                   setIsOpen(false)
                 }}
+                className={cn(
+                  "w-full px-3 py-2 text-left text-sm hover:bg-gray-50",
+                  option.value === value && "bg-gray-50 text-mednavi-blue"
+                )}
               >
                 {option.label}
               </button>
