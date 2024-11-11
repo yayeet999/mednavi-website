@@ -1,124 +1,85 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { useInView } from 'react-intersection-observer'
 
-interface ParticleProps {
-  size?: number
-  color?: string
-  position: {
-    x: number
-    y: number
-  }
-}
-
-interface StatsCardProps {
-  number: string
-  label: string
-  delay?: number
-}
-
-// Particle component
-const Particle = ({ size = 2, color = '#1E3A8A', position }: ParticleProps) => {
-  const particleRef = useRef<HTMLDivElement>(null)
-  const [offset, setOffset] = useState({ x: 0, y: 0 })
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setOffset({
-        x: Math.sin(Date.now() / 2000) * 20,
-        y: Math.cos(Date.now() / 2000) * 20
-      })
-    }, 50)
-    return () => clearInterval(interval)
-  }, [])
+// DataPoint animation component
+const DataGrid = () => {
+  const points = Array.from({ length: 50 }, (_, i) => ({
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    delay: Math.random() * 2
+  }))
 
   return (
-    <motion.div
-      ref={particleRef}
-      className="absolute rounded-full"
-      style={{
-        width: size,
-        height: size,
-        backgroundColor: color,
-        left: position.x,
-        top: position.y,
-        opacity: 0.6,
-      }}
-      animate={{
-        x: offset.x,
-        y: offset.y,
-      }}
-      transition={{
-        duration: 2,
-        ease: "linear",
-      }}
-    />
+    <div className="absolute inset-0 overflow-hidden opacity-20">
+      {points.map((point, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-mednavi-blue rounded-full"
+          style={{
+            left: `${point.x}%`,
+            top: `${point.y}%`
+          }}
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [0.3, 0.7, 0.3]
+          }}
+          transition={{
+            duration: 3,
+            delay: point.delay,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      ))}
+      <svg className="absolute inset-0 w-full h-full">
+        {points.slice(0, 20).map((point, i) => (
+          <motion.path
+            key={`line-${i}`}
+            d={`M ${point.x} ${point.y} L ${points[(i + 1) % 20].x} ${points[(i + 1) % 20].y}`}
+            stroke="rgba(30, 58, 138, 0.1)"
+            strokeWidth="0.5"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{
+              duration: 2,
+              delay: point.delay,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+        ))}
+      </svg>
+    </div>
   )
 }
 
-// Stats Card Component
-function StatsCard({ number, label, delay = 0 }: StatsCardProps) {
-  const [ref, inView] = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  })
-
-  return (
-    <motion.div
-      ref={ref}
-      className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
-      initial={{ opacity: 0, y: 20 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay }}
-      whileHover={{ scale: 1.05 }}
-    >
-      <motion.h3
-        className="text-4xl font-bold text-mednavi-blue mb-2"
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 1, delay: delay + 0.2 }}
-      >
-        {number}
-      </motion.h3>
-      <p className="text-gray-600">{label}</p>
-    </motion.div>
-  )
-}
-
-// Main Hero component
 export default function Hero() {
-  const [particles, setParticles] = useState<Array<{ x: number; y: number }>>([])
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 500], [0, -150])
 
-  useEffect(() => {
-    const newParticles = Array.from({ length: 20 }, () => ({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * 500,
-    }))
-    setParticles(newParticles)
-  }, [])
-
   return (
-    <section className="relative min-h-screen overflow-hidden">
-      {/* Particle Background */}
-      <div className="absolute inset-0 opacity-50">
-        {particles.map((position, index) => (
-          <Particle key={index} position={position} />
-        ))}
-      </div>
-
-      {/* Main Content */}
+    <section className="relative min-h-[80vh] overflow-hidden bg-gradient-to-br from-white via-blue-50/50 to-white">
+      <DataGrid />
+      
       <motion.div 
         className="relative container mx-auto px-4 pt-32 pb-16"
         style={{ y }}
       >
         <div className="max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-100/10 to-transparent animate-wave" />
+          </motion.div>
+
           <motion.h1
-            className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6"
+            className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6 relative"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -160,30 +121,6 @@ export default function Hero() {
             </Link>
           </motion.div>
         </div>
-
-        {/* Floating Stats Cards */}
-        <motion.div
-          className="grid md:grid-cols-3 gap-6 mt-16"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          <StatsCard
-            number="97%"
-            label="Client Satisfaction"
-            delay={0}
-          />
-          <StatsCard
-            number="45%"
-            label="Revenue Increase"
-            delay={0.2}
-          />
-          <StatsCard
-            number="2.5x"
-            label="Efficiency Boost"
-            delay={0.4}
-          />
-        </motion.div>
       </motion.div>
     </section>
   )
