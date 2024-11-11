@@ -46,12 +46,12 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <Link href="/contact">
-              <Button size="lg" className="bg-mednavi-blue hover:bg-mednavi-blue/90">
+              <Button size="lg">
                 Get Started
               </Button>
             </Link>
             <Link href="/services">
-              <Button size="lg" variant="outline" className="border-mednavi-blue text-mednavi-blue hover:bg-mednavi-blue/10">
+              <Button size="lg" variant="outline">
                 Learn More
               </Button>
             </Link>
