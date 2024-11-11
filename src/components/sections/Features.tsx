@@ -1,17 +1,49 @@
 'use client'
-import { motion, useAnimation } from 'framer-motion'
-import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 import { LineChart, Line, ResponsiveContainer, Tooltip } from 'recharts'
 import { useInView } from 'react-intersection-observer'
+import { BarChart, Brain, FileText } from 'lucide-react'
+
+interface ChartDataPoint {
+  name: number
+  value: number
+}
+
+interface FeatureCardProps {
+  title: string
+  description: string
+  chartData: ChartDataPoint[]
+  icon: React.ElementType
+  index: number
+}
+
+interface TimelineItemData {
+  year: string
+  title: string
+  description: string
+}
+
+interface TimelineItemProps {
+  data: TimelineItemData
+  index: number
+}
+
+interface LiveChartCardProps {
+  title: string
+  color: string
+  index: number
+}
 
 // Mini Chart Data
-const generateChartData = () => Array.from({ length: 12 }, (_, i) => ({
-  name: i,
-  value: Math.floor(Math.random() * 50) + 50
-}))
+const generateChartData = (): ChartDataPoint[] => 
+  Array.from({ length: 12 }, (_, i) => ({
+    name: i,
+    value: Math.floor(Math.random() * 50) + 50
+  }))
 
 // Interactive Feature Card Component
-function FeatureCard({ title, description, chartData, icon: Icon, index }) {
+function FeatureCard({ title, description, chartData, icon: Icon, index }: FeatureCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [ref, inView] = useInView({ triggerOnce: true })
 
@@ -64,7 +96,7 @@ function FeatureCard({ title, description, chartData, icon: Icon, index }) {
 
 // Animated Timeline Component
 function Timeline() {
-  const timelineData = [
+  const timelineData: TimelineItemData[] = [
     {
       year: '2024',
       title: 'Advanced Analytics',
@@ -93,7 +125,7 @@ function Timeline() {
   )
 }
 
-function TimelineItem({ data, index }) {
+function TimelineItem({ data, index }: TimelineItemProps) {
   const [ref, inView] = useInView({ triggerOnce: true })
   
   return (
@@ -138,8 +170,8 @@ function LiveCharts() {
   )
 }
 
-function LiveChartCard({ title, color, index }) {
-  const [data, setData] = useState(generateChartData())
+function LiveChartCard({ title, color, index }: LiveChartCardProps) {
+  const [data, setData] = useState<ChartDataPoint[]>(generateChartData())
   const [ref, inView] = useInView({ triggerOnce: true })
 
   useEffect(() => {
@@ -186,19 +218,19 @@ export default function EnhancedFeatures() {
     {
       title: 'Real-Time Analytics',
       description: 'Track key metrics instantly with live updates and alerts.',
-      icon: ChartIcon,
+      icon: BarChart,
       chartData: generateChartData()
     },
     {
       title: 'Smart Predictions',
       description: 'AI-powered insights to optimize your practice performance.',
-      icon: BrainIcon,
+      icon: Brain,
       chartData: generateChartData()
     },
     {
       title: 'Automated Reporting',
       description: 'Generate comprehensive reports with a single click.',
-      icon: DocumentIcon,
+      icon: FileText,
       chartData: generateChartData()
     }
   ]
