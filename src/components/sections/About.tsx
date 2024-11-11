@@ -1,10 +1,11 @@
 'use client'
 import { motion } from 'framer-motion'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import * as Select from "@radix-ui/react-select"
+import { SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
 import { useState } from 'react'
 
-// Sample data for different time periods
+// Sample data unchanged...
 const monthlyData = [
   { month: 'Jan', started: 15, completed: 12 },
   { month: 'Feb', started: 18, completed: 14 },
@@ -48,6 +49,7 @@ export default function About() {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
+          {/* Left column content remains the same */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -88,19 +90,16 @@ export default function About() {
           >
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Invisalign Production</h3>
-              <Select
-                value={timeFrame}
-                onValueChange={setTimeFrame}
-              >
+              <Select.Root value={timeFrame} onValueChange={setTimeFrame}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select time frame" />
+                  <Select.Value placeholder="Select time frame" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="monthly">Last 6 Months</SelectItem>
                   <SelectItem value="quarterly">Quarterly</SelectItem>
                   <SelectItem value="yearly">Yearly</SelectItem>
                 </SelectContent>
-              </Select>
+              </Select.Root>
             </div>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
