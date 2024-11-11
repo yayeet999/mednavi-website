@@ -1,6 +1,6 @@
 'use client'
 import { motion } from 'framer-motion'
-import { Shield, Clock, Graph, Users } from 'lucide-react'
+import { Shield, Clock, LineChart, Users } from 'lucide-react'
 
 const reasons = [
   {
@@ -14,7 +14,7 @@ const reasons = [
     description: "Round-the-clock technical support and assistance for your practice"
   },
   {
-    icon: <Graph className="w-12 h-12 text-mednavi-blue" />,
+    icon: <LineChart className="w-12 h-12 text-mednavi-blue" />,
     title: "Data-Driven Insights",
     description: "Advanced analytics that help you make informed decisions"
   },
@@ -25,6 +25,7 @@ const reasons = [
   }
 ]
 
+// Rest of the component remains the same
 export default function WhyChoose() {
   return (
     <section className="py-20 bg-white">
