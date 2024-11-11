@@ -27,7 +27,7 @@ const Navbar = () => {
             Contact
           </Link>
           <Link href="/login">
-            <Button variant="ghost" className="text-mednavi-blue hover:bg-mednavi-blue/10">
+            <Button variant="ghost">
               Client Login
             </Button>
           </Link>
