@@ -47,7 +47,6 @@ const pieData = {
 
 export default function AnalyticsComparison() {
   const [isAfter, setIsAfter] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -95,6 +94,7 @@ export default function AnalyticsComparison() {
                     stroke={beforeAfterColors.before}
                     strokeWidth={2}
                     dot={false}
+                    isAnimationActive={true}
                   />
                   {isAfter && (
                     <Line
@@ -104,6 +104,7 @@ export default function AnalyticsComparison() {
                       stroke={beforeAfterColors.after}
                       strokeWidth={2}
                       dot={false}
+                      isAnimationActive={true}
                     />
                   )}
                 </LineChart>
@@ -125,13 +126,11 @@ export default function AnalyticsComparison() {
                   <XAxis dataKey="name" />
                   <YAxis domain={[150, 220]} />
                   <Tooltip />
-                  <Bar
+                  <Bar 
                     dataKey="value"
                     fill={isAfter ? beforeAfterColors.after : beforeAfterColors.before}
-                    animate={{
-                      duration: 1000,
-                      easing: "ease-in-out"
-                    }}
+                    isAnimationActive={true}
+                    animationDuration={1000}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -158,10 +157,8 @@ export default function AnalyticsComparison() {
                     fill={beforeAfterColors.before}
                     paddingAngle={5}
                     dataKey="value"
-                    animate={{
-                      duration: 1000,
-                      easing: "ease-in-out"
-                    }}
+                    isAnimationActive={true}
+                    animationDuration={1000}
                   >
                     {(isAfter ? pieData.after : pieData.before).map((entry, index) => (
                       <Cell
