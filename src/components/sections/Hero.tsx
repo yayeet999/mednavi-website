@@ -72,4 +72,4 @@ export default function Hero() {
         transition={{ duration: 1 }}
       >
         <div className="max-w-3xl">
-          <motion.h1
+          <motion.h1>
