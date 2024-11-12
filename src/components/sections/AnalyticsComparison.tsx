@@ -1,68 +1,233 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts'
+import { BarChartIcon, ActivityIcon, UsersIcon } from 'lucide-react'
 
-const beforeAfterColors = {
-  before: '#94A3B8', // Slate
-  after: '#059669',  // Green
+interface AnalysisState {
+  isAnalyzing: boolean
+  isComplete: boolean
 }
 
-const lineData = {
-  before: Array.from({ length: 12 }, (_, i) => ({
-    month: i + 1,
-    value: 75 + Math.random() * 7
-  })),
-  after: Array.from({ length: 12 }, (_, i) => ({
-    month: i + 1,
-    value: 85 + Math.random() * 7
+// Monthly new patients data with seasonality
+const generateMonthlyData = (baseValue: number, improvement: number = 0) => {
+  const seasonality = [0.9, 0.95, 1.1, 1.2, 1.15, 1.1, 1.05, 1, 0.95, 0.9, 0.85, 1]
+  return Array.from({ length: 12 }, (_, i) => ({
+    month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
+    value: Math.round((baseValue + improvement) * seasonality[i])
   }))
 }
 
-const barData = {
-  before: [
-    { name: 'Q1', value: 165 },
-    { name: 'Q2', value: 175 },
-    { name: 'Q3', value: 180 },
-    { name: 'Q4', value: 170 }
-  ],
-  after: [
-    { name: 'Q1', value: 190 },
-    { name: 'Q2', value: 200 },
-    { name: 'Q3', value: 210 },
-    { name: 'Q4', value: 205 }
-  ]
+const LoadingSpinner = () => (
+  <motion.div
+    className="w-5 h-5 rounded-full border-2 border-mednavi-blue border-t-transparent"
+    animate={{ rotate: 360 }}
+    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+  />
+)
+
+const AnalysisButton = ({ isAnalyzing, isComplete, onClick }: { isAnalyzing: boolean; isComplete: boolean; onClick: () => void }) => (
+  <button
+    onClick={onClick}
+    disabled={isAnalyzing}
+    className={`inline-flex items-center space-x-2 px-3 py-1 rounded-md text-sm transition-all ${
+      isComplete
+        ? 'bg-green-50 text-green-700'
+        : isAnalyzing
+        ? 'bg-blue-50 text-blue-600'
+        : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+    }`}
+  >
+    {isAnalyzing ? (
+      <><LoadingSpinner /><span>Analyzing...</span></>
+    ) : isComplete ? (
+      <span>Analysis Complete</span>
+    ) : (
+      <span>Analyze Impact</span>
+    )}
+  </button>
+)
+
+const KPIDisplay = ({ value, label }: { value: string; label: string }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="absolute top-0 right-0 bg-green-50 text-green-700 px-3 py-1 rounded-md text-sm"
+  >
+    <span className="font-medium">{value}</span>
+    <span className="ml-1 text-xs">{label}</span>
+  </motion.div>
+)
+
+const NewPatientsChart = ({ analysis }: { analysis: AnalysisState }) => {
+  const baseData = generateMonthlyData(25)
+  const improvedData = generateMonthlyData(25, 5)
+  
+  return (
+    <div className="relative h-[300px]">
+      <ResponsiveContainer>
+        <LineChart margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+          <XAxis dataKey="month" />
+          <YAxis domain={[0, 'auto']} />
+          <Tooltip />
+          <Line
+            data={baseData}
+            type="monotone"
+            dataKey="value"
+            stroke="#94A3B8"
+            strokeWidth={2}
+            dot={false}
+            name="Current"
+          />
+          {analysis.isComplete && (
+            <Line
+              data={improvedData}
+              type="monotone"
+              dataKey="value"
+              stroke="#059669"
+              strokeWidth={2}
+              dot={false}
+              name="Improved"
+              isAnimationActive={true}
+            />
+          )}
+        </LineChart>
+      </ResponsiveContainer>
+      {analysis.isComplete && (
+        <KPIDisplay value="+20%" label="Monthly New Patients" />
+      )}
+    </div>
+  )
 }
 
-const pieData = {
-  before: [
-    { name: 'Accepted', value: 60 },
-    { name: 'Declined', value: 40 }
-  ],
-  after: [
-    { name: 'Accepted', value: 72 },
-    { name: 'Declined', value: 28 }
+const ProductionChart = ({ analysis }: { analysis: AnalysisState }) => {
+  const baseData = [
+    { month: 'Jan', value: 180 },
+    { month: 'Feb', value: 185 },
+    { month: 'Mar', value: 190 },
+    { month: 'Apr', value: 195 },
+    { month: 'May', value: 200 },
+    { month: 'Jun', value: 205 },
+    { month: 'Jul', value: 200 },
+    { month: 'Aug', value: 195 },
+    { month: 'Sep', value: 190 },
+    { month: 'Oct', value: 185 },
+    { month: 'Nov', value: 180 },
+    { month: 'Dec', value: 185 }
   ]
+
+  const improvedData = baseData.map(item => ({
+    ...item,
+    improvedValue: item.value * 1.15
+  }))
+
+  return (
+    <div className="relative h-[300px]">
+      <ResponsiveContainer>
+        <BarChart data={improvedData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+          <XAxis dataKey="month" />
+          <YAxis domain={[0, 'auto']} />
+          <Tooltip />
+          <Bar dataKey="value" fill="#94A3B8" />
+          {analysis.isComplete && (
+            <Bar dataKey="improvedValue" fill="#059669" />
+          )}
+        </BarChart>
+      </ResponsiveContainer>
+      {analysis.isComplete && (
+        <KPIDisplay value="+15%" label="Avg Production/Visit" />
+      )}
+    </div>
+  )
+}
+
+const ActivePatientsCharts = ({ analysis }: { analysis: AnalysisState }) => {
+  const baseActive = 75
+  const baseUnscheduled = 35
+  const improvement = analysis.isComplete ? 10 : 0
+
+  return (
+    <div className="relative h-[300px] flex justify-between">
+      <div className="w-1/2">
+        <ResponsiveContainer>
+          <PieChart>
+            <Pie
+              data={[
+                { name: 'Active', value: baseActive + improvement },
+                { name: 'Inactive', value: 100 - (baseActive + improvement) }
+              ]}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={80}
+              fill="#059669"
+              paddingAngle={5}
+              dataKey="value"
+            >
+              <Cell fill="#059669" />
+              <Cell fill="#E2E8F0" />
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+        <div className="text-center mt-2 text-sm font-medium">Active Patients</div>
+      </div>
+      <div className="w-1/2">
+        <ResponsiveContainer>
+          <PieChart>
+            <Pie
+              data={[
+                { name: 'Unscheduled', value: baseUnscheduled - improvement },
+                { name: 'Scheduled', value: 100 - (baseUnscheduled - improvement) }
+              ]}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={80}
+              fill="#059669"
+              paddingAngle={5}
+              dataKey="value"
+            >
+              <Cell fill="#059669" />
+              <Cell fill="#E2E8F0" />
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+        <div className="text-center mt-2 text-sm font-medium">Unscheduled Patients</div>
+      </div>
+      {analysis.isComplete && (
+        <KPIDisplay value="+10%" label="Patient Activity" />
+      )}
+    </div>
+  )
 }
 
 export default function AnalyticsComparison() {
-  const [isAfter, setIsAfter] = useState(false)
+  const [newPatientsAnalysis, setNewPatientsAnalysis] = useState<AnalysisState>({ isAnalyzing: false, isComplete: false })
+  const [productionAnalysis, setProductionAnalysis] = useState<AnalysisState>({ isAnalyzing: false, isComplete: false })
+  const [patientsAnalysis, setPatientsAnalysis] = useState<AnalysisState>({ isAnalyzing: false, isComplete: false })
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAfter(true)
-    }, 2000)
-    return () => clearTimeout(timer)
-  }, [])
+  const startAnalysis = (
+    analysisState: AnalysisState,
+    setAnalysisState: (state: AnalysisState) => void
+  ) => {
+    if (!analysisState.isAnalyzing && !analysisState.isComplete) {
+      setAnalysisState({ isAnalyzing: true, isComplete: false })
+      setTimeout(() => {
+        setAnalysisState({ isAnalyzing: false, isComplete: true })
+      }, 2000)
+    }
+  }
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-10"
         >
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             The Power of Data-Driven Decisions
@@ -73,115 +238,57 @@ export default function AnalyticsComparison() {
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {/* Patient Retention Rate */}
+          <motion.div
+            className="bg-white rounded-xl shadow-lg p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">New Patients Monthly</h3>
+              <AnalysisButton
+                isAnalyzing={newPatientsAnalysis.isAnalyzing}
+                isComplete={newPatientsAnalysis.isComplete}
+                onClick={() => startAnalysis(newPatientsAnalysis, setNewPatientsAnalysis)}
+              />
+            </div>
+            <NewPatientsChart analysis={newPatientsAnalysis} />
+          </motion.div>
+
+          <motion.div
+            className="bg-white rounded-xl shadow-lg p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">Average Production per Visit</h3>
+              <AnalysisButton
+                isAnalyzing={productionAnalysis.isAnalyzing}
+                isComplete={productionAnalysis.isComplete}
+                onClick={() => startAnalysis(productionAnalysis, setProductionAnalysis)}
+              />
+            </div>
+            <ProductionChart analysis={productionAnalysis} />
+          </motion.div>
+
           <motion.div
             className="bg-white rounded-xl shadow-lg p-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h3 className="text-xl font-semibold mb-4">Patient Retention Rate</h3>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart>
-                  <XAxis dataKey="month" />
-                  <YAxis domain={[70, 100]} />
-                  <Tooltip />
-                  <Line
-                    data={lineData.before}
-                    type="monotone"
-                    dataKey="value"
-                    stroke={beforeAfterColors.before}
-                    strokeWidth={2}
-                    dot={false}
-                    isAnimationActive={true}
-                  />
-                  {isAfter && (
-                    <Line
-                      data={lineData.after}
-                      type="monotone"
-                      dataKey="value"
-                      stroke={beforeAfterColors.after}
-                      strokeWidth={2}
-                      dot={false}
-                      isAnimationActive={true}
-                    />
-                  )}
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">Patient Activity Status</h3>
+              <AnalysisButton
+                isAnalyzing={patientsAnalysis.isAnalyzing}
+                isComplete={patientsAnalysis.isComplete}
+                onClick={() => startAnalysis(patientsAnalysis, setPatientsAnalysis)}
+              />
             </div>
-          </motion.div>
-
-          {/* Revenue per Visit */}
-          <motion.div
-            className="bg-white rounded-xl shadow-lg p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <h3 className="text-xl font-semibold mb-4">Revenue per Visit</h3>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={isAfter ? barData.after : barData.before}>
-                  <XAxis dataKey="name" />
-                  <YAxis domain={[150, 220]} />
-                  <Tooltip />
-                  <Bar 
-                    dataKey="value"
-                    fill={isAfter ? beforeAfterColors.after : beforeAfterColors.before}
-                    isAnimationActive={true}
-                    animationDuration={1000}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </motion.div>
-
-          {/* Treatment Plan Acceptance */}
-          <motion.div
-            className="bg-white rounded-xl shadow-lg p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <h3 className="text-xl font-semibold mb-4">Treatment Plan Acceptance</h3>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={isAfter ? pieData.after : pieData.before}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    fill={beforeAfterColors.before}
-                    paddingAngle={5}
-                    dataKey="value"
-                    isAnimationActive={true}
-                    animationDuration={1000}
-                  >
-                    {(isAfter ? pieData.after : pieData.before).map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={index === 0 ? (isAfter ? beforeAfterColors.after : beforeAfterColors.before) : '#E2E8F0'}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+            <ActivePatientsCharts analysis={patientsAnalysis} />
           </motion.div>
         </div>
-
-        <motion.div
-          className="text-center mt-8 text-gray-500"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 3 }}
-        >
-          {isAfter ? "↑ Improved metrics with data-driven decisions" : "Initial metrics before analysis"}
-        </motion.div>
       </div>
     </section>
   )
