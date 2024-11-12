@@ -37,7 +37,6 @@ const DataFlow = () => {
         />
       ))}
 
-      {/* Data Grid Pattern */}
       <svg className="absolute inset-0 w-full h-full opacity-5">
         <pattern
           id="grid"
@@ -72,4 +71,50 @@ export default function Hero() {
         transition={{ duration: 1 }}
       >
         <div className="max-w-3xl">
-          <motion.h1>
+          <motion.h1
+            className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            Transforming Dental Data into Actionable Insights
+          </motion.h1>
+          
+          <motion.p 
+            className="text-xl text-gray-600 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            Empower your dental practice with real-time analytics to improve patient experience and operational efficiency.
+          </motion.p>
+          
+          <motion.div 
+            className="flex gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <Link href="/contact">
+              <Button 
+                size="lg" 
+                className="bg-mednavi-blue hover:bg-mednavi-blue/90 transform hover:scale-105 transition-transform"
+              >
+                Get Started
+              </Button>
+            </Link>
+            <Link href="/services">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-mednavi-blue text-mednavi-blue hover:bg-mednavi-blue/10 transform hover:scale-105 transition-transform"
+              >
+                Learn More
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
+    </section>
+  )
+}
