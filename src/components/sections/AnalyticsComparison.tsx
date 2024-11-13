@@ -100,8 +100,8 @@ const CustomSlider = ({
           className="absolute w-full h-full cursor-pointer opacity-0 z-10"
         />
         <div 
-          className="absolute h-4 w-4 bg-white rounded-full shadow-md border border-gray-300 top-1/2 transform -translate-y-1/2"
-          style={{ left: `calc(${(value/max)*100}% - 8px)` }}
+          className="absolute h-5 w-5 bg-white rounded-full shadow-md border border-gray-300 top-1/2 transform -translate-y-1/2"
+          style={{ left: `calc(${(value/max)*100}% - 10px)` }}
         />
       </div>
     </div>
