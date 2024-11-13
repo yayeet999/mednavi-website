@@ -42,12 +42,12 @@ export default function Hero() {
 
         {/* Data visualization elements positioned closer to the center */}
         <div className="absolute inset-0 flex flex-col items-end justify-center pr-36 space-y-10">
-          {/* Enhanced 3D pie chart */}
+          {/* Enhanced 3D pie chart with simple rotation */}
           <motion.svg
             className="w-56 h-56 opacity-25 hidden lg:block"
             viewBox="0 0 100 100"
-            initial={{ opacity: 0, rotate: -90 }}
-            animate={{ opacity: 1, rotate: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
             <defs>
@@ -56,43 +56,22 @@ export default function Hero() {
                 <stop offset="100%" style={{ stopColor: 'rgba(30, 40, 80, 0.2)', stopOpacity: 1 }} />
               </linearGradient>
             </defs>
-            {[{ start: 0, end: 90 }, { start: 90, end: 180 }, { start: 180, end: 360 }].map((segment, i) => (
-              <motion.path
-                key={`segment-${i}`}
-                d={`M50,50 L${50 + 45 * Math.cos(segment.start * Math.PI / 180)},${50 + 45 * Math.sin(segment.start * Math.PI / 180)} A45,45 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 45 * Math.cos(segment.end * Math.PI / 180)},${50 + 45 * Math.sin(segment.end * Math.PI / 180)} Z`}
-                fill="url(#3dGradientPie)"
-                initial={{ opacity: 0, rotate: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                  duration: 1.5,
-                  delay: i * 0.3,
-                  ease: "easeInOut",
-                  repeat: Infinity,
-                  repeatType: "mirror",
-                  repeatDelay: 2,
-                }}
-              />
-            ))}
-            {/* Smooth continuous rotation */}
-            <motion.g
+            {/* Single pie shape with continuous rotation */}
+            <motion.circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="url(#3dGradientPie)"
               initial={{ rotate: 0 }}
               animate={{ rotate: 360 }}
-              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            >
-              {[{ start: 0, end: 45 }, { start: 45, end: 170 }, { start: 170, end: 360 }].map((segment, i) => (
-                <motion.path
-                  key={`dynamic-segment-${i}`}
-                  d={`M50,50 L${50 + 45 * Math.cos(segment.start * Math.PI / 180)},${50 + 45 * Math.sin(segment.start * Math.PI / 180)} A45,45 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 45 * Math.cos(segment.end * Math.PI / 180)},${50 + 45 * Math.sin(segment.end * Math.PI / 180)} Z`}
-                  fill="url(#3dGradientPie)"
-                />
-              ))}
-            </motion.g>
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            />
           </motion.svg>
 
-          {/* Enhanced 3D bar chart positioned below pie chart with increased width and depth */}
+          {/* Enhanced 3D bar chart with five wider bars */}
           <motion.svg
             className="w-64 h-40 opacity-25 hidden md:block"
-            viewBox="0 0 220 150"
+            viewBox="0 0 240 150"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
@@ -103,11 +82,11 @@ export default function Hero() {
                 <stop offset="100%" style={{ stopColor: 'rgba(30, 40, 80, 0.3)', stopOpacity: 1 }} />
               </linearGradient>
             </defs>
-            {[{ x: 20, height: 40 }, { x: 70, height: 80 }, { x: 120, height: 110 }, { x: 170, height: 130 }, { x: 220, height: 140 }].map((bar, i) => (
+            {[{ x: 20, height: 40 }, { x: 70, height: 80 }, { x: 120, height: 110 }, { x: 170, height: 130 }, { x: 220, height: 150 }].map((bar, i) => (
               <motion.rect
                 key={`bar-${i}`}
-                x={bar.x - 15}
-                width="30"
+                x={bar.x - 18}  // Slightly wider bars
+                width="36"
                 y={150 - bar.height}
                 height={bar.height}
                 fill="url(#3dGradientBar)"
