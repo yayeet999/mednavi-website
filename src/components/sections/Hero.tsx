@@ -27,7 +27,7 @@ export default function Hero() {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent" />
 
-        {/* Subtle data waves */}
+        {/* Subtle computational data waves */}
         <motion.div
           className="absolute inset-0 w-full h-full opacity-10"
           initial={{ opacity: 0 }}
@@ -42,7 +42,7 @@ export default function Hero() {
 
         {/* Data visualization elements */}
         <div className="absolute inset-0">
-          {/* Enhanced bar chart */}
+          {/* Enhanced bar chart with uptrend alignment */}
           <motion.svg
             className="absolute top-20 right-20 w-64 h-48 opacity-20 hidden md:block"
             viewBox="0 0 200 150"
@@ -50,7 +50,7 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
-            {[{ x: 20, height: 100 }, { x: 60, height: 140 }, { x: 100, height: 80 }, { x: 140, height: 120 }, { x: 180, height: 110 }].map((bar, i) => (
+            {[{ x: 20, height: 60 }, { x: 60, height: 90 }, { x: 100, height: 120 }, { x: 140, height: 150 }, { x: 180, height: 180 }].map((bar, i) => (
               <motion.rect
                 key={`bar-${i}`}
                 x={bar.x - 15}
@@ -65,14 +65,14 @@ export default function Hero() {
                   delay: i * 0.3,
                   repeat: Infinity,
                   repeatType: "mirror",
-                  repeatDelay: 1,
+                  repeatDelay: 3,
                   ease: "easeInOut"
                 }}
               />
             ))}
           </motion.svg>
 
-          {/* Slightly animated pie chart */}
+          {/* Animated pie chart with spinning and slice variation */}
           <motion.svg
             className="absolute top-40 right-96 w-48 h-48 opacity-20 hidden lg:block"
             viewBox="0 0 100 100"
@@ -97,6 +97,30 @@ export default function Hero() {
                 }}
               />
             ))}
+            {/* Continuous slow spin with intermittent segment changes */}
+            <motion.g
+              initial={{ rotate: 0 }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+              {[{ start: 0, end: 45, color: 'rgba(30, 58, 138, 0.4)' }, { start: 45, end: 170, color: 'rgba(30, 58, 138, 0.25)' }, { start: 170, end: 360, color: 'rgba(30, 58, 138, 0.2)' }].map((segment, i) => (
+                <motion.path
+                  key={`dynamic-segment-${i}`}
+                  d={`M50,50 L${50 + 40 * Math.cos(segment.start * Math.PI / 180)},${50 + 40 * Math.sin(segment.start * Math.PI / 180)} A40,40 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(segment.end * Math.PI / 180)},${50 + 40 * Math.sin(segment.end * Math.PI / 180)} Z`}
+                  fill={segment.color}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{
+                    delay: i * 0.5,
+                    duration: 1,
+                    repeat: Infinity,
+                    repeatType: "mirror",
+                    repeatDelay: 5,
+                    ease: "easeInOut"
+                  }}
+                />
+              ))}
+            </motion.g>
           </motion.svg>
         </div>
       </div>
