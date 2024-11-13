@@ -1,15 +1,56 @@
 'use client'
+
+import { motion } from 'framer-motion'
 import Hero from '@/components/sections/Hero'
+import KeyFeatures from '@/components/sections/KeyFeatures'
 import Features from '@/components/sections/Features'
 import AnalyticsComparison from '@/components/sections/AnalyticsComparison'
-import { motion } from 'framer-motion'
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1
+    }
+  }
+}
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5
+    }
+  }
+}
 
 export default function Home() {
   return (
-    <div className="pt-16">
-      <Hero />
-      <AnalyticsComparison />
-      <Features />
-    </div>
+    <motion.div 
+      className="pt-16"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.section variants={sectionVariants}>
+        <Hero />
+      </motion.section>
+
+      <motion.section variants={sectionVariants}>
+        <KeyFeatures />
+      </motion.section>
+
+      <motion.section variants={sectionVariants}>
+        <AnalyticsComparison />
+      </motion.section>
+
+      <motion.section variants={sectionVariants}>
+        <Features />
+      </motion.section>
+    </motion.div>
   )
 }
