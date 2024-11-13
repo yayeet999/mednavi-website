@@ -11,6 +11,12 @@ import {
   Tooltip
 } from 'recharts';
 
+interface StatCardProps {
+  title: string;
+  value: string;
+  trend: number;
+}
+
 const demographicsData = [
   { month: 'Jan', patients: 120, newPatients: 25 },
   { month: 'Feb', patients: 150, newPatients: 30 },
@@ -30,7 +36,7 @@ const revenueData = [
 ];
 
 const MiniDashboard = () => {
-  const StatCard = ({ title, value, trend }) => (
+  const StatCard = ({ title, value, trend }: StatCardProps) => (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       <p className="text-sm text-gray-600">{title}</p>
       <p className="text-2xl font-semibold mt-1">{value}</p>
