@@ -48,7 +48,6 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
-            {/* Grid lines with better visibility */}
             {[0, 1, 2, 3, 4].map((i) => (
               <line
                 key={`grid-${i}`}
@@ -61,31 +60,20 @@ export default function Hero() {
                 strokeDasharray="4 4"
               />
             ))}
-            
-            {/* Enhanced animated bars */}
-            {[
-              { x: 20, height: 90, delay: 0 },
-              { x: 60, height: 120, delay: 0.2 },
-              { x: 100, height: 70, delay: 0.4 },
-              { x: 140, height: 100, delay: 0.6 },
-              { x: 180, height: 110, delay: 0.8 },
-            ].map((bar, i) => (
+            {[20, 60, 100, 140, 180].map((x, i) => (
               <motion.rect
                 key={`bar-${i}`}
-                x={bar.x - 12}
+                x={x - 12}
                 width="24"
-                y={150 - bar.height}
-                height={bar.height}
+                y={150 - (i + 1) * 30}
+                height={(i + 1) * 30}
                 rx="4"
                 fill="rgba(30, 58, 138, 0.2)"
                 initial={{ height: 0, y: 150 }}
-                animate={{ 
-                  height: bar.height, 
-                  y: 150 - bar.height 
-                }}
+                animate={{ height: (i + 1) * 30, y: 150 - (i + 1) * 30 }}
                 transition={{
                   duration: 1.5,
-                  delay: bar.delay,
+                  delay: i * 0.2,
                   repeat: Infinity,
                   repeatType: "reverse",
                   repeatDelay: 1,
@@ -103,15 +91,11 @@ export default function Hero() {
             animate={{ opacity: 1, rotate: 0 }}
             transition={{ duration: 1 }}
           >
-            {[
-              { start: 0, end: 120, color: 'rgba(30, 58, 138, 0.3)' },
-              { start: 120, end: 240, color: 'rgba(30, 58, 138, 0.2)' },
-              { start: 240, end: 360, color: 'rgba(30, 58, 138, 0.15)' },
-            ].map((segment, i) => (
+            {[120, 240, 360].map((end, i) => (
               <motion.path
                 key={`segment-${i}`}
-                d={`M50,50 L${50 + 40 * Math.cos(segment.start * Math.PI / 180)},${50 + 40 * Math.sin(segment.start * Math.PI / 180)} A40,40 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(segment.end * Math.PI / 180)},${50 + 40 * Math.sin(segment.end * Math.PI / 180)} Z`}
-                fill={segment.color}
+                d={`M50,50 L${50 + 40 * Math.cos((end - 120) * Math.PI / 180)},${50 + 40 * Math.sin((end - 120) * Math.PI / 180)} A40,40 0 ${end - (end - 120) > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(end * Math.PI / 180)},${50 + 40 * Math.sin(end * Math.PI / 180)} Z`}
+                fill={`rgba(30, 58, 138, ${0.15 * (i + 1)})`}
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
                 transition={{
@@ -123,37 +107,28 @@ export default function Hero() {
             ))}
           </motion.svg>
 
-          {/* Monitor with line chart */}
-          <div className="absolute bottom-40 right-40 w-80 h-48 hidden md:block">
-            {/* Monitor frame */}
+          {/* Monitor with line chart moved down */}
+          <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 w-80 h-48 hidden md:block">
             <motion.div
               className="relative w-full h-full bg-white rounded-lg shadow-lg overflow-hidden"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              {/* Monitor bezel */}
               <motion.div
                 className="absolute inset-0 border-4 border-gray-200 rounded-lg"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.3 }}
               >
-                {/* Screen content */}
                 <motion.div
                   className="absolute inset-2 bg-white rounded-md overflow-hidden"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.8, duration: 0.3 }}
                 >
-                  {/* Chart grid */}
                   <svg className="w-full h-full" viewBox="0 0 300 200">
-                    {/* Grid lines */}
-                    <motion.g
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 0.2 }}
-                      transition={{ delay: 1, duration: 0.5 }}
-                    >
+                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 0.2 }} transition={{ delay: 1, duration: 0.5 }}>
                       {[0, 1, 2, 3, 4].map((i) => (
                         <line
                           key={`h-grid-${i}`}
@@ -179,8 +154,6 @@ export default function Hero() {
                         />
                       ))}
                     </motion.g>
-
-                    {/* Trend line */}
                     <motion.path
                       d="M0,180 C100,150 200,80 300,20"
                       fill="none"
@@ -190,8 +163,6 @@ export default function Hero() {
                       animate={{ pathLength: 1 }}
                       transition={{ delay: 1.3, duration: 1.5, ease: "easeInOut" }}
                     />
-
-                    {/* Dollar sign */}
                     <motion.text
                       x="285"
                       y="15"
@@ -206,8 +177,6 @@ export default function Hero() {
                   </svg>
                 </motion.div>
               </motion.div>
-
-              {/* Monitor stand */}
               <motion.div
                 className="absolute -bottom-4 left-1/2 w-16 h-8 bg-gray-200 rounded-lg transform -translate-x-1/2"
                 initial={{ opacity: 0, scaleX: 0 }}
@@ -222,8 +191,7 @@ export default function Hero() {
       {/* Main content */}
       <div className="relative container mx-auto px-4 pt-16 pb-8 flex flex-col min-h-[85vh]">
         <div className="max-w-3xl mb-auto">
-          <motion.h1
-            className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6"
+          <motion.h1 className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -241,8 +209,7 @@ export default function Hero() {
             Insights
           </motion.h1>
           
-          <motion.p 
-            className="text-xl text-gray-600 mb-8"
+          <motion.p className="text-xl text-gray-600 mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -250,8 +217,7 @@ export default function Hero() {
             Empower your dental practice with real-time analytics to improve patient experience and operational efficiency.
           </motion.p>
           
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-4 mb-16"
+          <motion.div className="flex flex-col sm:flex-row gap-4 mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
