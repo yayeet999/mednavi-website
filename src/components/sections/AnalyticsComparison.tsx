@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts'
+import { motion } from 'framer-motion'
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts'
 import { ChevronRight } from 'lucide-react'
 
 interface AnalysisState {
@@ -18,7 +18,10 @@ interface ChartDataPoint {
 // Analysis Loading Animation Component
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center">
-    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-mednavi-blue"></div>
+    <svg className="animate-spin h-6 w-6 text-mednavi-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+      <path className="opacity-75" fill="currentColor" d="M12 2a10 10 0 000 20V2z"></path>
+    </svg>
   </div>
 )
 
@@ -96,8 +99,9 @@ const generateProductionData = (baseValue: number, improvement: number = 0): Cha
   })
 }
 
-// Custom tooltip formatter
+// Custom tooltip formatters
 const formatCurrency = (value: number) => `$${(value / 1000).toFixed(1)}k`
+const formatPercentage = (value: number) => `${value}%`
 
 export default function AnalyticsComparison() {
   const [newPatientsAnalysis, setNewPatientsAnalysis] = useState<AnalysisState>({
@@ -126,15 +130,15 @@ export default function AnalyticsComparison() {
   }
 
   return (
-    <section className="py-10 bg-gray-50">
+    <section className="py-6 bg-gray-50">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8"
+          className="text-center mb-4"
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
             The Power of Data-Driven Decisions
           </h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
@@ -142,17 +146,17 @@ export default function AnalyticsComparison() {
           </p>
         </motion.div>
 
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* New Patients Analysis */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white rounded-xl shadow-lg p-6 md:p-8"
+            className="bg-white rounded-xl shadow-lg p-4 md:p-6"
           >
             <div className="flex flex-col lg:flex-row lg:gap-8">
               <div className="lg:w-2/3">
-                <div className="flex justify-between items-center mb-4 md:mb-6">
+                <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg md:text-xl font-semibold">New Patients Monthly</h3>
                   <AnalysisButton
                     isAnalyzing={newPatientsAnalysis.isAnalyzing}
@@ -160,7 +164,7 @@ export default function AnalyticsComparison() {
                     onClick={() => startAnalysis(newPatientsAnalysis, setNewPatientsAnalysis)}
                   />
                 </div>
-                <div className="h-64 md:h-80 lg:h-96">
+                <div className="h-60 md:h-72 lg:h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                       data={generateMonthlyPatients(25, newPatientsAnalysis.isComplete ? 5 : 0)}
@@ -191,8 +195,8 @@ export default function AnalyticsComparison() {
                   </ResponsiveContainer>
                 </div>
               </div>
-              <div className="lg:w-1/3 mt-6 lg:mt-0">
-                <div className="space-y-4">
+              <div className="lg:w-1/3 mt-4 lg:mt-0">
+                <div className="space-y-2">
                   <h4 className="text-lg font-semibold text-gray-900">Impact Analysis</h4>
                   <p className="text-gray-600">
                     By analyzing regional trends, marketing effectiveness, and patient demographics,
@@ -211,11 +215,11 @@ export default function AnalyticsComparison() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white rounded-xl shadow-lg p-6 md:p-8"
+            className="bg-white rounded-xl shadow-lg p-4 md:p-6"
           >
             <div className="flex flex-col lg:flex-row lg:gap-8">
               <div className="lg:w-2/3">
-                <div className="flex justify-between items-center mb-4 md:mb-6">
+                <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg md:text-xl font-semibold">Average Production per Month</h3>
                   <AnalysisButton
                     isAnalyzing={productionAnalysis.isAnalyzing}
@@ -223,7 +227,7 @@ export default function AnalyticsComparison() {
                     onClick={() => startAnalysis(productionAnalysis, setProductionAnalysis)}
                   />
                 </div>
-                <div className="h-64 md:h-80 lg:h-96">
+                <div className="h-60 md:h-72 lg:h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={generateProductionData(80000, productionAnalysis.isComplete ? 0.15 : 0)}
@@ -240,8 +244,8 @@ export default function AnalyticsComparison() {
                   </ResponsiveContainer>
                 </div>
               </div>
-              <div className="lg:w-1/3 mt-6 lg:mt-0">
-                <div className="space-y-4">
+              <div className="lg:w-1/3 mt-4 lg:mt-0">
+                <div className="space-y-2">
                   <h4 className="text-lg font-semibold text-gray-900">Revenue Optimization</h4>
                   <p className="text-gray-600">
                     Optimize your service mix and treatment plan acceptance rates through
@@ -260,11 +264,11 @@ export default function AnalyticsComparison() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white rounded-xl shadow-lg p-6 md:p-8"
+            className="bg-white rounded-xl shadow-lg p-4 md:p-6"
           >
             <div className="flex flex-col lg:flex-row lg:gap-8">
               <div className="lg:w-2/3">
-                <div className="flex justify-between items-center mb-4 md:mb-6">
+                <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg md:text-xl font-semibold">Patient Activity Status</h3>
                   <AnalysisButton
                     isAnalyzing={patientActivityAnalysis.isAnalyzing}
@@ -272,8 +276,8 @@ export default function AnalyticsComparison() {
                     onClick={() => startAnalysis(patientActivityAnalysis, setPatientActivityAnalysis)}
                   />
                 </div>
-                <div className="flex flex-col md:flex-row md:justify-center items-center h-64 md:h-80 lg:h-96">
-                  <div className="w-full md:w-1/2">
+                <div className="flex flex-row justify-center items-center h-60 md:h-72 lg:h-80">
+                  <div className="w-1/2">
                     <ResponsiveContainer width="100%" height={200}>
                       <PieChart>
                         <Pie
@@ -297,23 +301,23 @@ export default function AnalyticsComparison() {
                           <Cell fill="#1E3A8A" />
                           <Cell fill="#E2E8F0" />
                         </Pie>
-                        <Tooltip />
+                        <Tooltip formatter={(value) => formatPercentage(value as number)} />
                       </PieChart>
                     </ResponsiveContainer>
-                    <div className="text-center mt-2 font-medium">Active Patients</div>
+                    <div className="text-center mt-2 font-medium">Percentage of Active Patients</div>
                   </div>
-                  <div className="w-full md:w-1/2 mt-6 md:mt-0">
+                  <div className="w-1/2">
                     <ResponsiveContainer width="100%" height={200}>
                       <PieChart>
                         <Pie
                           data={[
                             {
-                              name: 'Scheduled',
-                              value: patientActivityAnalysis.isComplete ? 70 : 60,
+                              name: 'Unscheduled Active Patients',
+                              value: patientActivityAnalysis.isComplete ? 4 : 18,
                             },
                             {
-                              name: 'Unscheduled',
-                              value: patientActivityAnalysis.isComplete ? 30 : 40,
+                              name: 'Scheduled Active Patients',
+                              value: patientActivityAnalysis.isComplete ? 96 : 82,
                             },
                           ]}
                           cx="50%"
@@ -326,15 +330,15 @@ export default function AnalyticsComparison() {
                           <Cell fill="#059669" />
                           <Cell fill="#E2E8F0" />
                         </Pie>
-                        <Tooltip />
+                        <Tooltip formatter={(value) => formatPercentage(value as number)} />
                       </PieChart>
                     </ResponsiveContainer>
-                    <div className="text-center mt-2 font-medium">Scheduling Status</div>
+                    <div className="text-center mt-2 font-medium">Unscheduled Active Patients</div>
                   </div>
                 </div>
               </div>
-              <div className="lg:w-1/3 mt-6 lg:mt-0">
-                <div className="space-y-4">
+              <div className="lg:w-1/3 mt-4 lg:mt-0">
+                <div className="space-y-2">
                   <h4 className="text-lg font-semibold text-gray-900">Patient Retention</h4>
                   <p className="text-gray-600">
                     Increase patient retention and recall effectiveness through personalized
@@ -342,8 +346,8 @@ export default function AnalyticsComparison() {
                   </p>
                   {patientActivityAnalysis.isComplete && (
                     <div className="space-y-2">
+                      <KPIDisplay value="-14%" label="Unscheduled Active Patients" />
                       <KPIDisplay value="+10%" label="Active Patient Base" />
-                      <KPIDisplay value="+15%" label="Recall Effectiveness" />
                     </div>
                   )}
                 </div>
