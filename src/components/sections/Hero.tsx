@@ -43,7 +43,6 @@ const particlesOptions = {
     move: {
       enable: true,
       speed: 2,
-      direction: 'none',
       random: false,
       straight: false,
       outModes: {
