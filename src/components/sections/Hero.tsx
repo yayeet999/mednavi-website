@@ -4,86 +4,65 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import dynamic from 'next/dynamic'
-import { Engine } from '@tsparticles/engine'
+import type { Engine } from '@tsparticles/engine'
+import { loadSlim } from '@tsparticles/slim'
 
-// Dynamically import the Particles component to prevent SSR issues
-const Particles = dynamic(() => import('@tsparticles/react'), { ssr: false })
+const Particles = dynamic(() => import('@tsparticles/react'), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 bg-gradient-to-br from-blue-50/90 via-white/50 to-blue-50/80" />
+})
 
 export default function Hero() {
-  // Initialize particles
   const particlesInit = useCallback(async (engine: Engine) => {
-    const { loadFull } = await import('@tsparticles/engine')
-    await loadFull(engine)
+    await loadSlim(engine)
   }, [])
 
   const particlesOptions = {
+    background: {
+      color: {
+        value: 'transparent',
+      },
+    },
     particles: {
       number: {
-        value: 120,
+        value: 80,
         density: {
           enable: true,
-          area: 900,
+          area: 800,
         },
       },
       color: {
-        value: ['#007BFF', '#00C6D7', '#33FF99'],
+        value: ['#1E3A8A', '#3B82F6', '#60A5FA'],
       },
       shape: {
         type: 'circle',
-        stroke: {
-          width: 0,
-        },
-        polygon: {
-          sides: 6,
-        },
       },
       opacity: {
-        value: 0.7,
-        random: true,
-        animation: {
-          enable: true,
-          speed: 1,
-          minimumValue: 0.3,
-          sync: false,
-        },
+        value: 0.5,
       },
       size: {
-        value: 4,
-        random: true,
-        animation: {
-          enable: true,
-          speed: 5,
-          minimumValue: 0.1,
-          sync: false,
-        },
+        value: { min: 1, max: 3 },
       },
       links: {
         enable: true,
-        distance: 120,
-        color: '#007BFF',
-        opacity: 0.4,
-        width: 1.5,
+        distance: 150,
+        color: '#1E3A8A',
+        opacity: 0.3,
+        width: 1,
       },
       move: {
         enable: true,
-        speed: 2.5,
+        speed: 2,
         direction: 'none',
         random: false,
         straight: false,
         outModes: {
-          default: 'out',
-        },
-        attract: {
-          enable: true,
-          rotate: {
-            x: 600,
-            y: 1200,
-          },
+          default: 'bounce',
         },
       },
     },
     interactivity: {
-      detectsOn: 'canvas',
+      detectsOn: 'window',
       events: {
         onHover: {
           enable: true,
@@ -97,45 +76,40 @@ export default function Hero() {
       },
       modes: {
         grab: {
-          distance: 200,
+          distance: 140,
           links: {
-            opacity: 0.7,
+            opacity: 0.5,
           },
         },
-        bubble: {
-          distance: 250,
-          size: 6,
-          duration: 2,
-          opacity: 0.8,
-          speed: 2,
-        },
-        repulse: {
-          distance: 150,
-          duration: 0.4,
-        },
         push: {
-          quantity: 3,
-        },
-        remove: {
-          quantity: 2,
+          quantity: 4,
         },
       },
     },
-    detectRetina: true,
+    responsive: [
+      {
+        maxWidth: 768,
+        options: {
+          particles: {
+            number: {
+              value: 40,
+            },
+          },
+        },
+      },
+    ],
   }
 
   return (
     <section className="relative min-h-[85vh] overflow-hidden">
-      {/* Particles Background */}
       <Particles
         id="tsparticles"
         className="absolute inset-0 -z-10"
         init={particlesInit}
         options={particlesOptions}
       />
-
-      {/* Hero Content */}
-      <motion.div
+      
+      <motion.div 
         className="relative container mx-auto px-4 pt-32 pb-16 flex items-center min-h-[85vh]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -150,35 +124,34 @@ export default function Hero() {
           >
             Transforming Dental Data into Actionable Insights
           </motion.h1>
-
-          <motion.p
+          
+          <motion.p 
             className="text-xl text-gray-600 mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Empower your dental practice with real-time analytics to improve patient experience and
-            operational efficiency.
+            Empower your dental practice with real-time analytics to improve patient experience and operational efficiency.
           </motion.p>
-
-          <motion.div
+          
+          <motion.div 
             className="flex gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <Link href="/contact">
-              <Button
-                size="lg"
+              <Button 
+                size="lg" 
                 className="bg-mednavi-blue hover:bg-mednavi-blue/90 transform hover:scale-105 transition-transform"
               >
                 Get Started
               </Button>
             </Link>
             <Link href="/services">
-              <Button
-                size="lg"
-                variant="outline"
+              <Button 
+                size="lg" 
+                variant="outline" 
                 className="border-mednavi-blue text-mednavi-blue hover:bg-mednavi-blue/10 transform hover:scale-105 transition-transform"
               >
                 Learn More
