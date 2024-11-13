@@ -50,37 +50,22 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom colors
-        'mednavi-blue': '#1E3A8A',
-        'mednavi-light-blue': '#60A5FA',
-        'mednavi-green': '#059669',
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      keyframes: {
-        "accordion-down": {
-          from: { height: 0 },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
-        },
-        "fluid-motion": {
-          "0%, 100%": { transform: "translateY(0) scale(1)" },
-          "50%": { transform: "translateY(-5%) scale(1.01)" },
-        }
+      boxShadow: {
+        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+        'glass-sm': '0 4px 16px 0 rgba(31, 38, 135, 0.25)',
       },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "fluid": "fluid-motion 8s ease-in-out infinite",
+      backdropBlur: {
+        'xs': '2px',
       },
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--gradient-start), var(--gradient-end))',
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
   },
