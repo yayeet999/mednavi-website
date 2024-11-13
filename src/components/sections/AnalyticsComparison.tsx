@@ -61,57 +61,36 @@ const CustomSlider = ({
   defaultValue,
   isReverse = false
 }: SliderProps) => {
-  const handleChange = (newValue: number) => {
-    if (isReverse) {
-      // For unscheduled patients, can't go below default (improvement is reducing)
-      onChange(Math.min(newValue, defaultValue));
-    } else {
-      // For others, can't go below default (improvement is increasing)
-      onChange(Math.max(newValue, defaultValue));
-    }
-  };
-
-  const getTrackStyle = () => {
-    const percentage = ((value - min) / (max - min)) * 100;
-    const defaultPercentage = ((defaultValue - min) / (max - min)) * 100;
-
-    return {
-      background: `linear-gradient(to right, 
-        #e5e7eb 0%, 
-        #e5e7eb ${isReverse ? percentage : defaultPercentage}%, 
-        #2563eb ${isReverse ? percentage : defaultPercentage}%, 
-        #2563eb ${isReverse ? defaultPercentage : percentage}%, 
-        #e5e7eb ${isReverse ? defaultPercentage : percentage}%,
-        #e5e7eb 100%)`
-    };
-  };
-
   return (
-    <div className="w-full mb-8">
+    <div className="w-full">
       <div className="flex justify-between items-center mb-2">
-        <span className="text-gray-600 text-lg">{label}</span>
+        <span className="text-gray-700 text-lg">{label}</span>
         <span className="text-lg font-medium">{displayValue}</span>
       </div>
-      <div className="relative">
-        <div className="absolute w-full h-2 rounded-lg" style={getTrackStyle()} />
+      <div className="relative h-2 bg-gray-200 rounded-full">
+        <div
+          className="absolute h-full bg-blue-600 rounded-full"
+          style={{
+            width: `${((value - min) / (max - min)) * 100}%`,
+            left: 0
+          }}
+        />
         <input
           type="range"
           min={min}
           max={max}
           step={step}
           value={value}
-          onChange={(e) => handleChange(Number(e.target.value))}
-          className="w-full h-2 bg-transparent appearance-none cursor-pointer accent-blue-600 relative z-10"
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="absolute w-full h-full opacity-0 cursor-pointer"
         />
-        <div className="absolute -bottom-6 left-0 text-xs text-gray-500">
-          Default: {isReverse ? `${defaultValue}% (max)` : defaultValue}
-        </div>
       </div>
     </div>
   );
 };
 
 const MiniDashboard = () => {
+  const TOTAL_PATIENTS = 315;
   const [activePatients, setActivePatients] = useState(78);
   const [unscheduledPatients, setUnscheduledPatients] = useState(22);
   const [revenuePerPatient, setRevenuePerPatient] = useState(285);
@@ -128,7 +107,6 @@ const MiniDashboard = () => {
   );
 
   useEffect(() => {
-    const TOTAL_PATIENTS = 1020;
     const MAX_POTENTIAL = 50000;
 
     // Calculate additional revenue from increased active patients
@@ -144,6 +122,138 @@ const MiniDashboard = () => {
     const totalPotential = Math.min(additionalActiveRevenue + improvedSchedulingRevenue, MAX_POTENTIAL);
     setPotentialRevenue(Math.round(totalPotential));
   }, [activePatients, unscheduledPatients, revenuePerPatient]);
+
+  const renderGrowthPotential = () => {
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-8">
+          <p className="text-gray-600 text-lg">
+            Adjust the sliders below to see how improving key metrics could impact your monthly revenue
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row lg:space-x-8">
+          <div className="lg:w-2/5 mb-8 lg:mb-0">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Potential', value: potentialRevenue },
+                        { name: 'Remaining', value: 50000 - potentialRevenue }
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={100}
+                      startAngle={90}
+                      endAngle={-270}
+                      dataKey="value"
+                    >
+                      <Cell fill="#2563eb" />
+                      <Cell fill="#e5e7eb" />
+                    </Pie>
+                    <text
+                      x="50%"
+                      y="50%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="#111827"
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        fontFamily: 'system-ui'
+                      }}
+                    >
+                      ${potentialRevenue.toLocaleString()}
+                    </text>
+                    <text
+                      x="50%"
+                      y="65%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="#6B7280"
+                      style={{
+                        fontSize: '14px',
+                        fontFamily: 'system-ui'
+                      }}
+                    >
+                      Potential Monthly
+                    </text>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <p className="text-sm font-semibold text-navy-800 text-center mt-4">
+                Potential improvements in revenue powered by mednavi's data-driven insights
+              </p>
+            </div>
+          </div>
+
+          <div className="lg:w-3/5">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="space-y-8">
+                <div className="relative">
+                  <CustomSlider
+                    label="Total Active Patients"
+                    value={activePatients}
+                    onChange={setActivePatients}
+                    min={78}
+                    max={100}
+                    step={1}
+                    displayValue={`${activePatients}%`}
+                    defaultValue={78}
+                  />
+                  {activePatients > 78 && (
+                    <p className="text-sm text-green-600 mt-1">
+                      ↑ (+{(activePatients - 78).toFixed(1)}% increase)
+                    </p>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <CustomSlider
+                    label="Unscheduled Active Patients"
+                    value={unscheduledPatients}
+                    onChange={setUnscheduledPatients}
+                    min={0}
+                    max={22}
+                    step={1}
+                    displayValue={`${unscheduledPatients}%`}
+                    defaultValue={22}
+                    isReverse={true}
+                  />
+                  {unscheduledPatients < 22 && (
+                    <p className="text-sm text-green-600 mt-1">
+                      ↓ ({(22 - unscheduledPatients).toFixed(1)}% fewer unscheduled)
+                    </p>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <CustomSlider
+                    label="Average Revenue Per Patient"
+                    value={revenuePerPatient}
+                    onChange={setRevenuePerPatient}
+                    min={285}
+                    max={500}
+                    step={5}
+                    displayValue={`$${revenuePerPatient}`}
+                    defaultValue={285}
+                  />
+                  {revenuePerPatient > 285 && (
+                    <p className="text-sm text-green-600 mt-1">
+                      ↑ (+${revenuePerPatient - 285} more per patient)
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <Card className="w-full max-w-6xl mx-auto bg-gray-50">
@@ -215,105 +325,7 @@ const MiniDashboard = () => {
           </TabsContent>
 
           <TabsContent value="growth">
-            <div>
-              <div className="text-center mb-8">
-                <p className="text-gray-600 text-lg">
-                  Adjust the sliders below to see how improving key metrics could impact your monthly revenue
-                </p>
-              </div>
-
-              <div className="flex flex-col lg:flex-row lg:space-x-8">
-                <div className="lg:w-2/5 mb-8 lg:mb-0">
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <ResponsiveContainer width="100%" height={300}>
-                      <PieChart>
-                        <Pie
-                          data={[
-                            { name: 'Potential', value: potentialRevenue },
-                            { name: 'Remaining', value: 50000 - potentialRevenue }
-                          ]}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={80}
-                          outerRadius={100}
-                          startAngle={90}
-                          endAngle={-270}
-                          dataKey="value"
-                        >
-                          <Cell fill="#2563eb" />
-                          <Cell fill="#e5e7eb" />
-                        </Pie>
-                        <text
-                          x="50%"
-                          y="50%"
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          fill="#111827"
-                          style={{
-                            fontSize: '24px',
-                            fontWeight: 'bold',
-                            fontFamily: 'system-ui'
-                          }}
-                        >
-                          ${potentialRevenue.toLocaleString()}
-                        </text>
-                        <text
-                          x="50%"
-                          y="65%"
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          fill="#6B7280"
-                          style={{
-                            fontSize: '14px',
-                            fontFamily: 'system-ui'
-                          }}
-                        >
-                          Potential Monthly
-                        </text>
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                <div className="lg:w-3/5">
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <CustomSlider
-                      label="Total Active Patients"
-                      value={activePatients}
-                      onChange={setActivePatients}
-                      min={0}
-                      max={100}
-                      step={1}
-                      displayValue={`${activePatients}%`}
-                      defaultValue={78}
-                    />
-
-                    <CustomSlider
-                      label="Unscheduled Active Patients"
-                      value={unscheduledPatients}
-                      onChange={setUnscheduledPatients}
-                      min={0}
-                      max={100}
-                      step={1}
-                      displayValue={`${unscheduledPatients}%`}
-                      defaultValue={22}
-                      isReverse={true}
-                    />
-
-                    <CustomSlider
-                      label="Average Revenue Per Patient"
-                      value={revenuePerPatient}
-                      onChange={setRevenuePerPatient}
-                      min={0}
-                      max={500}
-                      step={5}
-                      displayValue={`$${revenuePerPatient}`}
-                      defaultValue={285}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+            {renderGrowthPotential()}
           </TabsContent>
         </Tabs>
       </CardContent>
