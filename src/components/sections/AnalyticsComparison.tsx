@@ -1,9 +1,15 @@
 'use client'
 import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
-import { Users, DollarSign } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip
+} from 'recharts';
 
 const demographicsData = [
   { month: 'Jan', patients: 120, newPatients: 25 },
@@ -24,8 +30,6 @@ const revenueData = [
 ];
 
 const MiniDashboard = () => {
-  const [activeTab, setActiveTab] = useState('demographics');
-  
   const StatCard = ({ title, value, trend }) => (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       <p className="text-sm text-gray-600">{title}</p>
@@ -39,113 +43,92 @@ const MiniDashboard = () => {
   return (
     <Card className="w-full max-w-6xl mx-auto bg-gray-50">
       <CardContent className="p-6">
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Tabs - Vertical on desktop, horizontal on mobile */}
-          <Tabs
-            defaultValue="demographics"
-            orientation="vertical"
-            className="lg:w-48 w-full"
-            onValueChange={setActiveTab}
-          >
-            <TabsList className="lg:flex-col h-auto bg-white">
-              <TabsTrigger
-                value="demographics"
-                className="w-full flex items-center gap-2 justify-start px-4"
-              >
-                <Users size={18} />
-                <span className="hidden lg:inline">Demographics</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="revenue"
-                className="w-full flex items-center gap-2 justify-start px-4"
-              >
-                <DollarSign size={18} />
-                <span className="hidden lg:inline">Revenue</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          {/* Content Area */}
-          <div className="flex-1">
-            {/* Demographics Content */}
-            {activeTab === 'demographics' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <StatCard
-                    title="Total Patients"
-                    value="1,020"
-                    trend={12}
-                  />
-                  <StatCard
-                    title="New Patients"
-                    value="203"
-                    trend={8}
-                  />
-                </div>
-                <div className="bg-white p-4 rounded-lg h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={demographicsData}>
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="patients"
-                        stroke="#2563eb"
-                        strokeWidth={2}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="newPatients"
-                        stroke="#16a34a"
-                        strokeWidth={2}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
+        <Tabs defaultValue="demographics" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="demographics">
+              Demographics
+            </TabsTrigger>
+            <TabsTrigger value="revenue">
+              Revenue
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="demographics">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <StatCard
+                  title="Total Patients"
+                  value="1,020"
+                  trend={12}
+                />
+                <StatCard
+                  title="New Patients"
+                  value="203"
+                  trend={8}
+                />
               </div>
-            )}
-
-            {/* Revenue Content */}
-            {activeTab === 'revenue' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <StatCard
-                    title="Monthly Revenue"
-                    value="$58,000"
-                    trend={15}
-                  />
-                  <StatCard
-                    title="Collections"
-                    value="$55,000"
-                    trend={10}
-                  />
-                </div>
-                <div className="bg-white p-4 rounded-lg h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={revenueData}>
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="revenue"
-                        stroke="#2563eb"
-                        strokeWidth={2}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="collections"
-                        stroke="#16a34a"
-                        strokeWidth={2}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="bg-white p-4 rounded-lg h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={demographicsData}>
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="patients"
+                      stroke="#2563eb"
+                      strokeWidth={2}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="newPatients"
+                      stroke="#16a34a"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
-            )}
-          </div>
-        </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="revenue">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <StatCard
+                  title="Monthly Revenue"
+                  value="$58,000"
+                  trend={15}
+                />
+                <StatCard
+                  title="Collections"
+                  value="$55,000"
+                  trend={10}
+                />
+              </div>
+              <div className="bg-white p-4 rounded-lg h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={revenueData}>
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#2563eb"
+                      strokeWidth={2}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="collections"
+                      stroke="#16a34a"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );
