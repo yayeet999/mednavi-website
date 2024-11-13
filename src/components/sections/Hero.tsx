@@ -40,26 +40,26 @@ export default function Hero() {
           }}
         />
 
-        {/* Data visualization elements */}
-        <div className="absolute inset-0 flex flex-row items-center justify-center space-x-8">
-          {/* Enhanced pie chart with smoother, dynamic animations */}
+        {/* Data visualization elements positioned closer to the center */}
+        <div className="absolute inset-0 flex flex-col items-end justify-center pr-36 space-y-10">
+          {/* Enhanced pie chart with upgraded colors and size */}
           <motion.svg
-            className="w-56 h-56 opacity-50"
+            className="w-56 h-56 opacity-25 hidden lg:block"
             viewBox="0 0 100 100"
             initial={{ opacity: 0, rotate: -90 }}
             animate={{ opacity: 1, rotate: 0 }}
             transition={{ duration: 1 }}
           >
-            {[{ start: 0, end: 120, color: 'rgba(59, 130, 246, 0.7)' }, { start: 120, end: 240, color: 'rgba(96, 165, 250, 0.6)' }, { start: 240, end: 360, color: 'rgba(147, 197, 253, 0.5)' }].map((segment, i) => (
+            {[{ start: 0, end: 90, color: 'rgba(60, 78, 160, 0.4)' }, { start: 90, end: 180, color: 'rgba(60, 78, 160, 0.3)' }, { start: 180, end: 360, color: 'rgba(60, 78, 160, 0.2)' }].map((segment, i) => (
               <motion.path
                 key={`segment-${i}`}
-                d={`M50,50 L${50 + 40 * Math.cos(segment.start * Math.PI / 180)},${50 + 40 * Math.sin(segment.start * Math.PI / 180)} A40,40 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(segment.end * Math.PI / 180)},${50 + 40 * Math.sin(segment.end * Math.PI / 180)} Z`}
+                d={`M50,50 L${50 + 45 * Math.cos(segment.start * Math.PI / 180)},${50 + 45 * Math.sin(segment.start * Math.PI / 180)} A45,45 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 45 * Math.cos(segment.end * Math.PI / 180)},${50 + 45 * Math.sin(segment.end * Math.PI / 180)} Z`}
                 fill={segment.color}
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
                 transition={{
                   duration: 1.5,
-                  delay: i * 0.5,
+                  delay: i * 0.3,
                   ease: "easeInOut",
                   repeat: Infinity,
                   repeatType: "mirror",
@@ -71,12 +71,12 @@ export default function Hero() {
             <motion.g
               initial={{ rotate: 0 }}
               animate={{ rotate: 360 }}
-              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
             >
-              {[{ start: 0, end: 90, color: 'rgba(96, 165, 250, 0.4)' }, { start: 90, end: 180, color: 'rgba(147, 197, 253, 0.3)' }, { start: 180, end: 360, color: 'rgba(191, 219, 254, 0.2)' }].map((segment, i) => (
+              {[{ start: 0, end: 45, color: 'rgba(60, 78, 160, 0.5)' }, { start: 45, end: 170, color: 'rgba(60, 78, 160, 0.35)' }, { start: 170, end: 360, color: 'rgba(60, 78, 160, 0.3)' }].map((segment, i) => (
                 <motion.path
                   key={`dynamic-segment-${i}`}
-                  d={`M50,50 L${50 + 35 * Math.cos(segment.start * Math.PI / 180)},${50 + 35 * Math.sin(segment.start * Math.PI / 180)} A35,35 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 35 * Math.cos(segment.end * Math.PI / 180)},${50 + 35 * Math.sin(segment.end * Math.PI / 180)} Z`}
+                  d={`M50,50 L${50 + 45 * Math.cos(segment.start * Math.PI / 180)},${50 + 45 * Math.sin(segment.start * Math.PI / 180)} A45,45 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 45 * Math.cos(segment.end * Math.PI / 180)},${50 + 45 * Math.sin(segment.end * Math.PI / 180)} Z`}
                   fill={segment.color}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -93,22 +93,22 @@ export default function Hero() {
             </motion.g>
           </motion.svg>
 
-          {/* Enhanced bar chart positioned beside pie chart with improved alignment */}
+          {/* Enhanced bar chart positioned below pie chart with improved colors, size, and alignment */}
           <motion.svg
-            className="w-56 h-40 opacity-50"
+            className="w-56 h-40 opacity-25 hidden md:block"
             viewBox="0 0 200 150"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
-            {[{ x: 20, height: 40 }, { x: 60, height: 80 }, { x: 100, height: 100 }, { x: 140, height: 120 }, { x: 180, height: 140 }].map((bar, i) => (
+            {[{ x: 20, height: 50 }, { x: 60, height: 80 }, { x: 100, height: 110 }, { x: 140, height: 130 }, { x: 180, height: 150 }].map((bar, i) => (
               <motion.rect
                 key={`bar-${i}`}
                 x={bar.x - 15}
                 width="30"
                 y={150 - bar.height}
                 height={bar.height}
-                fill={`rgba(59, 130, 246, ${0.3 + i * 0.1})`}
+                fill="rgba(60, 78, 160, 0.4)"
                 initial={{ height: 0, y: 150 }}
                 animate={{ height: bar.height, y: 150 - bar.height }}
                 transition={{
