@@ -1,361 +1,154 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts'
-import { ChevronRight } from 'lucide-react'
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { Users, DollarSign } from 'lucide-react';
 
-interface AnalysisState {
-  isAnalyzing: boolean
-  isComplete: boolean
-}
+const demographicsData = [
+  { month: 'Jan', patients: 120, newPatients: 25 },
+  { month: 'Feb', patients: 150, newPatients: 30 },
+  { month: 'Mar', patients: 180, newPatients: 35 },
+  { month: 'Apr', patients: 170, newPatients: 28 },
+  { month: 'May', patients: 190, newPatients: 40 },
+  { month: 'Jun', patients: 210, newPatients: 45 }
+];
 
-interface ChartDataPoint {
-  month: string
-  value: number
-  improvedValue?: number
-}
+const revenueData = [
+  { month: 'Jan', revenue: 45000, collections: 42000 },
+  { month: 'Feb', revenue: 48000, collections: 45000 },
+  { month: 'Mar', revenue: 52000, collections: 49000 },
+  { month: 'Apr', revenue: 49000, collections: 47000 },
+  { month: 'May', revenue: 55000, collections: 52000 },
+  { month: 'Jun', revenue: 58000, collections: 55000 }
+];
 
-// Analysis Loading Animation Component
-const LoadingSpinner = () => (
-  <div className="flex justify-center items-center">
-    <svg className="animate-spin h-6 w-6 text-mednavi-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-      <path className="opacity-75" fill="currentColor" d="M12 2a10 10 0 000 20V2z"></path>
-    </svg>
-  </div>
-)
-
-// Analysis Button Component
-const AnalysisButton = ({ 
-  isAnalyzing, 
-  isComplete, 
-  onClick 
-}: { 
-  isAnalyzing: boolean
-  isComplete: boolean
-  onClick: () => void 
-}) => (
-  <button
-    onClick={onClick}
-    disabled={isAnalyzing}
-    className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-      isComplete
-        ? 'bg-green-50 text-green-700'
-        : isAnalyzing
-        ? 'bg-blue-50 text-blue-600'
-        : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
-    }`}
-  >
-    {isAnalyzing ? (
-      <LoadingSpinner />
-    ) : isComplete ? (
-      <div className="flex items-center space-x-1">
-        <span>Analysis Complete</span>
-        <ChevronRight className="w-4 h-4" />
-      </div>
-    ) : (
-      <span>Analyze Impact</span>
-    )}
-  </button>
-)
-
-// KPI Display Component
-const KPIDisplay = ({ value, label }: { value: string; label: string }) => (
-  <div className="bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm font-medium">
-    <span className="font-semibold">{value}</span>
-    <span className="ml-1">{label}</span>
-  </div>
-)
-
-// Generate realistic dental practice seasonality data
-const generateMonthlyPatients = (baseValue: number, improvement: number = 0): ChartDataPoint[] => {
-  const seasonality = [0.85, 0.9, 1.1, 1.2, 1.15, 1.1, 1.05, 1, 0.95, 0.9, 0.85, 1]
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-  return months.map((month, i) => {
-    const seasonalFactor = seasonality[i]
-    const value = Math.round(baseValue * seasonalFactor)
-    const improvedValue = improvement ? Math.round((baseValue + improvement) * seasonalFactor) : undefined
-    return {
-      month,
-      value,
-      ...(improvement ? { improvedValue } : {}),
-    }
-  })
-}
-
-const generateProductionData = (baseValue: number, improvement: number = 0): ChartDataPoint[] => {
-  const seasonality = [1, 0.95, 1.05, 1.1, 1.15, 1.2, 1.1, 1.05, 1, 0.95, 0.9, 0.85]
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  return months.map((month, i) => {
-    const seasonalFactor = seasonality[i]
-    const value = Math.round(baseValue * seasonalFactor)
-    const improvedValue = improvement ? Math.round(value * (1 + improvement)) : undefined
-    return {
-      month,
-      value,
-      ...(improvement ? { improvedValue } : {}),
-    }
-  })
-}
-
-// Custom tooltip formatters
-const formatCurrency = (value: number) => `$${(value / 1000).toFixed(1)}k`
-const formatPercentage = (value: number) => `${value}%`
-
-export default function AnalyticsComparison() {
-  const [newPatientsAnalysis, setNewPatientsAnalysis] = useState<AnalysisState>({
-    isAnalyzing: false,
-    isComplete: false,
-  })
-  const [productionAnalysis, setProductionAnalysis] = useState<AnalysisState>({
-    isAnalyzing: false,
-    isComplete: false,
-  })
-  const [patientActivityAnalysis, setPatientActivityAnalysis] = useState<AnalysisState>({
-    isAnalyzing: false,
-    isComplete: false,
-  })
-
-  const startAnalysis = (
-    analysisState: AnalysisState,
-    setAnalysisState: (state: AnalysisState) => void
-  ) => {
-    if (!analysisState.isAnalyzing && !analysisState.isComplete) {
-      setAnalysisState({ isAnalyzing: true, isComplete: false })
-      setTimeout(() => {
-        setAnalysisState({ isAnalyzing: false, isComplete: true })
-      }, 2000)
-    }
-  }
+const MiniDashboard = () => {
+  const [activeTab, setActiveTab] = useState('demographics');
+  
+  const StatCard = ({ title, value, trend }) => (
+    <div className="bg-white p-4 rounded-lg shadow-sm">
+      <p className="text-sm text-gray-600">{title}</p>
+      <p className="text-2xl font-semibold mt-1">{value}</p>
+      <p className={`text-sm mt-1 ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}%
+      </p>
+    </div>
+  );
 
   return (
-    <section className="py-6 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-4"
-        >
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-            The Power of Data-Driven Decisions
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-            See how data analytics transforms dental practice performance
-          </p>
-        </motion.div>
-
-        <div className="space-y-6">
-          {/* New Patients Analysis */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-white rounded-xl shadow-lg p-4 md:p-6"
+    <Card className="w-full max-w-6xl mx-auto bg-gray-50">
+      <CardContent className="p-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Tabs - Vertical on desktop, horizontal on mobile */}
+          <Tabs
+            defaultValue="demographics"
+            orientation="vertical"
+            className="lg:w-48 w-full"
+            onValueChange={setActiveTab}
           >
-            <div className="flex flex-col lg:flex-row lg:gap-8">
-              <div className="lg:w-2/3">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg md:text-xl font-semibold">New Patients Monthly</h3>
-                  <AnalysisButton
-                    isAnalyzing={newPatientsAnalysis.isAnalyzing}
-                    isComplete={newPatientsAnalysis.isComplete}
-                    onClick={() => startAnalysis(newPatientsAnalysis, setNewPatientsAnalysis)}
+            <TabsList className="lg:flex-col h-auto bg-white">
+              <TabsTrigger
+                value="demographics"
+                className="w-full flex items-center gap-2 justify-start px-4"
+              >
+                <Users size={18} />
+                <span className="hidden lg:inline">Demographics</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="revenue"
+                className="w-full flex items-center gap-2 justify-start px-4"
+              >
+                <DollarSign size={18} />
+                <span className="hidden lg:inline">Revenue</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          {/* Content Area */}
+          <div className="flex-1">
+            {/* Demographics Content */}
+            {activeTab === 'demographics' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <StatCard
+                    title="Total Patients"
+                    value="1,020"
+                    trend={12}
+                  />
+                  <StatCard
+                    title="New Patients"
+                    value="203"
+                    trend={8}
                   />
                 </div>
-                <div className="h-60 md:h-72 lg:h-80">
+                <div className="bg-white p-4 rounded-lg h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={generateMonthlyPatients(25, newPatientsAnalysis.isComplete ? 5 : 0)}
-                      margin={{ top: 10, right: 20, left: -10, bottom: 0 }}
-                    >
+                    <LineChart data={demographicsData}>
                       <XAxis dataKey="month" />
-                      <YAxis domain={[0, 'auto']} />
+                      <YAxis />
                       <Tooltip />
                       <Line
                         type="monotone"
-                        dataKey="value"
-                        stroke={newPatientsAnalysis.isComplete ? '#94A3B8' : '#1E3A8A'}
-                        strokeWidth={3}
-                        dot={false}
-                        name={newPatientsAnalysis.isComplete ? 'Before' : 'Current'}
+                        dataKey="patients"
+                        stroke="#2563eb"
+                        strokeWidth={2}
                       />
-                      {newPatientsAnalysis.isComplete && (
-                        <Line
-                          type="monotone"
-                          dataKey="improvedValue"
-                          stroke="#059669"
-                          strokeWidth={3}
-                          dot={false}
-                          name="After Optimization"
-                        />
-                      )}
+                      <Line
+                        type="monotone"
+                        dataKey="newPatients"
+                        stroke="#16a34a"
+                        strokeWidth={2}
+                      />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
               </div>
-              <div className="lg:w-1/3 mt-4 lg:mt-0">
-                <div className="space-y-2">
-                  <h4 className="text-lg font-semibold text-gray-900">Impact Analysis</h4>
-                  <p className="text-gray-600">
-                    By analyzing regional trends, marketing effectiveness, and patient demographics,
-                    MedNavi helps optimize your patient acquisition strategies for sustainable growth.
-                  </p>
-                  {newPatientsAnalysis.isComplete && (
-                    <KPIDisplay value="+20%" label="Monthly New Patients" />
-                  )}
-                </div>
-              </div>
-            </div>
-          </motion.div>
+            )}
 
-          {/* Production Analysis */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-white rounded-xl shadow-lg p-4 md:p-6"
-          >
-            <div className="flex flex-col lg:flex-row lg:gap-8">
-              <div className="lg:w-2/3">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg md:text-xl font-semibold">Average Production per Month</h3>
-                  <AnalysisButton
-                    isAnalyzing={productionAnalysis.isAnalyzing}
-                    isComplete={productionAnalysis.isComplete}
-                    onClick={() => startAnalysis(productionAnalysis, setProductionAnalysis)}
+            {/* Revenue Content */}
+            {activeTab === 'revenue' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <StatCard
+                    title="Monthly Revenue"
+                    value="$58,000"
+                    trend={15}
+                  />
+                  <StatCard
+                    title="Collections"
+                    value="$55,000"
+                    trend={10}
                   />
                 </div>
-                <div className="h-60 md:h-72 lg:h-80">
+                <div className="bg-white p-4 rounded-lg h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={generateProductionData(80000, productionAnalysis.isComplete ? 0.15 : 0)}
-                      margin={{ top: 10, right: 20, left: -10, bottom: 0 }}
-                    >
+                    <LineChart data={revenueData}>
                       <XAxis dataKey="month" />
-                      <YAxis domain={[0, 'auto']} tickFormatter={formatCurrency} />
-                      <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                      <Bar dataKey="value" fill="#1E3A8A" name="Current" barSize={20} />
-                      {productionAnalysis.isComplete && (
-                        <Bar dataKey="improvedValue" fill="#059669" name="Optimized" barSize={20} />
-                      )}
-                    </BarChart>
+                      <YAxis />
+                      <Tooltip />
+                      <Line
+                        type="monotone"
+                        dataKey="revenue"
+                        stroke="#2563eb"
+                        strokeWidth={2}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="collections"
+                        stroke="#16a34a"
+                        strokeWidth={2}
+                      />
+                    </LineChart>
                   </ResponsiveContainer>
                 </div>
               </div>
-              <div className="lg:w-1/3 mt-4 lg:mt-0">
-                <div className="space-y-2">
-                  <h4 className="text-lg font-semibold text-gray-900">Revenue Optimization</h4>
-                  <p className="text-gray-600">
-                    Optimize your service mix and treatment plan acceptance rates through
-                    data-driven insights and patient engagement strategies.
-                  </p>
-                  {productionAnalysis.isComplete && (
-                    <KPIDisplay value="+15%" label="Average Production/Month" />
-                  )}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Patient Activity Status */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-white rounded-xl shadow-lg p-4 md:p-6"
-          >
-            <div className="flex flex-col lg:flex-row lg:gap-8">
-              <div className="lg:w-2/3">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg md:text-xl font-semibold">Patient Activity Status</h3>
-                  <AnalysisButton
-                    isAnalyzing={patientActivityAnalysis.isAnalyzing}
-                    isComplete={patientActivityAnalysis.isComplete}
-                    onClick={() => startAnalysis(patientActivityAnalysis, setPatientActivityAnalysis)}
-                  />
-                </div>
-                <div className="flex flex-row justify-center items-center h-60 md:h-72 lg:h-80">
-                  <div className="w-1/2">
-                    <ResponsiveContainer width="100%" height={200}>
-                      <PieChart>
-                        <Pie
-                          data={[
-                            {
-                              name: 'Active',
-                              value: patientActivityAnalysis.isComplete ? 85 : 75,
-                            },
-                            {
-                              name: 'Inactive',
-                              value: patientActivityAnalysis.isComplete ? 15 : 25,
-                            },
-                          ]}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={50}
-                          outerRadius={70}
-                          paddingAngle={5}
-                          dataKey="value"
-                        >
-                          <Cell fill="#1E3A8A" />
-                          <Cell fill="#E2E8F0" />
-                        </Pie>
-                        <Tooltip formatter={(value) => formatPercentage(value as number)} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="text-center mt-2 font-medium">Percentage of Active Patients</div>
-                  </div>
-                  <div className="w-1/2">
-                    <ResponsiveContainer width="100%" height={200}>
-                      <PieChart>
-                        <Pie
-                          data={[
-                            {
-                              name: 'Unscheduled Active Patients',
-                              value: patientActivityAnalysis.isComplete ? 4 : 18,
-                            },
-                            {
-                              name: 'Scheduled Active Patients',
-                              value: patientActivityAnalysis.isComplete ? 96 : 82,
-                            },
-                          ]}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={50}
-                          outerRadius={70}
-                          paddingAngle={5}
-                          dataKey="value"
-                        >
-                          <Cell fill="#059669" />
-                          <Cell fill="#E2E8F0" />
-                        </Pie>
-                        <Tooltip formatter={(value) => formatPercentage(value as number)} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="text-center mt-2 font-medium">Unscheduled Active Patients</div>
-                  </div>
-                </div>
-              </div>
-              <div className="lg:w-1/3 mt-4 lg:mt-0">
-                <div className="space-y-2">
-                  <h4 className="text-lg font-semibold text-gray-900">Patient Retention</h4>
-                  <p className="text-gray-600">
-                    Increase patient retention and recall effectiveness through personalized
-                    communication and targeted follow-up strategies informed by data analytics.
-                  </p>
-                  {patientActivityAnalysis.isComplete && (
-                    <div className="space-y-2">
-                      <KPIDisplay value="-14%" label="Unscheduled Active Patients" />
-                      <KPIDisplay value="+10%" label="Active Patient Base" />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </motion.div>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
-  )
-}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default MiniDashboard;
