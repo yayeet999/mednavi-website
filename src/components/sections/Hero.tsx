@@ -37,79 +37,131 @@ export default function Hero() {
             backgroundSize: '40px 40px, 100px 100px'
           }}
         />
-        
+
         {/* Data visualization elements */}
         <div className="absolute inset-0">
-          {/* Animated chart lines */}
+          {/* Animated bar chart */}
           <motion.svg
-            className="absolute top-20 right-20 w-64 h-32 opacity-20"
-            viewBox="0 0 256 128"
+            className="absolute top-20 right-20 w-64 h-48 opacity-20 hidden md:block"
+            viewBox="0 0 200 150"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
+            {[0, 1, 2, 3, 4].map((i) => (
+              <line
+                key={`grid-${i}`}
+                x1="0"
+                y1={30 * i}
+                x2="200"
+                y2={30 * i}
+                stroke="rgba(30, 58, 138, 0.1)"
+                strokeWidth="1"
+              />
+            ))}
+            
+            {[
+              { x: 20, height: 80 },
+              { x: 60, height: 120 },
+              { x: 100, height: 60 },
+              { x: 140, height: 90 },
+              { x: 180, height: 100 },
+            ].map((bar, i) => (
+              <motion.rect
+                key={`bar-${i}`}
+                x={bar.x - 15}
+                width="30"
+                y={150 - bar.height}
+                height={bar.height}
+                fill="rgba(30, 58, 138, 0.2)"
+                initial={{ height: 0, y: 150 }}
+                animate={{ height: bar.height, y: 150 - bar.height }}
+                transition={{
+                  duration: 1,
+                  delay: i * 0.2,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  repeatDelay: 2
+                }}
+              />
+            ))}
+          </motion.svg>
+
+          {/* Animated pie chart */}
+          <motion.svg
+            className="absolute top-40 right-96 w-48 h-48 opacity-20 hidden lg:block"
+            viewBox="0 0 100 100"
+            initial={{ opacity: 0, rotate: -90 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
+            {[
+              { start: 0, end: 45, color: 'rgba(30, 58, 138, 0.3)' },
+              { start: 45, end: 170, color: 'rgba(30, 58, 138, 0.2)' },
+              { start: 170, end: 360, color: 'rgba(30, 58, 138, 0.1)' },
+            ].map((segment, i) => (
+              <motion.path
+                key={`segment-${i}`}
+                d={`M50,50 L${50 + 40 * Math.cos(segment.start * Math.PI / 180)},${50 + 40 * Math.sin(segment.start * Math.PI / 180)} A40,40 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(segment.end * Math.PI / 180)},${50 + 40 * Math.sin(segment.end * Math.PI / 180)} Z`}
+                fill={segment.color}
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{
+                  duration: 1.5,
+                  delay: i * 0.3,
+                  ease: "easeInOut"
+                }}
+              />
+            ))}
+          </motion.svg>
+
+          {/* Modern dental icon */}
+          <motion.svg
+            className="absolute top-60 right-40 w-32 h-32 opacity-20 hidden md:block"
+            viewBox="0 0 100 100"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
             <motion.path
-              d="M0,64 C32,32 64,96 96,64 C128,32 160,96 192,64 C224,32 256,64 256,64"
+              d="M50,20 C65,20 75,30 75,45 C75,60 70,80 50,80 C30,80 25,60 25,45 C25,30 35,20 50,20"
               fill="none"
               stroke="rgba(30, 58, 138, 0.3)"
               strokeWidth="2"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
             />
+            <motion.g
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+            >
+              <line
+                x1="42"
+                y1="45"
+                x2="58"
+                y2="45"
+                stroke="rgba(30, 58, 138, 0.3)"
+                strokeWidth="2"
+              />
+              <line
+                x1="50"
+                y1="37"
+                x2="50"
+                y2="53"
+                stroke="rgba(30, 58, 138, 0.3)"
+                strokeWidth="2"
+              />
+            </motion.g>
           </motion.svg>
 
-          {/* Dental-inspired decorative elements */}
-          <motion.div
-            className="absolute left-20 top-40 w-40 h-40 opacity-10"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.1 }}
-            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-          >
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              <path
-                d="M50,20 C70,20 80,40 80,60 C80,80 70,90 50,90 C30,90 20,80 20,60 C20,40 30,20 50,20"
-                className="fill-none stroke-blue-500"
-                strokeWidth="1"
-              />
-              {/* Simplified tooth root lines */}
-              <path
-                d="M40,80 L35,95 M60,80 L65,95"
-                className="stroke-blue-500"
-                strokeWidth="1"
-              />
-            </svg>
-          </motion.div>
-
-          {/* Data points and connection lines */}
-          <div ref={decorativeDotsRef} className="absolute inset-0 transition-transform duration-300 ease-out">
-            <motion.div 
-              className="absolute top-1/4 left-1/3 w-2 h-2 rounded-full bg-blue-400/30"
-              initial={{ scale: 0 }}
-              animate={{ scale: [1, 1.5, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <motion.div 
-              className="absolute top-1/3 right-1/3 w-3 h-3 rounded-full bg-blue-300/40"
-              initial={{ scale: 0 }}
-              animate={{ scale: [1, 1.3, 1] }}
-              transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-            />
-            <motion.div 
-              className="absolute bottom-1/3 left-1/4 w-2 h-2 rounded-full bg-blue-500/30"
-              initial={{ scale: 0 }}
-              animate={{ scale: [1, 1.4, 1] }}
-              transition={{ duration: 2.5, repeat: Infinity, delay: 1 }}
-            />
-          </div>
-        </div>
-
-        {/* Animated bottom wave */}
-        <div className="absolute -bottom-10 left-0 right-0 h-40 opacity-10">
-          <svg viewBox="0 0 1000 200" className="w-full h-full">
+          {/* Data connection lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-10">
             <motion.path
-              d="M0,100 Q250,150 500,100 T1000,100"
-              className="stroke-blue-500 fill-none"
+              d="M100,100 C150,150 200,50 250,100 C300,150 350,50 400,100"
+              fill="none"
+              stroke="rgba(30, 58, 138, 0.2)"
               strokeWidth="2"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
