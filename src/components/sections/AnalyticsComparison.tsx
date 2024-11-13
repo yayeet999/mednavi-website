@@ -1,5 +1,5 @@
-'use client'
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -20,6 +20,16 @@ interface StatCardProps {
   trend: number;
 }
 
+interface SliderProps {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  min: number;
+  max: number;
+  step: number;
+  displayValue: string;
+}
+
 const demographicsData = [
   { month: 'Jan', patients: 120, newPatients: 25 },
   { month: 'Feb', patients: 150, newPatients: 30 },
@@ -38,15 +48,7 @@ const revenueData = [
   { month: 'Jun', revenue: 58000, collections: 55000 }
 ];
 
-const CustomSlider = ({ label, value, onChange, min, max, step, displayValue }: {
-  label: string;
-  value: number;
-  onChange: (value: number) => void;
-  min: number;
-  max: number;
-  step: number;
-  displayValue: string;
-}) => (
+const CustomSlider = ({ label, value, onChange, min, max, step, displayValue }: SliderProps) => (
   <div className="w-full mb-8">
     <div className="flex justify-between items-center mb-2">
       <span className="text-gray-600 text-lg">{label}</span>
@@ -69,7 +71,7 @@ const MiniDashboard = () => {
   const [unscheduledPatients, setUnscheduledPatients] = useState(22);
   const [revenuePerPatient, setRevenuePerPatient] = useState(285);
   const [potentialRevenue, setPotentialRevenue] = useState(0);
-  
+
   const StatCard = ({ title, value, trend }: StatCardProps) => (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       <p className="text-sm text-gray-600">{title}</p>
@@ -80,107 +82,23 @@ const MiniDashboard = () => {
     </div>
   );
 
-  const renderGrowthPotential = () => {
+  useEffect(() => {
     const TOTAL_PATIENTS = 1020;
     const MAX_POTENTIAL = 50000;
 
-    const calculatePotentialRevenue = () => {
-      const additionalActivePatients = ((activePatients - 78) / 100) * TOTAL_PATIENTS;
-      const currentActivePatients = (activePatients / 100) * TOTAL_PATIENTS;
-      const schedulingImprovement = ((22 - unscheduledPatients) / 100) * currentActivePatients;
-      const totalImprovedPatients = additionalActivePatients + schedulingImprovement;
-      const calculated = Math.max(0, totalImprovedPatients * revenuePerPatient);
-      return Math.min(calculated, MAX_POTENTIAL);
-    };
+    // Calculate additional revenue from increased active patients
+    const additionalActivePatients = (Math.max(0, activePatients - 78) / 100) * TOTAL_PATIENTS;
+    const additionalActiveRevenue = additionalActivePatients * revenuePerPatient;
 
-    const data = [
-      { name: 'Potential', value: potentialRevenue },
-      { name: 'Remaining', value: MAX_POTENTIAL - potentialRevenue }
-    ];
+    // Calculate additional revenue from reduced unscheduled patients
+    const currentActivePatients = (activePatients / 100) * TOTAL_PATIENTS;
+    const improvedSchedulingPatients = (Math.max(0, 22 - unscheduledPatients) / 100) * currentActivePatients;
+    const improvedSchedulingRevenue = improvedSchedulingPatients * revenuePerPatient;
 
-    return (
-      <div className="space-y-6">
-        <div className="h-64 mb-8">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={80}
-                outerRadius={100}
-                startAngle={90}
-                endAngle={-270}
-                dataKey="value"
-              >
-                <Cell fill="#2563eb" />
-                <Cell fill="#e5e7eb" />
-              </Pie>
-              <text
-                x="50%"
-                y="50%"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="#111827"
-                style={{
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  fontFamily: 'system-ui'
-                }}
-              >
-                ${potentialRevenue.toLocaleString()}
-              </text>
-              <text
-                x="50%"
-                y="65%"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="#6B7280"
-                style={{
-                  fontSize: '14px',
-                  fontFamily: 'system-ui'
-                }}
-              >
-                Potential Monthly
-              </text>
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="space-y-6">
-          <CustomSlider
-            label="Total Active Patients"
-            value={activePatients}
-            onChange={setActivePatients}
-            min={0}
-            max={100}
-            step={1}
-            displayValue={`${activePatients}%`}
-          />
-          
-          <CustomSlider
-            label="Unscheduled Active Patients"
-            value={unscheduledPatients}
-            onChange={setUnscheduledPatients}
-            min={0}
-            max={100}
-            step={1}
-            displayValue={`${unscheduledPatients}%`}
-          />
-          
-          <CustomSlider
-            label="Average Revenue Per Patient"
-            value={revenuePerPatient}
-            onChange={setRevenuePerPatient}
-            min={0}
-            max={500}
-            step={5}
-            displayValue={`$${revenuePerPatient}`}
-          />
-        </div>
-      </div>
-    );
-  };
+    // Total potential additional revenue
+    const totalPotential = Math.min(additionalActiveRevenue + improvedSchedulingRevenue, MAX_POTENTIAL);
+    setPotentialRevenue(Math.round(totalPotential));
+  }, [activePatients, unscheduledPatients, revenuePerPatient]);
 
   return (
     <Card className="w-full max-w-6xl mx-auto bg-gray-50">
@@ -295,7 +213,95 @@ const MiniDashboard = () => {
           </TabsContent>
 
           <TabsContent value="growth">
-            {renderGrowthPotential()}
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <p className="text-gray-600 text-lg">
+                  Adjust the sliders below to see how improving key metrics could impact your monthly revenue
+                </p>
+              </div>
+
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Potential', value: potentialRevenue },
+                        { name: 'Remaining', value: 50000 - potentialRevenue }
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={100}
+                      startAngle={90}
+                      endAngle={-270}
+                      dataKey="value"
+                    >
+                      <Cell fill="#2563eb" />
+                      <Cell fill="#e5e7eb" />
+                    </Pie>
+                    <text
+                      x="50%"
+                      y="50%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="#111827"
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        fontFamily: 'system-ui'
+                      }}
+                    >
+                      ${potentialRevenue.toLocaleString()}
+                    </text>
+                    <text
+                      x="50%"
+                      y="65%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="#6B7280"
+                      style={{
+                        fontSize: '14px',
+                        fontFamily: 'system-ui'
+                      }}
+                    >
+                      Potential Monthly
+                    </text>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="space-y-6">
+                <CustomSlider
+                  label="Total Active Patients"
+                  value={activePatients}
+                  onChange={setActivePatients}
+                  min={0}
+                  max={100}
+                  step={1}
+                  displayValue={`${activePatients}%`}
+                />
+                
+                <CustomSlider
+                  label="Unscheduled Active Patients"
+                  value={unscheduledPatients}
+                  onChange={setUnscheduledPatients}
+                  min={0}
+                  max={100}
+                  step={1}
+                  displayValue={`${unscheduledPatients}%`}
+                />
+                
+                <CustomSlider
+                  label="Average Revenue Per Patient"
+                  value={revenuePerPatient}
+                  onChange={setRevenuePerPatient}
+                  min={0}
+                  max={500}
+                  step={5}
+                  displayValue={`$${revenuePerPatient}`}
+                />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </CardContent>
