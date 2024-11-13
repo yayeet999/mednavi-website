@@ -3,102 +3,95 @@ import { useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import dynamic from 'next/dynamic'
 import type { Engine } from '@tsparticles/engine'
 import { loadSlim } from '@tsparticles/slim'
+import Particles from '@tsparticles/react'
 
-const Particles = dynamic(() => import('@tsparticles/react'), {
-  ssr: false,
-  loading: () => <div className="absolute inset-0 bg-gradient-to-br from-blue-50/90 via-white/50 to-blue-50/80" />
-})
+const particlesOptions = {
+  background: {
+    color: {
+      value: 'transparent',
+    },
+  },
+  particles: {
+    number: {
+      value: 80,
+      density: {
+        enable: true,
+        area: 800,
+      },
+    },
+    color: {
+      value: ['#1E3A8A', '#3B82F6', '#60A5FA'],
+    },
+    shape: {
+      type: 'circle',
+    },
+    opacity: {
+      value: 0.5,
+    },
+    size: {
+      value: { min: 1, max: 3 },
+    },
+    links: {
+      enable: true,
+      distance: 150,
+      color: '#1E3A8A',
+      opacity: 0.3,
+      width: 1,
+    },
+    move: {
+      enable: true,
+      speed: 2,
+      direction: 'none',
+      random: false,
+      straight: false,
+      outModes: {
+        default: 'bounce',
+      },
+    },
+  },
+  interactivity: {
+    events: {
+      onHover: {
+        enable: true,
+        mode: 'grab',
+      },
+      onClick: {
+        enable: true,
+        mode: 'push',
+      },
+    },
+    modes: {
+      grab: {
+        distance: 140,
+        links: {
+          opacity: 0.5,
+        },
+      },
+      push: {
+        quantity: 4,
+      },
+    },
+  },
+  responsive: [
+    {
+      maxWidth: 768,
+      options: {
+        particles: {
+          number: {
+            value: 40,
+          },
+        },
+      },
+    },
+  ],
+}
 
 export default function Hero() {
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine)
   }, [])
-
-  const particlesOptions = {
-    background: {
-      color: {
-        value: 'transparent',
-      },
-    },
-    particles: {
-      number: {
-        value: 80,
-        density: {
-          enable: true,
-          area: 800,
-        },
-      },
-      color: {
-        value: ['#1E3A8A', '#3B82F6', '#60A5FA'],
-      },
-      shape: {
-        type: 'circle',
-      },
-      opacity: {
-        value: 0.5,
-      },
-      size: {
-        value: { min: 1, max: 3 },
-      },
-      links: {
-        enable: true,
-        distance: 150,
-        color: '#1E3A8A',
-        opacity: 0.3,
-        width: 1,
-      },
-      move: {
-        enable: true,
-        speed: 2,
-        direction: 'none',
-        random: false,
-        straight: false,
-        outModes: {
-          default: 'bounce',
-        },
-      },
-    },
-    interactivity: {
-      detectsOn: "window" as const,
-      events: {
-        onHover: {
-          enable: true,
-          mode: 'grab',
-        },
-        onClick: {
-          enable: true,
-          mode: 'push',
-        },
-        resize: true,
-      },
-      modes: {
-        grab: {
-          distance: 140,
-          links: {
-            opacity: 0.5,
-          },
-        },
-        push: {
-          quantity: 4,
-        },
-      },
-    },
-    responsive: [
-      {
-        maxWidth: 768,
-        options: {
-          particles: {
-            number: {
-              value: 40,
-            },
-          },
-        },
-      },
-    ],
-  }
 
   return (
     <section className="relative min-h-[85vh] overflow-hidden">
