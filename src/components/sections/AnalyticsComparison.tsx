@@ -79,11 +79,11 @@ const CustomSlider = ({
       </div>
       <div className="relative h-2">
         <div 
-          className="absolute w-full h-full rounded-full"
+          className="absolute w-full h-full rounded-full overflow-hidden"
           style={{
             background: isReverse
-              ? `linear-gradient(to right, #e5e7eb 0%, #e5e7eb ${(value/max)*100}%, #e5e7eb ${(value/max)*100}%, #e5e7eb ${(defaultValue/max)*100}%, rgba(229, 231, 235, 0.3) ${(defaultValue/max)*100}%, rgba(229, 231, 235, 0.3) 100%)`
-              : `linear-gradient(to right, rgba(229, 231, 235, 0.3) 0%, rgba(229, 231, 235, 0.3) ${(defaultValue/max)*100}%, #e5e7eb ${(defaultValue/max)*100}%, #e5e7eb ${(value/max)*100}%, rgba(229, 231, 235, 0.3) ${(value/max)*100}%, rgba(229, 231, 235, 0.3) 100%)`
+              ? `linear-gradient(to right, #e5e7eb 0%, #e5e7eb ${(value/max)*100}%, rgb(37 99 235) ${(value/max)*100}%, rgb(37 99 235) ${(defaultValue/max)*100}%, #e5e7eb ${(defaultValue/max)*100}%, #e5e7eb 100%)`
+              : `linear-gradient(to right, #e5e7eb 0%, #e5e7eb ${(defaultValue/max)*100}%, rgb(37 99 235) ${(defaultValue/max)*100}%, rgb(37 99 235) ${(value/max)*100}%, #e5e7eb ${(value/max)*100}%, #e5e7eb 100%)`
           }}
         />
         <div
@@ -97,11 +97,11 @@ const CustomSlider = ({
           step={step}
           value={value}
           onChange={handleSliderChange}
-          className="absolute w-full h-full cursor-pointer opacity-0 z-10"
+          className="absolute w-full h-full opacity-0 cursor-pointer z-10"
         />
         <div 
-          className="absolute h-5 w-5 bg-white rounded-full shadow-md border border-gray-300 top-1/2 transform -translate-y-1/2"
-          style={{ left: `calc(${(value/max)*100}% - 10px)` }}
+          className="absolute h-4 w-4 bg-white rounded-full shadow-md border border-gray-300 top-1/2 transform -translate-y-1/2"
+          style={{ left: `calc(${(value/max)*100}% - 8px)` }}
         />
       </div>
     </div>
@@ -144,53 +144,40 @@ const MiniDashboard = () => {
           <TabsList className="flex w-full h-12 mb-6 bg-slate-900 p-1 rounded-xl overflow-hidden">
             <TabsTrigger 
               value="demographics"
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-400 rounded-lg transition-all duration-200
-                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-gray-400 rounded-lg transition-all duration-200
+                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200
+                lg:gap-2 lg:text-base sm:text-sm sm:gap-0"
             >
-              <Users className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">Demographics</span>
+              <Users className="w-4 h-4 lg:block hidden" />
+              <span>Demographics</span>
             </TabsTrigger>
             <TabsTrigger 
               value="revenue"
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-400 rounded-lg transition-all duration-200
-                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-gray-400 rounded-lg transition-all duration-200
+                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200
+                lg:gap-2 lg:text-base sm:text-sm sm:gap-0"
             >
-              <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">Revenue</span>
+              <BarChart2 className="w-4 h-4 lg:block hidden" />
+              <span>Revenue</span>
             </TabsTrigger>
             <TabsTrigger 
               value="growth"
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-400 rounded-lg transition-all duration-200
-                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-gray-400 rounded-lg transition-all duration-200
+                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200
+                lg:gap-2 lg:text-base sm:text-sm sm:gap-0"
             >
-              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">Growth Potential</span>
+              <TrendingUp className="w-4 h-4 lg:block hidden" />
+              <span>Growth Potential</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="demographics">
             <div className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard
-                  title="Total Patients"
-                  value="1,020"
-                  trend={12}
-                />
-                <StatCard
-                  title="New Patients"
-                  value="203"
-                  trend={8}
-                />
-                <StatCard
-                  title="Total Active Patients"
-                  value="78%"
-                  trend={5}
-                />
-                <StatCard
-                  title="Unscheduled Active"
-                  value="22%"
-                  trend={-3}
-                />
+                <StatCard title="Total Patients" value="1,020" trend={12} />
+                <StatCard title="New Patients" value="203" trend={8} />
+                <StatCard title="Total Active Patients" value="78%" trend={5} />
+                <StatCard title="Unscheduled Active" value="22%" trend={-3} />
               </div>
               <div className="bg-white p-4 rounded-lg shadow-md h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -198,18 +185,8 @@ const MiniDashboard = () => {
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="patients"
-                      stroke="#2563eb"
-                      strokeWidth={2}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="newPatients"
-                      stroke="#16a34a"
-                      strokeWidth={2}
-                    />
+                    <Line type="monotone" dataKey="patients" stroke="#2563eb" strokeWidth={2} />
+                    <Line type="monotone" dataKey="newPatients" stroke="#16a34a" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -219,26 +196,10 @@ const MiniDashboard = () => {
           <TabsContent value="revenue">
             <div className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard
-                  title="Monthly Revenue"
-                  value="$58,000"
-                  trend={15}
-                />
-                <StatCard
-                  title="Collections"
-                  value="$55,000"
-                  trend={10}
-                />
-                <StatCard
-                  title="Avg Revenue/Patient"
-                  value="$285"
-                  trend={7}
-                />
-                <StatCard
-                  title="Avg Profit/Patient"
-                  value="$180"
-                  trend={4}
-                />
+                <StatCard title="Monthly Revenue" value="$58,000" trend={15} />
+                <StatCard title="Collections" value="$55,000" trend={10} />
+                <StatCard title="Avg Revenue/Patient" value="$285" trend={7} />
+                <StatCard title="Avg Profit/Patient" value="$180" trend={4} />
               </div>
               <div className="bg-white p-4 rounded-lg shadow-md h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -246,18 +207,8 @@ const MiniDashboard = () => {
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="#2563eb"
-                      strokeWidth={2}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="collections"
-                      stroke="#16a34a"
-                      strokeWidth={2}
-                    />
+                    <Line type="monotone" dataKey="revenue" stroke="#2563eb" strokeWidth={2} />
+                    <Line type="monotone" dataKey="collections" stroke="#16a34a" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -272,11 +223,11 @@ const MiniDashboard = () => {
                 </p>
               </div>
 
-              <div className="flex flex-col lg:flex-row lg:space-x-8">
+              <div className="flex flex-col lg:flex-row lg:space-x-8 lg:items-stretch">
                 <div className="lg:w-2/5 mb-8 lg:mb-0">
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <div className="relative h-64">
-                      <ResponsiveContainer width="100%" height="100%">
+                  <div className="bg-white p-6 rounded-lg shadow-md h-full flex flex-col">
+                    <div className="flex-grow flex items-center justify-center relative">
+                      <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
                           <Pie
                             data={[
@@ -296,56 +247,39 @@ const MiniDashboard = () => {
                           </Pie>
                           <text
                             x="50%"
-                            y="45%"
+                            y="50%"
                             textAnchor="middle"
                             dominantBaseline="middle"
-                            fill="#111827"
-                            style={{
-                              fontSize: '24px',
-                              fontWeight: 'bold',
-                              fontFamily: 'system-ui'
-                            }}
                           >
-                            ${potentialRevenue.toLocaleString()}
-                          </text>
-                          <text
-                            x="50%"
-                            y="60%"
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            fill="#6B7280"
-                            className="text-sm"
-                          >
-                            Potential
-                          </text>
-                          <text
-                            x="50%"
-                            y="70%"
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            fill="#6B7280"
-                            className="text-sm"
-                          >
-                            Monthly
-                          </text>
-                          <text
-                            x="50%"
-                            y="80%"
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            fill="#6B7280"
-                            className="text-sm"
-                          >
-                            Improvement
+                            <tspan
+                              x="50%"
+                              dy="-0.2em"
+                              fontSize="18"
+                              fill="#111827"
+                            >
+                              +
+                            </tspan>
+                            <tspan
+                              x="50%"
+                              dy="1.2em"
+                              fontSize="24"
+                              fontWeight="bold"
+                              fill="#111827"
+                            >
+                              ${potentialRevenue.toLocaleString()}
+                            </tspan>
                           </text>
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
+                    <p className="text-lg font-medium text-[#1e3a8a] mt-4 text-center">
+                      Potential improvements in revenue powered by mednavi's data-driven insights
+                    </p>
                   </div>
                 </div>
 
-                <div className="lg:w-3/5 flex flex-col">
-                  <div className="bg-white p-6 rounded-lg shadow-md flex-grow">
+                <div className="lg:w-3/5">
+                  <div className="bg-white p-6 rounded-lg shadow-md h-full">
                     <div className="space-y-8">
                       <div className="relative">
                         <CustomSlider
@@ -402,11 +336,6 @@ const MiniDashboard = () => {
                         )}
                       </div>
                     </div>
-                  </div>
-                  <div className="mt-6 px-6">
-                    <p className="text-lg text-[#1e3a8a] font-medium">
-                      Potential improvements in revenue powered by mednavi's data-driven insights
-                    </p>
                   </div>
                 </div>
               </div>
