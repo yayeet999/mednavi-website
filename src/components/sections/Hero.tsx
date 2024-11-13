@@ -8,7 +8,6 @@ export default function Hero() {
   const decorativeDotsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Subtle movement of decorative elements on mouse move
     const handleMouseMove = (e: MouseEvent) => {
       if (!decorativeDotsRef.current) return;
       const { clientX, clientY } = e;
@@ -28,37 +27,86 @@ export default function Hero() {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent" />
         
-        {/* Decorative grid pattern */}
+        {/* Enhanced grid pattern */}
         <div className="absolute inset-0" 
           style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(30, 58, 138, 0.05) 1px, transparent 0)',
-            backgroundSize: '40px 40px'
+            backgroundImage: `
+              radial-gradient(circle at 1px 1px, rgba(30, 58, 138, 0.07) 1px, transparent 0),
+              linear-gradient(to right, rgba(30, 58, 138, 0.03) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px, 100px 100px'
           }}
         />
         
-        {/* Animated decorative dots */}
-        <div ref={decorativeDotsRef} className="absolute inset-0 transition-transform duration-300 ease-out">
-          <div className="absolute top-20 left-[20%] w-3 h-3 rounded-full bg-blue-200/50" />
-          <div className="absolute top-40 right-[30%] w-2 h-2 rounded-full bg-blue-300/50" />
-          <div className="absolute bottom-40 left-[40%] w-4 h-4 rounded-full bg-blue-100/50" />
+        {/* Data visualization elements */}
+        <div className="absolute inset-0">
+          {/* Animated chart lines */}
+          <motion.svg
+            className="absolute top-20 right-20 w-64 h-32 opacity-20"
+            viewBox="0 0 256 128"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
+            <motion.path
+              d="M0,64 C32,32 64,96 96,64 C128,32 160,96 192,64 C224,32 256,64 256,64"
+              fill="none"
+              stroke="rgba(30, 58, 138, 0.3)"
+              strokeWidth="2"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+            />
+          </motion.svg>
+
+          {/* Dental-inspired decorative elements */}
+          <motion.div
+            className="absolute left-20 top-40 w-40 h-40 opacity-10"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.1 }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+          >
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <path
+                d="M50,20 C70,20 80,40 80,60 C80,80 70,90 50,90 C30,90 20,80 20,60 C20,40 30,20 50,20"
+                className="fill-none stroke-blue-500"
+                strokeWidth="1"
+              />
+              {/* Simplified tooth root lines */}
+              <path
+                d="M40,80 L35,95 M60,80 L65,95"
+                className="stroke-blue-500"
+                strokeWidth="1"
+              />
+            </svg>
+          </motion.div>
+
+          {/* Data points and connection lines */}
+          <div ref={decorativeDotsRef} className="absolute inset-0 transition-transform duration-300 ease-out">
+            <motion.div 
+              className="absolute top-1/4 left-1/3 w-2 h-2 rounded-full bg-blue-400/30"
+              initial={{ scale: 0 }}
+              animate={{ scale: [1, 1.5, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            <motion.div 
+              className="absolute top-1/3 right-1/3 w-3 h-3 rounded-full bg-blue-300/40"
+              initial={{ scale: 0 }}
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+            />
+            <motion.div 
+              className="absolute bottom-1/3 left-1/4 w-2 h-2 rounded-full bg-blue-500/30"
+              initial={{ scale: 0 }}
+              animate={{ scale: [1, 1.4, 1] }}
+              transition={{ duration: 2.5, repeat: Infinity, delay: 1 }}
+            />
+          </div>
         </div>
 
-        {/* Abstract data visualization shapes */}
-        <motion.div 
-          className="absolute right-10 top-20 w-32 h-32"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.1, scale: 1 }}
-          transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-        >
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <circle cx="50" cy="50" r="40" className="fill-blue-500/10 stroke-blue-500/30" strokeWidth="1"/>
-            <path d="M30,50 L70,50 M50,30 L50,70" className="stroke-blue-500/30" strokeWidth="1"/>
-          </svg>
-        </motion.div>
-
-        {/* Data lines */}
+        {/* Animated bottom wave */}
         <div className="absolute -bottom-10 left-0 right-0 h-40 opacity-10">
-          <svg viewBox="0 0 1000 200" className="w-full h-full preserve-3d">
+          <svg viewBox="0 0 1000 200" className="w-full h-full">
             <motion.path
               d="M0,100 Q250,150 500,100 T1000,100"
               className="stroke-blue-500 fill-none"
@@ -67,37 +115,18 @@ export default function Hero() {
               animate={{ pathLength: 1 }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
             />
-            <motion.path
-              d="M0,150 Q250,50 500,150 T1000,150"
-              className="stroke-blue-400 fill-none"
-              strokeWidth="2"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 2, delay: 0.5, repeat: Infinity, repeatDelay: 1 }}
-            />
           </svg>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="relative container mx-auto px-4 pt-32 pb-16 flex items-center min-h-[85vh]">
+      <div className="relative container mx-auto px-4 pt-20 pb-16 flex items-center min-h-[85vh]">
         <div className="max-w-3xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="p-1.5 mb-8 inline-block rounded-full bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200"
-          >
-            <span className="text-sm text-blue-700 px-4 py-1">
-              Dental Analytics Platform
-            </span>
-          </motion.div>
-
           <motion.h1
             className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8 }}
           >
             Transforming Dental Data into{' '}
             <span className="relative">
@@ -116,7 +145,7 @@ export default function Hero() {
             className="text-xl text-gray-600 mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
             Empower your dental practice with real-time analytics to improve patient experience and operational efficiency.
           </motion.p>
@@ -125,7 +154,7 @@ export default function Hero() {
             className="flex flex-col sm:flex-row gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
             <Link href="/contact">
               <Button 
