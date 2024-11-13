@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import dynamic from 'next/dynamic'
-import { Engine } from '@tsparticles/engine' // Import Engine type
+import { Engine } from '@tsparticles/engine'
 
 // Dynamically import the Particles component to prevent SSR issues
 const Particles = dynamic(() => import('@tsparticles/react'), { ssr: false })
@@ -12,9 +12,7 @@ const Particles = dynamic(() => import('@tsparticles/react'), { ssr: false })
 export default function Hero() {
   // Initialize particles
   const particlesInit = useCallback(async (engine: Engine) => {
-    // Load the necessary tsParticles plugins here, if any
-    // For the basic setup, loadFull is sufficient
-    const { loadFull } = await import('tsparticles')
+    const { loadFull } = await import('@tsparticles/engine')
     await loadFull(engine)
   }, [])
 
@@ -24,11 +22,11 @@ export default function Hero() {
         value: 120,
         density: {
           enable: true,
-          area: 900, // Adjusted property name
+          area: 900,
         },
       },
       color: {
-        value: ['#007BFF', '#00C6D7', '#33FF99'], // Light blue, teal, and mint green
+        value: ['#007BFF', '#00C6D7', '#33FF99'],
       },
       shape: {
         type: 'circle',
@@ -123,7 +121,7 @@ export default function Hero() {
         },
       },
     },
-    detectRetina: true, // Adjusted property name
+    detectRetina: true,
   }
 
   return (
