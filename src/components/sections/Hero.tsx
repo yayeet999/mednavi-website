@@ -21,109 +21,88 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-[85vh] overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-100">
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Gradient Overlay */}
+    <section className="relative min-h-[85vh] overflow-hidden">
+      {/* Background with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-100">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent" />
-
-        {/* Subtle computational data waves */}
-        <motion.div
-          className="absolute inset-0 w-full h-full opacity-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.2 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
-          style={{
-            backgroundImage: `radial-gradient(circle at 20px 20px, rgba(30, 58, 138, 0.1) 1px, transparent 0),
-              linear-gradient(120deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px)`,
-            backgroundSize: '100px 100px, 200px 200px'
-          }}
-        />
-
-        {/* Data visualization elements positioned closer to the center */}
-        <div className="absolute inset-0 flex flex-col items-end justify-center pr-36 space-y-10">
-          {/* Enhanced pie chart with varying slice proportions and continuous rotation */}
-          <motion.svg
-            className="w-56 h-56 opacity-25 hidden lg:block"
-            viewBox="0 0 100 100"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            <defs>
-              <linearGradient id="3dGradientPie" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{ stopColor: 'rgba(60, 78, 160, 0.5)', stopOpacity: 1 }} />
-                <stop offset="100%" style={{ stopColor: 'rgba(30, 40, 80, 0.2)', stopOpacity: 1 }} />
-              </linearGradient>
-            </defs>
-            {/* Pie chart slices with varied proportions */}
-            {[{ start: 0, end: 70, color: 'rgba(60, 78, 160, 0.4)' }, { start: 70, end: 160, color: 'rgba(60, 78, 160, 0.3)' }, { start: 160, end: 270, color: 'rgba(60, 78, 160, 0.2)' }, { start: 270, end: 360, color: 'rgba(60, 78, 160, 0.15)' }].map((segment, i) => (
-              <motion.path
-                key={`segment-${i}`}
-                d={`M50,50 L${50 + 45 * Math.cos(segment.start * Math.PI / 180)},${50 + 45 * Math.sin(segment.start * Math.PI / 180)} A45,45 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 45 * Math.cos(segment.end * Math.PI / 180)},${50 + 45 * Math.sin(segment.end * Math.PI / 180)} Z`}
-                fill={segment.color}
-              />
-            ))}
-            {/* Continuous slow rotation */}
-            <motion.g
-              initial={{ rotate: 0 }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            >
-              {[{ start: 0, end: 70, color: 'rgba(60, 78, 160, 0.4)' }, { start: 70, end: 160, color: 'rgba(60, 78, 160, 0.3)' }, { start: 160, end: 270, color: 'rgba(60, 78, 160, 0.2)' }, { start: 270, end: 360, color: 'rgba(60, 78, 160, 0.15)' }].map((segment, i) => (
-                <motion.path
-                  key={`rotate-segment-${i}`}
-                  d={`M50,50 L${50 + 45 * Math.cos(segment.start * Math.PI / 180)},${50 + 45 * Math.sin(segment.start * Math.PI / 180)} A45,45 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 45 * Math.cos(segment.end * Math.PI / 180)},${50 + 45 * Math.sin(segment.end * Math.PI / 180)} Z`}
-                  fill={segment.color}
-                />
-              ))}
-            </motion.g>
-          </motion.svg>
-
-          {/* Enhanced 3D bar chart with five wider bars */}
-          <motion.svg
-            className="w-64 h-40 opacity-25 hidden md:block"
-            viewBox="0 0 240 150"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            <defs>
-              <linearGradient id="3dGradientBar" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{ stopColor: 'rgba(60, 78, 160, 0.5)', stopOpacity: 1 }} />
-                <stop offset="100%" style={{ stopColor: 'rgba(30, 40, 80, 0.3)', stopOpacity: 1 }} />
-              </linearGradient>
-            </defs>
-            {[{ x: 20, height: 40 }, { x: 70, height: 80 }, { x: 120, height: 110 }, { x: 170, height: 130 }, { x: 220, height: 150 }].map((bar, i) => (
-              <motion.rect
-                key={`bar-${i}`}
-                x={bar.x - 18}  // Slightly wider bars
-                width="36"
-                y={150 - bar.height}
-                height={bar.height}
-                fill="url(#3dGradientBar)"
-                rx="3"
-                initial={{ height: 0, y: 150 }}
-                animate={{ height: bar.height, y: 150 - bar.height }}
-                transition={{
-                  duration: 1,
-                  delay: i * 0.3,
-                  repeat: Infinity,
-                  repeatType: "mirror",
-                  repeatDelay: 3,
-                  ease: "easeInOut"
-                }}
-              />
-            ))}
-          </motion.svg>
-        </div>
       </div>
 
-      {/* Main content */}
+      {/* Decorative Pattern */}
+      <div 
+        ref={decorativeDotsRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(circle at 20px 20px, rgba(30, 58, 138, 0.1) 1px, transparent 0),
+            linear-gradient(120deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px)`,
+          backgroundSize: '100px 100px, 200px 200px'
+        }}
+      />
+
+      {/* Data visualization elements */}
+      <div className="absolute right-0 inset-y-0 flex flex-col items-end justify-center pr-36 space-y-10">
+        {/* Pie Chart */}
+        <motion.svg
+          className="w-56 h-56 opacity-25 hidden lg:block"
+          viewBox="0 0 100 100"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <motion.circle
+            cx="50"
+            cy="50"
+            r="45"
+            fill="none"
+            stroke="rgba(30, 58, 138, 0.2)"
+            strokeWidth="10"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 2, ease: "easeInOut" }}
+          />
+          <motion.path
+            d="M50,50 L50,5 A45,45 0 0,1 95,50 Z"
+            fill="rgba(30, 58, 138, 0.15)"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          />
+        </motion.svg>
+
+        {/* Bar Chart */}
+        <motion.svg
+          className="w-64 h-40 opacity-25 hidden md:block"
+          viewBox="0 0 240 150"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          {[40, 80, 110, 130, 150].map((height, i) => (
+            <motion.rect
+              key={i}
+              x={20 + i * 50}
+              y={150 - height}
+              width="30"
+              height={height}
+              fill="rgba(30, 58, 138, 0.2)"
+              rx="4"
+              initial={{ scaleY: 0 }}
+              animate={{ scaleY: 1 }}
+              transition={{
+                delay: i * 0.1,
+                duration: 1,
+                ease: "easeOut"
+              }}
+              style={{ transformOrigin: 'bottom' }}
+            />
+          ))}
+        </motion.svg>
+      </div>
+
+      {/* Main Content */}
       <div className="relative container mx-auto px-4 pt-20 pb-16 flex items-center min-h-[85vh]">
         <div className="max-w-3xl">
           <motion.h1
-            className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6"
+            className="text-5xl md:text-6xl font-bold text-blue-900 mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -151,7 +130,7 @@ export default function Hero() {
           </motion.p>
           
           <motion.div 
-            className="flex flex-col sm:flex-row gap-4"
+            className="flex flex-col sm:flex-row gap-4 relative z-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -159,7 +138,7 @@ export default function Hero() {
             <Link href="/contact">
               <Button 
                 size="lg" 
-                className="w-full sm:w-auto bg-mednavi-blue hover:bg-mednavi-blue/90 transform hover:translate-y-[-2px] transition-all shadow-lg hover:shadow-xl"
+                className="w-full sm:w-auto"
               >
                 Get Started
               </Button>
@@ -168,7 +147,7 @@ export default function Hero() {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="w-full sm:w-auto border-2 border-mednavi-blue text-mednavi-blue hover:bg-mednavi-blue/5 transform hover:translate-y-[-2px] transition-all"
+                className="w-full sm:w-auto"
               >
                 Learn More
               </Button>
