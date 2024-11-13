@@ -50,7 +50,7 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom colors for MedNavi
+        // Custom colors
         'mednavi-blue': '#1E3A8A',
         'mednavi-light-blue': '#60A5FA',
         'mednavi-green': '#059669',
@@ -69,10 +69,18 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        "fluid-motion": {
+          "0%, 100%": { transform: "translateY(0) scale(1)" },
+          "50%": { transform: "translateY(-5%) scale(1.01)" },
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fluid": "fluid-motion 8s ease-in-out infinite",
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--gradient-start), var(--gradient-end))',
       },
     },
   },
