@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, LineChart, Zap, Clock, LayoutDashboard } from 'lucide-react'
+import { ChevronDown, LineChart, Zap, Clock, LayoutDashboard, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface FeatureItem {
@@ -9,6 +9,8 @@ interface FeatureItem {
   icon: React.ReactNode
   title: string
   content: string
+  benefits: string[]
+  metrics: string[]
 }
 
 const features: FeatureItem[] = [
@@ -16,25 +18,73 @@ const features: FeatureItem[] = [
     id: 'real-time',
     icon: <LineChart className="w-6 h-6" />,
     title: 'Real-Time Patient Analytics',
-    content: 'With mednavi, access instant insights into patient metrics including appointment attendance, wait times, and treatment history. Make informed decisions to optimize patient flow and enhance the overall care experience.'
+    content: 'With mednavi, access instant insights into patient metrics including appointment attendance, wait times, and treatment history. Make informed decisions to optimize patient flow and enhance the overall care experience.',
+    benefits: [
+      'Track patient wait times and optimize scheduling',
+      'Monitor treatment plan completion rates',
+      'Analyze patient satisfaction metrics in real-time',
+      'Identify and reduce appointment bottlenecks'
+    ],
+    metrics: [
+      'Reduce wait times by up to 30%',
+      'Improve patient satisfaction scores',
+      'Increase appointment efficiency',
+      'Better resource allocation'
+    ]
   },
   {
     id: 'revenue',
     icon: <Zap className="w-6 h-6" />,
     title: 'Revenue Optimization',
-    content: 'mednavi helps identify high-performing services and growth opportunities through detailed financial analytics. Understand patient behavior and revenue trends to increase profitability while maintaining excellent care standards.'
+    content: 'mednavi helps identify high-performing services and growth opportunities through detailed financial analytics. Understand patient behavior and revenue trends to increase profitability while maintaining excellent care standards.',
+    benefits: [
+      'Track revenue trends across all services',
+      'Analyze insurance claim success rates',
+      'Monitor treatment acceptance rates',
+      'Identify most profitable procedures'
+    ],
+    metrics: [
+      'Increase revenue per patient visit',
+      'Improve insurance claim acceptance',
+      'Optimize pricing strategies',
+      'Enhance treatment plan acceptance'
+    ]
   },
   {
     id: 'operations',
     icon: <Clock className="w-6 h-6" />,
     title: 'Operational Efficiency',
-    content: 'Streamline your practice operations with mednavi\'s comprehensive tools for appointment scheduling and resource management. Identify workflow bottlenecks and optimize practice efficiency to reduce costs and improve productivity.'
+    content: 'Streamline your practice operations with mednavi\'s comprehensive tools for appointment scheduling and resource management. Identify workflow bottlenecks and optimize practice efficiency to reduce costs and improve productivity.',
+    benefits: [
+      'Streamline appointment scheduling',
+      'Optimize staff scheduling',
+      'Track equipment utilization',
+      'Reduce administrative overhead'
+    ],
+    metrics: [
+      'Improve staff productivity',
+      'Reduce scheduling conflicts',
+      'Optimize resource utilization',
+      'Minimize operational costs'
+    ]
   },
   {
     id: 'dashboards',
     icon: <LayoutDashboard className="w-6 h-6" />,
     title: 'Customizable Dashboards',
-    content: 'mednavi provides tailored dashboards that match your practice\'s specific needs. Whether focusing on patient care, revenue, or operations, get a complete overview of your practice metrics at a glance.'
+    content: 'mednavi provides tailored dashboards that match your practice\'s specific needs. Whether focusing on patient care, revenue, or operations, get a complete overview of your practice metrics at a glance.',
+    benefits: [
+      'Create role-specific dashboards',
+      'Customize metric tracking',
+      'Set automated alerts',
+      'Generate custom reports'
+    ],
+    metrics: [
+      'Real-time performance tracking',
+      'Automated report generation',
+      'Key metric monitoring',
+      'Trend analysis visualization'
+    ]
   }
 ]
 
@@ -52,7 +102,7 @@ const AccordionItem = ({
       className={cn(
         "border-b border-blue-200/30 last:border-none overflow-hidden",
         "backdrop-blur-sm transition-colors duration-300",
-        isActive ? "bg-white/60" : "bg-blue-50/50 hover:bg-white/50"
+        isActive ? "bg-white/80" : "bg-blue-50/80 hover:bg-white/60"
       )}
     >
       <button
@@ -91,10 +141,36 @@ const AccordionItem = ({
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="px-6 pb-5 pl-[4.5rem]">
-              <p className="text-gray-600 leading-relaxed">
+            <div className="px-6 pb-6 pl-[4.5rem]">
+              <p className="text-gray-600 leading-relaxed mb-4">
                 {feature.content}
               </p>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-medium text-blue-900 mb-3">Key Benefits</h4>
+                  <ul className="space-y-2">
+                    {feature.benefits.map((benefit, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <Check className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
+                        <span className="text-gray-600">{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <h4 className="font-medium text-blue-900 mb-3">Impact Metrics</h4>
+                  <ul className="space-y-2">
+                    {feature.metrics.map((metric, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                        <span className="text-gray-600">{metric}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
@@ -108,49 +184,26 @@ export default function KeyFeatures() {
 
   return (
     <section className="py-20 relative overflow-hidden">
-      {/* Animated gradient background */}
+      {/* Animated dots background */}
       <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50/30" />
         <motion.div
           className="absolute inset-0"
+          initial={{ opacity: 0.03 }}
           animate={{
-            background: [
-              'radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.4) 0%, transparent 50%)',
-              'radial-gradient(circle at 100% 100%, rgba(219, 234, 254, 0.4) 0%, transparent 50%)',
-              'radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.4) 0%, transparent 50%)',
-            ],
+            opacity: [0.03, 0.06, 0.03],
           }}
           transition={{
-            duration: 15,
+            duration: 8,
             repeat: Infinity,
-            ease: "linear"
+            ease: "easeInOut",
           }}
-        />
-        
-        <motion.div
-          className="absolute inset-0"
-          animate={{
-            background: [
-              'radial-gradient(circle at 100% 50%, rgba(199, 210, 254, 0.3) 0%, transparent 50%)',
-              'radial-gradient(circle at 0% 50%, rgba(199, 210, 254, 0.3) 0%, transparent 50%)',
-              'radial-gradient(circle at 100% 50%, rgba(199, 210, 254, 0.3) 0%, transparent 50%)',
-            ],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
+          style={{
+            backgroundImage: `radial-gradient(circle at center, #1E40AF 1px, transparent 1px)`,
+            backgroundSize: '24px 24px',
           }}
         />
       </div>
-
-      {/* Geometric pattern overlay */}
-      <div 
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231E3A8A' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '60px 60px'
-        }}
-      />
 
       <div className="container relative mx-auto px-4">
         <div className="text-center mb-12">
@@ -162,8 +215,8 @@ export default function KeyFeatures() {
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
-          <div className="rounded-2xl overflow-hidden bg-blue-50/70 backdrop-blur-sm shadow-xl shadow-blue-500/10 border border-blue-100/50">
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-2xl overflow-hidden bg-white/70 backdrop-blur-sm shadow-xl shadow-blue-500/10 border border-blue-100/50">
             {features.map((feature) => (
               <AccordionItem
                 key={feature.id}
