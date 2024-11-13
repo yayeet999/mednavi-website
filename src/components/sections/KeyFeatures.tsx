@@ -50,9 +50,9 @@ const AccordionItem = ({
   return (
     <div
       className={cn(
-        "border-b border-blue-100/20 last:border-none overflow-hidden",
+        "border-b border-blue-200/30 last:border-none overflow-hidden",
         "backdrop-blur-sm transition-colors duration-300",
-        isActive ? "bg-white/40" : "bg-white/20 hover:bg-white/30"
+        isActive ? "bg-white/60" : "bg-blue-50/50 hover:bg-white/50"
       )}
     >
       <button
@@ -64,7 +64,7 @@ const AccordionItem = ({
             "p-3 rounded-xl transition-all duration-300",
             isActive 
               ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/20"
-              : "bg-blue-50 text-blue-600 group-hover:shadow-md group-hover:shadow-blue-500/10"
+              : "bg-blue-100 text-blue-600 group-hover:shadow-md group-hover:shadow-blue-500/10"
           )}
         >
           {feature.icon}
@@ -108,9 +108,50 @@ export default function KeyFeatures() {
 
   return (
     <section className="py-20 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 via-white to-white" />
-      
+      {/* Animated gradient background */}
+      <div className="absolute inset-0">
+        <motion.div
+          className="absolute inset-0"
+          animate={{
+            background: [
+              'radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.4) 0%, transparent 50%)',
+              'radial-gradient(circle at 100% 100%, rgba(219, 234, 254, 0.4) 0%, transparent 50%)',
+              'radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.4) 0%, transparent 50%)',
+            ],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+        
+        <motion.div
+          className="absolute inset-0"
+          animate={{
+            background: [
+              'radial-gradient(circle at 100% 50%, rgba(199, 210, 254, 0.3) 0%, transparent 50%)',
+              'radial-gradient(circle at 0% 50%, rgba(199, 210, 254, 0.3) 0%, transparent 50%)',
+              'radial-gradient(circle at 100% 50%, rgba(199, 210, 254, 0.3) 0%, transparent 50%)',
+            ],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+      </div>
+
+      {/* Geometric pattern overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231E3A8A' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundSize: '60px 60px'
+        }}
+      />
+
       <div className="container relative mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-6">
@@ -122,7 +163,7 @@ export default function KeyFeatures() {
         </div>
 
         <div className="max-w-3xl mx-auto">
-          <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-white/50 to-blue-50/50 backdrop-blur-sm shadow-xl shadow-blue-500/10">
+          <div className="rounded-2xl overflow-hidden bg-blue-50/70 backdrop-blur-sm shadow-xl shadow-blue-500/10 border border-blue-100/50">
             {features.map((feature) => (
               <AccordionItem
                 key={feature.id}
@@ -134,15 +175,6 @@ export default function KeyFeatures() {
           </div>
         </div>
       </div>
-
-      {/* Decorative grid pattern */}
-      <div 
-        className="absolute inset-0 opacity-[0.02] pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231E3A8A' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '60px 60px'
-        }}
-      />
     </section>
   )
 }
