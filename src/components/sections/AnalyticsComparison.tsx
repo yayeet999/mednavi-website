@@ -8,7 +8,10 @@ import {
   XAxis,
   YAxis,
   ResponsiveContainer,
-  Tooltip
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell
 } from 'recharts';
 
 interface StatCardProps {
@@ -35,7 +38,38 @@ const revenueData = [
   { month: 'Jun', revenue: 58000, collections: 55000 }
 ];
 
+const CustomSlider = ({ label, value, onChange, min, max, step, displayValue }: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  min: number;
+  max: number;
+  step: number;
+  displayValue: string;
+}) => (
+  <div className="w-full mb-8">
+    <div className="flex justify-between items-center mb-2">
+      <span className="text-gray-600 text-lg">{label}</span>
+      <span className="text-lg font-medium">{displayValue}</span>
+    </div>
+    <input
+      type="range"
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      onChange={(e) => onChange(Number(e.target.value))}
+      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+    />
+  </div>
+);
+
 const MiniDashboard = () => {
+  const [activePatients, setActivePatients] = useState(78);
+  const [unscheduledPatients, setUnscheduledPatients] = useState(22);
+  const [revenuePerPatient, setRevenuePerPatient] = useState(285);
+  const [potentialRevenue, setPotentialRevenue] = useState(0);
+  
   const StatCard = ({ title, value, trend }: StatCardProps) => (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       <p className="text-sm text-gray-600">{title}</p>
@@ -46,16 +80,121 @@ const MiniDashboard = () => {
     </div>
   );
 
+  const renderGrowthPotential = () => {
+    const TOTAL_PATIENTS = 1020;
+    const MAX_POTENTIAL = 50000;
+
+    const calculatePotentialRevenue = () => {
+      const additionalActivePatients = ((activePatients - 78) / 100) * TOTAL_PATIENTS;
+      const currentActivePatients = (activePatients / 100) * TOTAL_PATIENTS;
+      const schedulingImprovement = ((22 - unscheduledPatients) / 100) * currentActivePatients;
+      const totalImprovedPatients = additionalActivePatients + schedulingImprovement;
+      const calculated = Math.max(0, totalImprovedPatients * revenuePerPatient);
+      return Math.min(calculated, MAX_POTENTIAL);
+    };
+
+    const data = [
+      { name: 'Potential', value: potentialRevenue },
+      { name: 'Remaining', value: MAX_POTENTIAL - potentialRevenue }
+    ];
+
+    return (
+      <div className="space-y-6">
+        <div className="h-64 mb-8">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                innerRadius={80}
+                outerRadius={100}
+                startAngle={90}
+                endAngle={-270}
+                dataKey="value"
+              >
+                <Cell fill="#2563eb" />
+                <Cell fill="#e5e7eb" />
+              </Pie>
+              <text
+                x="50%"
+                y="50%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="#111827"
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  fontFamily: 'system-ui'
+                }}
+              >
+                ${potentialRevenue.toLocaleString()}
+              </text>
+              <text
+                x="50%"
+                y="65%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="#6B7280"
+                style={{
+                  fontSize: '14px',
+                  fontFamily: 'system-ui'
+                }}
+              >
+                Potential Monthly
+              </text>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="space-y-6">
+          <CustomSlider
+            label="Total Active Patients"
+            value={activePatients}
+            onChange={setActivePatients}
+            min={0}
+            max={100}
+            step={1}
+            displayValue={`${activePatients}%`}
+          />
+          
+          <CustomSlider
+            label="Unscheduled Active Patients"
+            value={unscheduledPatients}
+            onChange={setUnscheduledPatients}
+            min={0}
+            max={100}
+            step={1}
+            displayValue={`${unscheduledPatients}%`}
+          />
+          
+          <CustomSlider
+            label="Average Revenue Per Patient"
+            value={revenuePerPatient}
+            onChange={setRevenuePerPatient}
+            min={0}
+            max={500}
+            step={5}
+            displayValue={`$${revenuePerPatient}`}
+          />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Card className="w-full max-w-6xl mx-auto bg-gray-50">
       <CardContent className="p-6">
         <Tabs defaultValue="demographics" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="demographics">
               Demographics
             </TabsTrigger>
             <TabsTrigger value="revenue">
               Revenue
+            </TabsTrigger>
+            <TabsTrigger value="growth">
+              Growth Potential
             </TabsTrigger>
           </TabsList>
           
@@ -153,6 +292,10 @@ const MiniDashboard = () => {
                 </ResponsiveContainer>
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="growth">
+            {renderGrowthPotential()}
           </TabsContent>
         </Tabs>
       </CardContent>
