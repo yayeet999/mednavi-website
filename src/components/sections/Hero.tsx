@@ -4,68 +4,131 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 
-const DataFlow = () => {
-  const flows = Array.from({ length: 15 }, (_, i) => ({
+const DataWaveBackground = () => {
+  const waves = Array.from({ length: 3 }, (_, i) => ({
+    id: i,
+    delay: i * 0.2,
+    baseY: 40 + i * 20
+  }))
+
+  const particles = Array.from({ length: 40 }, (_, i) => ({
+    id: i,
+    initialX: Math.random() * 100,
+    initialY: Math.random() * 100,
+    size: 1 + Math.random() * 2,
+    duration: 3 + Math.random() * 2
+  }))
+
+  const flowLines = Array.from({ length: 10 }, (_, i) => ({
+    id: i,
     startX: Math.random() * 100,
     startY: Math.random() * 100,
     endX: Math.random() * 100,
     endY: Math.random() * 100,
-    delay: i * 0.2,
-    duration: 3 + Math.random() * 2
+    duration: 4 + Math.random() * 3,
+    delay: i * 0.3
   }))
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-blue-50/30" />
-      {flows.map((flow, i) => (
+      {/* Base gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/90 via-white/50 to-blue-50/80" />
+
+      {/* Animated wave patterns */}
+      {waves.map((wave) => (
         <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-mednavi-blue/20 rounded-full"
-          initial={{ x: `${flow.startX}%`, y: `${flow.startY}%`, scale: 0, opacity: 0 }}
+          key={wave.id}
+          className="absolute w-full"
+          style={{
+            height: '100%',
+            backgroundImage: 'linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.1) 50%, rgba(59, 130, 246, 0.05) 100%)',
+            y: wave.baseY
+          }}
           animate={{
-            x: [`${flow.startX}%`, `${flow.endX}%`],
-            y: [`${flow.startY}%`, `${flow.endY}%`],
-            scale: [0, 1.5, 0],
-            opacity: [0, 0.6, 0]
+            y: [wave.baseY - 20, wave.baseY + 20, wave.baseY - 20]
           }}
           transition={{
-            duration: flow.duration,
-            delay: flow.delay,
+            duration: 8,
+            delay: wave.delay,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      ))}
+
+      {/* Animated particles */}
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute rounded-full bg-blue-400/30"
+          style={{
+            width: particle.size,
+            height: particle.size
+          }}
+          initial={{ 
+            x: `${particle.initialX}%`, 
+            y: `${particle.initialY}%`,
+            opacity: 0 
+          }}
+          animate={{
+            x: [`${particle.initialX}%`, `${(particle.initialX + 30) % 100}%`],
+            y: [`${particle.initialY}%`, `${(particle.initialY + 30) % 100}%`],
+            opacity: [0, 0.8, 0]
+          }}
+          transition={{
+            duration: particle.duration,
             repeat: Infinity,
             ease: "linear"
           }}
         />
       ))}
 
-      <svg className="absolute inset-0 w-full h-full opacity-5">
-        <pattern
-          id="grid"
-          x="0"
-          y="0"
-          width="40"
-          height="40"
-          patternUnits="userSpaceOnUse"
-        >
-          <path
-            d="M 40 0 L 0 0 0 40"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-          />
-        </pattern>
-        <rect width="100%" height="100%" fill="url(#grid)" />
-      </svg>
+      {/* Animated flow lines */}
+      {flowLines.map((line) => (
+        <motion.div
+          key={line.id}
+          className="absolute h-px bg-gradient-to-r from-transparent via-blue-400/20 to-transparent"
+          style={{
+            width: '100px',
+            left: `${line.startX}%`,
+            top: `${line.startY}%`,
+            transform: `rotate(${Math.atan2(line.endY - line.startY, line.endX - line.startX) * 180 / Math.PI}deg)`
+          }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{
+            scale: [0, 1, 0],
+            opacity: [0, 0.5, 0],
+            x: [0, 100, 0]
+          }}
+          transition={{
+            duration: line.duration,
+            delay: line.delay,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+      ))}
+
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0" style={{ opacity: 0.05 }}>
+        <svg className="w-full h-full">
+          <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+      </div>
     </div>
   )
 }
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[70vh] flex items-center overflow-hidden bg-gradient-to-br from-white to-blue-50">
-      <DataFlow />
+    <section className="relative min-h-[85vh] overflow-hidden">
+      <DataWaveBackground />
       
       <motion.div 
-        className="relative container mx-auto px-4 py-12"
+        className="relative container mx-auto px-4 pt-32 pb-16 flex items-center min-h-[85vh]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
