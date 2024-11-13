@@ -26,21 +26,23 @@ export default function Hero() {
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent" />
-        
-        {/* Enhanced grid pattern */}
-        <div className="absolute inset-0" 
+
+        {/* Subtle data waves */}
+        <motion.div
+          className="absolute inset-0 w-full h-full opacity-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.2 }}
+          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
           style={{
-            backgroundImage: `
-              radial-gradient(circle at 1px 1px, rgba(30, 58, 138, 0.07) 1px, transparent 0),
-              linear-gradient(to right, rgba(30, 58, 138, 0.03) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px, 100px 100px'
+            backgroundImage: `radial-gradient(circle at 20px 20px, rgba(30, 58, 138, 0.1) 1px, transparent 0),
+              linear-gradient(120deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px)`,
+            backgroundSize: '100px 100px, 200px 200px'
           }}
         />
 
         {/* Data visualization elements */}
         <div className="absolute inset-0">
-          {/* Animated bar chart */}
+          {/* Enhanced bar chart */}
           <motion.svg
             className="absolute top-20 right-20 w-64 h-48 opacity-20 hidden md:block"
             viewBox="0 0 200 150"
@@ -48,58 +50,37 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
-            {[0, 1, 2, 3, 4].map((i) => (
-              <line
-                key={`grid-${i}`}
-                x1="0"
-                y1={30 * i}
-                x2="200"
-                y2={30 * i}
-                stroke="rgba(30, 58, 138, 0.1)"
-                strokeWidth="1"
-              />
-            ))}
-            
-            {[
-              { x: 20, height: 80 },
-              { x: 60, height: 120 },
-              { x: 100, height: 60 },
-              { x: 140, height: 90 },
-              { x: 180, height: 100 },
-            ].map((bar, i) => (
+            {[{ x: 20, height: 100 }, { x: 60, height: 140 }, { x: 100, height: 80 }, { x: 140, height: 120 }, { x: 180, height: 110 }].map((bar, i) => (
               <motion.rect
                 key={`bar-${i}`}
                 x={bar.x - 15}
                 width="30"
                 y={150 - bar.height}
                 height={bar.height}
-                fill="rgba(30, 58, 138, 0.2)"
+                fill="rgba(30, 58, 138, 0.3)"
                 initial={{ height: 0, y: 150 }}
                 animate={{ height: bar.height, y: 150 - bar.height }}
                 transition={{
                   duration: 1,
-                  delay: i * 0.2,
+                  delay: i * 0.3,
                   repeat: Infinity,
-                  repeatType: "reverse",
-                  repeatDelay: 2
+                  repeatType: "mirror",
+                  repeatDelay: 1,
+                  ease: "easeInOut"
                 }}
               />
             ))}
           </motion.svg>
 
-          {/* Animated pie chart */}
+          {/* Slightly animated pie chart */}
           <motion.svg
             className="absolute top-40 right-96 w-48 h-48 opacity-20 hidden lg:block"
             viewBox="0 0 100 100"
             initial={{ opacity: 0, rotate: -90 }}
-            animate={{ opacity: 1 }}
+            animate={{ opacity: 1, rotate: 0 }}
             transition={{ duration: 1 }}
           >
-            {[
-              { start: 0, end: 45, color: 'rgba(30, 58, 138, 0.3)' },
-              { start: 45, end: 170, color: 'rgba(30, 58, 138, 0.2)' },
-              { start: 170, end: 360, color: 'rgba(30, 58, 138, 0.1)' },
-            ].map((segment, i) => (
+            {[{ start: 0, end: 90, color: 'rgba(30, 58, 138, 0.3)' }, { start: 90, end: 180, color: 'rgba(30, 58, 138, 0.2)' }, { start: 180, end: 360, color: 'rgba(30, 58, 138, 0.15)' }].map((segment, i) => (
               <motion.path
                 key={`segment-${i}`}
                 d={`M50,50 L${50 + 40 * Math.cos(segment.start * Math.PI / 180)},${50 + 40 * Math.sin(segment.start * Math.PI / 180)} A40,40 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(segment.end * Math.PI / 180)},${50 + 40 * Math.sin(segment.end * Math.PI / 180)} Z`}
@@ -109,65 +90,14 @@ export default function Hero() {
                 transition={{
                   duration: 1.5,
                   delay: i * 0.3,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  repeatDelay: 2,
                 }}
               />
             ))}
           </motion.svg>
-
-          {/* Modern dental icon */}
-          <motion.svg
-            className="absolute top-60 right-40 w-32 h-32 opacity-20 hidden md:block"
-            viewBox="0 0 100 100"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            <motion.path
-              d="M50,20 C65,20 75,30 75,45 C75,60 70,80 50,80 C30,80 25,60 25,45 C25,30 35,20 50,20"
-              fill="none"
-              stroke="rgba(30, 58, 138, 0.3)"
-              strokeWidth="2"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-            />
-            <motion.g
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-            >
-              <line
-                x1="42"
-                y1="45"
-                x2="58"
-                y2="45"
-                stroke="rgba(30, 58, 138, 0.3)"
-                strokeWidth="2"
-              />
-              <line
-                x1="50"
-                y1="37"
-                x2="50"
-                y2="53"
-                stroke="rgba(30, 58, 138, 0.3)"
-                strokeWidth="2"
-              />
-            </motion.g>
-          </motion.svg>
-
-          {/* Data connection lines */}
-          <svg className="absolute inset-0 w-full h-full opacity-10">
-            <motion.path
-              d="M100,100 C150,150 200,50 250,100 C300,150 350,50 400,100"
-              fill="none"
-              stroke="rgba(30, 58, 138, 0.2)"
-              strokeWidth="2"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-            />
-          </svg>
         </div>
       </div>
 
