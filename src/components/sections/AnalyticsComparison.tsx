@@ -28,6 +28,8 @@ interface SliderProps {
   max: number;
   step: number;
   displayValue: string;
+  defaultValue: number;
+  isReverse?: boolean;
 }
 
 const demographicsData = [
@@ -48,23 +50,66 @@ const revenueData = [
   { month: 'Jun', revenue: 58000, collections: 55000 }
 ];
 
-const CustomSlider = ({ label, value, onChange, min, max, step, displayValue }: SliderProps) => (
-  <div className="w-full mb-8">
-    <div className="flex justify-between items-center mb-2">
-      <span className="text-gray-600 text-lg">{label}</span>
-      <span className="text-lg font-medium">{displayValue}</span>
+const CustomSlider = ({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+  step,
+  displayValue,
+  defaultValue,
+  isReverse = false
+}: SliderProps) => {
+  const handleChange = (newValue: number) => {
+    if (isReverse) {
+      // For unscheduled patients, can't go below default (improvement is reducing)
+      onChange(Math.min(newValue, defaultValue));
+    } else {
+      // For others, can't go below default (improvement is increasing)
+      onChange(Math.max(newValue, defaultValue));
+    }
+  };
+
+  const getTrackStyle = () => {
+    const percentage = ((value - min) / (max - min)) * 100;
+    const defaultPercentage = ((defaultValue - min) / (max - min)) * 100;
+
+    return {
+      background: `linear-gradient(to right, 
+        #e5e7eb 0%, 
+        #e5e7eb ${isReverse ? percentage : defaultPercentage}%, 
+        #2563eb ${isReverse ? percentage : defaultPercentage}%, 
+        #2563eb ${isReverse ? defaultPercentage : percentage}%, 
+        #e5e7eb ${isReverse ? defaultPercentage : percentage}%,
+        #e5e7eb 100%)`
+    };
+  };
+
+  return (
+    <div className="w-full mb-8">
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-gray-600 text-lg">{label}</span>
+        <span className="text-lg font-medium">{displayValue}</span>
+      </div>
+      <div className="relative">
+        <div className="absolute w-full h-2 rounded-lg" style={getTrackStyle()} />
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(e) => handleChange(Number(e.target.value))}
+          className="w-full h-2 bg-transparent appearance-none cursor-pointer accent-blue-600 relative z-10"
+        />
+        <div className="absolute -bottom-6 left-0 text-xs text-gray-500">
+          Default: {isReverse ? `${defaultValue}% (max)` : defaultValue}
+        </div>
+      </div>
     </div>
-    <input
-      type="range"
-      min={min}
-      max={max}
-      step={step}
-      value={value}
-      onChange={(e) => onChange(Number(e.target.value))}
-      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-    />
-  </div>
-);
+  );
+};
 
 const MiniDashboard = () => {
   const [activePatients, setActivePatients] = useState(78);
@@ -87,12 +132,12 @@ const MiniDashboard = () => {
     const MAX_POTENTIAL = 50000;
 
     // Calculate additional revenue from increased active patients
-    const additionalActivePatients = (Math.max(0, activePatients - 78) / 100) * TOTAL_PATIENTS;
+    const additionalActivePatients = ((Math.max(0, activePatients - 78) / 100) * TOTAL_PATIENTS);
     const additionalActiveRevenue = additionalActivePatients * revenuePerPatient;
 
     // Calculate additional revenue from reduced unscheduled patients
     const currentActivePatients = (activePatients / 100) * TOTAL_PATIENTS;
-    const improvedSchedulingPatients = (Math.max(0, 22 - unscheduledPatients) / 100) * currentActivePatients;
+    const improvedSchedulingPatients = ((Math.max(0, 22 - unscheduledPatients) / 100) * currentActivePatients);
     const improvedSchedulingRevenue = improvedSchedulingPatients * revenuePerPatient;
 
     // Total potential additional revenue
@@ -104,60 +149,43 @@ const MiniDashboard = () => {
     <Card className="w-full max-w-6xl mx-auto bg-gray-50">
       <CardContent className="p-6">
         <Tabs defaultValue="demographics" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="demographics">
+          <TabsList className="grid w-full grid-cols-3 mb-6 p-1 bg-white rounded-xl shadow-lg">
+            <TabsTrigger
+              value="demographics"
+              className="px-4 py-3 rounded-lg data-[state=active]:bg-gradient-to-r from-blue-600 to-blue-700 data-[state=active]:text-white transition-all duration-200 data-[state=active]:shadow-md"
+            >
               Demographics
             </TabsTrigger>
-            <TabsTrigger value="revenue">
+            <TabsTrigger
+              value="revenue"
+              className="px-4 py-3 rounded-lg data-[state=active]:bg-gradient-to-r from-blue-600 to-blue-700 data-[state=active]:text-white transition-all duration-200 data-[state=active]:shadow-md"
+            >
               Revenue
             </TabsTrigger>
-            <TabsTrigger value="growth">
+            <TabsTrigger
+              value="growth"
+              className="px-4 py-3 rounded-lg data-[state=active]:bg-gradient-to-r from-blue-600 to-blue-700 data-[state=active]:text-white transition-all duration-200 data-[state=active]:shadow-md"
+            >
               Growth Potential
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="demographics">
             <div className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard
-                  title="Total Patients"
-                  value="1,020"
-                  trend={12}
-                />
-                <StatCard
-                  title="New Patients"
-                  value="203"
-                  trend={8}
-                />
-                <StatCard
-                  title="Total Active Patients"
-                  value="78%"
-                  trend={5}
-                />
-                <StatCard
-                  title="Unscheduled Active"
-                  value="22%"
-                  trend={-3}
-                />
+                <StatCard title="Total Patients" value="1,020" trend={12} />
+                <StatCard title="New Patients" value="203" trend={8} />
+                <StatCard title="Total Active Patients" value="78%" trend={5} />
+                <StatCard title="Unscheduled Active" value="22%" trend={-3} />
               </div>
-              <div className="bg-white p-4 rounded-lg h-64">
+              <div className="bg-white p-4 rounded-lg shadow-md h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={demographicsData}>
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="patients"
-                      stroke="#2563eb"
-                      strokeWidth={2}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="newPatients"
-                      stroke="#16a34a"
-                      strokeWidth={2}
-                    />
+                    <Line type="monotone" dataKey="patients" stroke="#2563eb" strokeWidth={2} />
+                    <Line type="monotone" dataKey="newPatients" stroke="#16a34a" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -167,45 +195,19 @@ const MiniDashboard = () => {
           <TabsContent value="revenue">
             <div className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard
-                  title="Monthly Revenue"
-                  value="$58,000"
-                  trend={15}
-                />
-                <StatCard
-                  title="Collections"
-                  value="$55,000"
-                  trend={10}
-                />
-                <StatCard
-                  title="Avg Revenue/Patient"
-                  value="$285"
-                  trend={7}
-                />
-                <StatCard
-                  title="Avg Profit/Patient"
-                  value="$180"
-                  trend={4}
-                />
+                <StatCard title="Monthly Revenue" value="$58,000" trend={15} />
+                <StatCard title="Collections" value="$55,000" trend={10} />
+                <StatCard title="Avg Revenue/Patient" value="$285" trend={7} />
+                <StatCard title="Avg Profit/Patient" value="$180" trend={4} />
               </div>
-              <div className="bg-white p-4 rounded-lg h-64">
+              <div className="bg-white p-4 rounded-lg shadow-md h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={revenueData}>
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="#2563eb"
-                      strokeWidth={2}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="collections"
-                      stroke="#16a34a"
-                      strokeWidth={2}
-                    />
+                    <Line type="monotone" dataKey="revenue" stroke="#2563eb" strokeWidth={2} />
+                    <Line type="monotone" dataKey="collections" stroke="#16a34a" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -213,93 +215,103 @@ const MiniDashboard = () => {
           </TabsContent>
 
           <TabsContent value="growth">
-            <div className="space-y-6">
+            <div>
               <div className="text-center mb-8">
                 <p className="text-gray-600 text-lg">
                   Adjust the sliders below to see how improving key metrics could impact your monthly revenue
                 </p>
               </div>
 
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={[
-                        { name: 'Potential', value: potentialRevenue },
-                        { name: 'Remaining', value: 50000 - potentialRevenue }
-                      ]}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={80}
-                      outerRadius={100}
-                      startAngle={90}
-                      endAngle={-270}
-                      dataKey="value"
-                    >
-                      <Cell fill="#2563eb" />
-                      <Cell fill="#e5e7eb" />
-                    </Pie>
-                    <text
-                      x="50%"
-                      y="50%"
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fill="#111827"
-                      style={{
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                        fontFamily: 'system-ui'
-                      }}
-                    >
-                      ${potentialRevenue.toLocaleString()}
-                    </text>
-                    <text
-                      x="50%"
-                      y="65%"
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fill="#6B7280"
-                      style={{
-                        fontSize: '14px',
-                        fontFamily: 'system-ui'
-                      }}
-                    >
-                      Potential Monthly
-                    </text>
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+              <div className="flex flex-col lg:flex-row lg:space-x-8">
+                <div className="lg:w-2/5 mb-8 lg:mb-0">
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: 'Potential', value: potentialRevenue },
+                            { name: 'Remaining', value: 50000 - potentialRevenue }
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={80}
+                          outerRadius={100}
+                          startAngle={90}
+                          endAngle={-270}
+                          dataKey="value"
+                        >
+                          <Cell fill="#2563eb" />
+                          <Cell fill="#e5e7eb" />
+                        </Pie>
+                        <text
+                          x="50%"
+                          y="50%"
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fill="#111827"
+                          style={{
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            fontFamily: 'system-ui'
+                          }}
+                        >
+                          ${potentialRevenue.toLocaleString()}
+                        </text>
+                        <text
+                          x="50%"
+                          y="65%"
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fill="#6B7280"
+                          style={{
+                            fontSize: '14px',
+                            fontFamily: 'system-ui'
+                          }}
+                        >
+                          Potential Monthly
+                        </text>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
 
-              <div className="space-y-6">
-                <CustomSlider
-                  label="Total Active Patients"
-                  value={activePatients}
-                  onChange={setActivePatients}
-                  min={0}
-                  max={100}
-                  step={1}
-                  displayValue={`${activePatients}%`}
-                />
-                
-                <CustomSlider
-                  label="Unscheduled Active Patients"
-                  value={unscheduledPatients}
-                  onChange={setUnscheduledPatients}
-                  min={0}
-                  max={100}
-                  step={1}
-                  displayValue={`${unscheduledPatients}%`}
-                />
-                
-                <CustomSlider
-                  label="Average Revenue Per Patient"
-                  value={revenuePerPatient}
-                  onChange={setRevenuePerPatient}
-                  min={0}
-                  max={500}
-                  step={5}
-                  displayValue={`$${revenuePerPatient}`}
-                />
+                <div className="lg:w-3/5">
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                    <CustomSlider
+                      label="Total Active Patients"
+                      value={activePatients}
+                      onChange={setActivePatients}
+                      min={0}
+                      max={100}
+                      step={1}
+                      displayValue={`${activePatients}%`}
+                      defaultValue={78}
+                    />
+
+                    <CustomSlider
+                      label="Unscheduled Active Patients"
+                      value={unscheduledPatients}
+                      onChange={setUnscheduledPatients}
+                      min={0}
+                      max={100}
+                      step={1}
+                      displayValue={`${unscheduledPatients}%`}
+                      defaultValue={22}
+                      isReverse={true}
+                    />
+
+                    <CustomSlider
+                      label="Average Revenue Per Patient"
+                      value={revenuePerPatient}
+                      onChange={setRevenuePerPatient}
+                      min={0}
+                      max={500}
+                      step={5}
+                      displayValue={`$${revenuePerPatient}`}
+                      defaultValue={285}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>
