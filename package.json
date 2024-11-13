@@ -11,9 +11,9 @@
   "dependencies": {
     "@react-three/drei": "^9.92.7",
     "@react-three/fiber": "^8.15.12",
-    "@tsparticles/engine": "^3.0.0",
-    "@tsparticles/webpack-plugin": "^3.0.0",
-    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/engine": "^2.12.0",
+    "@tsparticles/webpack-plugin": "^2.12.0",
+    "@tsparticles/react": "^2.12.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.3",
