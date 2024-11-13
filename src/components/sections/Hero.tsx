@@ -4,14 +4,17 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import dynamic from 'next/dynamic'
+import { Engine } from '@tsparticles/engine' // Import Engine type
 
 // Dynamically import the Particles component to prevent SSR issues
-const Particles = dynamic(() => import('react-tsparticles'), { ssr: false })
-import { loadFull } from 'tsparticles'
+const Particles = dynamic(() => import('@tsparticles/react'), { ssr: false })
 
 export default function Hero() {
   // Initialize particles
-  const particlesInit = useCallback(async (engine) => {
+  const particlesInit = useCallback(async (engine: Engine) => {
+    // Load the necessary tsParticles plugins here, if any
+    // For the basic setup, loadFull is sufficient
+    const { loadFull } = await import('tsparticles')
     await loadFull(engine)
   }, [])
 
@@ -21,7 +24,7 @@ export default function Hero() {
         value: 120,
         density: {
           enable: true,
-          value_area: 900,
+          area: 900, // Adjusted property name
         },
       },
       color: {
@@ -33,26 +36,26 @@ export default function Hero() {
           width: 0,
         },
         polygon: {
-          nb_sides: 6,
+          sides: 6,
         },
       },
       opacity: {
         value: 0.7,
         random: true,
-        anim: {
+        animation: {
           enable: true,
           speed: 1,
-          opacity_min: 0.3,
+          minimumValue: 0.3,
           sync: false,
         },
       },
       size: {
         value: 4,
         random: true,
-        anim: {
+        animation: {
           enable: true,
           speed: 5,
-          size_min: 0.1,
+          minimumValue: 0.1,
           sync: false,
         },
       },
@@ -74,8 +77,10 @@ export default function Hero() {
         },
         attract: {
           enable: true,
-          rotateX: 600,
-          rotateY: 1200,
+          rotate: {
+            x: 600,
+            y: 1200,
+          },
         },
       },
     },
@@ -118,7 +123,7 @@ export default function Hero() {
         },
       },
     },
-    retina_detect: true,
+    detectRetina: true, // Adjusted property name
   }
 
   return (
