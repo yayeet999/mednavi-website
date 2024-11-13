@@ -5,6 +5,21 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 
 export default function Hero() {
+  const decorativeDotsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!decorativeDotsRef.current) return;
+      const { clientX, clientY } = e;
+      const moveX = clientX * 0.01;
+      const moveY = clientY * 0.01;
+      decorativeDotsRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <section className="relative min-h-[85vh] overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-100">
       {/* Decorative background elements */}
@@ -25,15 +40,14 @@ export default function Hero() {
 
         {/* Data visualization elements */}
         <div className="absolute inset-0">
-          {/* Improved animated bar chart */}
+          {/* Animated bar chart */}
           <motion.svg
-            className="absolute top-16 right-12 w-64 h-48 opacity-25 hidden md:block"
+            className="absolute top-20 right-20 w-64 h-48 opacity-20 hidden md:block"
             viewBox="0 0 200 150"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
-            {/* Background grid */}
             {[0, 1, 2, 3, 4].map((i) => (
               <line
                 key={`grid-${i}`}
@@ -43,163 +57,123 @@ export default function Hero() {
                 y2={30 * i}
                 stroke="rgba(30, 58, 138, 0.1)"
                 strokeWidth="1"
-                strokeDasharray="4 4"
               />
             ))}
             
-            {/* Animated bars with better aesthetics */}
             {[
-              { x: 20, height: 100, delay: 0 },
-              { x: 60, height: 120, delay: 0.1 },
-              { x: 100, height: 80, delay: 0.2 },
-              { x: 140, height: 110, delay: 0.3 },
-              { x: 180, height: 130, delay: 0.4 },
+              { x: 20, height: 80 },
+              { x: 60, height: 120 },
+              { x: 100, height: 60 },
+              { x: 140, height: 90 },
+              { x: 180, height: 100 },
             ].map((bar, i) => (
               <motion.rect
                 key={`bar-${i}`}
-                x={bar.x - 12}
-                width="24"
+                x={bar.x - 15}
+                width="30"
                 y={150 - bar.height}
                 height={bar.height}
-                rx="4"
                 fill="rgba(30, 58, 138, 0.2)"
                 initial={{ height: 0, y: 150 }}
-                animate={{ 
-                  height: bar.height, 
-                  y: 150 - bar.height,
-                }}
+                animate={{ height: bar.height, y: 150 - bar.height }}
                 transition={{
                   duration: 1,
-                  delay: bar.delay,
+                  delay: i * 0.2,
                   repeat: Infinity,
                   repeatType: "reverse",
-                  repeatDelay: 2,
-                  ease: "easeInOut"
+                  repeatDelay: 2
                 }}
               />
             ))}
           </motion.svg>
 
-          {/* Improved animated pie chart */}
+          {/* Animated pie chart */}
           <motion.svg
-            className="absolute top-28 right-80 w-48 h-48 opacity-25 hidden lg:block"
+            className="absolute top-40 right-96 w-48 h-48 opacity-20 hidden lg:block"
             viewBox="0 0 100 100"
             initial={{ opacity: 0, rotate: -90 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
             {[
-              { start: 0, end: 120, color: 'rgba(30, 58, 138, 0.3)' },
-              { start: 120, end: 240, color: 'rgba(30, 58, 138, 0.2)' },
-              { start: 240, end: 360, color: 'rgba(30, 58, 138, 0.15)' },
+              { start: 0, end: 45, color: 'rgba(30, 58, 138, 0.3)' },
+              { start: 45, end: 170, color: 'rgba(30, 58, 138, 0.2)' },
+              { start: 170, end: 360, color: 'rgba(30, 58, 138, 0.1)' },
             ].map((segment, i) => (
               <motion.path
                 key={`segment-${i}`}
                 d={`M50,50 L${50 + 40 * Math.cos(segment.start * Math.PI / 180)},${50 + 40 * Math.sin(segment.start * Math.PI / 180)} A40,40 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(segment.end * Math.PI / 180)},${50 + 40 * Math.sin(segment.end * Math.PI / 180)} Z`}
                 fill={segment.color}
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ 
-                  pathLength: 1, 
-                  opacity: 1,
-                  rotate: [0, 10, 0]
-                }}
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
                 transition={{
-                  duration: 2,
-                  delay: i * 0.2,
-                  rotate: {
-                    duration: 3,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    ease: "easeInOut"
-                  }
+                  duration: 1.5,
+                  delay: i * 0.3,
+                  ease: "easeInOut"
                 }}
               />
             ))}
           </motion.svg>
 
-          {/* Improved dental icon matching reference */}
+          {/* Modern dental icon */}
           <motion.svg
-            className="absolute top-44 right-32 w-28 h-28 opacity-25 hidden md:block"
+            className="absolute top-60 right-40 w-32 h-32 opacity-20 hidden md:block"
             viewBox="0 0 100 100"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1 }}
           >
             <motion.path
-              d="M35,25 C35,25 38,20 50,20 C62,20 65,25 65,25 C65,25 80,35 80,55 C80,85 65,95 50,95 C35,95 20,85 20,55 C20,35 35,25 35,25"
+              d="M50,20 C65,20 75,30 75,45 C75,60 70,80 50,80 C30,80 25,60 25,45 C25,30 35,20 50,20"
               fill="none"
               stroke="rgba(30, 58, 138, 0.3)"
               strokeWidth="2"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 2 }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
             />
-            {/* Cross icon */}
             <motion.g
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
             >
-              <circle
-                cx="70"
-                cy="30"
-                r="12"
-                fill="rgba(30, 58, 138, 0.1)"
+              <line
+                x1="42"
+                y1="45"
+                x2="58"
+                y2="45"
                 stroke="rgba(30, 58, 138, 0.3)"
                 strokeWidth="2"
               />
               <line
-                x1="65"
-                y1="30"
-                x2="75"
-                y2="30"
-                stroke="rgba(30, 58, 138, 0.3)"
-                strokeWidth="2"
-              />
-              <line
-                x1="70"
-                y1="25"
-                x2="70"
-                y2="35"
+                x1="50"
+                y1="37"
+                x2="50"
+                y2="53"
                 stroke="rgba(30, 58, 138, 0.3)"
                 strokeWidth="2"
               />
             </motion.g>
           </motion.svg>
 
-          {/* Added trend line chart */}
-          <motion.svg
-            className="absolute top-60 right-56 w-64 h-32 opacity-20 hidden lg:block"
-            viewBox="0 0 200 100"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
+          {/* Data connection lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-10">
             <motion.path
-              d="M0,80 C40,70 80,60 120,40 C160,20 180,10 200,10"
+              d="M100,100 C150,150 200,50 250,100 C300,150 350,50 400,100"
               fill="none"
-              stroke="rgba(30, 58, 138, 0.3)"
+              stroke="rgba(30, 58, 138, 0.2)"
               strokeWidth="2"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 2 }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
             />
-            <motion.circle
-              cx="120"
-              cy="40"
-              r="3"
-              fill="rgba(30, 58, 138, 0.3)"
-              initial={{ scale: 0 }}
-              animate={{ scale: [1, 1.5, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-          </motion.svg>
+          </svg>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="relative container mx-auto px-4 pt-16 pb-8 flex flex-col min-h-[85vh]">
-        <div className="max-w-3xl mb-auto">
+      <div className="relative container mx-auto px-4 pt-20 pb-16 flex items-center min-h-[85vh]">
+        <div className="max-w-3xl">
           <motion.h1
             className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6"
             initial={{ opacity: 0, y: 20 }}
@@ -229,7 +203,7 @@ export default function Hero() {
           </motion.p>
           
           <motion.div 
-            className="flex flex-col sm:flex-row gap-4 mb-12"
+            className="flex flex-col sm:flex-row gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -253,21 +227,6 @@ export default function Hero() {
             </Link>
           </motion.div>
         </div>
-
-        {/* Power of Data-Driven Decisions section */}
-        <motion.div 
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          <h2 className="text-3xl font-bold text-mednavi-blue mb-2">
-            The Power of Data-Driven Decisions
-          </h2>
-          <p className="text-gray-600">
-            See how data analytics transforms dental practice performance
-          </p>
-        </motion.div>
       </div>
     </section>
   )
