@@ -89,11 +89,17 @@ const KPIDisplay = ({ value, label }: { value: string; label: string }) => (
 const generateMonthlyPatients = (baseValue: number, improvement: number = 0): ChartDataPoint[] => {
   const seasonality = [0.85, 0.9, 1.1, 1.2, 1.15, 1.1, 1.05, 1, 0.95, 0.9, 0.85, 1]
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  
-  return months.map((month, i) => ({
-    month,
-    value: Math.round((baseValue + (improvement * seasonality[i])) * seasonality[i])
-  }))
+
+  return months.map((month, i) => {
+    const seasonalFactor = seasonality[i]
+    const value = Math.round(baseValue * seasonalFactor)
+    const improvedValue = improvement ? Math.round((baseValue + improvement) * seasonalFactor) : undefined
+    return {
+      month,
+      value,
+      ...(improvement ? { improvedValue } : {}),
+    }
+  })
 }
 
 const generateProductionData = (baseValue: number, improvement: number = 0): ChartDataPoint[] => {
@@ -348,7 +354,20 @@ export default function AnalyticsComparison() {
                           </Pie>
                           <Tooltip />
                         </PieChart>
-                      {patientActivityAnalysis.isComplete && (
+                      </ResponsiveContainer>
+                      <div className="text-center mt-4 font-medium">Scheduling Status</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="lg:w-1/3 mt-6 lg:mt-0">
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-gray-900">Patient Retention</h4>
+                  <p className="text-gray-600">
+                    Increase patient retention and recall effectiveness through personalized
+                    communication and targeted follow-up strategies informed by data analytics.
+                  </p>
+                  {patientActivityAnalysis.isComplete && (
                     <div className="space-y-2">
                       <KPIDisplay value="+10%" label="Active Patient Base" />
                       <KPIDisplay value="+15%" label="Recall Effectiveness" />
@@ -363,5 +382,3 @@ export default function AnalyticsComparison() {
     </section>
   )
 }
-
-export default AnalyticsComparison
