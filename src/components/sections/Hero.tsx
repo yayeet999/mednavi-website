@@ -62,7 +62,7 @@ export default function Hero() {
       },
     },
     interactivity: {
-      detectsOn: 'window',
+      detectsOn: "window" as const,
       events: {
         onHover: {
           enable: true,
