@@ -61,7 +61,7 @@ const MiniDashboard = () => {
           
           <TabsContent value="demographics">
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <StatCard
                   title="Total Patients"
                   value="1,020"
@@ -71,6 +71,16 @@ const MiniDashboard = () => {
                   title="New Patients"
                   value="203"
                   trend={8}
+                />
+                <StatCard
+                  title="Total Active Patients"
+                  value="78%"
+                  trend={5}
+                />
+                <StatCard
+                  title="Unscheduled Active"
+                  value="22%"
+                  trend={-3}
                 />
               </div>
               <div className="bg-white p-4 rounded-lg h-64">
@@ -99,7 +109,7 @@ const MiniDashboard = () => {
 
           <TabsContent value="revenue">
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <StatCard
                   title="Monthly Revenue"
                   value="$58,000"
@@ -109,6 +119,16 @@ const MiniDashboard = () => {
                   title="Collections"
                   value="$55,000"
                   trend={10}
+                />
+                <StatCard
+                  title="Avg Revenue/Patient"
+                  value="$285"
+                  trend={7}
+                />
+                <StatCard
+                  title="Avg Profit/Patient"
+                  value="$180"
+                  trend={4}
                 />
               </div>
               <div className="bg-white p-4 rounded-lg h-64">
