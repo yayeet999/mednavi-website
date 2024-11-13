@@ -3,153 +3,164 @@ import { useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import type { Engine } from '@tsparticles/engine'
+import dynamic from 'next/dynamic'
+import type { Container, Engine } from '@tsparticles/engine'
 import { loadSlim } from '@tsparticles/slim'
-import Particles from '@tsparticles/react'
+
+// Dynamically import Particles with a loading state
+const Particles = dynamic(() => import('@tsparticles/react'), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 bg-gradient-to-br from-blue-50/90 via-white/50 to-blue-50/80" />
+})
 
 const particlesOptions = {
- background: {
-   color: {
-     value: 'transparent',
-   },
- },
- particles: {
-   number: {
-     value: 80,
-     density: {
-       enable: true,
-       area: 800,
-     },
-   },
-   color: {
-     value: ['#1E3A8A', '#3B82F6', '#60A5FA'],
-   },
-   shape: {
-     type: 'circle',
-   },
-   opacity: {
-     value: 0.5,
-   },
-   size: {
-     value: { min: 1, max: 3 },
-   },
-   links: {
-     enable: true,
-     distance: 150,
-     color: '#1E3A8A',
-     opacity: 0.3,
-     width: 1,
-   },
-   move: {
-     enable: true,
-     speed: 2,
-     random: false,
-     straight: false,
-     outMode: 'bounce' as const,
-   },
- },
- interactivity: {
-   events: {
-     onHover: {
-       enable: true,
-       mode: 'grab',
-     },
-     onClick: {
-       enable: true,
-       mode: 'push',
-     },
-   },
-   modes: {
-     grab: {
-       distance: 140,
-       links: {
-         opacity: 0.5,
-       },
-     },
-     push: {
-       quantity: 4,
-     },
-   },
- },
- responsive: [
-   {
-     maxWidth: 768,
-     options: {
-       particles: {
-         number: {
-           value: 40,
-         },
-       },
-     },
-   },
- ],
+  background: {
+    color: {
+      value: 'transparent',
+    },
+  },
+  particles: {
+    number: {
+      value: 80,
+      density: {
+        enable: true,
+        area: 800,
+      },
+    },
+    color: {
+      value: ['#1E3A8A', '#3B82F6', '#60A5FA'],
+    },
+    shape: {
+      type: 'circle',
+    },
+    opacity: {
+      value: 0.5,
+    },
+    size: {
+      value: { min: 1, max: 3 },
+    },
+    links: {
+      enable: true,
+      distance: 150,
+      color: '#1E3A8A',
+      opacity: 0.3,
+      width: 1,
+    },
+    move: {
+      enable: true,
+      speed: 2,
+      random: false,
+      straight: false,
+      bounce: true,
+    },
+  },
+  interactivity: {
+    events: {
+      onHover: {
+        enable: true,
+        mode: 'grab',
+      },
+      onClick: {
+        enable: true,
+        mode: 'push',
+      },
+    },
+    modes: {
+      grab: {
+        distance: 140,
+        links: {
+          opacity: 0.5,
+        },
+      },
+      push: {
+        quantity: 4,
+      },
+    },
+  },
+  responsive: [
+    {
+      maxWidth: 768,
+      options: {
+        particles: {
+          number: {
+            value: 40,
+          },
+        },
+      },
+    },
+  ],
 }
 
 export default function Hero() {
- const particlesInit = useCallback(async (engine: Engine) => {
-   await loadSlim(engine)
- }, [])
+  const particlesInit = useCallback(async (engine: Engine) => {
+    await loadSlim(engine)
+  }, [])
 
- return (
-   <section className="relative min-h-[85vh] overflow-hidden">
-     <Particles
-       id="tsparticles"
-       className="absolute inset-0 -z-10"
-       init={particlesInit}
-       options={particlesOptions}
-     />
-     
-     <motion.div 
-       className="relative container mx-auto px-4 pt-32 pb-16 flex items-center min-h-[85vh]"
-       initial={{ opacity: 0 }}
-       animate={{ opacity: 1 }}
-       transition={{ duration: 1 }}
-     >
-       <div className="max-w-3xl">
-         <motion.h1
-           className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6"
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8 }}
-         >
-           Transforming Dental Data into Actionable Insights
-         </motion.h1>
-         
-         <motion.p 
-           className="text-xl text-gray-600 mb-8"
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8, delay: 0.2 }}
-         >
-           Empower your dental practice with real-time analytics to improve patient experience and operational efficiency.
-         </motion.p>
-         
-         <motion.div 
-           className="flex gap-4"
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8, delay: 0.4 }}
-         >
-           <Link href="/contact">
-             <Button 
-               size="lg" 
-               className="bg-mednavi-blue hover:bg-mednavi-blue/90 transform hover:scale-105 transition-transform"
-             >
-               Get Started
-             </Button>
-           </Link>
-           <Link href="/services">
-             <Button 
-               size="lg" 
-               variant="outline" 
-               className="border-mednavi-blue text-mednavi-blue hover:bg-mednavi-blue/10 transform hover:scale-105 transition-transform"
-             >
-               Learn More
-             </Button>
-           </Link>
-         </motion.div>
-       </div>
-     </motion.div>
-   </section>
- )
+  const particlesLoaded = useCallback(async (container: Container | undefined) => {
+    // Optional: You can use this callback to do something when particles are loaded
+  }, [])
+
+  return (
+    <section className="relative min-h-[85vh] overflow-hidden">
+      <Particles
+        id="tsparticles"
+        className="absolute inset-0 -z-10"
+        particlesLoaded={particlesLoaded}
+        init={particlesInit}
+        options={particlesOptions}
+      />
+      
+      <motion.div 
+        className="relative container mx-auto px-4 pt-32 pb-16 flex items-center min-h-[85vh]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <div className="max-w-3xl">
+          <motion.h1
+            className="text-5xl md:text-6xl font-bold text-mednavi-blue mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            Transforming Dental Data into Actionable Insights
+          </motion.h1>
+          
+          <motion.p 
+            className="text-xl text-gray-600 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            Empower your dental practice with real-time analytics to improve patient experience and operational efficiency.
+          </motion.p>
+          
+          <motion.div 
+            className="flex gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <Link href="/contact">
+              <Button 
+                size="lg" 
+                className="bg-mednavi-blue hover:bg-mednavi-blue/90 transform hover:scale-105 transition-transform"
+              >
+                Get Started
+              </Button>
+            </Link>
+            <Link href="/services">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-mednavi-blue text-mednavi-blue hover:bg-mednavi-blue/10 transform hover:scale-105 transition-transform"
+              >
+                Learn More
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
+    </section>
+  )
 }
