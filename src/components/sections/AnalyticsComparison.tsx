@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -62,33 +62,12 @@ const CustomSlider = ({
   defaultValue,
   isReverse = false 
 }: SliderProps) => {
-  const handleChange = (newValue: number) => {
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = Number(e.target.value);
     if (isReverse) {
-      onChange(newValue > defaultValue ? defaultValue : newValue);
+      onChange(Math.min(newValue, defaultValue));
     } else {
-      onChange(newValue < defaultValue ? defaultValue : newValue);
-    }
-  };
-
-  const getLockedStyle = () => {
-    if (isReverse) {
-      const percentage = (value / max) * 100;
-      return `linear-gradient(to right, 
-        rgba(37, 99, 235, 0.1) 0%,
-        rgba(37, 99, 235, 0.1) ${percentage}%,
-        rgba(229, 231, 235, 0.5) ${percentage}%,
-        rgba(229, 231, 235, 0.5) ${(defaultValue / max) * 100}%,
-        rgba(229, 231, 235, 0.1) ${(defaultValue / max) * 100}%,
-        rgba(229, 231, 235, 0.1) 100%)`;
-    } else {
-      const percentage = (value / max) * 100;
-      return `linear-gradient(to right, 
-        rgba(229, 231, 235, 0.1) 0%,
-        rgba(229, 231, 235, 0.1) ${(defaultValue / max) * 100}%,
-        rgba(37, 99, 235, 0.5) ${(defaultValue / max) * 100}%,
-        rgba(37, 99, 235, 0.5) ${percentage}%,
-        rgba(229, 231, 235, 0.1) ${percentage}%,
-        rgba(229, 231, 235, 0.1) 100%)`;
+      onChange(Math.max(newValue, defaultValue));
     }
   };
 
@@ -98,20 +77,31 @@ const CustomSlider = ({
         <span className="text-gray-700 text-lg">{label}</span>
         <span className="text-lg font-medium">{displayValue}</span>
       </div>
-      <div className="relative h-2 rounded-full bg-gray-200">
-        <div className="absolute inset-0 rounded-full" style={{ background: getLockedStyle() }} />
+      <div className="relative h-2">
+        <div 
+          className="absolute w-full h-full rounded-full"
+          style={{
+            background: isReverse
+              ? `linear-gradient(to right, #e5e7eb 0%, #e5e7eb ${(value/max)*100}%, #e5e7eb ${(value/max)*100}%, #e5e7eb ${(defaultValue/max)*100}%, rgba(229, 231, 235, 0.3) ${(defaultValue/max)*100}%, rgba(229, 231, 235, 0.3) 100%)`
+              : `linear-gradient(to right, rgba(229, 231, 235, 0.3) 0%, rgba(229, 231, 235, 0.3) ${(defaultValue/max)*100}%, #e5e7eb ${(defaultValue/max)*100}%, #e5e7eb ${(value/max)*100}%, rgba(229, 231, 235, 0.3) ${(value/max)*100}%, rgba(229, 231, 235, 0.3) 100%)`
+          }}
+        />
+        <div
+          className="absolute w-1 h-4 bg-blue-900 rounded-full top-1/2 -mt-2"
+          style={{ left: `${(defaultValue/max)*100}%` }}
+        />
         <input
           type="range"
           min={min}
           max={max}
           step={step}
           value={value}
-          onChange={(e) => handleChange(Number(e.target.value))}
-          className="absolute w-full h-full opacity-0 cursor-pointer"
+          onChange={handleSliderChange}
+          className="absolute w-full h-full cursor-pointer opacity-0 z-10"
         />
         <div 
-          className="absolute h-4 w-4 top-1/2 -mt-2 -ml-2 bg-white rounded-full shadow border border-gray-300"
-          style={{ left: `${(value / max) * 100}%` }}
+          className="absolute h-4 w-4 bg-white rounded-full shadow-md border border-gray-300 top-1/2 transform -translate-y-1/2"
+          style={{ left: `calc(${(value/max)*100}% - 8px)` }}
         />
       </div>
     </div>
@@ -136,16 +126,13 @@ const MiniDashboard = () => {
   );
 
   useEffect(() => {
-    // Calculate additional revenue from increased active patients
-    const additionalActivePatients = (Math.max(0, activePatients - 78) / 100) * TOTAL_PATIENTS;
+    const additionalActivePatients = Math.max(0, activePatients - 78) / 100 * TOTAL_PATIENTS;
     const additionalActiveRevenue = additionalActivePatients * revenuePerPatient;
 
-    // Calculate additional revenue from reduced unscheduled patients
     const currentActivePatients = (activePatients / 100) * TOTAL_PATIENTS;
-    const improvedSchedulingPatients = (Math.max(0, 22 - unscheduledPatients) / 100) * currentActivePatients;
+    const improvedSchedulingPatients = Math.max(0, 22 - unscheduledPatients) / 100 * currentActivePatients;
     const improvedSchedulingRevenue = improvedSchedulingPatients * revenuePerPatient;
 
-    // Total potential additional revenue
     const totalPotential = Math.min(additionalActiveRevenue + improvedSchedulingRevenue, 50000);
     setPotentialRevenue(Math.round(totalPotential));
   }, [activePatients, unscheduledPatients, revenuePerPatient]);
@@ -154,30 +141,33 @@ const MiniDashboard = () => {
     <Card className="w-full max-w-6xl mx-auto bg-gray-50">
       <CardContent className="p-6">
         <Tabs defaultValue="demographics" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6 bg-slate-900 p-1.5 rounded-xl shadow-md">
+          <TabsList className="flex w-full h-12 mb-6 bg-slate-900 p-1 rounded-xl overflow-hidden">
             <TabsTrigger 
               value="demographics"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-gray-400 data-[state=active]:bg-gray-200 data-[state=active]:text-blue-900 transition-all duration-200 hover:text-gray-200"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-400 rounded-lg transition-all duration-200
+                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200"
             >
-              <Users className="w-4 h-4" />
-              <span>Demographics</span>
+              <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="whitespace-nowrap">Demographics</span>
             </TabsTrigger>
             <TabsTrigger 
               value="revenue"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-gray-400 data-[state=active]:bg-gray-200 data-[state=active]:text-blue-900 transition-all duration-200 hover:text-gray-200"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-400 rounded-lg transition-all duration-200
+                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200"
             >
-              <BarChart2 className="w-4 h-4" />
-              <span>Revenue</span>
+              <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="whitespace-nowrap">Revenue</span>
             </TabsTrigger>
             <TabsTrigger 
               value="growth"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-gray-400 data-[state=active]:bg-gray-200 data-[state=active]:text-blue-900 transition-all duration-200 hover:text-gray-200"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-400 rounded-lg transition-all duration-200
+                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200"
             >
-              <TrendingUp className="w-4 h-4" />
-              <span>Growth Potential</span>
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="whitespace-nowrap">Growth Potential</span>
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="demographics">
             <div className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -284,8 +274,8 @@ const MiniDashboard = () => {
 
               <div className="flex flex-col lg:flex-row lg:space-x-8">
                 <div className="lg:w-2/5 mb-8 lg:mb-0">
-                  <div className="bg-white p-6 rounded-lg shadow-md h-full">
-                    <div className="h-64">
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                    <div className="relative h-64">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
@@ -324,10 +314,7 @@ const MiniDashboard = () => {
                             textAnchor="middle"
                             dominantBaseline="middle"
                             fill="#6B7280"
-                            style={{
-                              fontSize: '13px',
-                              fontFamily: 'system-ui'
-                            }}
+                            className="text-sm"
                           >
                             Potential
                           </text>
@@ -337,10 +324,7 @@ const MiniDashboard = () => {
                             textAnchor="middle"
                             dominantBaseline="middle"
                             fill="#6B7280"
-                            style={{
-                              fontSize: '13px',
-                              fontFamily: 'system-ui'
-                            }}
+                            className="text-sm"
                           >
                             Monthly
                           </text>
@@ -350,24 +334,18 @@ const MiniDashboard = () => {
                             textAnchor="middle"
                             dominantBaseline="middle"
                             fill="#6B7280"
-                            style={{
-                              fontSize: '13px',
-                              fontFamily: 'system-ui'
-                            }}
+                            className="text-sm"
                           >
                             Improvement
                           </text>
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                    <p className="text-sm font-semibold text-[#1e3a8a] text-center mt-4">
-                      Potential improvements in revenue powered by mednavi's data-driven insights
-                    </p>
                   </div>
                 </div>
 
-                <div className="lg:w-3/5">
-                  <div className="bg-white p-6 rounded-lg shadow-md">
+                <div className="lg:w-3/5 flex flex-col">
+                  <div className="bg-white p-6 rounded-lg shadow-md flex-grow">
                     <div className="space-y-8">
                       <div className="relative">
                         <CustomSlider
@@ -424,6 +402,11 @@ const MiniDashboard = () => {
                         )}
                       </div>
                     </div>
+                  </div>
+                  <div className="mt-6 px-6">
+                    <p className="text-lg text-[#1e3a8a] font-medium">
+                      Potential improvements in revenue powered by mednavi's data-driven insights
+                    </p>
                   </div>
                 </div>
               </div>
