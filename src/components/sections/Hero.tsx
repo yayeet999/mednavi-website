@@ -27,7 +27,7 @@ export default function Hero() {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent" />
 
-        {/* Subtle computational data flow waves */}
+        {/* Subtle computational data waves */}
         <motion.div
           className="absolute inset-0 w-full h-full opacity-10"
           initial={{ opacity: 0 }}
@@ -41,16 +41,67 @@ export default function Hero() {
         />
 
         {/* Data visualization elements */}
-        <div className="absolute inset-0">
-          {/* Improved bar chart with uptrend alignment */}
+        <div className="absolute inset-0 flex flex-col items-end justify-center pr-20 space-y-8">
+          {/* Enhanced pie chart with smoother, dynamic animations */}
           <motion.svg
-            className="absolute top-20 right-20 w-64 h-48 opacity-20 hidden md:block"
+            className="w-48 h-48 opacity-20 hidden lg:block"
+            viewBox="0 0 100 100"
+            initial={{ opacity: 0, rotate: -90 }}
+            animate={{ opacity: 1, rotate: 0 }}
+            transition={{ duration: 1 }}
+          >
+            {[{ start: 0, end: 90, color: 'rgba(30, 58, 138, 0.3)' }, { start: 90, end: 180, color: 'rgba(30, 58, 138, 0.2)' }, { start: 180, end: 360, color: 'rgba(30, 58, 138, 0.15)' }].map((segment, i) => (
+              <motion.path
+                key={`segment-${i}`}
+                d={`M50,50 L${50 + 40 * Math.cos(segment.start * Math.PI / 180)},${50 + 40 * Math.sin(segment.start * Math.PI / 180)} A40,40 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(segment.end * Math.PI / 180)},${50 + 40 * Math.sin(segment.end * Math.PI / 180)} Z`}
+                fill={segment.color}
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{
+                  duration: 1.5,
+                  delay: i * 0.3,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  repeatDelay: 2,
+                }}
+              />
+            ))}
+            {/* Continuous slow spin with intermittent segment changes */}
+            <motion.g
+              initial={{ rotate: 0 }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+              {[{ start: 0, end: 45, color: 'rgba(30, 58, 138, 0.4)' }, { start: 45, end: 170, color: 'rgba(30, 58, 138, 0.25)' }, { start: 170, end: 360, color: 'rgba(30, 58, 138, 0.2)' }].map((segment, i) => (
+                <motion.path
+                  key={`dynamic-segment-${i}`}
+                  d={`M50,50 L${50 + 40 * Math.cos(segment.start * Math.PI / 180)},${50 + 40 * Math.sin(segment.start * Math.PI / 180)} A40,40 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(segment.end * Math.PI / 180)},${50 + 40 * Math.sin(segment.end * Math.PI / 180)} Z`}
+                  fill={segment.color}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{
+                    delay: i * 0.5,
+                    duration: 1,
+                    repeat: Infinity,
+                    repeatType: "mirror",
+                    repeatDelay: 5,
+                    ease: "easeInOut"
+                  }}
+                />
+              ))}
+            </motion.g>
+          </motion.svg>
+
+          {/* Enhanced bar chart positioned below pie chart with fixed alignment */}
+          <motion.svg
+            className="w-48 h-32 opacity-20 hidden md:block"
             viewBox="0 0 200 150"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
-            {[{ x: 20, height: 60 }, { x: 60, height: 90 }, { x: 100, height: 120 }, { x: 140, height: 150 }, { x: 180, height: 180 }].map((bar, i) => (
+            {[{ x: 20, height: 40 }, { x: 60, height: 80 }, { x: 100, height: 100 }, { x: 140, height: 120 }, { x: 180, height: 140 }].map((bar, i) => (
               <motion.rect
                 key={`bar-${i}`}
                 x={bar.x - 15}
@@ -71,58 +122,6 @@ export default function Hero() {
               />
             ))}
           </motion.svg>
-
-          {/* Enhanced pie chart with continuous smooth animations */}
-          <motion.svg
-            className="absolute top-40 right-96 w-48 h-48 opacity-20 hidden lg:block"
-            viewBox="0 0 100 100"
-            initial={{ opacity: 0, rotate: -90 }}
-            animate={{ opacity: 1, rotate: 0 }}
-            transition={{ duration: 1 }}
-          >
-            <motion.g
-              initial={{ rotate: 0 }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            >
-              {[{ start: 0, end: 90, color: 'rgba(30, 58, 138, 0.3)' }, { start: 90, end: 180, color: 'rgba(30, 58, 138, 0.2)' }, { start: 180, end: 360, color: 'rgba(30, 58, 138, 0.15)' }].map((segment, i) => (
-                <motion.path
-                  key={`segment-${i}`}
-                  d={`M50,50 L${50 + 40 * Math.cos(segment.start * Math.PI / 180)},${50 + 40 * Math.sin(segment.start * Math.PI / 180)} A40,40 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 40 * Math.cos(segment.end * Math.PI / 180)},${50 + 40 * Math.sin(segment.end * Math.PI / 180)} Z`}
-                  fill={segment.color}
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{
-                    duration: 1.5,
-                    delay: i * 0.3,
-                    ease: "easeInOut",
-                    repeat: Infinity,
-                    repeatType: "mirror",
-                    repeatDelay: 2,
-                  }}
-                />
-              ))}
-            </motion.g>
-          </motion.svg>
-
-          {/* Data flow animation */}
-          <svg className="absolute bottom-10 left-1/2 transform -translate-x-1/2 w-96 h-24 opacity-10">
-            <motion.path
-              d="M0,20 C50,10 150,30 200,20 C250,10 350,30 400,20"
-              fill="none"
-              stroke="rgba(30, 58, 138, 0.3)"
-              strokeWidth="2"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "mirror",
-                repeatDelay: 3,
-                ease: "easeInOut"
-              }}
-            />
-          </svg>
         </div>
       </div>
 
