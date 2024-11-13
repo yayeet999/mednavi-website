@@ -42,7 +42,7 @@ export default function Hero() {
 
         {/* Data visualization elements positioned closer to the center */}
         <div className="absolute inset-0 flex flex-col items-end justify-center pr-36 space-y-10">
-          {/* Enhanced pie chart with upgraded colors and size */}
+          {/* Enhanced 3D pie chart */}
           <motion.svg
             className="w-56 h-56 opacity-25 hidden lg:block"
             viewBox="0 0 100 100"
@@ -50,13 +50,19 @@ export default function Hero() {
             animate={{ opacity: 1, rotate: 0 }}
             transition={{ duration: 1 }}
           >
-            {[{ start: 0, end: 90, color: 'rgba(60, 78, 160, 0.4)' }, { start: 90, end: 180, color: 'rgba(60, 78, 160, 0.3)' }, { start: 180, end: 360, color: 'rgba(60, 78, 160, 0.2)' }].map((segment, i) => (
+            <defs>
+              <linearGradient id="3dGradientPie" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{ stopColor: 'rgba(60, 78, 160, 0.5)', stopOpacity: 1 }} />
+                <stop offset="100%" style={{ stopColor: 'rgba(30, 40, 80, 0.2)', stopOpacity: 1 }} />
+              </linearGradient>
+            </defs>
+            {[{ start: 0, end: 90 }, { start: 90, end: 180 }, { start: 180, end: 360 }].map((segment, i) => (
               <motion.path
                 key={`segment-${i}`}
                 d={`M50,50 L${50 + 45 * Math.cos(segment.start * Math.PI / 180)},${50 + 45 * Math.sin(segment.start * Math.PI / 180)} A45,45 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 45 * Math.cos(segment.end * Math.PI / 180)},${50 + 45 * Math.sin(segment.end * Math.PI / 180)} Z`}
-                fill={segment.color}
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
+                fill="url(#3dGradientPie)"
+                initial={{ opacity: 0, rotate: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{
                   duration: 1.5,
                   delay: i * 0.3,
@@ -67,48 +73,45 @@ export default function Hero() {
                 }}
               />
             ))}
-            {/* Continuous slow spin with intermittent segment changes */}
+            {/* Smooth continuous rotation */}
             <motion.g
               initial={{ rotate: 0 }}
               animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
             >
-              {[{ start: 0, end: 45, color: 'rgba(60, 78, 160, 0.5)' }, { start: 45, end: 170, color: 'rgba(60, 78, 160, 0.35)' }, { start: 170, end: 360, color: 'rgba(60, 78, 160, 0.3)' }].map((segment, i) => (
+              {[{ start: 0, end: 45 }, { start: 45, end: 170 }, { start: 170, end: 360 }].map((segment, i) => (
                 <motion.path
                   key={`dynamic-segment-${i}`}
                   d={`M50,50 L${50 + 45 * Math.cos(segment.start * Math.PI / 180)},${50 + 45 * Math.sin(segment.start * Math.PI / 180)} A45,45 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 45 * Math.cos(segment.end * Math.PI / 180)},${50 + 45 * Math.sin(segment.end * Math.PI / 180)} Z`}
-                  fill={segment.color}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{
-                    delay: i * 0.5,
-                    duration: 1,
-                    repeat: Infinity,
-                    repeatType: "mirror",
-                    repeatDelay: 5,
-                    ease: "easeInOut"
-                  }}
+                  fill="url(#3dGradientPie)"
                 />
               ))}
             </motion.g>
           </motion.svg>
 
-          {/* Enhanced bar chart positioned below pie chart with improved colors, size, and alignment */}
+          {/* Enhanced 3D bar chart positioned below pie chart with increased width and depth */}
           <motion.svg
-            className="w-56 h-40 opacity-25 hidden md:block"
-            viewBox="0 0 200 150"
+            className="w-64 h-40 opacity-25 hidden md:block"
+            viewBox="0 0 220 150"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           >
-            {[{ x: 20, height: 50 }, { x: 60, height: 80 }, { x: 100, height: 110 }, { x: 140, height: 130 }, { x: 180, height: 150 }].map((bar, i) => (
+            <defs>
+              <linearGradient id="3dGradientBar" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{ stopColor: 'rgba(60, 78, 160, 0.5)', stopOpacity: 1 }} />
+                <stop offset="100%" style={{ stopColor: 'rgba(30, 40, 80, 0.3)', stopOpacity: 1 }} />
+              </linearGradient>
+            </defs>
+            {[{ x: 20, height: 40 }, { x: 70, height: 80 }, { x: 120, height: 110 }, { x: 170, height: 130 }, { x: 220, height: 140 }].map((bar, i) => (
               <motion.rect
                 key={`bar-${i}`}
                 x={bar.x - 15}
                 width="30"
                 y={150 - bar.height}
                 height={bar.height}
-                fill="rgba(60, 78, 160, 0.4)"
+                fill="url(#3dGradientBar)"
+                rx="3"
                 initial={{ height: 0, y: 150 }}
                 animate={{ height: bar.height, y: 150 - bar.height }}
                 transition={{
