@@ -42,7 +42,7 @@ export default function Hero() {
 
         {/* Data visualization elements positioned closer to the center */}
         <div className="absolute inset-0 flex flex-col items-end justify-center pr-36 space-y-10">
-          {/* Enhanced 3D pie chart with simple rotation */}
+          {/* Enhanced pie chart with distinct slices and continuous rotation */}
           <motion.svg
             className="w-56 h-56 opacity-25 hidden lg:block"
             viewBox="0 0 100 100"
@@ -56,12 +56,15 @@ export default function Hero() {
                 <stop offset="100%" style={{ stopColor: 'rgba(30, 40, 80, 0.2)', stopOpacity: 1 }} />
               </linearGradient>
             </defs>
-            {/* Single pie shape with continuous rotation */}
-            <motion.circle
-              cx="50"
-              cy="50"
-              r="45"
-              fill="url(#3dGradientPie)"
+            {[{ start: 0, end: 90, color: 'rgba(60, 78, 160, 0.4)' }, { start: 90, end: 180, color: 'rgba(60, 78, 160, 0.3)' }, { start: 180, end: 270, color: 'rgba(60, 78, 160, 0.2)' }, { start: 270, end: 360, color: 'rgba(60, 78, 160, 0.15)' }].map((segment, i) => (
+              <motion.path
+                key={`segment-${i}`}
+                d={`M50,50 L${50 + 45 * Math.cos(segment.start * Math.PI / 180)},${50 + 45 * Math.sin(segment.start * Math.PI / 180)} A45,45 0 ${segment.end - segment.start > 180 ? 1 : 0},1 ${50 + 45 * Math.cos(segment.end * Math.PI / 180)},${50 + 45 * Math.sin(segment.end * Math.PI / 180)} Z`}
+                fill={segment.color}
+              />
+            ))}
+            {/* Continuous slow rotation */}
+            <motion.g
               initial={{ rotate: 0 }}
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
