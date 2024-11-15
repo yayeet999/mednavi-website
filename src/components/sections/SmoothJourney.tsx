@@ -38,9 +38,6 @@ const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-  const [isInView, setIsInView] = useState(false);
-  const [canScroll, setCanScroll] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
@@ -56,51 +53,10 @@ const SmoothJourney: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        setIsInView(entry.isIntersecting);
-        if (entry.intersectionRatio > 0.7) {
-          setCanScroll(true);
-        } else {
-          setCanScroll(false);
-        }
-      },
-      {
-        threshold: [0, 0.7, 1.0]
-      }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   const handleWheel = useCallback((e: WheelEvent) => {
-    if (!canScroll || isAnimating || isMobile || isTransitioning) return;
-
-    if (currentIndex === 0 && e.deltaY < 0) {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCanScroll(false);
-        setIsTransitioning(false);
-      }, 2000);
-      return;
-    }
-
-    if (currentIndex === stations.length - 1 && e.deltaY > 0) {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCanScroll(false);
-        setIsTransitioning(false);
-      }, 2000);
-      return;
-    }
-
+    if (isAnimating || isMobile) return;
     e.preventDefault();
+    
     const direction = e.deltaY > 0 ? 1 : -1;
     const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
     
@@ -109,14 +65,23 @@ const SmoothJourney: React.FC = () => {
       setCurrentIndex(nextIndex);
       setTimeout(() => setIsAnimating(false), 1000);
     }
-  }, [currentIndex, isAnimating, canScroll, isMobile, isTransitioning]);
+  }, [currentIndex, isAnimating, isMobile]);
 
   useEffect(() => {
     const element = sectionRef.current;
     if (!element) return;
 
+    const preventDefaultScroll = (e: WheelEvent) => {
+      e.preventDefault();
+    };
+
+    element.addEventListener('wheel', preventDefaultScroll, { passive: false });
     element.addEventListener('wheel', handleWheel, { passive: false });
-    return () => element.removeEventListener('wheel', handleWheel);
+
+    return () => {
+      element.removeEventListener('wheel', preventDefaultScroll);
+      element.removeEventListener('wheel', handleWheel);
+    };
   }, [handleWheel]);
 
   const navigate = useCallback((index: number) => {
@@ -135,7 +100,7 @@ const SmoothJourney: React.FC = () => {
   return (
     <div 
       ref={sectionRef}
-      className="relative w-full h-screen bg-[#EBF4FF] overflow-hidden"
+      className="relative w-full h-[70vh] md:h-screen bg-[#EBF4FF] overflow-hidden"
     >
       <div 
         className="relative w-full h-full transition-transform duration-1000 ease-out"
@@ -195,9 +160,8 @@ const SmoothJourney: React.FC = () => {
         {stations.map((station, i) => (
           <div
             key={station.id}
-            className={`absolute transition-all duration-1000 ease-out
-                       ${i === currentIndex ? 'z-20' : 'z-10'}
-                       w-[300px] h-[175px] md:w-[700px] md:h-[400px]`}
+            className={`absolute w-[300px] md:w-[700px] h-[400px] transition-all duration-1000 ease-out
+                       ${i === currentIndex ? 'z-20' : 'z-10'}`}
             style={{
               left: station.x,
               top: station.y,
@@ -219,31 +183,27 @@ const SmoothJourney: React.FC = () => {
         ))}
       </div>
 
-      {isInView && (
-        <>
-          <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-50">
-            {stations.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(i)}
-                disabled={isAnimating}
-                className={`w-3 h-3 md:w-2.5 md:h-2.5 rounded-full transition-all duration-300
-                           ${i === currentIndex 
-                             ? 'bg-blue-500 scale-125' 
-                             : 'bg-blue-200 hover:bg-blue-300'}`}
-                aria-label={`Navigate to station ${i + 1}`}
-              />
-            ))}
-          </div>
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-50">
+        {stations.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => navigate(i)}
+            disabled={isAnimating}
+            className={`w-4 h-4 rounded-full transition-all duration-300
+                       ${i === currentIndex 
+                         ? 'bg-blue-500 scale-125' 
+                         : 'bg-blue-200 hover:bg-blue-300'}`}
+            aria-label={`Navigate to station ${i + 1}`}
+          />
+        ))}
+      </div>
 
-          <div className="fixed top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 bg-blue-100 rounded-full overflow-hidden z-50">
-            <div 
-              className="h-full bg-blue-500 transition-all duration-1000 ease-out"
-              style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
-            />
-          </div>
-        </>
-      )}
+      <div className="fixed top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 bg-blue-100 rounded-full overflow-hidden z-50">
+        <div 
+          className="h-full bg-blue-500 transition-all duration-1000 ease-out"
+          style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
+        />
+      </div>
     </div>
   );
 };
