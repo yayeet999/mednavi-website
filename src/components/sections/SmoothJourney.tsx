@@ -147,7 +147,7 @@ const SmoothJourney: React.FC = () => {
           document.body.style.overflow = '';
         }
       },
-      { threshold: 0 }
+      { threshold: 0 } // Trigger as soon as any part is visible
     );
 
     if (sectionRef.current) {
