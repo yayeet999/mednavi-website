@@ -298,7 +298,7 @@ const SmoothJourney: React.FC = () => {
         <>
           {/* Navigation Dots */}
           <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
-                          transition-all ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                          transition-opacity ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
             {stations.map((_, i) => (
               <button
                 key={i}
@@ -308,9 +308,9 @@ const SmoothJourney: React.FC = () => {
                   ${isMobile ? 'w-10 h-10' : 'w-4 h-4'}
                   rounded-full transform transition-all duration-300 will-change-transform
                   ${i === currentIndex 
-                    ? 'bg-blue-800 scale-110 ring-4 ring-blue-300' 
+                    ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-pulse-slow' 
                     : 'bg-blue-600 hover:bg-blue-700'}
-                  ${isMobile ? 'touch-manipulation' : 'animate-pulse-slow'}
+                  ${isMobile ? 'touch-manipulation' : ''}
                   disabled:opacity-50
                 `}
                 style={{
