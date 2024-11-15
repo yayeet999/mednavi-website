@@ -93,6 +93,11 @@ const SmoothJourney: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Scroll Lock States
+  const [scrollLockTop, setScrollLockTop] = useState(false);
+  const [scrollLockBottom, setScrollLockBottom] = useState(false);
+  const scrollLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Initialize and update window size and mobile status
   useEffect(() => {
     const handleResize = () => {
@@ -149,14 +154,14 @@ const SmoothJourney: React.FC = () => {
 
         // Scroll Locking
         if (isVisibleNow) {
-          document.body.style.overflow = 'hidden';
-          console.log('Scroll locked');
-        } else {
-          document.body.style.overflow = '';
-          console.log('Scroll unlocked');
+          // Automatically scroll to center the component
+          if (sectionRef.current) {
+            sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            console.log('Auto-scrolled to center SmoothJourney');
+          }
         }
       },
-      { threshold: 0 } // Trigger as soon as any part is visible
+      { threshold: 0.2 } // Trigger when 20% is visible
     );
 
     if (sectionRef.current) {
@@ -178,9 +183,25 @@ const SmoothJourney: React.FC = () => {
   const handleScroll = useCallback((e: WheelEvent) => {
     if (!isVisible || isAnimating || isMobile) return;
 
+    // Determine scroll direction
+    const direction = e.deltaY > 0 ? 'down' : 'up';
+    console.log(`Wheel scrolling ${direction}`);
+
+    // Check for scroll locks
+    if (direction === 'up' && scrollLockTop) {
+      e.preventDefault();
+      console.log('Scroll up is temporarily locked');
+      return;
+    }
+
+    if (direction === 'down' && scrollLockBottom) {
+      e.preventDefault();
+      console.log('Scroll down is temporarily locked');
+      return;
+    }
+
     e.preventDefault();
-    const direction = e.deltaY > 0 ? 1 : -1;
-    const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
+    const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + (direction === 'down' ? 1 : -1)));
 
     if (nextIndex !== currentIndex) {
       console.log(`Navigating from index ${currentIndex} to ${nextIndex}`);
@@ -188,7 +209,28 @@ const SmoothJourney: React.FC = () => {
       setCurrentIndex(nextIndex);
       setTimeout(() => setIsAnimating(false), 1000);
     }
-  }, [currentIndex, isAnimating, isMobile, isVisible]);
+
+    // Check if at top or bottom and set scroll locks
+    if (nextIndex === 0 && direction === 'up') {
+      setScrollLockTop(true);
+      console.log('Scroll up locked for 2.5 seconds');
+      if (scrollLockTimeoutRef.current) clearTimeout(scrollLockTimeoutRef.current);
+      scrollLockTimeoutRef.current = setTimeout(() => {
+        setScrollLockTop(false);
+        console.log('Scroll up lock released');
+      }, 2500);
+    }
+
+    if (nextIndex === stations.length - 1 && direction === 'down') {
+      setScrollLockBottom(true);
+      console.log('Scroll down locked for 2.5 seconds');
+      if (scrollLockTimeoutRef.current) clearTimeout(scrollLockTimeoutRef.current);
+      scrollLockTimeoutRef.current = setTimeout(() => {
+        setScrollLockBottom(false);
+        console.log('Scroll down lock released');
+      }, 2500);
+    }
+  }, [currentIndex, isAnimating, isVisible, isMobile, scrollLockTop, scrollLockBottom]);
 
   // Attach wheel event listener for desktop
   useEffect(() => {
@@ -219,6 +261,15 @@ const SmoothJourney: React.FC = () => {
     setCurrentIndex(index);
     setTimeout(() => setIsAnimating(false), 1000);
   }, [currentIndex, isAnimating]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollLockTimeoutRef.current) {
+        clearTimeout(scrollLockTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Ensure window size is set before rendering
   if (!mounted) {
