@@ -38,6 +38,8 @@ const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [isInView, setIsInView] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
@@ -53,8 +55,27 @@ const SmoothJourney: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsInView(entry.isIntersecting);
+        if (entry.isIntersecting && !hasInitialized) {
+          setHasInitialized(true);
+        }
+      },
+      { threshold: [0.2, 0.8] }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasInitialized]);
+
   const handleWheel = useCallback((e: WheelEvent) => {
-    if (isAnimating || isMobile) return;
+    if (!isInView || isAnimating || isMobile) return;
     e.preventDefault();
     
     const direction = e.deltaY > 0 ? 1 : -1;
@@ -65,14 +86,14 @@ const SmoothJourney: React.FC = () => {
       setCurrentIndex(nextIndex);
       setTimeout(() => setIsAnimating(false), 1000);
     }
-  }, [currentIndex, isAnimating, isMobile]);
+  }, [currentIndex, isAnimating, isMobile, isInView]);
 
   useEffect(() => {
     const element = sectionRef.current;
-    if (!element) return;
+    if (!element || isMobile) return;
 
     const preventDefaultScroll = (e: WheelEvent) => {
-      e.preventDefault();
+      if (isInView) e.preventDefault();
     };
 
     element.addEventListener('wheel', preventDefaultScroll, { passive: false });
@@ -82,7 +103,7 @@ const SmoothJourney: React.FC = () => {
       element.removeEventListener('wheel', preventDefaultScroll);
       element.removeEventListener('wheel', handleWheel);
     };
-  }, [handleWheel]);
+  }, [handleWheel, isInView, isMobile]);
 
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
@@ -96,6 +117,7 @@ const SmoothJourney: React.FC = () => {
   }
 
   const currentPosition = stations[currentIndex];
+  const mobileOffset = isMobile ? -150 : 0; // Adjust container position for mobile
 
   return (
     <div 
@@ -105,7 +127,7 @@ const SmoothJourney: React.FC = () => {
       <div 
         className="relative w-full h-full transition-transform duration-1000 ease-out"
         style={{
-          transform: `translate(${windowSize.width/2 - currentPosition.x}px, ${windowSize.height/2 - currentPosition.y}px)`
+          transform: `translate(${windowSize.width/2 - currentPosition.x}px, ${windowSize.height/2 - currentPosition.y + mobileOffset}px)`
         }}
       >
         <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
@@ -183,27 +205,31 @@ const SmoothJourney: React.FC = () => {
         ))}
       </div>
 
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-50">
-        {stations.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => navigate(i)}
-            disabled={isAnimating}
-            className={`w-4 h-4 rounded-full transition-all duration-300
-                       ${i === currentIndex 
-                         ? 'bg-blue-500 scale-125' 
-                         : 'bg-blue-200 hover:bg-blue-300'}`}
-            aria-label={`Navigate to station ${i + 1}`}
-          />
-        ))}
-      </div>
+      {isInView && (
+        <>
+          <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4 z-50">
+            {stations.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => navigate(i)}
+                disabled={isAnimating}
+                className={`w-5 h-5 md:w-4 md:h-4 rounded-full transition-all duration-300
+                           ${i === currentIndex 
+                             ? 'bg-blue-700 scale-125' 
+                             : 'bg-blue-400 hover:bg-blue-500'}`}
+                aria-label={`Navigate to station ${i + 1}`}
+              />
+            ))}
+          </div>
 
-      <div className="fixed top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 bg-blue-100 rounded-full overflow-hidden z-50">
-        <div 
-          className="h-full bg-blue-500 transition-all duration-1000 ease-out"
-          style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
-        />
-      </div>
+          <div className="fixed top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 bg-blue-100 rounded-full overflow-hidden z-50">
+            <div 
+              className="h-full bg-blue-500 transition-all duration-1000 ease-out"
+              style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
