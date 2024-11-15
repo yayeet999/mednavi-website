@@ -14,7 +14,7 @@ export default function Description() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="space-y-6 p-6 rounded-md lg:ml-10" // Adds left margin to move it toward the center
+            className="space-y-6 p-6 rounded-md lg:ml-10" // Moves text closer to the center on large screens
           >
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -66,7 +66,7 @@ export default function Description() {
             </motion.div>
           </motion.div>
 
-          {/* SVG Diagram - Hidden on mobile */}
+          {/* SVG Diagram - Larger Size and Hidden on Mobile */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -74,12 +74,12 @@ export default function Description() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="hidden lg:block relative"
           >
-            <div className="relative w-full h-[500px] lg:max-w-[1200px] mx-auto">
+            <div className="relative w-full h-[600px] lg:w-[800px] lg:h-[600px] mx-auto">
               <Image
                 src="/Minimalist 5 Cycle Diagram Graph.svg"
                 alt="MedNavi Practice Management Cycle"
                 fill
-                className="object-contain"
+                className="object-cover" // Changed to object-cover for a larger display
                 priority
               />
             </div>
