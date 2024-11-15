@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 
 const stations = [
@@ -151,6 +151,22 @@ const SmoothJourney: React.FC = () => {
     return () => observer.disconnect();
   }, [isMobile]);
 
+  // Scroll Locking: Prevent body scroll when isScrollLocked is true
+  useEffect(() => {
+    if (isScrollLocked) {
+      // Lock the body scroll
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Unlock the body scroll
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isScrollLocked]);
+
+  // Handle scroll to navigate between stations
   const handleScroll = useCallback((e: WheelEvent) => {
     if (!isDesktopVisible || isAnimating || isMobile || !isScrollLocked) return;
 
@@ -165,16 +181,22 @@ const SmoothJourney: React.FC = () => {
     }
   }, [currentIndex, isAnimating, isMobile, isDesktopVisible, isScrollLocked]);
 
+  // Attach wheel event listener for desktop
   useEffect(() => {
     if (isMobile) return;
 
     const section = sectionRef.current;
     if (!section) return;
 
-    section.addEventListener('wheel', handleScroll, { passive: false });
-    return () => section.removeEventListener('wheel', handleScroll);
+    const handleWheelEvent = (e: WheelEvent) => {
+      handleScroll(e);
+    };
+
+    section.addEventListener('wheel', handleWheelEvent, { passive: false });
+    return () => section.removeEventListener('wheel', handleWheelEvent);
   }, [handleScroll, isMobile]);
 
+  // Navigate to specific station
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
     setIsAnimating(true);
@@ -196,7 +218,7 @@ const SmoothJourney: React.FC = () => {
       <div 
         className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
         style={{
-          transform: `translate(${windowSize.width/2 - currentPosition.x}px, ${windowSize.height/2 - currentPosition.y + mobileOffset}px)`
+          transform: `translate(${windowSize.width / 2 - currentPosition.x}px, ${windowSize.height / 2 - currentPosition.y + mobileOffset}px)`
         }}
       >
         <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
@@ -256,16 +278,14 @@ const SmoothJourney: React.FC = () => {
             style={{
               left: station.x,
               top: station.y,
-              transform: `translate(-50%, -50%) scale(${
-                i === currentIndex ? 1 : 0.9
-              })`,
+              transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
               opacity: Math.abs(currentIndex - i) <= 1 ? 
                       1 - Math.abs(currentIndex - i) * 0.3 : 0,
             }}
           >
             <div className={`w-full h-full bg-white rounded-xl transition-shadow duration-500
                             ${i === currentIndex 
-                              ? 'shadow-[0_8px_30px_rgb(59,130,246,0.15)]' 
+                              ? 'shadow-[0_8px_30px_rgba(59,130,246,0.15)]' 
                               : 'shadow-lg'}`} 
             >
               {renderKPIBox(station.kpis)}
@@ -275,41 +295,44 @@ const SmoothJourney: React.FC = () => {
       </div>
 
       {isVisible && (
-        <div 
-          className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
-                      transition-all ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-        >
-          {stations.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => navigate(i)}
-              disabled={isAnimating}
-              className={`
-                ${isMobile ? 'w-10 h-10' : 'w-4 h-4'}
-                rounded-full transform transition-all duration-300 will-change-transform
-                ${i === currentIndex 
-                  ? 'bg-blue-800 scale-110 ring-4 ring-blue-300' 
-                  : 'bg-blue-600'}
-                ${isMobile ? 'touch-manipulation' : 'hover:bg-blue-700'}
-                disabled:opacity-50
-              `}
-              style={{
-                WebkitTapHighlightColor: 'transparent'
-              }}
-              aria-label={`Navigate to station ${i + 1}`}
-            />
-          ))}
-        </div>
-      )}
+        <>
+          {/* Navigation Dots */}
+          <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
+                          transition-all ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+            {stations.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => navigate(i)}
+                disabled={isAnimating}
+                className={`
+                  ${isMobile ? 'w-10 h-10' : 'w-4 h-4'}
+                  rounded-full transform transition-all duration-300 will-change-transform
+                  ${i === currentIndex 
+                    ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-pulse' 
+                    : 'bg-blue-600 hover:bg-blue-700'}
+                  ${isMobile ? 'touch-manipulation' : ''}
+                  disabled:opacity-50
+                `}
+                style={{
+                  WebkitTapHighlightColor: 'transparent'
+                }}
+                aria-label={`Navigate to station ${i + 1}`}
+                aria-current={i === currentIndex ? 'true' : 'false'}
+              />
+            ))}
+          </div>
 
-      {isVisible && !isMobile && (
-        <div className="absolute top-[5%] left-1/2 transform -translate-x-1/2 w-96 h-1 
-                       bg-blue-100 rounded-full overflow-hidden z-50">
-          <div 
-            className="h-full bg-blue-600 transition-all duration-1000 ease-out will-change-transform"
-            style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
-          />
-        </div>
+          {/* Progress Bar for Desktop */}
+          {!isMobile && isVisible && (
+            <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 
+                           bg-blue-100 rounded-full overflow-hidden z-50">
+              <div 
+                className="h-full bg-blue-600 transition-all duration-1000 ease-out will-change-transform"
+                style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   );
