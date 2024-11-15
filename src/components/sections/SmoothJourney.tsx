@@ -1,6 +1,6 @@
 'use client';  
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import DashboardContainer from './DashboardContainer'; // Make sure to adjust the import path as needed
+import DashboardContainer from '@/components/dashboard/DashboardContainer'; // Updated import path
 
 const stations = [
   { 
