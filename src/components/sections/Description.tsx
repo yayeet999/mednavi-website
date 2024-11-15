@@ -74,7 +74,8 @@ export default function Description() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="hidden lg:block relative"
           >
-            <div className="relative w-full h-[600px] lg:w-[800px] lg:h-[600px] mx-auto">
+            <div className="relative w-full h-[500px] lg:w-[700px] lg:h-[500px] mx-auto">
+
               <Image
                 src="/Minimalist 5 Cycle Diagram Graph.svg"
                 alt="MedNavi Practice Management Cycle"
