@@ -269,22 +269,37 @@ const SmoothJourney: React.FC = () => {
       if (scrollLockTimeoutRef.current) {
         clearTimeout(scrollLockTimeoutRef.current);
       }
+      document.body.style.overflow = '';
+      console.log('Full page scroll unlocked on cleanup');
     };
   }, []);
 
-  // **Added Code Below: Lock Full Page Scroll on Containers 2, 3, and 4 for Desktop and Very Wide Screens**
+  // **Added Code Below: Temporary Scroll Lock on First and Last Containers for Desktop and Very Wide Screens**
   useEffect(() => {
     const isVeryWideScreen = windowSize.width >= 1200; // Define "very wide" as 1200px or more
     if (!isMobile && isVeryWideScreen) {
       if (currentIndex >= 1 && currentIndex <= 3) { // Containers 2, 3, 4 (zero-based indices 1, 2, 3)
         document.body.style.overflow = 'hidden';
         console.log('Full page scroll locked');
-      } else { // Containers 1 and 5
+      } else if (currentIndex === 0 || currentIndex === 4) { // Containers 1 and 5
+        // Lock scrolling for 1 second
+        document.body.style.overflow = 'hidden';
+        console.log('Full page scroll temporarily locked for 1 second');
+
+        const timeout = setTimeout(() => {
+          document.body.style.overflow = '';
+          console.log('Full page scroll unlocked after 1 second');
+        }, 1000);
+
+        // Cleanup timeout if component unmounts or currentIndex changes
+        return () => clearTimeout(timeout);
+      } else {
+        // Ensure scroll is unlocked
         document.body.style.overflow = '';
         console.log('Full page scroll unlocked');
       }
     } else {
-      // For other devices or not very wide screens, ensure scroll is not locked
+      // For mobile or not very wide screens, ensure scroll is not locked
       document.body.style.overflow = '';
       console.log('Full page scroll unlocked for non-desktop or not very wide screens');
     }
