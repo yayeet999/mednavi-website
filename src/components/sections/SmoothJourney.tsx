@@ -79,12 +79,15 @@ const SmoothJourney: React.FC = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [windowSize, setWindowSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [autoScrollMuted, setAutoScrollMuted] = useState(false);
+  
   const sectionRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollMuteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Initialize and update window size
+  // Initialize and update window size and mobile status
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -93,17 +96,40 @@ const SmoothJourney: React.FC = () => {
         width: width,
         height: height
       });
-      console.log(`Window resized: width=${width}, height=${height}`);
+      setIsMobile(width < 768);
+      console.log(`Window resized: width=${width}, height=${height}, isMobile=${width < 768}`);
     };
+
+    // Set mounted to true after component mounts
+    setMounted(true);
+    console.log('Component mounted');
 
     // Initial check
     handleResize();
 
     // Add event listener
     window.addEventListener('resize', handleResize);
-    console.log('Resize listener attached');
 
-    return () => window.removeEventListener('resize', handleResize);
+    // Track previous scroll position
+    prevScrollY.current = window.scrollY;
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (autoScrollMuteTimeoutRef.current) clearTimeout(autoScrollMuteTimeoutRef.current);
+      document.body.style.overflow = '';
+      console.log('Cleanup: Resize listener removed and scroll unlocked');
+    };
+  }, []);
+
+  // Track previous scroll position
+  const prevScrollY = useRef<number>(window.scrollY);
+  useEffect(() => {
+    const handleScroll = () => {
+      prevScrollY.current = window.scrollY;
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Intersection Observer to detect when ~30% of SmoothJourney is visible
@@ -118,11 +144,12 @@ const SmoothJourney: React.FC = () => {
 
         if (isVisibleNow && !autoScrollMuted) {
           // Determine scroll direction based on previous scroll position
-          const scrollDirection = window.scrollY > prevScrollY.current ? 'down' : 'up';
-          console.log(`User is scrolling ${scrollDirection} into SmoothJourney`);
+          const currentScrollY = window.scrollY;
+          const direction = currentScrollY > prevScrollY.current ? 'down' : 'up';
+          console.log(`User is scrolling ${direction} into SmoothJourney`);
 
-          // Auto-scroll to first or last container based on scroll direction
-          if (scrollDirection === 'down') {
+          // Auto-scroll to first or last container based on direction
+          if (direction === 'down') {
             // Scroll down into SmoothJourney
             scrollToContainer(0);
             console.log('Auto-scrolled to first container');
@@ -157,16 +184,6 @@ const SmoothJourney: React.FC = () => {
       if (autoScrollMuteTimeoutRef.current) clearTimeout(autoScrollMuteTimeoutRef.current);
     };
   }, [autoScrollMuted]);
-
-  // Track previous scroll position
-  const prevScrollY = useRef<number>(window.scrollY);
-  useEffect(() => {
-    const handleScroll = () => {
-      prevScrollY.current = window.scrollY;
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Function to scroll to a specific container
   const scrollToContainer = (index: number) => {
