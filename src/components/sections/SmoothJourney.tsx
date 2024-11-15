@@ -1,5 +1,6 @@
 'use client';  
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import DashboardContainer from './DashboardContainer'; // Make sure to adjust the import path as needed
 
 const stations = [
   { 
@@ -385,7 +386,7 @@ const SmoothJourney: React.FC = () => {
           <div
             key={station.id}
             className={`absolute w-[300px] md:w-[700px] h-[400px] transition-transform duration-1000 ease-out will-change-transform
-                       ${i === currentIndex ? 'z-20' : 'z-10'}`}
+                        ${i === currentIndex ? 'z-20' : 'z-10'}`}
             style={{
               left: station.x,
               top: station.y,
@@ -399,7 +400,11 @@ const SmoothJourney: React.FC = () => {
                               ? 'shadow-[0_8px_30px_rgba(59,130,246,0.15)]' 
                               : 'shadow-lg'}`} 
             >
-              {renderKPIBox(station.kpis)}
+              {i === 0 ? (
+                <DashboardContainer />
+              ) : (
+                renderKPIBox(station.kpis)
+              )}
             </div>
           </div>
         ))}
