@@ -93,10 +93,10 @@ const SmoothJourney: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Scroll Lock States
-  const [scrollLockTop, setScrollLockTop] = useState(false);
-  const [scrollLockBottom, setScrollLockBottom] = useState(false);
-  const scrollLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Scroll Lock Timers
+  const autoScrollLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const boundaryScrollLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const manualScrollLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize and update window size and mobile status
   useEffect(() => {
@@ -113,6 +113,7 @@ const SmoothJourney: React.FC = () => {
 
     // Set mounted to true after component mounts
     setMounted(true);
+    console.log('Component mounted');
 
     // Initial check
     handleResize();
@@ -138,6 +139,8 @@ const SmoothJourney: React.FC = () => {
 
     handleScroll(); // Check initial position
     window.addEventListener('scroll', handleScroll);
+    console.log('Mobile scroll listener attached');
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile, mounted]);
 
@@ -152,13 +155,19 @@ const SmoothJourney: React.FC = () => {
         console.log('Desktop Visibility:', isVisibleNow);
         setIsVisible(isVisibleNow);
 
-        // Scroll Locking
         if (isVisibleNow) {
           // Automatically scroll to center the component
           if (sectionRef.current) {
             sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
             console.log('Auto-scrolled to center SmoothJourney');
           }
+          // Lock scroll for 2 seconds
+          lockScroll();
+          if (autoScrollLockTimeoutRef.current) clearTimeout(autoScrollLockTimeoutRef.current);
+          autoScrollLockTimeoutRef.current = setTimeout(() => {
+            unlockScroll();
+            console.log('Auto-scroll lock released');
+          }, 2000);
         }
       },
       { threshold: 0.2 } // Trigger when 20% is visible
@@ -174,10 +183,26 @@ const SmoothJourney: React.FC = () => {
         observer.unobserve(sectionRef.current);
         console.log('Intersection Observer detached');
       }
+      // Clear any existing scroll locks
+      if (autoScrollLockTimeoutRef.current) clearTimeout(autoScrollLockTimeoutRef.current);
+      if (boundaryScrollLockTimeoutRef.current) clearTimeout(boundaryScrollLockTimeoutRef.current);
+      if (manualScrollLockTimeoutRef.current) clearTimeout(manualScrollLockTimeoutRef.current);
       document.body.style.overflow = '';
       console.log('Scroll unlocked on cleanup');
     };
   }, [isMobile, mounted]);
+
+  // Function to lock scroll
+  const lockScroll = () => {
+    document.body.style.overflow = 'hidden';
+    console.log('Scroll locked');
+  };
+
+  // Function to unlock scroll
+  const unlockScroll = () => {
+    document.body.style.overflow = '';
+    console.log('Scroll unlocked');
+  };
 
   // Handle scroll to navigate between stations
   const handleScroll = useCallback((e: WheelEvent) => {
@@ -187,20 +212,56 @@ const SmoothJourney: React.FC = () => {
     const direction = e.deltaY > 0 ? 'down' : 'up';
     console.log(`Wheel scrolling ${direction}`);
 
-    // Check for scroll locks
-    if (direction === 'up' && scrollLockTop) {
+    // If user is on first container and scrolling up, lock scroll for 2 seconds
+    if (direction === 'up' && currentIndex === 0) {
       e.preventDefault();
-      console.log('Scroll up is temporarily locked');
+      console.log('Attempting to scroll up from first container');
+      // Lock scroll
+      lockScroll();
+      console.log('Scroll up locked for 2 seconds');
+
+      // Clear existing timeout
+      if (boundaryScrollLockTimeoutRef.current) clearTimeout(boundaryScrollLockTimeoutRef.current);
+      // Set timeout to unlock after 2 seconds
+      boundaryScrollLockTimeoutRef.current = setTimeout(() => {
+        unlockScroll();
+        console.log('Scroll up lock released');
+      }, 2000);
       return;
     }
 
-    if (direction === 'down' && scrollLockBottom) {
+    // If user is on last container and scrolling down, lock scroll for 2 seconds
+    if (direction === 'down' && currentIndex === stations.length - 1) {
       e.preventDefault();
-      console.log('Scroll down is temporarily locked');
+      console.log('Attempting to scroll down from last container');
+      // Lock scroll
+      lockScroll();
+      console.log('Scroll down locked for 2 seconds');
+
+      // Clear existing timeout
+      if (boundaryScrollLockTimeoutRef.current) clearTimeout(boundaryScrollLockTimeoutRef.current);
+      // Set timeout to unlock after 2 seconds
+      boundaryScrollLockTimeoutRef.current = setTimeout(() => {
+        unlockScroll();
+        console.log('Scroll down lock released');
+      }, 2000);
       return;
     }
 
+    // If user is on containers 2-4, lock page scroll
+    if (currentIndex > 0 && currentIndex < stations.length - 1) {
+      // Lock scroll to prevent page scrolling
+      lockScroll();
+      console.log('Scroll locked while navigating through SmoothJourney');
+
+      // Optionally, you can clear existing manual scroll lock timeout
+      if (manualScrollLockTimeoutRef.current) clearTimeout(manualScrollLockTimeoutRef.current);
+    }
+
+    // Prevent default scrolling behavior
     e.preventDefault();
+
+    // Calculate next index based on scroll direction
     const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + (direction === 'down' ? 1 : -1)));
 
     if (nextIndex !== currentIndex) {
@@ -210,27 +271,21 @@ const SmoothJourney: React.FC = () => {
       setTimeout(() => setIsAnimating(false), 1000);
     }
 
-    // Check if at top or bottom and set scroll locks
-    if (nextIndex === 0 && direction === 'up') {
-      setScrollLockTop(true);
-      console.log('Scroll up locked for 2.5 seconds');
-      if (scrollLockTimeoutRef.current) clearTimeout(scrollLockTimeoutRef.current);
-      scrollLockTimeoutRef.current = setTimeout(() => {
-        setScrollLockTop(false);
-        console.log('Scroll up lock released');
-      }, 2500);
-    }
+    // If after navigation, user is on first or last container, set a timeout to unlock scroll
+    if (nextIndex === 0 || nextIndex === stations.length - 1) {
+      // Clear any existing boundary scroll lock timeout
+      if (boundaryScrollLockTimeoutRef.current) clearTimeout(boundaryScrollLockTimeoutRef.current);
 
-    if (nextIndex === stations.length - 1 && direction === 'down') {
-      setScrollLockBottom(true);
-      console.log('Scroll down locked for 2.5 seconds');
-      if (scrollLockTimeoutRef.current) clearTimeout(scrollLockTimeoutRef.current);
-      scrollLockTimeoutRef.current = setTimeout(() => {
-        setScrollLockBottom(false);
-        console.log('Scroll down lock released');
-      }, 2500);
+      // Lock scroll for 2 seconds
+      lockScroll();
+      console.log('Scroll locked for boundary condition');
+
+      boundaryScrollLockTimeoutRef.current = setTimeout(() => {
+        unlockScroll();
+        console.log('Boundary scroll lock released');
+      }, 2000);
     }
-  }, [currentIndex, isAnimating, isVisible, isMobile, scrollLockTop, scrollLockBottom]);
+  }, [currentIndex, isAnimating, isVisible, isMobile, stations.length]);
 
   // Attach wheel event listener for desktop
   useEffect(() => {
@@ -260,14 +315,31 @@ const SmoothJourney: React.FC = () => {
     setIsAnimating(true);
     setCurrentIndex(index);
     setTimeout(() => setIsAnimating(false), 1000);
-  }, [currentIndex, isAnimating]);
+
+    // If navigating to first or last container, handle scroll lock
+    if (index === 0 || index === stations.length - 1) {
+      lockScroll();
+      console.log('Scroll locked due to navigation to boundary container');
+
+      // Clear existing boundary scroll lock timeout
+      if (boundaryScrollLockTimeoutRef.current) clearTimeout(boundaryScrollLockTimeoutRef.current);
+
+      // Set timeout to unlock scroll after 2 seconds
+      boundaryScrollLockTimeoutRef.current = setTimeout(() => {
+        unlockScroll();
+        console.log('Boundary scroll lock released after navigation');
+      }, 2000);
+    }
+  }, [isAnimating, currentIndex, stations.length]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (scrollLockTimeoutRef.current) {
-        clearTimeout(scrollLockTimeoutRef.current);
-      }
+      if (autoScrollLockTimeoutRef.current) clearTimeout(autoScrollLockTimeoutRef.current);
+      if (boundaryScrollLockTimeoutRef.current) clearTimeout(boundaryScrollLockTimeoutRef.current);
+      if (manualScrollLockTimeoutRef.current) clearTimeout(manualScrollLockTimeoutRef.current);
+      document.body.style.overflow = '';
+      console.log('Component unmounted, scroll unlocked');
     };
   }, []);
 
