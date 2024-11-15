@@ -87,25 +87,31 @@ const renderKPIBox = (kpis: typeof stations[0]['kpis']) => (
 const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [windowSize, setWindowSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // Initialize and update window size and mobile status
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
+      const height = window.innerHeight;
       setWindowSize({
         width: width,
-        height: window.innerHeight
+        height: height
       });
       setIsMobile(width < 768);
+      console.log(`Window resized: width=${width}, height=${height}, isMobile=${width < 768}`);
     };
-    
+
+    // Set mounted to true after component mounts
+    setMounted(true);
+
     // Initial check
     handleResize();
-    
+
     // Add event listener
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -113,25 +119,26 @@ const SmoothJourney: React.FC = () => {
 
   // Visibility detection for mobile
   useEffect(() => {
-    if (!isMobile) return;
+    if (!isMobile || !mounted) return;
 
     const handleScroll = () => {
       if (!sectionRef.current) return;
-      
+
       const rect = sectionRef.current.getBoundingClientRect();
       const isVisibleNow = rect.top < window.innerHeight && rect.bottom >= 0;
-      
+
       setIsVisible(isVisibleNow);
+      console.log(`Mobile Scroll: isVisibleNow=${isVisibleNow}`);
     };
 
     handleScroll(); // Check initial position
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile]);
+  }, [isMobile, mounted]);
 
   // Visibility detection for desktop using Intersection Observer
   useEffect(() => {
-    if (isMobile) return;
+    if (isMobile || !mounted) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -143,8 +150,10 @@ const SmoothJourney: React.FC = () => {
         // Scroll Locking
         if (isVisibleNow) {
           document.body.style.overflow = 'hidden';
+          console.log('Scroll locked');
         } else {
           document.body.style.overflow = '';
+          console.log('Scroll unlocked');
         }
       },
       { threshold: 0 } // Trigger as soon as any part is visible
@@ -152,15 +161,18 @@ const SmoothJourney: React.FC = () => {
 
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
+      console.log('Intersection Observer attached');
     }
 
     return () => {
       if (sectionRef.current) {
         observer.unobserve(sectionRef.current);
+        console.log('Intersection Observer detached');
       }
       document.body.style.overflow = '';
+      console.log('Scroll unlocked on cleanup');
     };
-  }, [isMobile]);
+  }, [isMobile, mounted]);
 
   // Handle scroll to navigate between stations
   const handleScroll = useCallback((e: WheelEvent) => {
@@ -169,8 +181,9 @@ const SmoothJourney: React.FC = () => {
     e.preventDefault();
     const direction = e.deltaY > 0 ? 1 : -1;
     const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
-    
+
     if (nextIndex !== currentIndex) {
+      console.log(`Navigating from index ${currentIndex} to ${nextIndex}`);
       setIsAnimating(true);
       setCurrentIndex(nextIndex);
       setTimeout(() => setIsAnimating(false), 1000);
@@ -179,29 +192,39 @@ const SmoothJourney: React.FC = () => {
 
   // Attach wheel event listener for desktop
   useEffect(() => {
-    if (isMobile) return;
+    if (isMobile || !mounted) return;
 
     const section = sectionRef.current;
     if (!section) return;
 
     const handleWheelEvent = (e: WheelEvent) => {
+      console.log('Wheel event detected');
       handleScroll(e);
     };
 
     section.addEventListener('wheel', handleWheelEvent, { passive: false });
-    return () => section.removeEventListener('wheel', handleWheelEvent);
-  }, [handleScroll, isMobile]);
+    console.log('Wheel event listener attached');
+
+    return () => {
+      section.removeEventListener('wheel', handleWheelEvent);
+      console.log('Wheel event listener detached');
+    };
+  }, [handleScroll, isMobile, mounted]);
 
   // Navigate to specific station
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
+    console.log(`Button clicked to navigate to station ${index + 1}`);
     setIsAnimating(true);
     setCurrentIndex(index);
     setTimeout(() => setIsAnimating(false), 1000);
   }, [currentIndex, isAnimating]);
 
   // Ensure window size is set before rendering
-  if (!windowSize.width || !windowSize.height) return null;
+  if (!mounted) {
+    console.log('Component not mounted yet');
+    return null;
+  }
 
   const currentPosition = stations[currentIndex];
   const mobileOffset = isMobile ? -150 : 0;
