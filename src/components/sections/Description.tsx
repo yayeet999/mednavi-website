@@ -14,7 +14,7 @@ export default function Description() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="space-y-6 p-6 rounded-md lg:mr-8" // Reduced margin to move closer to center
+            className="space-y-6 p-6 rounded-md lg:mr-2" // Reduced margin to move closer to center
           >
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
