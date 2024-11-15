@@ -138,7 +138,7 @@ const SmoothJourney: React.FC = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        setIsDesktopVisible(entry.isIntersecting);
+        setIsDesktopVisible(entry.intersectionRatio >= 0.75);
         setIsScrollLocked(entry.intersectionRatio >= 0.75);
       },
       { threshold: [0, 0.75, 1] }
@@ -308,9 +308,9 @@ const SmoothJourney: React.FC = () => {
                   ${isMobile ? 'w-10 h-10' : 'w-4 h-4'}
                   rounded-full transform transition-all duration-300 will-change-transform
                   ${i === currentIndex 
-                    ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-pulse' 
+                    ? 'bg-blue-800 scale-110 ring-4 ring-blue-300' 
                     : 'bg-blue-600 hover:bg-blue-700'}
-                  ${isMobile ? 'touch-manipulation' : ''}
+                  ${isMobile ? 'touch-manipulation' : 'animate-pulse-slow'}
                   disabled:opacity-50
                 `}
                 style={{
