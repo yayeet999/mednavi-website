@@ -69,12 +69,12 @@ module.exports = {
       },
       // Adding the pulse-slow animation with longer duration and more pronounced effect
       animation: {
-    'scale-up-down': 'scale-up-down 6s cubic-bezier(0.4, 0, 0.2, 1) infinite',
-},
-keyframes: {
-    'scale-up-down': [
-        { '0%, 100%': { transform: 'scale(1)' } },
-        { '50%': { transform: 'scale(1.05)' } },
+        'pulse-slow': 'pulse-slow 14s infinite', // Increased duration for slower pulses
+      },
+      keyframes: {
+        'pulse-slow': {
+          '0%, 100%': { opacity: 1, boxShadow: '0 0 0 0 rgba(59,130,246, 0.7)' },
+          '50%': { opacity: 0.6, boxShadow: '0 0 0 15px rgba(59,130,246, 0)' }, // Larger spread for a more subtle fade
         },
       },
     },
