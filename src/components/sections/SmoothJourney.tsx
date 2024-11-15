@@ -1,39 +1,5 @@
-'use client'
+'use client';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-
-// Static KPI Data
-const kpiData = [
-  {
-    revenue: { value: '120k', change: '+5.3%' },
-    users: { value: '750k', change: '+3.2%' },
-    conversion: { value: '12.5%', change: '+1.1%' },
-    growth: { value: '8.5%', change: '+2.0%' },
-  },
-  {
-    revenue: { value: '150k', change: '+6.1%' },
-    users: { value: '820k', change: '+4.0%' },
-    conversion: { value: '13.0%', change: '+1.3%' },
-    growth: { value: '9.0%', change: '+2.5%' },
-  },
-  {
-    revenue: { value: '180k', change: '+7.0%' },
-    users: { value: '900k', change: '+4.5%' },
-    conversion: { value: '14.2%', change: '+1.5%' },
-    growth: { value: '10.2%', change: '+3.0%' },
-  },
-  {
-    revenue: { value: '210k', change: '+8.2%' },
-    users: { value: '980k', change: '+5.0%' },
-    conversion: { value: '15.0%', change: '+1.8%' },
-    growth: { value: '11.0%', change: '+3.5%' },
-  },
-  {
-    revenue: { value: '240k', change: '+9.0%' },
-    users: { value: '1050k', change: '+5.5%' },
-    conversion: { value: '16.5%', change: '+2.0%' },
-    growth: { value: '12.0%', change: '+4.0%' },
-  },
-];
 
 const stations = [
   { id: 1, x: 400, y: 300 },
@@ -43,27 +9,28 @@ const stations = [
   { id: 5, x: 1000, y: 1800 },
 ];
 
-const renderKPIBox = (kpi) => (
+// KPI Box remains unchanged with dynamic values
+const renderKPIBox = () => (
   <div className="grid grid-cols-2 gap-4 md:gap-8 p-6 md:p-12 h-full">
     <div className="space-y-2 md:space-y-4">
       <div className="text-base md:text-lg text-gray-500">Revenue</div>
-      <div className="text-xl md:text-3xl font-semibold text-gray-800">${kpi.revenue.value}</div>
-      <div className="text-xs md:text-sm text-green-500">{kpi.revenue.change}</div>
+      <div className="text-xl md:text-3xl font-semibold text-gray-800">${(Math.random() * 100000).toFixed(0)}k</div>
+      <div className="text-xs md:text-sm text-green-500">+{(Math.random() * 20).toFixed(1)}%</div>
     </div>
     <div className="space-y-2 md:space-y-4">
       <div className="text-base md:text-lg text-gray-500">Users</div>
-      <div className="text-xl md:text-3xl font-semibold text-gray-800">{kpi.users.value}</div>
-      <div className="text-xs md:text-sm text-blue-500">{kpi.users.change}</div>
+      <div className="text-xl md:text-3xl font-semibold text-gray-800">{(Math.random() * 1000).toFixed(0)}k</div>
+      <div className="text-xs md:text-sm text-blue-500">+{(Math.random() * 15).toFixed(1)}%</div>
     </div>
     <div className="space-y-2 md:space-y-4">
       <div className="text-base md:text-lg text-gray-500">Conversion</div>
-      <div className="text-xl md:text-3xl font-semibold text-gray-800">{kpi.conversion.value}</div>
-      <div className="text-xs md:text-sm text-green-500">{kpi.conversion.change}</div>
+      <div className="text-xl md:text-3xl font-semibold text-gray-800">{(Math.random() * 100).toFixed(1)}%</div>
+      <div className="text-xs md:text-sm text-green-500">+{(Math.random() * 10).toFixed(1)}%</div>
     </div>
     <div className="space-y-2 md:space-y-4">
       <div className="text-base md:text-lg text-gray-500">Growth</div>
-      <div className="text-xl md:text-3xl font-semibold text-gray-800">{kpi.growth.value}</div>
-      <div className="text-xs md:text-sm text-blue-500">{kpi.growth.change}</div>
+      <div className="text-xl md:text-3xl font-semibold text-gray-800">{(Math.random() * 50).toFixed(1)}%</div>
+      <div className="text-xs md:text-sm text-blue-500">+{(Math.random() * 12).toFixed(1)}%</div>
     </div>
   </div>
 );
@@ -152,15 +119,11 @@ const SmoothJourney = () => {
 
   // Prevent page scroll when interacting with SmoothJourney
   useEffect(() => {
-    const preventScroll = (e) => {
-      if (isVisible) {
-        e.preventDefault();
-      }
-    };
-
     if (isVisible) {
+      // Lock the body scroll
       document.body.style.overflow = 'hidden';
     } else {
+      // Unlock the body scroll
       document.body.style.overflow = '';
     }
 
@@ -244,7 +207,7 @@ const SmoothJourney = () => {
               className={`w-full h-full bg-white rounded-xl transition-all duration-500
                           ${i === currentIndex ? 'shadow-[0_8px_30px_rgba(59,130,246,0.15)]' : 'shadow-lg'}`}
             >
-              {renderKPIBox(kpiData[i])}
+              {renderKPIBox()}
             </div>
           </div>
         ))}
@@ -265,7 +228,7 @@ const SmoothJourney = () => {
                                ? 'bg-blue-800 scale-125'
                                : 'bg-blue-600 hover:bg-blue-700'
                            }
-                           ${'animate-pulse-on-visible'}`}
+                           animate-pulse-on-visible`}
                 aria-label={`Navigate to station ${i + 1}`}
               />
             ))}
