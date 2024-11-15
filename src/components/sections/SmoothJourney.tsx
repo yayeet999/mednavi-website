@@ -136,7 +136,7 @@ const SmoothJourney: React.FC = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        const isVisibleNow = entry.intersectionRatio >= 0.75;
+        const isVisibleNow = entry.isIntersecting;
         console.log('Desktop Visibility:', isVisibleNow);
         setIsVisible(isVisibleNow);
 
@@ -147,7 +147,7 @@ const SmoothJourney: React.FC = () => {
           document.body.style.overflow = '';
         }
       },
-      { threshold: [0, 0.75, 1] }
+      { threshold: 0 }
     );
 
     if (sectionRef.current) {
