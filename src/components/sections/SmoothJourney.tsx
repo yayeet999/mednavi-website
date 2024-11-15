@@ -272,14 +272,21 @@ const SmoothJourney: React.FC = () => {
     };
   }, []);
 
-  // **Added Code Below: Lock Full Page Scroll on Containers 2, 3, and 4**
+  // **Added Code Below: Lock Full Page Scroll on Containers 2, 3, and 4 for Desktop and Very Wide Screens**
   useEffect(() => {
-    if (currentIndex >= 1 && currentIndex <= 3) { // Containers 2, 3, 4
-      document.body.style.overflow = 'hidden';
-      console.log('Full page scroll locked');
+    const isVeryWideScreen = windowSize.width >= 1200; // Define "very wide" as 1200px or more
+    if (!isMobile && isVeryWideScreen) {
+      if (currentIndex >= 1 && currentIndex <= 3) { // Containers 2, 3, 4 (zero-based indices 1, 2, 3)
+        document.body.style.overflow = 'hidden';
+        console.log('Full page scroll locked');
+      } else { // Containers 1 and 5
+        document.body.style.overflow = '';
+        console.log('Full page scroll unlocked');
+      }
     } else {
+      // For other devices or not very wide screens, ensure scroll is not locked
       document.body.style.overflow = '';
-      console.log('Full page scroll unlocked');
+      console.log('Full page scroll unlocked for non-desktop or not very wide screens');
     }
 
     // Cleanup on unmount
@@ -287,7 +294,7 @@ const SmoothJourney: React.FC = () => {
       document.body.style.overflow = '';
       console.log('Full page scroll unlocked on cleanup');
     };
-  }, [currentIndex]);
+  }, [currentIndex, isMobile, windowSize.width]);
   // **End of Added Code**
 
   // Ensure window size is set before rendering
