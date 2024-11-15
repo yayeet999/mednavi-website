@@ -1,6 +1,12 @@
 'use client'
 import React, { useState } from 'react';
-import { Home, Grid, MapPin, Bot } from 'lucide-react';
+import { Home, Grid, MapPin, BarChart2 } from 'lucide-react';
+
+const IconBox = ({ children }: { children: React.ReactNode }) => (
+  <div className="w-14 h-14 md:w-16 md:h-16 bg-[#E5F9FD] rounded-xl flex items-center justify-center">
+    {children}
+  </div>
+);
 
 export const DashboardContainer = () => {
   const [activePage, setActivePage] = useState('home');
@@ -11,108 +17,92 @@ export const DashboardContainer = () => {
 
   return (
     <div className="flex h-full w-full">
-      {/* Sidebar - Slimmer for both mobile and desktop */}
-      <div className="bg-white w-[40px] md:w-[50px] flex flex-col items-center pt-2 md:pt-4">
-        <button
-          onClick={() => showPage('home')}
-          className={`w-7 h-7 md:w-8 md:h-8 mb-3 rounded-full flex items-center justify-center cursor-pointer transition-colors
-                     ${activePage === 'home' ? 'bg-[#80deea]' : 'bg-[#e0f7fa] hover:bg-[#80deea]'}`}
-        >
-          <Home size={16} className="text-[#103d68]" />
-        </button>
-        <button
-          onClick={() => showPage('practice')}
-          className={`w-7 h-7 md:w-8 md:h-8 mb-3 rounded-full flex items-center justify-center cursor-pointer transition-colors
-                     ${activePage === 'practice' ? 'bg-[#80deea]' : 'bg-[#e0f7fa] hover:bg-[#80deea]'}`}
-        >
-          <Grid size={16} className="text-[#103d68]" />
-        </button>
-        <button
-          onClick={() => showPage('connect')}
-          className={`w-7 h-7 md:w-8 md:h-8 mb-3 rounded-full flex items-center justify-center cursor-pointer transition-colors
-                     ${activePage === 'connect' ? 'bg-[#80deea]' : 'bg-[#e0f7fa] hover:bg-[#80deea]'}`}
-        >
-          <MapPin size={16} className="text-[#103d68]" />
-        </button>
-        <button
-          onClick={() => showPage('reports')}
-          className={`w-7 h-7 md:w-8 md:h-8 mb-3 rounded-full flex items-center justify-center cursor-pointer transition-colors
-                     ${activePage === 'reports' ? 'bg-[#80deea]' : 'bg-[#e0f7fa] hover:bg-[#80deea]'}`}
-        >
-          <Bot size={16} className="text-[#103d68]" />
-        </button>
+      {/* Sidebar - Now with light mint background */}
+      <div className="bg-[#E5F9FD] w-[45px] md:w-[50px] flex flex-col items-center pt-3 md:pt-4">
+        {[
+          { id: 'home', icon: <Home className="text-[#103d68]" size={20} /> },
+          { id: 'practice', icon: <Grid className="text-[#103d68]" size={20} /> },
+          { id: 'connect', icon: <MapPin className="text-[#103d68]" size={20} /> },
+          { id: 'reports', icon: <BarChart2 className="text-[#103d68]" size={20} /> }
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => showPage(item.id)}
+            className={`w-8 h-8 md:w-9 md:h-9 mb-3 rounded-xl flex items-center justify-center cursor-pointer transition-colors
+                       ${activePage === item.id ? 'bg-white shadow-md' : 'bg-transparent hover:bg-white/50'}`}
+          >
+            {item.icon}
+          </button>
+        ))}
       </div>
 
-      {/* Main Content - Optimized spacing */}
-      <div className="flex-1 bg-[#103d68] p-2 md:p-4 text-white rounded-r-xl">
-        {/* Header - Reduced top margin */}
-        <div className="text-right mb-2">
-          <h1 className="text-lg md:text-xl">mednavi</h1>
+      {/* Main Content */}
+      <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col">
+        {/* Header */}
+        <div className="text-right p-3 md:p-4">
+          <h1 className="text-lg md:text-xl text-white">mednavi</h1>
         </div>
 
         {/* Content Pages */}
         {activePage === 'home' && (
-          <div className="flex flex-col h-[calc(100%-40px)] justify-between">
-            {/* Intro Box - More compact */}
-            <div className="bg-white text-[#103d68] p-3 md:p-4 rounded-xl text-center mb-2">
-              <p className="text-xs md:text-sm leading-tight mb-1">
+          <div className="flex flex-col h-[calc(100%-48px)] px-3 md:px-4 pb-3 md:pb-4">
+            {/* White Card */}
+            <div className="bg-white rounded-xl p-4 mb-4 flex flex-col items-center">
+              <p className="text-[#103d68] text-sm md:text-base text-center mb-2">
                 We don't do data as a feature, we do <strong>data as a complete service.</strong>
               </p>
-              <p className="text-xs md:text-sm leading-tight mb-1">
+              <p className="text-[#103d68] text-sm md:text-base text-center mb-2">
                 Bringing the same high-level tools used by <strong>Fortune 500 companies.</strong>
               </p>
-              <div className="flex justify-center gap-1 text-sm">
-                <span>✅</span>
-                <span>✅</span>
+              <p className="text-[#103d68] text-sm md:text-base text-center mb-2">Easy as...</p>
+              
+              {/* Steps Row */}
+              <div className="flex justify-between w-full mt-2">
+                {[
+                  { num: 1, icon: <Home size={24} className="text-[#40C4FF]" />, label: "Your Practice" },
+                  { num: 2, icon: <MapPin size={24} className="text-[#40C4FF]" />, label: "Connect your PMS" },
+                  { num: 3, icon: <BarChart2 size={24} className="text-[#40C4FF]" />, label: "Data Reports" }
+                ].map((step, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <div className="flex items-center mb-2">
+                      <div className="w-6 h-6 rounded-full bg-[#103d68] text-white flex items-center justify-center text-sm font-medium">
+                        {step.num}
+                      </div>
+                    </div>
+                    <IconBox>{step.icon}</IconBox>
+                    <p className="text-[#103d68] text-xs md:text-sm mt-2 font-medium">{step.label}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Steps - More compact layout */}
-            <div className="flex justify-around items-start my-2">
-              {[
-                { num: 1, icon: <Grid size={14} />, label: "Your Practice" },
-                { num: 2, icon: <MapPin size={14} />, label: "Connect your PMS" },
-                { num: 3, icon: <Bot size={14} />, label: "Data Reports" }
-              ].map((step, index) => (
-                <div key={index} className="text-center px-1">
-                  <div className="w-5 h-5 md:w-6 md:h-6 bg-white text-[#103d68] rounded-full flex items-center justify-center font-bold text-xs mb-1 mx-auto">
-                    {step.num}
-                  </div>
-                  <div className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-1 bg-white rounded-full flex items-center justify-center">
-                    {step.icon}
-                  </div>
-                  <p className="text-[10px] md:text-xs">{step.label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Info Boxes - Optimized height */}
-            <div className="flex gap-1 mt-2">
-              <div className="flex-1 h-12 md:h-16 bg-white rounded-lg"></div>
-              <div className="flex-1 h-12 md:h-16 bg-white rounded-lg"></div>
-              <div className="flex-1 h-12 md:h-16 bg-white rounded-lg"></div>
+            {/* Info Boxes */}
+            <div className="grid grid-cols-3 gap-2 mt-auto">
+              <div className="bg-white rounded-xl h-16 md:h-20"></div>
+              <div className="bg-white rounded-xl h-16 md:h-20"></div>
+              <div className="bg-white rounded-xl h-16 md:h-20"></div>
             </div>
           </div>
         )}
 
         {activePage === 'practice' && (
-          <div className="p-2">
-            <h2 className="text-base md:text-lg mb-2">Your Practice</h2>
-            <p className="text-xs md:text-sm">Practice management content goes here.</p>
+          <div className="p-4">
+            <h2 className="text-base md:text-lg mb-2 text-white">Your Practice</h2>
+            <p className="text-xs md:text-sm text-white">Practice management content goes here.</p>
           </div>
         )}
 
         {activePage === 'connect' && (
-          <div className="p-2">
-            <h2 className="text-base md:text-lg mb-2">Connect Your PMS</h2>
-            <p className="text-xs md:text-sm">PMS connection interface goes here.</p>
+          <div className="p-4">
+            <h2 className="text-base md:text-lg mb-2 text-white">Connect Your PMS</h2>
+            <p className="text-xs md:text-sm text-white">PMS connection interface goes here.</p>
           </div>
         )}
 
         {activePage === 'reports' && (
-          <div className="p-2">
-            <h2 className="text-base md:text-lg mb-2">Data Reports</h2>
-            <p className="text-xs md:text-sm">Reports and analytics content goes here.</p>
+          <div className="p-4">
+            <h2 className="text-base md:text-lg mb-2 text-white">Data Reports</h2>
+            <p className="text-xs md:text-sm text-white">Reports and analytics content goes here.</p>
           </div>
         )}
       </div>
