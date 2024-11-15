@@ -39,7 +39,11 @@ const SmoothJourney: React.FC = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [isVisible, setIsVisible] = useState(false);
+  const [isScrollLocked, setIsScrollLocked] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const lastScrollPosition = useRef(0);
+  const releaseTimeout = useRef<NodeJS.Timeout>();
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
@@ -49,7 +53,6 @@ const SmoothJourney: React.FC = () => {
         height: window.innerHeight
       });
     };
-    
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -57,10 +60,20 @@ const SmoothJourney: React.FC = () => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
+      (entries) => {
+        const entry = entries[0];
+        const visibleRatio = entry.intersectionRatio;
         setIsVisible(entry.isIntersecting);
+        
+        if (visibleRatio >= 0.75 && !isMobile) {
+          setIsScrollLocked(true);
+        } else if (visibleRatio < 0.75 && !isTransitioning) {
+          setIsScrollLocked(false);
+        }
       },
-      { threshold: 0.3 }
+      {
+        threshold: [0, 0.75, 1]
+      }
     );
 
     if (sectionRef.current) {
@@ -68,36 +81,55 @@ const SmoothJourney: React.FC = () => {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [isMobile, isTransitioning]);
 
   const handleScroll = useCallback((e: WheelEvent) => {
-    if (!isVisible || isAnimating || isMobile) return;
+    if (!isVisible || isAnimating || isMobile || !isScrollLocked || isTransitioning) return;
 
     e.preventDefault();
     const direction = e.deltaY > 0 ? 1 : -1;
     const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
-    
+
     if (nextIndex !== currentIndex) {
+      if (
+        (nextIndex === stations.length - 1 && direction > 0) ||
+        (nextIndex === 0 && direction < 0)
+      ) {
+        setIsTransitioning(true);
+        releaseTimeout.current = setTimeout(() => {
+          setIsScrollLocked(false);
+          setIsTransitioning(false);
+        }, 2500);
+      }
+
       setIsAnimating(true);
       setCurrentIndex(nextIndex);
       setTimeout(() => setIsAnimating(false), 1000);
     }
-  }, [currentIndex, isAnimating, isMobile, isVisible]);
+  }, [currentIndex, isAnimating, isMobile, isVisible, isScrollLocked, isTransitioning]);
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
+    if (!section || isMobile) return;
 
-    const handleWheel = (e: WheelEvent) => {
-      if (isVisible) {
+    const preventScroll = (e: WheelEvent) => {
+      if (isScrollLocked) {
         e.preventDefault();
         handleScroll(e);
       }
     };
 
-    section.addEventListener('wheel', handleWheel, { passive: false });
-    return () => section.removeEventListener('wheel', handleWheel);
-  }, [handleScroll, isVisible]);
+    section.addEventListener('wheel', preventScroll, { passive: false });
+    return () => section.removeEventListener('wheel', preventScroll);
+  }, [handleScroll, isScrollLocked, isMobile]);
+
+  useEffect(() => {
+    return () => {
+      if (releaseTimeout.current) {
+        clearTimeout(releaseTimeout.current);
+      }
+    };
+  }, []);
 
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
@@ -199,22 +231,25 @@ const SmoothJourney: React.FC = () => {
 
       {isVisible && (
         <>
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4 z-50">
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50">
             {stations.map((_, i) => (
               <button
                 key={i}
                 onClick={() => navigate(i)}
                 disabled={isAnimating}
-                className={`w-6 h-6 md:w-4 md:h-4 rounded-full transition-all duration-300
+                className={`w-8 h-8 md:w-4 md:h-4 rounded-full transition-all duration-300
                            ${i === currentIndex 
                              ? 'bg-blue-800 scale-125' 
-                             : 'bg-blue-600 hover:bg-blue-700'}`}
+                             : 'bg-blue-600 hover:bg-blue-700'}
+                           ${isMobile ? 'animate-pulse shadow-lg shadow-blue-400' : ''}
+                           disabled:opacity-50`}
                 aria-label={`Navigate to station ${i + 1}`}
               />
             ))}
           </div>
 
-          <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 bg-blue-100 rounded-full overflow-hidden z-50">
+          <div className="absolute top-[5%] left-1/2 transform -translate-x-1/2 w-96 h-1 
+                         bg-blue-100 rounded-full overflow-hidden z-50 transition-opacity duration-500">
             <div 
               className="h-full bg-blue-600 transition-all duration-1000 ease-out"
               style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
