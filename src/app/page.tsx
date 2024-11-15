@@ -1,10 +1,16 @@
 'use client'
 import { motion } from 'framer-motion'
+import dynamic from 'next/dynamic'
 import Hero from '@/components/sections/Hero'
 import KeyFeatures from '@/components/sections/KeyFeatures'
 import Features from '@/components/sections/Features'
 import AnalyticsComparison from '@/components/sections/AnalyticsComparison'
-import SmoothJourney from '@/components/sections/SmoothJourney'
+
+// Dynamically import SmoothJourney with no SSR
+const SmoothJourney = dynamic(
+  () => import('@/components/sections/SmoothJourney'),
+  { ssr: false }
+)
 
 const containerVariants = {
   hidden: { opacity: 0 },
