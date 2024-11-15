@@ -4,7 +4,8 @@ import { motion } from 'framer-motion'
 
 export default function Description() {
   return (
-    <section className="py-20 bg-white">
+    // Reduce py-20 to py-8 or remove it entirely if you want minimal padding
+    <section className="bg-white">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
@@ -42,7 +43,8 @@ export default function Description() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="hidden lg:block relative"
           >
-            <div className="relative w-full aspect-square max-w-[600px] mx-auto">
+            {/* Adjust the height of the container */}
+            <div className="relative w-full h-[400px] max-w-[600px] mx-auto">
               <Image
                 src="/Minimalist 5 Cycle Diagram Graph.svg"
                 alt="MedNavi Practice Management Cycle"
