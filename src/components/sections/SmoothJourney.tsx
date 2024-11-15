@@ -1,14 +1,7 @@
 'use client'
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 
-interface Station {
-  id: number;
-  x: number;
-  y: number;
-}
-
-// Increased spacing between stations
-const stations: Station[] = [
+const stations = [
   { id: 1, x: 400, y: 300 },
   { id: 2, x: 1800, y: 600 },
   { id: 3, x: 600, y: 1200 },
@@ -16,32 +9,7 @@ const stations: Station[] = [
   { id: 5, x: 1000, y: 1800 }
 ];
 
-const renderKPIBox = (index: number) => (
-  <div className="grid grid-cols-2 gap-8 p-12 h-full"> {/* Increased padding and gap */}
-    <div className="space-y-4"> {/* Increased spacing */}
-      <div className="text-lg text-gray-500">Revenue</div> {/* Increased text size */}
-      <div className="text-3xl font-semibold text-gray-800">${(Math.random() * 100000).toFixed(0)}k</div>
-      <div className="text-sm text-green-500">+{(Math.random() * 20).toFixed(1)}%</div>
-    </div>
-    <div className="space-y-4">
-      <div className="text-lg text-gray-500">Users</div>
-      <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 1000).toFixed(0)}k</div>
-      <div className="text-sm text-blue-500">+{(Math.random() * 15).toFixed(1)}%</div>
-    </div>
-    <div className="space-y-4">
-      <div className="text-lg text-gray-500">Conversion</div>
-      <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 100).toFixed(1)}%</div>
-      <div className="text-sm text-green-500">+{(Math.random() * 10).toFixed(1)}%</div>
-    </div>
-    <div className="space-y-4">
-      <div className="text-lg text-gray-500">Growth</div>
-      <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 50).toFixed(1)}%</div>
-      <div className="text-sm text-blue-500">+{(Math.random() * 12).toFixed(1)}%</div>
-    </div>
-  </div>
-);
-
-export default function SmoothJourney() {
+const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -49,23 +17,20 @@ export default function SmoothJourney() {
   const [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
-
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight
       });
     };
+    
+    // Initial size
+    handleResize();
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Intersection Observer to detect when section is in view
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -89,7 +54,9 @@ export default function SmoothJourney() {
     const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
     
     if (nextIndex !== currentIndex) {
-      navigate(nextIndex);
+      setIsAnimating(true);
+      setCurrentIndex(nextIndex);
+      setTimeout(() => setIsAnimating(false), 1000);
     }
   }, [currentIndex, isAnimating, isInView]);
 
@@ -112,21 +79,46 @@ export default function SmoothJourney() {
     };
   }, [handleWheel, isInView]);
 
-  const navigate = useCallback((index: number) => {
+  const navigate = (index: number) => {
     if (isAnimating || index === currentIndex) return;
     setIsAnimating(true);
     setCurrentIndex(index);
     setTimeout(() => setIsAnimating(false), 1000);
-  }, [currentIndex, isAnimating]);
+  };
 
-  const currentPosition = stations[currentIndex];
+  const renderKPIBox = () => (
+    <div className="grid grid-cols-2 gap-8 p-12 h-full">
+      <div className="space-y-4">
+        <div className="text-lg text-gray-500">Revenue</div>
+        <div className="text-3xl font-semibold text-gray-800">${(Math.random() * 100000).toFixed(0)}k</div>
+        <div className="text-sm text-green-500">+{(Math.random() * 20).toFixed(1)}%</div>
+      </div>
+      <div className="space-y-4">
+        <div className="text-lg text-gray-500">Users</div>
+        <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 1000).toFixed(0)}k</div>
+        <div className="text-sm text-blue-500">+{(Math.random() * 15).toFixed(1)}%</div>
+      </div>
+      <div className="space-y-4">
+        <div className="text-lg text-gray-500">Conversion</div>
+        <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 100).toFixed(1)}%</div>
+        <div className="text-sm text-green-500">+{(Math.random() * 10).toFixed(1)}%</div>
+      </div>
+      <div className="space-y-4">
+        <div className="text-lg text-gray-500">Growth</div>
+        <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 50).toFixed(1)}%</div>
+        <div className="text-sm text-blue-500">+{(Math.random() * 12).toFixed(1)}%</div>
+      </div>
+    </div>
+  );
 
   if (!windowSize.width || !windowSize.height) {
     return null;
   }
 
+  const currentPosition = stations[currentIndex];
+
   return (
-    <section 
+    <div 
       ref={sectionRef}
       className="relative w-full h-screen bg-[#EBF4FF] overflow-hidden"
     >
@@ -136,7 +128,7 @@ export default function SmoothJourney() {
           transform: `translate(${windowSize.width/2 - currentPosition.x}px, ${windowSize.height/2 - currentPosition.y}px)`
         }}
       >
-        <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}> {/* Increased SVG size */}
+        <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
           <defs>
             <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
@@ -157,7 +149,7 @@ export default function SmoothJourney() {
                       ${midX} ${(station.y + next.y) / 2}
                     T ${next.x} ${next.y}`}
                 stroke="url(#lineGradient)"
-                strokeWidth="5" {/* Increased stroke width */}
+                strokeWidth="5"
                 fill="none"
                 className={`transition-opacity duration-500
                            ${Math.abs(currentIndex - i) <= 1 ? 'opacity-100' : 'opacity-30'}`}
@@ -170,14 +162,14 @@ export default function SmoothJourney() {
               <circle
                 cx={station.x}
                 cy={station.y}
-                r="12" {/* Increased circle size */}
+                r="12"
                 fill="#3B82F6"
                 className="opacity-30"
               />
               <circle
                 cx={station.x}
                 cy={station.y}
-                r="6" {/* Increased circle size */}
+                r="6"
                 fill="#3B82F6"
                 className="opacity-70"
               />
@@ -189,7 +181,7 @@ export default function SmoothJourney() {
           <div
             key={station.id}
             className={`absolute w-[600px] h-[400px] transition-all duration-1000 ease-out
-                       ${i === currentIndex ? 'z-20' : 'z-10'}`} {/* Increased card size */}
+                       ${i === currentIndex ? 'z-20' : 'z-10'}`}
             style={{
               left: station.x,
               top: station.y,
@@ -205,7 +197,7 @@ export default function SmoothJourney() {
                               ? 'shadow-[0_8px_30px_rgb(59,130,246,0.15)]' 
                               : 'shadow-lg'}`} 
             >
-              {renderKPIBox(i)}
+              {renderKPIBox()}
             </div>
           </div>
         ))}
@@ -236,6 +228,8 @@ export default function SmoothJourney() {
           </div>
         </>
       )}
-    </section>
+    </div>
   );
-}
+};
+
+export default SmoothJourney;
