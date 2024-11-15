@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import Hero from '@/components/sections/Hero'
+import Description from '@/components/sections/Description'
 import KeyFeatures from '@/components/sections/KeyFeatures'
 import Features from '@/components/sections/Features'
 import AnalyticsComparison from '@/components/sections/AnalyticsComparison'
@@ -43,6 +44,9 @@ export default function Home() {
     >
       <motion.section variants={sectionVariants}>
         <Hero />
+      </motion.section>
+      <motion.section variants={sectionVariants}>
+        <Description />
       </motion.section>
       <motion.section variants={sectionVariants}>
         <SmoothJourney />
