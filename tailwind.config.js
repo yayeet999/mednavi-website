@@ -67,6 +67,16 @@ module.exports = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      // Adding the pulse-slow animation
+      animation: {
+        'pulse-slow': 'pulse-slow 4s infinite', // Slower pulse
+      },
+      keyframes: {
+        'pulse-slow': {
+          '0%, 100%': { opacity: 1, boxShadow: '0 0 0 0 rgba(59, 130, 246, 0.7)' },
+          '50%': { opacity: 0.7, boxShadow: '0 0 0 10px rgba(59, 130, 246, 0)' },
+        },
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
