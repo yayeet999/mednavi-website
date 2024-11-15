@@ -6,7 +6,7 @@ export default function Description() {
   return (
     <section className="bg-white py-8">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-[3fr_2fr] gap-12 items-center">
           
           {/* Text Content */}
           <motion.div
@@ -14,7 +14,7 @@ export default function Description() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="space-y-6 p-6 rounded-md lg:mr-2" // Reduced margin to move closer to center
+            className="space-y-6 p-6 rounded-md lg:ml-10" // Adds left margin to move it toward the center
           >
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -32,7 +32,7 @@ export default function Description() {
               className="space-y-4 text-black"
             >
               <p className="text-lg">
-                <strong className="text-mednavi-blue">Would you drive blindfolded</strong>, guessing when to refuel or service your car? Running your practice without the data is no different.
+                <strong className="text-mednavi-blue">Would you drive blindfolded</strong>, guessing when to refuel or service your car? Running your practice without the <strong style={{ color: '#333333' }}>right data</strong> is no different.
               </p>
 
               <motion.ul
@@ -43,15 +43,15 @@ export default function Description() {
               >
                 <li className="flex items-start">
                   <span className="w-3 h-3 rounded-full bg-mednavi-blue mt-1 mr-2"></span>
-                  <span>mednavi provides <strong className="text-mednavi-blue">advanced insights and strategies</strong> used by top organizations</span>
+                  <span>MedNavi provides <strong className="text-mednavi-blue">advanced insights and strategies</strong> used by top organizations</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-3 h-3 rounded-full bg-mednavi-blue mt-1 mr-2"></span>
-                  <span><strong>Affordable</strong> and tailored for <strong>smaller practices</strong></span>
+                  <span><strong style={{ color: '#333333' }}>Affordable</strong> and tailored for <strong style={{ color: '#333333' }}>smaller practices</strong></span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-3 h-3 rounded-full bg-mednavi-blue mt-1 mr-2"></span>
-                  <span>Focus on patient care while we handle the <strong>data and analytics</strong></span>
+                  <span>Focus on patient care while we handle the <strong style={{ color: '#333333' }}>data and analytics</strong></span>
                 </li>
               </motion.ul>
 
@@ -61,7 +61,7 @@ export default function Description() {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="text-lg"
               >
-                Staying competitive means knowing exactly how your practice is performing and where to improve. With mednavi, you'll have everything you need to <strong style={{ color: '#034660' }}>make smarter decisions and drive real growth</strong>.
+                Staying competitive means knowing exactly how your practice is performing and where to improve. With MedNavi, you'll have everything you need to <strong style={{ color: '#034660' }}>make smarter decisions and drive real growth</strong>.
               </motion.p>
             </motion.div>
           </motion.div>
