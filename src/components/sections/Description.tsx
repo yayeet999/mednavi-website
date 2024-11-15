@@ -44,7 +44,7 @@ export default function Description() {
           >
             <div className="relative w-full aspect-square max-w-[600px] mx-auto">
               <Image
-                src="/Minimalist 5 Cycle Diagram Graph - Copy.svg"
+                src="/Minimalist 5 Cycle Diagram Graph"
                 alt="MedNavi Practice Management Cycle"
                 fill
                 className="object-contain"
