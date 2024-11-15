@@ -385,7 +385,7 @@ const SmoothJourney: React.FC = () => {
         {stations.map((station, i) => (
           <div
             key={station.id}
-            className={`absolute w-[300px] md:w-[700px] h-[400px] transition-transform duration-1000 ease-out will-change-transform
+            className={`absolute w-[300px] md:w-[840px] h-[400px] md:h-[480px] transition-transform duration-1000 ease-out will-change-transform
                         ${i === currentIndex ? 'z-20' : 'z-10'}`}
             style={{
               left: station.x,
