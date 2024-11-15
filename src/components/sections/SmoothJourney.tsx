@@ -10,26 +10,26 @@ const stations = [
 ];
 
 const renderKPIBox = () => (
-  <div className="grid grid-cols-2 gap-8 p-12 h-full">
-    <div className="space-y-4">
-      <div className="text-lg text-gray-500">Revenue</div>
-      <div className="text-3xl font-semibold text-gray-800">${(Math.random() * 100000).toFixed(0)}k</div>
-      <div className="text-sm text-green-500">+{(Math.random() * 20).toFixed(1)}%</div>
+  <div className="grid grid-cols-2 gap-4 md:gap-8 p-6 md:p-12 h-full">
+    <div className="space-y-2 md:space-y-4">
+      <div className="text-base md:text-lg text-gray-500">Revenue</div>
+      <div className="text-xl md:text-3xl font-semibold text-gray-800">${(Math.random() * 100000).toFixed(0)}k</div>
+      <div className="text-xs md:text-sm text-green-500">+{(Math.random() * 20).toFixed(1)}%</div>
     </div>
-    <div className="space-y-4">
-      <div className="text-lg text-gray-500">Users</div>
-      <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 1000).toFixed(0)}k</div>
-      <div className="text-sm text-blue-500">+{(Math.random() * 15).toFixed(1)}%</div>
+    <div className="space-y-2 md:space-y-4">
+      <div className="text-base md:text-lg text-gray-500">Users</div>
+      <div className="text-xl md:text-3xl font-semibold text-gray-800">{(Math.random() * 1000).toFixed(0)}k</div>
+      <div className="text-xs md:text-sm text-blue-500">+{(Math.random() * 15).toFixed(1)}%</div>
     </div>
-    <div className="space-y-4">
-      <div className="text-lg text-gray-500">Conversion</div>
-      <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 100).toFixed(1)}%</div>
-      <div className="text-sm text-green-500">+{(Math.random() * 10).toFixed(1)}%</div>
+    <div className="space-y-2 md:space-y-4">
+      <div className="text-base md:text-lg text-gray-500">Conversion</div>
+      <div className="text-xl md:text-3xl font-semibold text-gray-800">{(Math.random() * 100).toFixed(1)}%</div>
+      <div className="text-xs md:text-sm text-green-500">+{(Math.random() * 10).toFixed(1)}%</div>
     </div>
-    <div className="space-y-4">
-      <div className="text-lg text-gray-500">Growth</div>
-      <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 50).toFixed(1)}%</div>
-      <div className="text-sm text-blue-500">+{(Math.random() * 12).toFixed(1)}%</div>
+    <div className="space-y-2 md:space-y-4">
+      <div className="text-base md:text-lg text-gray-500">Growth</div>
+      <div className="text-xl md:text-3xl font-semibold text-gray-800">{(Math.random() * 50).toFixed(1)}%</div>
+      <div className="text-xs md:text-sm text-blue-500">+{(Math.random() * 12).toFixed(1)}%</div>
     </div>
   </div>
 );
@@ -38,10 +38,8 @@ const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-  const [isInView, setIsInView] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Initialize window size
   useEffect(() => {
     function handleResize() {
       setWindowSize({
@@ -54,11 +52,11 @@ const SmoothJourney: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Scroll handler
-  const handleScroll = useCallback((e: WheelEvent) => {
-    if (isAnimating || !isInView) return;
-    
+  const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
+    
+    if (isAnimating) return;
+    
     const direction = e.deltaY > 0 ? 1 : -1;
     const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
     
@@ -67,47 +65,31 @@ const SmoothJourney: React.FC = () => {
       setCurrentIndex(nextIndex);
       setTimeout(() => setIsAnimating(false), 1000);
     }
-  }, [currentIndex, isAnimating, isInView]);
+  }, [currentIndex, isAnimating]);
 
-  // Intersection Observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setIsInView(true);
-        } else {
-          setIsInView(false);
-        }
-      },
-      {
-        threshold: 0.3,
-        rootMargin: '-10% 0px'
-      }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  // Attach scroll listener
   useEffect(() => {
     const element = sectionRef.current;
     if (!element) return;
 
-    element.addEventListener('wheel', handleScroll, { passive: false });
-    return () => element.removeEventListener('wheel', handleScroll);
-  }, [handleScroll]);
+    const preventDefaultScroll = (e: WheelEvent) => {
+      e.preventDefault();
+    };
 
-  // Navigation function
-  const navigate = (index: number) => {
+    element.addEventListener('wheel', preventDefaultScroll, { passive: false });
+    element.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      element.removeEventListener('wheel', preventDefaultScroll);
+      element.removeEventListener('wheel', handleWheel);
+    };
+  }, [handleWheel]);
+
+  const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
     setIsAnimating(true);
     setCurrentIndex(index);
     setTimeout(() => setIsAnimating(false), 1000);
-  };
+  }, [currentIndex, isAnimating]);
 
   if (!windowSize.width || !windowSize.height) {
     return null;
@@ -178,7 +160,7 @@ const SmoothJourney: React.FC = () => {
         {stations.map((station, i) => (
           <div
             key={station.id}
-            className={`absolute w-[600px] h-[400px] transition-all duration-1000 ease-out
+            className={`absolute w-[300px] md:w-[600px] h-[250px] md:h-[400px] transition-all duration-1000 ease-out
                        ${i === currentIndex ? 'z-20' : 'z-10'}`}
             style={{
               left: station.x,
@@ -201,32 +183,27 @@ const SmoothJourney: React.FC = () => {
         ))}
       </div>
 
-      {/* Navigation dots - Always visible when section is in view */}
-      {isInView && (
-        <>
-          <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-50">
-            {stations.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(i)}
-                disabled={isAnimating}
-                className={`w-3 h-3 rounded-full transition-all duration-300
-                           ${i === currentIndex 
-                             ? 'bg-blue-500 scale-125' 
-                             : 'bg-blue-200 hover:bg-blue-300'}`}
-                aria-label={`Navigate to station ${i + 1}`}
-              />
-            ))}
-          </div>
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-50">
+        {stations.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => navigate(i)}
+            disabled={isAnimating}
+            className={`w-3 h-3 rounded-full transition-all duration-300
+                       ${i === currentIndex 
+                         ? 'bg-blue-500 scale-125' 
+                         : 'bg-blue-200 hover:bg-blue-300'}`}
+            aria-label={`Navigate to station ${i + 1}`}
+          />
+        ))}
+      </div>
 
-          <div className="fixed top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 bg-blue-100 rounded-full overflow-hidden z-50">
-            <div 
-              className="h-full bg-blue-500 transition-all duration-1000 ease-out"
-              style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
-            />
-          </div>
-        </>
-      )}
+      <div className="fixed top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 bg-blue-100 rounded-full overflow-hidden z-50">
+        <div 
+          className="h-full bg-blue-500 transition-all duration-1000 ease-out"
+          style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
+        />
+      </div>
     </div>
   );
 };
