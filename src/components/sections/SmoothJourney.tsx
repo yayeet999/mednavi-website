@@ -35,12 +35,12 @@ const renderKPIBox = () => (
   </div>
 );
 
-const SmoothJourney = () => {
+const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   // Update window size
@@ -75,7 +75,7 @@ const SmoothJourney = () => {
 
   // Handle scroll to navigate between stations
   const handleScroll = useCallback(
-    (e) => {
+    (e: WheelEvent) => { // Added type annotation here
       if (!isVisible || isAnimating || isMobile) return;
 
       e.preventDefault();
@@ -96,7 +96,7 @@ const SmoothJourney = () => {
     const section = sectionRef.current;
     if (!section) return;
 
-    const handleWheel = (e) => {
+    const handleWheel = (e: WheelEvent) => { // Ensure the event is typed correctly
       if (isVisible) {
         handleScroll(e);
       }
@@ -108,7 +108,7 @@ const SmoothJourney = () => {
 
   // Navigate to specific station
   const navigate = useCallback(
-    (index) => {
+    (index: number) => {
       if (isAnimating || index === currentIndex) return;
       setIsAnimating(true);
       setCurrentIndex(index);
@@ -230,6 +230,7 @@ const SmoothJourney = () => {
                            }
                            animate-pulse-on-visible`}
                 aria-label={`Navigate to station ${i + 1}`}
+                aria-current={i === currentIndex ? 'true' : 'false'}
               />
             ))}
           </div>
