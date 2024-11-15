@@ -88,9 +88,7 @@ const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-  const [isDesktopVisible, setIsDesktopVisible] = useState(false);
-  const [isMobileVisible, setIsMobileVisible] = useState(false);
-  const [isScrollLocked, setIsScrollLocked] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -113,17 +111,17 @@ const SmoothJourney: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Simplified visibility detection for mobile
+  // Visibility detection for mobile
   useEffect(() => {
+    if (!isMobile) return;
+
     const handleScroll = () => {
       if (!sectionRef.current) return;
       
       const rect = sectionRef.current.getBoundingClientRect();
-      const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+      const isVisibleNow = rect.top < window.innerHeight && rect.bottom >= 0;
       
-      if (isMobile) {
-        setIsMobileVisible(isVisible);
-      }
+      setIsVisible(isVisibleNow);
     };
 
     handleScroll(); // Check initial position
@@ -131,15 +129,23 @@ const SmoothJourney: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  // Desktop scroll handling with Intersection Observer
+  // Visibility detection for desktop using Intersection Observer
   useEffect(() => {
     if (isMobile) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        setIsDesktopVisible(entry.intersectionRatio >= 0.75);
-        setIsScrollLocked(entry.intersectionRatio >= 0.75);
+        const isVisibleNow = entry.intersectionRatio >= 0.75;
+        console.log('Desktop Visibility:', isVisibleNow);
+        setIsVisible(isVisibleNow);
+
+        // Scroll Locking
+        if (isVisibleNow) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = '';
+        }
       },
       { threshold: [0, 0.75, 1] }
     );
@@ -148,27 +154,17 @@ const SmoothJourney: React.FC = () => {
       observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect();
-  }, [isMobile]);
-
-  // Scroll Locking: Prevent body scroll when isScrollLocked is true
-  useEffect(() => {
-    if (isScrollLocked) {
-      // Lock the body scroll
-      document.body.style.overflow = 'hidden';
-    } else {
-      // Unlock the body scroll
-      document.body.style.overflow = '';
-    }
-
     return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
       document.body.style.overflow = '';
     };
-  }, [isScrollLocked]);
+  }, [isMobile]);
 
   // Handle scroll to navigate between stations
   const handleScroll = useCallback((e: WheelEvent) => {
-    if (!isDesktopVisible || isAnimating || isMobile || !isScrollLocked) return;
+    if (!isVisible || isAnimating || isMobile) return;
 
     e.preventDefault();
     const direction = e.deltaY > 0 ? 1 : -1;
@@ -179,7 +175,7 @@ const SmoothJourney: React.FC = () => {
       setCurrentIndex(nextIndex);
       setTimeout(() => setIsAnimating(false), 1000);
     }
-  }, [currentIndex, isAnimating, isMobile, isDesktopVisible, isScrollLocked]);
+  }, [currentIndex, isAnimating, isMobile, isVisible]);
 
   // Attach wheel event listener for desktop
   useEffect(() => {
@@ -204,11 +200,11 @@ const SmoothJourney: React.FC = () => {
     setTimeout(() => setIsAnimating(false), 1000);
   }, [currentIndex, isAnimating]);
 
+  // Ensure window size is set before rendering
   if (!windowSize.width || !windowSize.height) return null;
 
   const currentPosition = stations[currentIndex];
   const mobileOffset = isMobile ? -150 : 0;
-  const isVisible = isMobile ? isMobileVisible : isDesktopVisible;
 
   return (
     <div 
@@ -323,7 +319,7 @@ const SmoothJourney: React.FC = () => {
           </div>
 
           {/* Progress Bar for Desktop */}
-          {!isMobile && isVisible && (
+          {!isMobile && (
             <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 
                            bg-blue-100 rounded-full overflow-hidden z-50">
               <div 
