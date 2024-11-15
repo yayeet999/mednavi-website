@@ -14,8 +14,7 @@ export default function Description() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="space-y-6 p-6 rounded-md"
-            style={{ transform: 'translateX(-5%)' }} // Slightly moves text to the center
+            className="space-y-6 p-6 rounded-md lg:mr-16" // Moves text closer to the center on large screens
           >
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -30,7 +29,7 @@ export default function Description() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="space-y-4 text-gray-700"
+              className="space-y-4 text-black"
             >
               <p className="text-lg">
                 <strong className="text-mednavi-blue">Would you drive blindfolded</strong>, guessing when to refuel or service your car? Running your practice without the <strong style={{ color: '#333333' }}>right data</strong> is no different.
@@ -75,7 +74,7 @@ export default function Description() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="hidden lg:block relative"
           >
-            <div className="relative w-full h-[450px] lg:max-w-[750px] mx-auto">
+            <div className="relative w-full h-[500px] lg:max-w-[800px] mx-auto">
               <Image
                 src="/Minimalist 5 Cycle Diagram Graph.svg"
                 alt="MedNavi Practice Management Cycle"
