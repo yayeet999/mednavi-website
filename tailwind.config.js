@@ -69,7 +69,7 @@ module.exports = {
       },
       // Adding the pulse-slow animation with longer duration and more pronounced effect
       animation: {
-        'pulse-slow': 'pulse-slow 3s infinite', // Increased duration for slower pulses
+        'pulse-slow': 'pulse-slow 14s infinite', // Increased duration for slower pulses
       },
       keyframes: {
         'pulse-slow': {
