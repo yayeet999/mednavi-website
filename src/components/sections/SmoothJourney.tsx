@@ -9,47 +9,56 @@ const stations = [
   { id: 5, x: 1000, y: 1800 }
 ];
 
+const renderKPIBox = () => (
+  <div className="grid grid-cols-2 gap-8 p-12 h-full">
+    <div className="space-y-4">
+      <div className="text-lg text-gray-500">Revenue</div>
+      <div className="text-3xl font-semibold text-gray-800">${(Math.random() * 100000).toFixed(0)}k</div>
+      <div className="text-sm text-green-500">+{(Math.random() * 20).toFixed(1)}%</div>
+    </div>
+    <div className="space-y-4">
+      <div className="text-lg text-gray-500">Users</div>
+      <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 1000).toFixed(0)}k</div>
+      <div className="text-sm text-blue-500">+{(Math.random() * 15).toFixed(1)}%</div>
+    </div>
+    <div className="space-y-4">
+      <div className="text-lg text-gray-500">Conversion</div>
+      <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 100).toFixed(1)}%</div>
+      <div className="text-sm text-green-500">+{(Math.random() * 10).toFixed(1)}%</div>
+    </div>
+    <div className="space-y-4">
+      <div className="text-lg text-gray-500">Growth</div>
+      <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 50).toFixed(1)}%</div>
+      <div className="text-sm text-blue-500">+{(Math.random() * 12).toFixed(1)}%</div>
+    </div>
+  </div>
+);
+
 const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-  const sectionRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
+  // Initialize window size
   useEffect(() => {
-    const handleResize = () => {
+    function handleResize() {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight
       });
-    };
-    
-    // Initial size
+    }
     handleResize();
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const handleWheel = useCallback((e: WheelEvent) => {
-    if (!isInView || isAnimating) return;
-    e.preventDefault();
+  // Scroll handler
+  const handleScroll = useCallback((e: WheelEvent) => {
+    if (isAnimating || !isInView) return;
     
+    e.preventDefault();
     const direction = e.deltaY > 0 ? 1 : -1;
     const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
     
@@ -60,56 +69,45 @@ const SmoothJourney: React.FC = () => {
     }
   }, [currentIndex, isAnimating, isInView]);
 
+  // Intersection Observer
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const preventScroll = (e: WheelEvent) => {
-      if (isInView) {
-        e.preventDefault();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsInView(true);
+        } else {
+          setIsInView(false);
+        }
+      },
+      {
+        threshold: 0.3,
+        rootMargin: '-10% 0px'
       }
-    };
+    );
 
-    section.addEventListener('wheel', preventScroll, { passive: false });
-    section.addEventListener('wheel', handleWheel, { passive: false });
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
 
-    return () => {
-      section.removeEventListener('wheel', preventScroll);
-      section.removeEventListener('wheel', handleWheel);
-    };
-  }, [handleWheel, isInView]);
+    return () => observer.disconnect();
+  }, []);
 
+  // Attach scroll listener
+  useEffect(() => {
+    const element = sectionRef.current;
+    if (!element) return;
+
+    element.addEventListener('wheel', handleScroll, { passive: false });
+    return () => element.removeEventListener('wheel', handleScroll);
+  }, [handleScroll]);
+
+  // Navigation function
   const navigate = (index: number) => {
     if (isAnimating || index === currentIndex) return;
     setIsAnimating(true);
     setCurrentIndex(index);
     setTimeout(() => setIsAnimating(false), 1000);
   };
-
-  const renderKPIBox = () => (
-    <div className="grid grid-cols-2 gap-8 p-12 h-full">
-      <div className="space-y-4">
-        <div className="text-lg text-gray-500">Revenue</div>
-        <div className="text-3xl font-semibold text-gray-800">${(Math.random() * 100000).toFixed(0)}k</div>
-        <div className="text-sm text-green-500">+{(Math.random() * 20).toFixed(1)}%</div>
-      </div>
-      <div className="space-y-4">
-        <div className="text-lg text-gray-500">Users</div>
-        <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 1000).toFixed(0)}k</div>
-        <div className="text-sm text-blue-500">+{(Math.random() * 15).toFixed(1)}%</div>
-      </div>
-      <div className="space-y-4">
-        <div className="text-lg text-gray-500">Conversion</div>
-        <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 100).toFixed(1)}%</div>
-        <div className="text-sm text-green-500">+{(Math.random() * 10).toFixed(1)}%</div>
-      </div>
-      <div className="space-y-4">
-        <div className="text-lg text-gray-500">Growth</div>
-        <div className="text-3xl font-semibold text-gray-800">{(Math.random() * 50).toFixed(1)}%</div>
-        <div className="text-sm text-blue-500">+{(Math.random() * 12).toFixed(1)}%</div>
-      </div>
-    </div>
-  );
 
   if (!windowSize.width || !windowSize.height) {
     return null;
@@ -203,6 +201,7 @@ const SmoothJourney: React.FC = () => {
         ))}
       </div>
 
+      {/* Navigation dots - Always visible when section is in view */}
       {isInView && (
         <>
           <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-50">
