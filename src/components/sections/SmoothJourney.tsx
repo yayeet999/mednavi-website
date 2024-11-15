@@ -98,6 +98,9 @@ const SmoothJourney: React.FC = () => {
   const [scrollLockBottom, setScrollLockBottom] = useState(false);
   const scrollLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Direction Ref to track scroll direction
+  const directionRef = useRef<'up' | 'down'>('down');
+
   // Initialize and update window size and mobile status
   useEffect(() => {
     const handleResize = () => {
@@ -113,6 +116,7 @@ const SmoothJourney: React.FC = () => {
 
     // Set mounted to true after component mounts
     setMounted(true);
+    console.log('Component mounted');
 
     // Initial check
     handleResize();
@@ -122,69 +126,84 @@ const SmoothJourney: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Visibility detection for mobile
+  // Track previous scroll position
+  const prevScrollY = useRef<number>(window.scrollY);
   useEffect(() => {
-    if (!isMobile || !mounted) return;
-
     const handleScroll = () => {
-      if (!sectionRef.current) return;
-
-      const rect = sectionRef.current.getBoundingClientRect();
-      const isVisibleNow = rect.top < window.innerHeight && rect.bottom >= 0;
-
-      setIsVisible(isVisibleNow);
-      console.log(`Mobile Scroll: isVisibleNow=${isVisibleNow}`);
+      prevScrollY.current = window.scrollY;
     };
-
-    handleScroll(); // Check initial position
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile, mounted]);
+  }, []);
 
-  // Visibility detection for desktop using Intersection Observer
+  // Intersection Observer to detect when ~30% of SmoothJourney is visible
   useEffect(() => {
-    if (isMobile || !mounted) return;
+    if (!sectionRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
         const isVisibleNow = entry.isIntersecting;
-        console.log('Desktop Visibility:', isVisibleNow);
-        setIsVisible(isVisibleNow);
+        console.log('SmoothJourney Visibility:', isVisibleNow);
 
-        // Scroll Locking
-        if (isVisibleNow) {
-          // Automatically scroll to center the component
-          if (sectionRef.current) {
-            sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            console.log('Auto-scrolled to center SmoothJourney');
+        if (isVisibleNow && !autoScrollMuted) {
+          // Use directionRef to determine scroll direction
+          const direction = directionRef.current;
+          console.log(`User is scrolling ${direction} into SmoothJourney`);
+
+          // Auto-scroll to first or last container based on direction
+          if (direction === 'down') {
+            // Scroll down into SmoothJourney
+            scrollToContainer(0);
+            console.log('Auto-scrolled to first container');
+          } else {
+            // Scroll up into SmoothJourney
+            scrollToContainer(stations.length - 1);
+            console.log('Auto-scrolled to last container');
           }
+
+          // Mute automatic scroll for 5 seconds after auto-scroll
+          setAutoScrollMuted(true);
+          if (autoScrollMuteTimeoutRef.current) clearTimeout(autoScrollMuteTimeoutRef.current);
+          autoScrollMuteTimeoutRef.current = setTimeout(() => {
+            setAutoScrollMuted(false);
+            console.log('Auto-scroll muted for 5 seconds');
+          }, 5000);
         }
+
+        setIsVisible(isVisibleNow);
       },
-      { threshold: 0.2 } // Trigger when 20% is visible
+      { threshold: 0.3 } // Updated to 30%
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-      console.log('Intersection Observer attached');
-    }
+    observer.observe(sectionRef.current);
+    console.log('Intersection Observer attached');
 
     return () => {
       if (sectionRef.current) {
         observer.unobserve(sectionRef.current);
         console.log('Intersection Observer detached');
       }
-      document.body.style.overflow = '';
-      console.log('Scroll unlocked on cleanup');
+      if (autoScrollMuteTimeoutRef.current) clearTimeout(autoScrollMuteTimeoutRef.current);
     };
-  }, [isMobile, mounted]);
+  }, [autoScrollMuted]);
 
-  // Handle scroll to navigate between stations
+  // Function to scroll to a specific container
+  const scrollToContainer = (index: number) => {
+    const container = scrollContainerRef.current?.children[index] as HTMLElement;
+    if (container) {
+      container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setCurrentIndex(index);
+    }
+  };
+
+  // Handle user scrolling through containers
   const handleScroll = useCallback((e: WheelEvent) => {
     if (!isVisible || isAnimating || isMobile) return;
 
-    // Determine scroll direction
+    // Determine scroll direction using deltaY
     const direction = e.deltaY > 0 ? 'down' : 'up';
+    directionRef.current = direction;
     console.log(`Wheel scrolling ${direction}`);
 
     // Check for scroll locks
@@ -232,6 +251,8 @@ const SmoothJourney: React.FC = () => {
     }
   }, [currentIndex, isAnimating, isVisible, isMobile, scrollLockTop, scrollLockBottom]);
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   // Attach wheel event listener for desktop
   useEffect(() => {
     if (isMobile || !mounted) return;
@@ -258,7 +279,7 @@ const SmoothJourney: React.FC = () => {
     if (isAnimating || index === currentIndex) return;
     console.log(`Button clicked to navigate to station ${index + 1}`);
     setIsAnimating(true);
-    setCurrentIndex(index);
+    scrollToContainer(index);
     setTimeout(() => setIsAnimating(false), 1000);
   }, [currentIndex, isAnimating]);
 
