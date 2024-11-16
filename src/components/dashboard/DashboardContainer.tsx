@@ -75,7 +75,7 @@ export const DashboardContainer = () => {
       {/* Main Content */}
       <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col">
         {/* Header */}
-        <div className="text-right p-1.5 md:p-3">
+        <div className="h-[32px] md:h-[40px] text-right p-1.5 md:p-3">
           <motion.h1 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -86,9 +86,9 @@ export const DashboardContainer = () => {
         </div>
 
         {activePage === 'home' && (
-          <div className="flex flex-col h-[calc(100%-32px)] px-2 md:px-4 pb-2 md:pb-4 space-y-2 md:space-y-4">
-            {/* Top Feature Box */}
-            <div className="bg-white rounded-xl p-2 md:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] h-[62%]">
+          <div className="flex flex-col px-2 md:px-4 pb-2 md:pb-4">
+            {/* Top Feature Box - Fixed height for mobile and desktop */}
+            <div className="bg-white rounded-xl p-2 md:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] h-[235px] md:h-[300px] mb-2 md:mb-4">
               <motion.div
                 variants={container}
                 initial="hidden"
@@ -120,7 +120,7 @@ export const DashboardContainer = () => {
                 {/* Steps Section */}
                 <motion.div 
                   variants={container}
-                  className="flex justify-between items-center px-1 md:px-4 mb-auto"
+                  className="flex justify-between items-center px-1 md:px-4 mt-auto"
                 >
                   {[
                     { num: 1, icon: <Home size={14} className="text-[#40C4FF]" />, label: "Your Practice" },
@@ -150,8 +150,8 @@ export const DashboardContainer = () => {
               </motion.div>
             </div>
 
-            {/* Metrics Row */}
-            <div className="grid grid-cols-3 gap-2 md:gap-3 h-[35%]">
+            {/* Metrics Row - Fixed height for mobile and desktop */}
+            <div className="grid grid-cols-3 gap-2 md:gap-3 h-[90px] md:h-[120px]">
               <motion.div variants={item} 
                          className="bg-white rounded-xl p-2 md:p-3 shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex flex-col justify-between">
                 <h3 className="text-[9px] md:text-sm font-medium text-[#103d68]">Active Patients</h3>
@@ -182,6 +182,7 @@ export const DashboardContainer = () => {
           </div>
         )}
 
+        {/* Other pages content - Same as before */}
         {activePage === 'practice' && (
           <div className="p-2 md:p-4">
             <h2 className="text-xs md:text-base mb-2 text-white">Your Practice</h2>
@@ -241,18 +242,18 @@ export const DashboardContainer = () => {
                   </div>
                 </div>
                 <div className="border rounded-lg p-2 md:p-4">
-                  <h4 className="text-[9px] md:text-sm font-medium text-[#103d68] mb-2">Revenue Trends</h4>
-                  <div className="h-14 md:h-32 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
-                    <span className="text-[9px] md:text-sm text-[#40C4FF]">Revenue Chart</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+                 <h4 className="text-[9px] md:text-sm font-medium text-[#103d68] mb-2">Revenue Trends</h4>
+                 <div className="h-14 md:h-32 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
+                   <span className="text-[9px] md:text-sm text-[#40C4FF]">Revenue Chart</span>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       )}
+     </div>
+   </div>
+ );
 };
 
 export default DashboardContainer;
