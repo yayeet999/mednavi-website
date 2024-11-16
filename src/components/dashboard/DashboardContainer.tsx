@@ -85,8 +85,8 @@ export const DashboardContainer = () => {
         </div>
 
         {activePage === 'home' && (
-          <div className="flex-1 flex flex-col px-2 md:px-4 pb-2 md:pb-4">
-            <div className="bg-white rounded-xl p-2 md:p-6 mb-2 md:mb-4 flex-1">
+          <div className="flex-1 flex flex-col px-2 md:px-4 pb-1 md:pb-4">
+            <div className="bg-white rounded-xl p-1.5 md:p-6 mb-1 md:mb-4 flex-1">
               <motion.div
                 variants={container}
                 initial="hidden"
@@ -94,14 +94,14 @@ export const DashboardContainer = () => {
                 className="flex flex-col h-full"
               >
                 {/* Text Section */}
-                <div className="text-center mb-1 md:mb-4">
-                  <motion.div variants={item} className="flex items-center justify-center mb-1 md:mb-2">
+                <div className="text-center mb-0.5 md:mb-4">
+                  <motion.div variants={item} className="flex items-center justify-center mb-0.5 md:mb-2">
                     <span className="text-xs md:text-base text-[#103d68]">
                       We don't do data as a feature, we do <strong>data as a complete service.</strong>
                     </span>
                     <Checkmark />
                   </motion.div>
-                  <motion.div variants={item} className="flex items-center justify-center mb-1 md:mb-2">
+                  <motion.div variants={item} className="flex items-center justify-center mb-0.5 md:mb-2">
                     <span className="text-xs md:text-base text-[#103d68]">
                       Bringing the same high-level tools used by <strong>Fortune 500 companies.</strong>
                     </span>
@@ -118,7 +118,7 @@ export const DashboardContainer = () => {
                 {/* Steps Section */}
                 <motion.div 
                   variants={container}
-                  className="flex justify-between items-center px-1 md:px-4 mb-2 md:mb-6"
+                  className="flex justify-between items-center px-0.5 md:px-4 mb-1 md:mb-6"
                 >
                   {[
                     { num: 1, icon: <Home size={16} className="text-[#40C4FF]" />, label: "Your Practice" },
@@ -131,7 +131,7 @@ export const DashboardContainer = () => {
                       className="flex flex-col items-center"
                     >
                       <motion.div 
-                        className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-[#103d68] text-white flex items-center justify-center text-[10px] md:text-sm font-medium mb-1 md:mb-2"
+                        className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-[#103d68] text-white flex items-center justify-center text-[10px] md:text-sm font-medium mb-0.5 md:mb-2"
                       >
                         {step.num}
                       </motion.div>
@@ -141,13 +141,13 @@ export const DashboardContainer = () => {
                       >
                         <IconBox>{step.icon}</IconBox>
                       </motion.div>
-                      <p className="text-[10px] md:text-sm mt-1 font-medium text-[#103d68]">{step.label}</p>
+                      <p className="text-[10px] md:text-sm mt-0.5 font-medium text-[#103d68]">{step.label}</p>
                     </motion.div>
                   ))}
                 </motion.div>
 
                 {/* Info Boxes */}
-                <div className="grid grid-cols-3 gap-1 md:gap-2 mt-auto">
+                <div className="grid grid-cols-3 gap-0.5 md:gap-2 mt-auto">
                   {[
                     { title: "Active Patients", value: "2,547", trend: "+12.5%" },
                     { title: "Monthly Revenue", value: "$125.8K", trend: "+15.2%" },
