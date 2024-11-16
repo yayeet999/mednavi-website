@@ -48,9 +48,14 @@ export const DashboardContainer = () => {
     show: { opacity: 1, y: 0 }
   };
 
+  const metricBoxStyle = "bg-white rounded-xl p-2 md:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex flex-col justify-between";
+  const metricTitleStyle = "text-[10px] md:text-sm font-medium text-[#103d68]";
+  const metricValueStyle = "text-sm md:text-xl font-bold text-[#40C4FF] mt-1";
+  const metricTrendStyle = "text-[10px] md:text-sm text-green-500";
+
   return (
     <div className="flex h-full w-full">
-      {/* Sidebar with more distinct background */}
+      {/* Sidebar */}
       <div className="bg-[#DCFAFD] w-[40px] md:w-[50px] flex flex-col items-center pt-2 md:pt-4">
         {[
           { id: 'home', icon: <Home className="text-[#103d68]" size={18} /> },
@@ -85,8 +90,8 @@ export const DashboardContainer = () => {
         </div>
 
         {activePage === 'home' && (
-          <div className="flex-1 flex flex-col px-2 md:px-4 pb-2 md:pb-4 space-y-3 md:space-y-4">
-            {/* Main Feature Box */}
+          <div className="flex flex-col px-2 md:px-4 space-y-3 md:space-y-4 pb-2 md:pb-4">
+            {/* Top Container */}
             <div className="bg-white rounded-xl p-3 md:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
               <motion.div
                 variants={container}
@@ -149,28 +154,36 @@ export const DashboardContainer = () => {
               </motion.div>
             </div>
 
-            {/* Metrics Boxes Container */}
-            <div className="grid grid-cols-3 gap-2 md:gap-3">
-              {[
-                { title: "Active Patients", value: "2,547", trend: "+12.5%" },
-                { title: "Monthly Revenue", value: "$125.8K", trend: "+15.2%" },
-                { title: "Growth Rate", value: "+48.9%", trend: "+11.6%" }
-              ].map((box, index) => (
-                <motion.div
-                  key={index}
-                  variants={item}
-                  className="bg-gradient-to-b from-white to-gray-50 rounded-xl p-2 md:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
-                >
-                  <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-1">{box.title}</h3>
-                  <p className="text-sm md:text-xl font-bold text-[#40C4FF]">{box.value}</p>
-                  <p className="text-[10px] md:text-sm text-green-500">{box.trend}</p>
-                </motion.div>
-              ))}
+            {/* Metrics Row */}
+            <div className="grid grid-cols-3 gap-3 md:gap-4">
+              <motion.div variants={item} className={metricBoxStyle}>
+                <h3 className={metricTitleStyle}>Active Patients</h3>
+                <div>
+                  <p className={metricValueStyle}>2,547</p>
+                  <p className={metricTrendStyle}>+12.5%</p>
+                </div>
+              </motion.div>
+
+              <motion.div variants={item} className={metricBoxStyle}>
+                <h3 className={metricTitleStyle}>Monthly Revenue</h3>
+                <div>
+                  <p className={metricValueStyle}>$125.8K</p>
+                  <p className={metricTrendStyle}>+15.2%</p>
+                </div>
+              </motion.div>
+
+              <motion.div variants={item} className={metricBoxStyle}>
+                <h3 className={metricTitleStyle}>Growth Rate</h3>
+                <div>
+                  <p className={metricValueStyle}>+48.9%</p>
+                  <p className={metricTrendStyle}>+11.6%</p>
+                </div>
+              </motion.div>
             </div>
           </div>
         )}
 
-        {/* Other pages content with consistent box styling */}
+        {/* Other pages content remains the same */}
         {activePage === 'practice' && (
           <div className="p-2 md:p-4">
             <h2 className="text-sm md:text-lg mb-2 text-white">Your Practice</h2>
