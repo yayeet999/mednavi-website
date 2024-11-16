@@ -94,14 +94,14 @@ export const DashboardContainer = () => {
                 className="flex flex-col h-full"
               >
                 {/* Text Section */}
-                <div className="text-center mb-1 md:mb-4">
-                  <motion.div variants={item} className="flex items-center justify-center mb-1 md:mb-2">
+                <div className="text-center mb-2 md:mb-4">
+                  <motion.div variants={item} className="flex items-center justify-center mb-2 md:mb-2">
                     <span className="text-xs md:text-base text-[#103d68]">
                       We don't do data as a feature, we do <strong>data as a complete service.</strong>
                     </span>
                     <Checkmark />
                   </motion.div>
-                  <motion.div variants={item} className="flex items-center justify-center mb-1 md:mb-2">
+                  <motion.div variants={item} className="flex items-center justify-center mb-2 md:mb-2">
                     <span className="text-xs md:text-base text-[#103d68]">
                       Bringing the same high-level tools used by <strong>Fortune 500 companies.</strong>
                     </span>
@@ -109,7 +109,7 @@ export const DashboardContainer = () => {
                   </motion.div>
                   <motion.p 
                     variants={item} 
-                    className="text-xs md:text-base text-[#103d68] opacity-80"
+                    className="text-xs md:text-base text-[#103d68] opacity-80 my-2 md:my-0"
                   >
                     Easy as...
                   </motion.p>
@@ -118,7 +118,7 @@ export const DashboardContainer = () => {
                 {/* Steps Section */}
                 <motion.div 
                   variants={container}
-                  className="flex justify-between items-center px-1 md:px-4 mb-2 md:mb-6 mt-2"
+                  className="flex justify-between items-center px-1 md:px-4 mb-2 md:mb-6 mt-3 md:mt-0"
                 >
                   {[
                     { num: 1, icon: <Home size={16} className="text-[#40C4FF]" />, label: "Your Practice" },
@@ -131,7 +131,7 @@ export const DashboardContainer = () => {
                       className="flex flex-col items-center"
                     >
                       <motion.div 
-                        className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-[#103d68] text-white flex items-center justify-center text-[10px] md:text-sm font-medium mb-1 md:mb-2"
+                        className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-[#103d68] text-white flex items-center justify-center text-[10px] md:text-sm font-medium mb-1.5 md:mb-2"
                       >
                         {step.num}
                       </motion.div>
@@ -141,7 +141,7 @@ export const DashboardContainer = () => {
                       >
                         <IconBox>{step.icon}</IconBox>
                       </motion.div>
-                      <p className="text-[10px] md:text-sm mt-1 font-medium text-[#103d68]">{step.label}</p>
+                      <p className="text-[10px] md:text-sm mt-1.5 md:mt-1 font-medium text-[#103d68]">{step.label}</p>
                     </motion.div>
                   ))}
                 </motion.div>
@@ -156,7 +156,7 @@ export const DashboardContainer = () => {
                     <motion.div
                       key={index}
                       variants={item}
-                      className="bg-[#F8FAFC] rounded-xl p-2 md:p-3 flex flex-col justify-between hover:shadow-md transition-shadow duration-200"
+                      className="bg-[#F8FAFC] rounded-xl p-2.5 md:p-3 flex flex-col justify-between hover:shadow-md transition-shadow duration-200"
                     >
                       <h3 className="text-[10px] md:text-sm font-medium text-[#103d68]">{box.title}</h3>
                       <div>
