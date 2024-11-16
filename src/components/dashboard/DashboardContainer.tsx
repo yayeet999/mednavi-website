@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Home, Grid, MapPin, BarChart2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Number1Icon from '@/components/dashboard/number1 icon.svg';
-import Number2Icon from '@/components/dashboard/number2 icon.svg';
-import Number3Icon from '@/components/dashboard/number3 icon.svg';
+import Number1Icon from '@/components/dashboard/number1icon.svg';
+import Number2Icon from '@/components/dashboard/number2icon.svg';
+import Number3Icon from '@/components/dashboard/number3icon.svg';
 
 const Checkmark = () => (
   <motion.svg 
