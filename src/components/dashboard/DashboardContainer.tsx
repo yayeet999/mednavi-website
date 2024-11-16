@@ -50,8 +50,8 @@ export const DashboardContainer = () => {
 
   return (
     <div className="flex h-full w-full">
-      {/* Sidebar */}
-      <div className="bg-[#E5F9FD] w-[40px] md:w-[50px] flex flex-col items-center pt-2 md:pt-4">
+      {/* Sidebar with more distinct background */}
+      <div className="bg-[#DCFAFD] w-[40px] md:w-[50px] flex flex-col items-center pt-2 md:pt-4">
         {[
           { id: 'home', icon: <Home className="text-[#103d68]" size={18} /> },
           { id: 'practice', icon: <Grid className="text-[#103d68]" size={18} /> },
@@ -85,16 +85,17 @@ export const DashboardContainer = () => {
         </div>
 
         {activePage === 'home' && (
-          <div className="flex-1 flex flex-col px-2 md:px-4 pb-2 md:pb-4">
-            <div className="bg-white rounded-xl p-2 md:p-6 mb-2 md:mb-4 flex-1">
+          <div className="flex-1 flex flex-col px-2 md:px-4 pb-2 md:pb-4 space-y-3 md:space-y-4">
+            {/* Main Feature Box */}
+            <div className="bg-white rounded-xl p-3 md:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
               <motion.div
                 variants={container}
                 initial="hidden"
                 animate={isVisible ? "show" : "hidden"}
-                className="flex flex-col h-full"
+                className="flex flex-col"
               >
                 {/* Text Section */}
-                <div className="text-center mb-1 md:mb-4">
+                <div className="text-center mb-2 md:mb-4">
                   <motion.div variants={item} className="flex items-center justify-center mb-1 md:mb-2">
                     <span className="text-xs md:text-base text-[#103d68]">
                       We don't do data as a feature, we do <strong>data as a complete service.</strong>
@@ -118,7 +119,7 @@ export const DashboardContainer = () => {
                 {/* Steps Section */}
                 <motion.div 
                   variants={container}
-                  className="flex justify-between items-center px-1 md:px-4 mb-2 md:mb-6"
+                  className="flex justify-between items-center px-1 md:px-4"
                 >
                   {[
                     { num: 1, icon: <Home size={16} className="text-[#40C4FF]" />, label: "Your Practice" },
@@ -145,36 +146,35 @@ export const DashboardContainer = () => {
                     </motion.div>
                   ))}
                 </motion.div>
-
-                {/* Info Boxes */}
-                <div className="grid grid-cols-3 gap-1 md:gap-2 mt-auto">
-                  {[
-                    { title: "Active Patients", value: "2,547", trend: "+12.5%" },
-                    { title: "Monthly Revenue", value: "$125.8K", trend: "+15.2%" },
-                    { title: "Growth Rate", value: "+48.9%", trend: "+11.6%" }
-                  ].map((box, index) => (
-                    <motion.div
-                      key={index}
-                      variants={item}
-                      className="bg-[#F8FAFC] rounded-xl p-1.5 md:p-3 flex flex-col justify-between hover:shadow-md transition-shadow duration-200"
-                    >
-                      <h3 className="text-[10px] md:text-sm font-medium text-[#103d68]">{box.title}</h3>
-                      <div>
-                        <p className="text-xs md:text-lg font-bold text-[#40C4FF]">{box.value}</p>
-                        <p className="text-[10px] md:text-sm text-green-500">{box.trend}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
               </motion.div>
+            </div>
+
+            {/* Metrics Boxes Container */}
+            <div className="grid grid-cols-3 gap-2 md:gap-3">
+              {[
+                { title: "Active Patients", value: "2,547", trend: "+12.5%" },
+                { title: "Monthly Revenue", value: "$125.8K", trend: "+15.2%" },
+                { title: "Growth Rate", value: "+48.9%", trend: "+11.6%" }
+              ].map((box, index) => (
+                <motion.div
+                  key={index}
+                  variants={item}
+                  className="bg-gradient-to-b from-white to-gray-50 rounded-xl p-2 md:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+                >
+                  <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-1">{box.title}</h3>
+                  <p className="text-sm md:text-xl font-bold text-[#40C4FF]">{box.value}</p>
+                  <p className="text-[10px] md:text-sm text-green-500">{box.trend}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
         )}
 
+        {/* Other pages content with consistent box styling */}
         {activePage === 'practice' && (
           <div className="p-2 md:p-4">
             <h2 className="text-sm md:text-lg mb-2 text-white">Your Practice</h2>
-            <div className="bg-white rounded-xl p-3 md:p-4">
+            <div className="bg-white rounded-xl p-3 md:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
               <h3 className="text-xs md:text-base font-medium text-[#103d68] mb-2">Practice Overview</h3>
               <div className="grid gap-2 md:gap-4">
                 <div className="flex items-center justify-between border-b pb-2">
@@ -197,7 +197,7 @@ export const DashboardContainer = () => {
         {activePage === 'connect' && (
           <div className="p-2 md:p-4">
             <h2 className="text-sm md:text-lg mb-2 text-white">Connect Your PMS</h2>
-            <div className="bg-white rounded-xl p-3 md:p-4">
+            <div className="bg-white rounded-xl p-3 md:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
               <h3 className="text-xs md:text-base font-medium text-[#103d68] mb-2">Available Integrations</h3>
               <div className="grid gap-2 md:gap-3">
                 <button className="flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
@@ -220,7 +220,7 @@ export const DashboardContainer = () => {
         {activePage === 'reports' && (
           <div className="p-2 md:p-4">
             <h2 className="text-sm md:text-lg mb-2 text-white">Data Reports</h2>
-            <div className="bg-white rounded-xl p-3 md:p-4">
+            <div className="bg-white rounded-xl p-3 md:p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
               <h3 className="text-xs md:text-base font-medium text-[#103d68] mb-2">Analytics Dashboard</h3>
               <div className="grid gap-2 md:gap-4">
                 <div className="border rounded-lg p-2 md:p-4">
