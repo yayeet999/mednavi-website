@@ -87,7 +87,7 @@ export const DashboardContainer = () => {
   );
 
   return (
-    <div className="flex h-full w-full max-h-[310px] md:max-h-[480px]">
+    <div className="flex h-full w-full max-h-[344px] md:max-h-[480px]">
       {/* Expanded Sidebar */}
       <div className="bg-[#E5F9FD] w-[36px] md:w-[54px] flex flex-col items-center pt-2 md:pt-3">
         {[
@@ -125,7 +125,7 @@ export const DashboardContainer = () => {
 
        {activePage === 'home' && (
           <div className="flex-1 flex flex-col px-3 md:px-4 pb-1 md:pb-2">
-            <div className="bg-white rounded-xl p-2 md:p-3 max-h-[310px] md:max-h-[480px] overflow-hidden">
+            <div className="bg-white rounded-xl p-2 md:p-3 max-h-[344px] md:max-h-[480px] overflow-hidden">
               <motion.div
                 initial="hidden"
                 animate="visible"
