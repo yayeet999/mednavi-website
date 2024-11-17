@@ -87,7 +87,7 @@ export const DashboardContainer = () => {
   );
 
   return (
-    <div className="flex h-full w-full max-h-[340px] md:max-h-[480px]">
+    <div className="flex h-full w-full max-h-[344px] md:max-h-[480px]">
       {/* Expanded Sidebar */}
       <div className="bg-[#E5F9FD] w-[36px] md:w-[54px] flex flex-col items-center pt-2 md:pt-3">
         {[
