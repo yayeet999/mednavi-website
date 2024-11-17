@@ -2,9 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { Home, Grid, MapPin, BarChart2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Number1Icon from '@/components/dashboard/number1icon.svg';
-import Number2Icon from '@/components/dashboard/number2icon.svg';
-import Number3Icon from '@/components/dashboard/number3icon.svg';
+
+const IconBox = ({ children }: { children: React.ReactNode }) => (
+  <div className="w-10 h-10 md:w-16 md:h-16 bg-[#E5F9FD] rounded-xl flex items-center justify-center">
+    {children}
+  </div>
+);
 
 const Checkmark = () => (
   <motion.svg 
@@ -48,7 +51,7 @@ export const DashboardContainer = () => {
   return (
     <div className="flex h-full w-full">
       {/* Sidebar */}
-      <div className="bg-[#DCFAFD] w-[40px] md:w-[50px] flex flex-col items-center pt-2 md:pt-4">
+      <div className="bg-[#E5F9FD] w-[40px] md:w-[50px] flex flex-col items-center pt-2 md:pt-4">
         {[
           { id: 'home', icon: <Home className="text-[#103d68]" size={18} /> },
           { id: 'practice', icon: <Grid className="text-[#103d68]" size={18} /> },
@@ -115,12 +118,12 @@ export const DashboardContainer = () => {
                 {/* Steps Section */}
                 <motion.div 
                   variants={container}
-                  className="flex justify-between items-center px-1 md:px-[15%] mb-2 md:mb-6 mt-3 md:mt-0"
+                  className="flex justify-between items-center px-1 md:px-4 mb-2 md:mb-6 mt-3 md:mt-0"
                 >
                   {[
-                    { num: 1, icon: <Number1Icon className="w-10 h-10 md:w-16 md:h-16" />, label: "Your Practice" },
-                    { num: 2, icon: <Number2Icon className="w-10 h-10 md:w-16 md:h-16" />, label: "Connect your PMS" },
-                    { num: 3, icon: <Number3Icon className="w-10 h-10 md:w-16 md:h-16" />, label: "Data Reports" }
+                    { num: 1, icon: <Home size={16} className="text-[#40C4FF]" />, label: "Your Practice" },
+                    { num: 2, icon: <MapPin size={16} className="text-[#40C4FF]" />, label: "Connect your PMS" },
+                    { num: 3, icon: <BarChart2 size={16} className="text-[#40C4FF]" />, label: "Data Reports" }
                   ].map((step, index) => (
                     <motion.div
                       key={index}
@@ -136,7 +139,7 @@ export const DashboardContainer = () => {
                         whileHover={{ scale: 1.05 }}
                         className="transition-transform duration-200"
                       >
-                        {step.icon}
+                        <IconBox>{step.icon}</IconBox>
                       </motion.div>
                       <p className="text-[10px] md:text-sm mt-1.5 md:mt-1 font-medium text-[#103d68]">{step.label}</p>
                     </motion.div>
