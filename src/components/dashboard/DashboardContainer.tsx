@@ -73,14 +73,14 @@ export const DashboardContainer = () => {
   };
 
   const CustomizedLegend = () => (
-    <div className="text-[8px] md:text-[10px] flex flex-col text-[#103d68]">
+    <div className="text-[9px] md:text-[11px] flex flex-col text-[#103d68] pr-2 md:pr-3">
       {donutData.map((entry, index) => (
-        <div key={`legend-${index}`} className="flex items-center mb-0.5">
+        <div key={`legend-${index}`} className="flex items-center mb-1">
           <div 
-            className="w-2 h-2 mr-1 rounded-sm"
+            className="w-2.5 h-2.5 mr-1.5 rounded-sm"
             style={{ backgroundColor: entry.color }}
           />
-          <span>{entry.name}</span>
+          <span className="whitespace-nowrap">{entry.name}</span>
         </div>
       ))}
     </div>
@@ -88,20 +88,20 @@ export const DashboardContainer = () => {
 
   return (
     <div className="flex h-full w-full max-h-[370px] md:max-h-[480px]">
-      {/* Sidebar */}
-      <div className="bg-[#E5F9FD] w-[24px] md:w-[36px] flex flex-col items-center pt-1.5 md:pt-2">
+      {/* Expanded Sidebar */}
+      <div className="bg-[#E5F9FD] w-[36px] md:w-[54px] flex flex-col items-center pt-2 md:pt-3">
         {[
-          { id: 'home', icon: <Home className="text-[#103d68]" size={12} /> },
-          { id: 'practice', icon: <Grid className="text-[#103d68]" size={12} /> },
-          { id: 'connect', icon: <MapPin className="text-[#103d68]" size={12} /> },
-          { id: 'reports', icon: <BarChart2 className="text-[#103d68]" size={12} /> }
+          { id: 'home', icon: <Home className="text-[#103d68]" size={18} /> },
+          { id: 'practice', icon: <Grid className="text-[#103d68]" size={18} /> },
+          { id: 'connect', icon: <MapPin className="text-[#103d68]" size={18} /> },
+          { id: 'reports', icon: <BarChart2 className="text-[#103d68]" size={18} /> }
         ].map((item) => (
           <motion.button
             key={item.id}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setActivePage(item.id)}
-            className={`w-4 h-4 md:w-6 md:h-6 mb-1.5 md:mb-2 rounded-lg flex items-center justify-center cursor-pointer transition-colors
+            className={`w-6 h-6 md:w-9 md:h-9 mb-2 md:mb-3 rounded-lg flex items-center justify-center cursor-pointer transition-colors
                        ${activePage === item.id ? 'bg-white shadow-sm' : 'bg-transparent hover:bg-white/50'}`}
             aria-label={item.id}
           >
@@ -112,12 +112,12 @@ export const DashboardContainer = () => {
 
       {/* Main Content */}
       <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
-        {/* Adjusted mednavi text positioning and size */}
-        <div className="text-right px-3 py-2 md:px-4 md:py-2.5">
+        {/* Adjusted mednavi text */}
+        <div className="text-right px-4 py-2.5 md:px-5 md:py-3">
           <motion.h1 
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-base md:text-xl text-white font-medium mr-1"
+            className="text-base md:text-xl text-white font-medium mr-2"
           >
             mednavi
           </motion.h1>
@@ -135,15 +135,15 @@ export const DashboardContainer = () => {
                 {/* Row 1: Header */}
                 <motion.h2 
                   variants={itemVariants}
-                  className="text-lg md:text-xl font-medium text-[#103d68]"
+                  className="text-lg md:text-xl font-medium text-[#103d68] pl-1 md:pl-2"
                 >
                   Your Dental Practice
                 </motion.h2>
 
-                {/* Row 2: KPIs with consistent heights */}
+                {/* Row 2: KPIs with increased spacing */}
                 <motion.div 
                   variants={itemVariants}
-                  className="grid grid-cols-3 gap-3 md:gap-6 px-1 md:px-2"
+                  className="grid grid-cols-3 gap-4 md:gap-8 px-4 md:px-6 mr-3 md:mr-4"
                 >
                   <div className="space-y-0.5 md:space-y-1">
                     <h3 className="text-[#103d68] text-[11px] md:text-base truncate">Active Patients</h3>
@@ -165,14 +165,14 @@ export const DashboardContainer = () => {
                 {/* Row 3: Revenue Trends + Donut */}
                 <motion.div 
                   variants={itemVariants}
-                  className="grid grid-cols-2 gap-2 md:gap-3"
+                  className="grid grid-cols-2 gap-3 md:gap-4 px-2 md:px-3"
                 >
                   {/* Revenue Trends Line Chart - Increased height */}
-                  <div className="h-[70px] md:h-[110px]">
+                  <div className="h-[80px] md:h-[125px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
-                    <div className="h-[55px] md:h-[95px]">
+                    <div className="h-[65px] md:h-[110px]">
                       <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={revenueData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis 
                             dataKey="month" 
                             tick={{ fontSize: 8, fill: '#103d68' }}
@@ -181,7 +181,7 @@ export const DashboardContainer = () => {
                           />
                           <YAxis 
                             tick={{ fontSize: 8, fill: '#103d68' }}
-                            width={15}
+                            width={20}
                             axisLine={false}
                             tickLine={false}
                           />
@@ -197,20 +197,20 @@ export const DashboardContainer = () => {
                     </div>
                   </div>
 
-                  {/* Services Distribution with Legend */}
-                  <div className="h-[70px] md:h-[110px]">
+                  {/* Services Distribution with increased size */}
+                  <div className="h-[80px] md:h-[125px] pl-2 md:pl-4">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
-                    <div className="h-[55px] md:h-[95px] flex items-center">
-                      <div className="w-1/4">
+                    <div className="h-[65px] md:h-[110px] flex items-center">
+                      <div className="w-1/3">
                         <CustomizedLegend />
                       </div>
-                      <div className="w-3/4 h-full">
+                      <div className="w-2/3 h-full scale-110 transform translate-x-2">
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                             <Pie
                               data={donutData}
                               innerRadius="40%"
-                              outerRadius="80%"
+                              outerRadius="85%"
                               paddingAngle={2}
                               dataKey="value"
                             >
@@ -231,14 +231,14 @@ export const DashboardContainer = () => {
                 {/* Row 4: Procedures Bar Chart + Patient Categories */}
                 <motion.div 
                   variants={itemVariants}
-                  className="grid grid-cols-2 gap-2 md:gap-3 flex-1"
+                  className="grid grid-cols-2 gap-3 md:gap-4 px-2 md:px-3 flex-1"
                 >
                   {/* Procedures Bar Chart - Elongated */}
-                  <div className="h-[80px] md:h-[120px]">
+                  <div className="h-[100px] md:h-[140px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Procedures</h3>
-                    <div className="h-[65px] md:h-[105px]">
+                    <div className="h-[85px] md:h-[125px]">
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                        <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis type="number" 
                             tick={{ fontSize: 8, fill: '#103d68' }}
                             axisLine={false}
@@ -248,7 +248,7 @@ export const DashboardContainer = () => {
                             dataKey="category" 
                             type="category"
                             tick={{ fontSize: 8, fill: '#103d68' }}
-                            width={40}
+                            width={45}
                             axisLine={false}
                             tickLine={false}
                           />
@@ -259,9 +259,9 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Patient Categories Grouped Bar Chart */}
-                  <div className="h-[80px] md:h-[120px]">
+                  <div className="h-[100px] md:h-[140px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Patient Categories</h3>
-                    <div className="h-[65px] md:h-[105px]">
+                    <div className="h-[85px] md:h-[125px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
@@ -272,7 +272,7 @@ export const DashboardContainer = () => {
                           />
                           <YAxis 
                             tick={{ fontSize: 8, fill: '#103d68' }}
-                            width={15}
+                            width={20}
                             axisLine={false}
                             tickLine={false}
                           />
@@ -290,16 +290,16 @@ export const DashboardContainer = () => {
         )}
 
         {activePage === 'practice' && (
-          <div className="p-1.5 md:p-2">
+          <div className="p-2 md:p-3">
             <h2 className="text-[10px] md:text-sm mb-1 text-white">Your Practice</h2>
-            <div className="bg-white rounded-xl p-2">
-              <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-1">Practice Overview</h3>
-              <div className="grid gap-1">
-                <div className="flex items-center justify-between border-b pb-1">
+            <div className="bg-white rounded-xl p-3 md:p-4">
+              <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Practice Overview</h3>
+              <div className="grid gap-2">
+                <div className="flex items-center justify-between border-b pb-2">
                   <span className="text-[10px] text-[#103d68]">Practice Name</span>
                   <span className="text-[10px] text-[#40C4FF] font-medium">MedCenter Plus</span>
                 </div>
-                <div className="flex items-center justify-between border-b pb-1">
+                <div className="flex items-center justify-between border-b pb-2">
                   <span className="text-[10px] text-[#103d68]">Location</span>
                   <span className="text-[10px] text-[#40C4FF] font-medium">San Francisco, CA</span>
                 </div>
@@ -313,20 +313,20 @@ export const DashboardContainer = () => {
         )}
 
         {activePage === 'connect' && (
-          <div className="p-1.5 md:p-2">
+          <div className="p-2 md:p-3">
             <h2 className="text-[10px] md:text-sm mb-1 text-white">Connect Your PMS</h2>
-            <div className="bg-white rounded-xl p-2">
-              <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-1">Available Integrations</h3>
-              <div className="grid gap-1">
-                <button className="flex items-center justify-between p-1.5 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
+            <div className="bg-white rounded-xl p-3 md:p-4">
+              <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Available Integrations</h3>
+              <div className="grid gap-2">
+                <button className="flex items-center justify-between p-2 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
                   <span className="text-[10px] font-medium text-[#103d68]">Practice Fusion</span>
                   <span className="text-[8px] text-green-500">Connected</span>
                 </button>
-                <button className="flex items-center justify-between p-1.5 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
+                <button className="flex items-center justify-between p-2 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
                   <span className="text-[10px] font-medium text-[#103d68]">Epic Systems</span>
                   <span className="text-[8px] text-[#40C4FF]">Connect</span>
                 </button>
-                <button className="flex items-center justify-between p-1.5 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
+                <button className="flex items-center justify-between p-2 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
                   <span className="text-[10px] font-medium text-[#103d68]">Athenahealth</span>
                   <span className="text-[8px] text-[#40C4FF]">Connect</span>
                 </button>
@@ -336,20 +336,20 @@ export const DashboardContainer = () => {
         )}
 
         {activePage === 'reports' && (
-          <div className="p-1.5 md:p-2">
+          <div className="p-2 md:p-3">
             <h2 className="text-[10px] md:text-sm mb-1 text-white">Data Reports</h2>
-            <div className="bg-white rounded-xl p-2">
-              <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-1">Analytics Dashboard</h3>
-              <div className="grid gap-1">
-                <div className="border rounded-lg p-1.5">
+            <div className="bg-white rounded-xl p-3 md:p-4">
+              <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Analytics Dashboard</h3>
+              <div className="grid gap-2">
+                <div className="border rounded-lg p-2">
                   <h4 className="text-[10px] font-medium text-[#103d68] mb-1">Patient Demographics</h4>
-                  <div className="h-8 md:h-16 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
+                  <div className="h-12 md:h-24 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
                     <span className="text-[10px] text-[#40C4FF]">Demographics Chart</span>
                   </div>
                 </div>
-                <div className="border rounded-lg p-1.5">
+                <div className="border rounded-lg p-2">
                   <h4 className="text-[10px] font-medium text-[#103d68] mb-1">Revenue Trends</h4>
-                  <div className="h-8 md:h-16 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
+                  <div className="h-12 md:h-24 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
                     <span className="text-[10px] text-[#40C4FF]">Revenue Chart</span>
                   </div>
                 </div>
