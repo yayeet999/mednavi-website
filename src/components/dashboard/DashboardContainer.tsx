@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Home, Grid, MapPin, BarChart2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, BarChart, Bar } from 'recharts';
 import { PieChart, Pie, Cell } from 'recharts';
 
 // Sample data
@@ -14,9 +14,9 @@ const revenueData = [
 ];
 
 const donutData = [
-  { name: 'General', value: 400 },
-  { name: 'Cosmetic', value: 300 },
-  { name: 'Orthodontic', value: 200 },
+  { name: 'General', value: 400, color: '#103d68' },
+  { name: 'Cosmetic', value: 300, color: '#40C4FF' },
+  { name: 'Orthodontic', value: 200, color: '#E5F9FD' }
 ];
 
 const proceduresData = [
@@ -26,17 +26,36 @@ const proceduresData = [
   { category: 'Crowns', value: 15 },
 ];
 
-const patientTrendsData = [
-  { month: 'Jan', patients: 120 },
-  { month: 'Feb', patients: 150 },
-  { month: 'Mar', patients: 180 },
-  { month: 'Apr', patients: 210 },
+const patientCategoriesData = [
+  { 
+    month: 'Jan',
+    new: 45,
+    returning: 65,
+    referred: 35
+  },
+  {
+    month: 'Feb',
+    new: 55,
+    returning: 70,
+    referred: 40
+  },
+  {
+    month: 'Mar',
+    new: 50,
+    returning: 75,
+    referred: 45
+  },
+  {
+    month: 'Apr',
+    new: 60,
+    returning: 80,
+    referred: 50
+  }
 ];
 
 export const DashboardContainer = () => {
   const [activePage, setActivePage] = useState('home');
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -53,9 +72,23 @@ export const DashboardContainer = () => {
     visible: { opacity: 1, y: 0 }
   };
 
+  const CustomizedLegend = () => (
+    <div className="text-[8px] md:text-[10px] flex flex-col text-[#103d68]">
+      {donutData.map((entry, index) => (
+        <div key={`legend-${index}`} className="flex items-center mb-0.5">
+          <div 
+            className="w-2 h-2 mr-1 rounded-sm"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span>{entry.name}</span>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="flex h-full w-full max-h-[370px] md:max-h-[480px]">
-      {/* Sidebar with adjusted spacing */}
+      {/* Sidebar */}
       <div className="bg-[#E5F9FD] w-[24px] md:w-[36px] flex flex-col items-center pt-1.5 md:pt-2">
         {[
           { id: 'home', icon: <Home className="text-[#103d68]" size={12} /> },
@@ -79,11 +112,12 @@ export const DashboardContainer = () => {
 
       {/* Main Content */}
       <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
-        <div className="text-right p-1 md:p-2">
+        {/* Adjusted mednavi text positioning and size */}
+        <div className="text-right px-3 py-2 md:px-4 md:py-2.5">
           <motion.h1 
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-xs md:text-sm text-white font-medium"
+            className="text-base md:text-xl text-white font-medium mr-1"
           >
             mednavi
           </motion.h1>
@@ -106,23 +140,23 @@ export const DashboardContainer = () => {
                   Your Dental Practice
                 </motion.h2>
 
-                {/* Row 2: KPIs */}
+                {/* Row 2: KPIs with consistent heights */}
                 <motion.div 
                   variants={itemVariants}
                   className="grid grid-cols-3 gap-3 md:gap-6 px-1 md:px-2"
                 >
                   <div className="space-y-0.5 md:space-y-1">
-                    <h3 className="text-[#103d68] text-xs md:text-base">Active Patients</h3>
+                    <h3 className="text-[#103d68] text-[11px] md:text-base truncate">Active Patients</h3>
                     <p className="text-[#103d68] text-sm md:text-2xl font-bold">2,547</p>
                     <p className="text-green-500 text-[10px] md:text-sm">+12.5%</p>
                   </div>
                   <div className="space-y-0.5 md:space-y-1">
-                    <h3 className="text-[#103d68] text-xs md:text-base">Monthly Revenue</h3>
+                    <h3 className="text-[#103d68] text-[11px] md:text-base truncate">Monthly Revenue</h3>
                     <p className="text-[#103d68] text-sm md:text-2xl font-bold">$125.8K</p>
                     <p className="text-green-500 text-[10px] md:text-sm">+15.2%</p>
                   </div>
                   <div className="space-y-0.5 md:space-y-1">
-                    <h3 className="text-[#103d68] text-xs md:text-base">New Patients</h3>
+                    <h3 className="text-[#103d68] text-[11px] md:text-base truncate">New Patients</h3>
                     <p className="text-[#103d68] text-sm md:text-2xl font-bold">148</p>
                     <p className="text-green-500 text-[10px] md:text-sm">+8.3%</p>
                   </div>
@@ -133,10 +167,10 @@ export const DashboardContainer = () => {
                   variants={itemVariants}
                   className="grid grid-cols-2 gap-2 md:gap-3"
                 >
-                  {/* Revenue Trends Line Chart */}
-                  <div className="h-[60px] md:h-[100px]">
+                  {/* Revenue Trends Line Chart - Increased height */}
+                  <div className="h-[70px] md:h-[110px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
-                    <div className="h-[45px] md:h-[85px]">
+                    <div className="h-[55px] md:h-[95px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={revenueData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
@@ -163,41 +197,46 @@ export const DashboardContainer = () => {
                     </div>
                   </div>
 
-                  {/* Services Distribution Donut */}
-                  <div className="h-[60px] md:h-[100px]">
+                  {/* Services Distribution with Legend */}
+                  <div className="h-[70px] md:h-[110px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
-                    <div className="h-[45px] md:h-[85px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-                          <Pie
-                            data={donutData}
-                            innerRadius="40%"
-                            outerRadius="80%"
-                            paddingAngle={2}
-                            dataKey="value"
-                          >
-                            {donutData.map((_, index) => (
-                              <Cell 
-                                key={`cell-${index}`} 
-                                fill={`${index === 0 ? '#103d68' : `${index === 1 ? '#40C4FF' : '#E5F9FD'}`}`}
-                              />
-                            ))}
-                          </Pie>
-                        </PieChart>
-                      </ResponsiveContainer>
+                    <div className="h-[55px] md:h-[95px] flex items-center">
+                      <div className="w-1/4">
+                        <CustomizedLegend />
+                      </div>
+                      <div className="w-3/4 h-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                            <Pie
+                              data={donutData}
+                              innerRadius="40%"
+                              outerRadius="80%"
+                              paddingAngle={2}
+                              dataKey="value"
+                            >
+                              {donutData.map((entry, index) => (
+                                <Cell 
+                                  key={`cell-${index}`} 
+                                  fill={entry.color}
+                                />
+                              ))}
+                            </Pie>
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
 
-                {/* Row 4: Procedures Bar Chart + Patient Trends */}
+                {/* Row 4: Procedures Bar Chart + Patient Categories */}
                 <motion.div 
                   variants={itemVariants}
-                  className="grid grid-cols-2 gap-2 md:gap-3"
+                  className="grid grid-cols-2 gap-2 md:gap-3 flex-1"
                 >
-                  {/* Procedures Bar Chart */}
-                  <div className="h-[60px] md:h-[100px]">
+                  {/* Procedures Bar Chart - Elongated */}
+                  <div className="h-[80px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Procedures</h3>
-                    <div className="h-[45px] md:h-[85px]">
+                    <div className="h-[65px] md:h-[105px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis type="number" 
@@ -219,12 +258,12 @@ export const DashboardContainer = () => {
                     </div>
                   </div>
 
-                  {/* Patient Trends Line Chart */}
-                  <div className="h-[60px] md:h-[100px]">
-                    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Patient Trends</h3>
-                    <div className="h-[45px] md:h-[85px]">
+                  {/* Patient Categories Grouped Bar Chart */}
+                  <div className="h-[80px] md:h-[120px]">
+                    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Patient Categories</h3>
+                    <div className="h-[65px] md:h-[105px]">
                       <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={patientTrendsData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                        <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
                             dataKey="month" 
                             tick={{ fontSize: 8, fill: '#103d68' }}
@@ -237,14 +276,10 @@ export const DashboardContainer = () => {
                             axisLine={false}
                             tickLine={false}
                           />
-                          <Line 
-                            type="monotone" 
-                            dataKey="patients" 
-                            stroke="#40C4FF" 
-                            strokeWidth={1.5}
-                            dot={false}
-                          />
-                        </LineChart>
+                          <Bar dataKey="new" fill="#103d68" radius={[2, 2, 0, 0]} />
+                          <Bar dataKey="returning" fill="#40C4FF" radius={[2, 2, 0, 0]} />
+                          <Bar dataKey="referred" fill="#E5F9FD" radius={[2, 2, 0, 0]} />
+                        </BarChart>
                       </ResponsiveContainer>
                     </div>
                   </div>
