@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import { Home, Grid, MapPin, BarChart2 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -87,7 +87,7 @@ export const DashboardContainer = () => {
   );
 
   return (
-    <div className="flex h-full w-full max-h-[370px] md:max-h-[480px]">
+    <div className="flex h-full w-full max-h-[340px] md:max-h-[480px]">
       {/* Expanded Sidebar */}
       <div className="bg-[#E5F9FD] w-[36px] md:w-[54px] flex flex-col items-center pt-2 md:pt-3">
         {[
