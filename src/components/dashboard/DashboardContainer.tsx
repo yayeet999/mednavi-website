@@ -125,12 +125,12 @@ export const DashboardContainer = () => {
 
        {activePage === 'home' && (
           <div className="flex-1 flex flex-col px-3 md:px-4 pb-1 md:pb-2">
-            <div className="bg-white rounded-xl p-2 md:p-3 flex-1 overflow-hidden">
+            <div className="bg-white rounded-xl p-2 md:p-3 max-h-[344px] md:max-h-[480px] overflow-hidden">
               <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
-                className="flex flex-col h-full space-y-2 md:space-y-3"
+                className="flex flex-col space-y-2 md:space-y-3"
               >
                 {/* Row 1: Header */}
                 <motion.h2 
@@ -168,7 +168,7 @@ export const DashboardContainer = () => {
                   className="grid grid-cols-2 gap-3 md:gap-4 px-2 md:px-3"
                 >
                   {/* Revenue Trends Line Chart - Increased height */}
-                  <div className="h-[80px] md:h-[125px]">
+                  <div className="h-[76px] md:h-[125px]"> {/* Reduced by ~5% for better fit */}
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
                     <div className="h-[65px] md:h-[110px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -198,7 +198,7 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Services Distribution with increased size */}
-                  <div className="h-[80px] md:h-[125px] pl-2 md:pl-4">
+                  <div className="h-[76px] md:h-[125px] pl-2 md:pl-4"> {/* Reduced by ~5% */}
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
                     <div className="h-[65px] md:h-[110px] flex items-center">
                       <div className="w-1/3">
