@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, BarChart, Bar } from 'recharts';
 import { PieChart, Pie, Cell } from 'recharts';
 
-// Sample data remains unchanged
+// Sample data
 const revenueData = [
   { month: 'Jan', value: 30000 },
   { month: 'Feb', value: 35000 },
@@ -56,6 +56,22 @@ const patientCategoriesData = [
 export const DashboardContainer = () => {
   const [activePage, setActivePage] = useState('home');
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   const CustomizedLegend = () => (
     <div className="text-[9px] md:text-[11px] flex flex-col text-[#103d68] pr-2 md:pr-3">
       {donutData.map((entry, index) => (
@@ -71,8 +87,8 @@ export const DashboardContainer = () => {
   );
 
   return (
-    <div className="flex h-full w-full max-h-[306px] md:max-h-[432px]">
-      {/* Sidebar - maintained original height */}
+    <div className="flex h-full w-full max-h-[344px] md:max-h-[480px]">
+      {/* Expanded Sidebar */}
       <div className="bg-[#E5F9FD] w-[36px] md:w-[54px] flex flex-col items-center pt-2 md:pt-3">
         {[
           { id: 'home', icon: <Home className="text-[#103d68]" size={18} /> },
@@ -96,7 +112,7 @@ export const DashboardContainer = () => {
 
       {/* Main Content */}
       <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
-        {/* Header */}
+        {/* Adjusted mednavi text */}
         <div className="text-right px-4 py-2.5 md:px-5 md:py-3">
           <motion.h1 
             initial={{ opacity: 0, x: -10 }}
@@ -107,38 +123,26 @@ export const DashboardContainer = () => {
           </motion.h1>
         </div>
 
-        {activePage === 'home' && (
+       {activePage === 'home' && (
           <div className="flex-1 flex flex-col px-3 md:px-4 pb-1 md:pb-2">
-            <div className="bg-white rounded-xl p-2 md:p-3 h-full overflow-hidden">
+            <div className="bg-white rounded-xl p-2 md:p-3 max-h-[344px] md:max-h-[480px] overflow-hidden">
               <motion.div
                 initial="hidden"
                 animate="visible"
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: { staggerChildren: 0.1, delayChildren: 0.1 }
-                  }
-                }}
+                variants={containerVariants}
                 className="flex flex-col space-y-2 md:space-y-3"
               >
-                {/* Header */}
+                {/* Row 1: Header */}
                 <motion.h2 
-                  variants={{
-                    hidden: { opacity: 0, y: 10 },
-                    visible: { opacity: 1, y: 0 }
-                  }}
+                  variants={itemVariants}
                   className="text-lg md:text-xl font-medium text-[#103d68] pl-1 md:pl-2"
                 >
                   Your Dental Practice
                 </motion.h2>
 
-                {/* KPIs */}
+                {/* Row 2: KPIs with increased spacing */}
                 <motion.div 
-                  variants={{
-                    hidden: { opacity: 0, y: 10 },
-                    visible: { opacity: 1, y: 0 }
-                  }}
+                  variants={itemVariants}
                   className="grid grid-cols-3 gap-4 md:gap-8 px-4 md:px-6 mr-3 md:mr-4"
                 >
                   <div className="space-y-0.5 md:space-y-1">
@@ -158,18 +162,15 @@ export const DashboardContainer = () => {
                   </div>
                 </motion.div>
 
-                {/* Charts Row */}
+                {/* Row 3: Revenue Trends + Donut */}
                 <motion.div 
-                  variants={{
-                    hidden: { opacity: 0, y: 10 },
-                    visible: { opacity: 1, y: 0 }
-                  }}
+                  variants={itemVariants}
                   className="grid grid-cols-2 gap-3 md:gap-4 px-2 md:px-3"
                 >
-                  {/* Revenue Trends Chart */}
-                  <div className="h-[68px] md:h-[112px]">
+                  {/* Revenue Trends Line Chart - Increased height */}
+                  <div className="h-[76px] md:h-[125px]"> {/* Reduced by ~5% for better fit */}
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
-                    <div className="h-[58px] md:h-[99px]">
+                    <div className="h-[65px] md:h-[110px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis 
@@ -196,10 +197,10 @@ export const DashboardContainer = () => {
                     </div>
                   </div>
 
-                  {/* Services Distribution */}
-                  <div className="h-[68px] md:h-[112px] pl-2 md:pl-4">
+                  {/* Services Distribution with increased size */}
+                  <div className="h-[76px] md:h-[125px] pl-2 md:pl-4"> {/* Reduced by ~5% */}
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
-                    <div className="h-[58px] md:h-[99px] flex items-center">
+                    <div className="h-[65px] md:h-[110px] flex items-center">
                       <div className="w-1/3">
                         <CustomizedLegend />
                       </div>
@@ -227,18 +228,15 @@ export const DashboardContainer = () => {
                   </div>
                 </motion.div>
 
-                {/* Bottom Charts */}
+                {/* Row 4: Procedures Bar Chart + Patient Categories */}
                 <motion.div 
-                  variants={{
-                    hidden: { opacity: 0, y: 10 },
-                    visible: { opacity: 1, y: 0 }
-                  }}
+                  variants={itemVariants}
                   className="grid grid-cols-2 gap-3 md:gap-4 px-2 md:px-3 flex-1"
                 >
-                  {/* Procedures Chart */}
-                  <div className="h-[90px] md:h-[126px]">
+                  {/* Procedures Bar Chart - Elongated */}
+                  <div className="h-[100px] md:h-[140px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Procedures</h3>
-                    <div className="h-[76px] md:h-[112px]">
+                    <div className="h-[85px] md:h-[125px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis type="number" 
@@ -260,10 +258,10 @@ export const DashboardContainer = () => {
                     </div>
                   </div>
 
-                  {/* Patient Categories Chart */}
-                  <div className="h-[90px] md:h-[126px]">
+                  {/* Patient Categories Grouped Bar Chart */}
+                  <div className="h-[100px] md:h-[140px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Patient Categories</h3>
-                    <div className="h-[76px] md:h-[112px]">
+                    <div className="h-[85px] md:h-[125px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
@@ -292,73 +290,73 @@ export const DashboardContainer = () => {
         )}
 
         {activePage === 'practice' && (
-  <div className="p-2 md:p-3">
-    <h2 className="text-[10px] md:text-sm mb-1 text-white">Your Practice</h2>
-    <div className="bg-white rounded-xl p-3 md:p-4">
-      <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Practice Overview</h3>
-      <div className="grid gap-2">
-        <div className="flex items-center justify-between border-b pb-2">
-          <span className="text-[10px] text-[#103d68]">Practice Name</span>
-          <span className="text-[10px] text-[#40C4FF] font-medium">MedCenter Plus</span>
-        </div>
-        <div className="flex items-center justify-between border-b pb-2">
-          <span className="text-[10px] text-[#103d68]">Location</span>
-          <span className="text-[10px] text-[#40C4FF] font-medium">San Francisco, CA</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] text-[#103d68]">Practitioners</span>
-          <span className="text-[10px] text-[#40C4FF] font-medium">12</span>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-
-{activePage === 'connect' && (
-  <div className="p-2 md:p-3">
-    <h2 className="text-[10px] md:text-sm mb-1 text-white">Connect Your PMS</h2>
-    <div className="bg-white rounded-xl p-3 md:p-4">
-      <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Available Integrations</h3>
-      <div className="grid gap-2">
-        <button className="flex items-center justify-between p-2 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
-          <span className="text-[10px] font-medium text-[#103d68]">Practice Fusion</span>
-          <span className="text-[8px] text-green-500">Connected</span>
-        </button>
-        <button className="flex items-center justify-between p-2 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
-          <span className="text-[10px] font-medium text-[#103d68]">Epic Systems</span>
-          <span className="text-[8px] text-[#40C4FF]">Connect</span>
-        </button>
-        <button className="flex items-center justify-between p-2 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
-          <span className="text-[10px] font-medium text-[#103d68]">Athenahealth</span>
-          <span className="text-[8px] text-[#40C4FF]">Connect</span>
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-{activePage === 'reports' && (
-  <div className="p-2 md:p-3">
-    <h2 className="text-[10px] md:text-sm mb-1 text-white">Data Reports</h2>
-    <div className="bg-white rounded-xl p-3 md:p-4">
-      <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Analytics Dashboard</h3>
-      <div className="grid gap-2">
-        <div className="border rounded-lg p-2">
-          <h4 className="text-[10px] font-medium text-[#103d68] mb-1">Patient Demographics</h4>
-          <div className="h-12 md:h-24 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
-            <span className="text-[10px] text-[#40C4FF]">Demographics Chart</span>
+          <div className="p-2 md:p-3">
+            <h2 className="text-[10px] md:text-sm mb-1 text-white">Your Practice</h2>
+            <div className="bg-white rounded-xl p-3 md:p-4">
+              <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Practice Overview</h3>
+              <div className="grid gap-2">
+                <div className="flex items-center justify-between border-b pb-2">
+                  <span className="text-[10px] text-[#103d68]">Practice Name</span>
+                  <span className="text-[10px] text-[#40C4FF] font-medium">MedCenter Plus</span>
+                </div>
+                <div className="flex items-center justify-between border-b pb-2">
+                  <span className="text-[10px] text-[#103d68]">Location</span>
+                  <span className="text-[10px] text-[#40C4FF] font-medium">San Francisco, CA</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-[#103d68]">Practitioners</span>
+                  <span className="text-[10px] text-[#40C4FF] font-medium">12</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="border rounded-lg p-2">
-          <h4 className="text-[10px] font-medium text-[#103d68] mb-1">Revenue Trends</h4>
-          <div className="h-12 md:h-24 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
-            <span className="text-[10px] text-[#40C4FF]">Revenue Chart</span>
+        )}
+
+        {activePage === 'connect' && (
+          <div className="p-2 md:p-3">
+            <h2 className="text-[10px] md:text-sm mb-1 text-white">Connect Your PMS</h2>
+            <div className="bg-white rounded-xl p-3 md:p-4">
+              <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Available Integrations</h3>
+              <div className="grid gap-2">
+                <button className="flex items-center justify-between p-2 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
+                  <span className="text-[10px] font-medium text-[#103d68]">Practice Fusion</span>
+                  <span className="text-[8px] text-green-500">Connected</span>
+                </button>
+                <button className="flex items-center justify-between p-2 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
+                  <span className="text-[10px] font-medium text-[#103d68]">Epic Systems</span>
+                  <span className="text-[8px] text-[#40C4FF]">Connect</span>
+                </button>
+                <button className="flex items-center justify-between p-2 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
+                  <span className="text-[10px] font-medium text-[#103d68]">Athenahealth</span>
+                  <span className="text-[8px] text-[#40C4FF]">Connect</span>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+        )}
+
+        {activePage === 'reports' && (
+          <div className="p-2 md:p-3">
+            <h2 className="text-[10px] md:text-sm mb-1 text-white">Data Reports</h2>
+            <div className="bg-white rounded-xl p-3 md:p-4">
+              <h3 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Analytics Dashboard</h3>
+              <div className="grid gap-2">
+                <div className="border rounded-lg p-2">
+                  <h4 className="text-[10px] font-medium text-[#103d68] mb-1">Patient Demographics</h4>
+                  <div className="h-12 md:h-24 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
+                    <span className="text-[10px] text-[#40C4FF]">Demographics Chart</span>
+                  </div>
+                </div>
+                <div className="border rounded-lg p-2">
+                  <h4 className="text-[10px] font-medium text-[#103d68] mb-1">Revenue Trends</h4>
+                  <div className="h-12 md:h-24 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
+                    <span className="text-[10px] text-[#40C4FF]">Revenue Chart</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
