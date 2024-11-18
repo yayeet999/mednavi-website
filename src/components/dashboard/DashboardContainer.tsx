@@ -197,8 +197,8 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Patient Categories */}
-                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
-                    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1 h-[85px] md:h-[130px]">Patient Categories</h3>
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm h-[85px] md:h-[130px]">
+                    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
                     <div className="h-[70px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
