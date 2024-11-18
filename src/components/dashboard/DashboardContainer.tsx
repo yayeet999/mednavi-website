@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Plug2, MapPin, BarChart2, ArrowRight } from 'lucide-react';
+import { Home, Plug2 } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
 export const DashboardContainer = () => {
@@ -49,18 +49,18 @@ export const DashboardContainer = () => {
   return (
     <div className="flex h-[340px] md:h-[480px] w-full">
       {/* Sidebar */}
-      <div className="bg-[#E5F9FD] w-[30px] md:w-[54px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
+      <div className="bg-white w-[30px] md:w-[54px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
         {[
-          { id: 'home', icon: <Home className="text-[#103d68]" size={16} /> },
-          { id: 'practice', icon: <Plug2 className="text-[#103d68]" size={16} /> },
-          { id: 'connect', icon: <MapPin className="text-[#103d68]" size={16} /> },
-          { id: 'reports', icon: <BarChart2 className="text-[#103d68]" size={16} /> }
+          { id: 'home', icon: <Home size={16} /> },
+          { id: 'practice', icon: <Plug2 size={16} /> }
         ].map((item) => (
           <button
             key={item.id}
             onClick={() => setActivePage(item.id)}
             className={`w-5 h-5 md:w-9 md:h-9 mb-2 md:mb-3 rounded-lg flex items-center justify-center cursor-pointer transition-colors
-                       ${activePage === item.id ? 'bg-white shadow-sm' : 'bg-transparent hover:bg-white/50'}`}
+                       ${activePage === item.id 
+                         ? 'bg-[#103d68] text-white shadow-sm' 
+                         : 'bg-transparent text-[#103d68] hover:bg-[#103d68] hover:bg-opacity-10'}`}
           >
             {item.icon}
           </button>
@@ -69,9 +69,10 @@ export const DashboardContainer = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="flex-shrink-0 text-right px-3 py-2 md:px-5 md:py-3">
-          <h1 className="text-sm md:text-xl text-white font-medium">mednavi</h1>
+        {/* Header Area */}
+        <div className="flex-shrink-0 flex justify-between items-center px-3 py-2 md:px-5 md:py-3">
+          <h1 className="text-xs md:text-lg text-white font-medium">Your Dental Practice</h1>
+          <h2 className="text-sm md:text-xl text-white font-medium">mednavi</h2>
         </div>
 
         {/* Content Area */}
@@ -80,10 +81,10 @@ export const DashboardContainer = () => {
             {activePage === 'home' && (
               <div className="flex flex-col p-2 md:p-3 space-y-2 md:space-y-3">
                 <h2 className="text-base md:text-xl font-bold text-[#103d68] pl-1 md:pl-2">
-                  Your Dental Practice
+                  Dashboard Overview
                 </h2>
 
-                {/* KPIs */}
+                {/* KPIs - Reordered */}
                 <div className="grid grid-cols-3 gap-2 md:gap-8 px-2 md:px-6 mr-2 md:mr-4">
                   <div className="space-y-0.5 md:space-y-1">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Active Patients</h3>
@@ -91,18 +92,18 @@ export const DashboardContainer = () => {
                     <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
                   </div>
                   <div className="space-y-0.5 md:space-y-1">
-                    <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Monthly Revenue</h3>
-                    <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
-                    <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
-                  </div>
-                  <div className="space-y-0.5 md:space-y-1">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">New Patients</h3>
                     <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
                     <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
                   </div>
+                  <div className="space-y-0.5 md:space-y-1">
+                    <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Monthly Revenue</h3>
+                    <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
+                    <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
+                  </div>
                 </div>
 
-                {/* Charts Row 1 */}
+             {/* Charts Row 1 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
                   {/* Revenue Trends */}
                   <div className="h-[65px] md:h-[110px]">
@@ -162,7 +163,7 @@ export const DashboardContainer = () => {
                   </div>
                 </div>
 
-                {/* Charts Row 2 - Increased by 10px for mobile */}
+                {/* Charts Row 2 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
                   {/* Procedures */}
                   <div className="h-[105px] md:h-[120px]">
@@ -245,85 +246,7 @@ export const DashboardContainer = () => {
               </div>
             )}
 
-            {activePage === 'connect' && (
-              <div className="p-4 md:p-6 space-y-3 md:space-y-4">
-                <h2 className="text-base md:text-xl font-medium text-[#103d68]">Available Integrations</h2>
-                <div className="space-y-2 md:space-y-3">
-                  <button className="w-full flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
-                    <span className="text-[10px] md:text-sm font-medium text-[#103d68]">Practice Fusion</span>
-                    <span className="text-[8px] md:text-xs text-green-500">Connected</span>
-                  </button>
-                  <button className="w-full flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
-                    <span className="text-[10px] md:text-sm font-medium text-[#103d68]">Epic Systems</span>
-                    <span className="text-[8px] md:text-xs text-[#40C4FF]">Connect</span>
-                  </button>
-                  <button className="w-full flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
-                    <span className="text-[10px] md:text-sm font-medium text-[#103d68]">Athenahealth</span>
-                    <span className="text-[8px] md:text-xs text-[#40C4FF]">Connect</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {activePage === 'reports' && (
-              <div className="p-3 md:p-4 space-y-2 md:space-y-3">
-                <h2 className="text-base md:text-xl font-medium text-[#103d68]">Analytics Dashboard</h2>
-                <div className="space-y-2 md:space-y-3">
-                  <div className="border rounded-lg p-2 md:p-3">
-                    <h4 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-1 md:mb-2">Patient Demographics</h4>
-                    <div className="h-[75px] md:h-[100px] bg-[#E5F9FD] rounded-lg">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
-                          <XAxis 
-                            dataKey="month" 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <YAxis 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            width={15}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <Bar dataKey="new" fill="#103d68" radius={[2, 2, 0, 0]} />
-                          <Bar dataKey="returning" fill="#40C4FF" radius={[2, 2, 0, 0]} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                  <div className="border rounded-lg p-2 md:p-3">
-                    <h4 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-1 md:mb-2">Revenue Trends</h4>
-                    <div className="h-[75px] md:h-[100px] bg-[#E5F9FD] rounded-lg">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
-                          <XAxis 
-                            dataKey="month" 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <YAxis 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            width={15}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="value" 
-                            stroke="#103d68" 
-                            strokeWidth={1.5}
-                            dot={false}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+           </div>
         </div>
       </div>
     </div>
