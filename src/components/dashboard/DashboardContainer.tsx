@@ -49,15 +49,15 @@ export const DashboardContainer = () => {
   return (
     <div className="flex h-[340px] md:h-[480px] w-full">
       {/* Sidebar */}
-      <div className="bg-white w-[50px] md:w-[80px] flex-shrink-0 flex flex-col items-center pt-6 md:pt-10 rounded-tl-xl rounded-bl-xl">
+      <div className="bg-white w-[30px] md:w-[54px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
         {[
-          { id: 'home', icon: <Home size={24} /> },
-          { id: 'practice', icon: <Plug2 size={24} /> }
+          { id: 'home', icon: <Home size={16} /> },
+          { id: 'practice', icon: <Plug2 size={16} /> }
         ].map((item) => (
           <button
             key={item.id}
             onClick={() => setActivePage(item.id)}
-            className={`w-8 h-8 md:w-12 md:h-12 mb-4 md:mb-6 rounded-lg flex items-center justify-center cursor-pointer transition-colors
+            className={`w-5 h-5 md:w-9 md:h-9 mb-2 md:mb-3 rounded-lg flex items-center justify-center cursor-pointer transition-colors
                        ${activePage === item.id 
                          ? 'bg-[#103d68] text-white shadow-sm' 
                          : 'bg-transparent text-[#103d68] hover:bg-[#103d68] hover:bg-opacity-10'}`}
@@ -77,50 +77,38 @@ export const DashboardContainer = () => {
 
         {/* Content Area */}
         <div className="flex-1 p-2 md:p-4">
-          <div className="bg-gray-100 rounded-xl h-full">
+          <div className="bg-gray-100 rounded-xl h-full p-2 md:p-3">
             {activePage === 'home' && (
-              <div className="flex flex-col p-2 md:p-3 space-y-2 md:space-y-3">
+              <div className="flex flex-col space-y-2 md:space-y-3">
                 <h2 className="text-base md:text-xl font-bold text-[#103d68] pl-1 md:pl-2">
                   Dashboard Overview
                 </h2>
 
-                {/* KPIs - Reordered */}
-                <div className="grid grid-cols-3 gap-2 md:gap-9 px-2 md:px-6 mr-2 md:mr-4">
-  {/* Active Patients */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow space-y-0.5 md:space-y-1 w-[110%] md:w-auto transform -translate-x-2 md:translate-x-0">
-    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
-    <div className="flex items-center space-x-2">
-      <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
-      <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
-    </div>
-  </div>
+                {/* KPIs - Reduced height */}
+                <div className="grid grid-cols-3 gap-2 md:gap-4">
+                  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[60px] md:h-[110px]">
+                    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
+                    <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">2,547</p>
+                    <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+12.5%</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[60px] md:h-[110px]">
+                    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
+                    <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">148</p>
+                    <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+8.3%</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[60px] md:h-[110px]">
+                    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
+                    <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">$125.8K</p>
+                    <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+15.2%</p>
+                  </div>
+                </div>
 
-  {/* New Patients */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow space-y-0.5 md:space-y-1 w-full md:w-auto">
-    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
-    <div className="flex items-center space-x-2">
-      <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
-      <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
-    </div>
-  </div>
-
-  {/* Monthly Revenue */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow space-y-0.5 md:space-y-1 w-[120%] md:w-auto">
-    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
-    <div className="flex items-center space-x-2">
-      <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
-      <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
-    </div>
-  </div>
-</div>
-
-
-             {/* Charts Row 1 */}
-                <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
+               {/* Charts Row 1 */}
+<div className="grid grid-cols-2 gap-2 md:gap-4">
   {/* Revenue Trends */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow transform -translate-x-2 md:translate-x-0">
+  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm w-[103%] md:w-auto">
     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
-    <div className="h-[50px] md:h-[95px]">
+    <div className="h-[70px] md:h-[95px]">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
           <XAxis 
@@ -148,7 +136,7 @@ export const DashboardContainer = () => {
   </div>
 
   {/* Services Distribution */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow transform -translate-x-2 md:translate-x-0">
+  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm w-[103%] md:w-auto">
     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Services Distribution</h3>
     <div className="h-[50px] md:h-[95px] flex items-center">
       <div className="w-1/3">
@@ -176,11 +164,11 @@ export const DashboardContainer = () => {
 </div>
 
                 {/* Charts Row 2 */}
-                <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
+                <div className="grid grid-cols-2 gap-2 md:gap-4">
                   {/* Procedures */}
-                  <div className="h-[105px] md:h-[120px]">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Procedures</h3>
-                    <div className="h-[90px] md:h-[105px]">
+                    <div className="h-[85px] md:h-[100px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis type="number" 
@@ -203,9 +191,9 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Patient Categories */}
-                  <div className="h-[105px] md:h-[120px]">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
-                    <div className="h-[90px] md:h-[105px]">
+                    <div className="h-[85px] md:h-[100px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
@@ -232,7 +220,7 @@ export const DashboardContainer = () => {
             )}
 
             {activePage === 'practice' && (
-              <div className="p-4 md:p-6 space-y-3 md:space-y-4">
+              <div className="bg-white rounded-xl p-4 md:p-6 space-y-3 md:space-y-4">
                 <h2 className="text-base md:text-xl font-bold text-[#103d68]">Mednavi Setup & Connection</h2>
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center justify-between border-b pb-2 md:pb-3">
@@ -257,8 +245,7 @@ export const DashboardContainer = () => {
                 </div>
               </div>
             )}
-
-           </div>
+          </div>
         </div>
       </div>
     </div>
