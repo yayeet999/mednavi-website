@@ -72,28 +72,19 @@ export const DashboardContainer = () => {
             >
               {item.icon}
               {item.id === 'practice' && (
-                <>
-                  <div 
-                    className="absolute inset-0 rounded-lg"
-                    style={{
-                      animation: 'outerGlow 4s ease-in-out infinite',
-                      boxShadow: '0 0 0 2px rgba(79, 70, 229, 0.2)',
-                    }}
-                  />
-                  <div 
-                    className="absolute inset-0 rounded-lg"
-                    style={{
-                      animation: 'innerPulse 4s ease-in-out infinite',
-                      boxShadow: '0 0 25px rgba(79, 70, 229, 0.3)',
-                    }}
-                  />
-                </>
+                <div 
+                  className="absolute inset-0 rounded-lg"
+                  style={{
+                    animation: 'outerGlow 4s ease-in-out infinite',
+                    boxShadow: '0 0 25px rgba(79, 70, 229, 0.3)',
+                  }}
+                />
               )}
             </button>
 
             {item.id === 'practice' && showTooltip && (
               <div 
-                className="absolute left-1/2 -translate-x-1/2 w-28 md:w-32"
+                className="absolute left-1/2 -translate-x-1/2 w-[30] md:w-34"
                 style={{
                   top: 'calc(100% + 12px)',
                   animation: 'smoothFloat 3s ease-in-out infinite',
@@ -301,17 +292,6 @@ export const DashboardContainer = () => {
             50% {
               transform: scale(1.2);
               opacity: 0.2;
-            }
-          }
-
-          @keyframes innerPulse {
-            0%, 100% {
-              transform: scale(1);
-              opacity: 0.3;
-            }
-            50% {
-              transform: scale(1.12);
-              opacity: 0.5;
             }
           }
 
