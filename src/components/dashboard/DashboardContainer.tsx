@@ -162,12 +162,12 @@ export const DashboardContainer = () => {
                   </div>
                 </div>
 
-                {/* Charts Row 2 - Adjusted mobile heights */}
+                {/* Charts Row 2 - Increased by 10px for mobile */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
                   {/* Procedures */}
-                  <div className="h-[95px] md:h-[120px]">
+                  <div className="h-[105px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Procedures</h3>
-                    <div className="h-[80px] md:h-[105px]">
+                    <div className="h-[90px] md:h-[105px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis type="number" 
@@ -190,9 +190,9 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Patient Categories */}
-                  <div className="h-[95px] md:h-[120px]">
+                  <div className="h-[105px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
-                    <div className="h-[80px] md:h-[105px]">
+                    <div className="h-[90px] md:h-[105px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
@@ -220,20 +220,26 @@ export const DashboardContainer = () => {
 
             {activePage === 'practice' && (
               <div className="p-4 md:p-6 space-y-3 md:space-y-4">
-                <h2 className="text-base md:text-xl font-medium text-[#103d68]">Practice Overview</h2>
+                <h2 className="text-base md:text-xl font-medium text-[#103d68]">Mednavi Setup & Connection</h2>
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center justify-between border-b pb-2 md:pb-3">
                     <span className="text-[10px] md:text-sm text-[#103d68]">Practice Name</span>
-                    <span className="text-[10px] md:text-sm text-[#40C4FF] font-medium">MedCenter Plus</span>
+                    <span className="text-[10px] md:text-sm text-[#40C4FF] font-medium">Your Amazing Dental Practice</span>
                   </div>
                   <div className="flex items-center justify-between border-b pb-2 md:pb-3">
                     <span className="text-[10px] md:text-sm text-[#103d68]">Location</span>
-                    <span className="text-[10px] md:text-sm text-[#40C4FF] font-medium">San Francisco, CA</span>
+                    <span className="text-[10px] md:text-sm text-[#40C4FF] font-medium">Chicago, IL</span>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between border-b pb-2 md:pb-3">
                     <span className="text-[10px] md:text-sm text-[#103d68]">Practitioners</span>
-                    <span className="text-[10px] md:text-sm text-[#40C4FF] font-medium">12</span>
+                    <span className="text-[10px] md:text-sm text-[#40C4FF] font-medium">2</span>
                   </div>
+                  <button 
+                    className="w-full py-2 md:py-3 px-4 bg-[#40C4FF] hover:bg-[#0091ea] transition-colors text-white rounded-lg text-[11px] md:text-sm font-medium shadow-sm hover:shadow-md"
+                    onClick={() => console.log('Continue clicked')}
+                  >
+                    Click to Continue!
+                  </button>
                 </div>
               </div>
             )}
