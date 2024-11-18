@@ -114,9 +114,9 @@ export const DashboardContainer = () => {
   {/* Revenue Trends */}
   <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto">
     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
-    <div className="h-[50px] md:h-[90px]">
+    <div className="h-[65px] md:h-[90px]">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
+        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 0, left: 5 }}>
           <XAxis 
             dataKey="month" 
             tick={{ fontSize: 7, fill: '#103d68' }}
@@ -133,8 +133,8 @@ export const DashboardContainer = () => {
             type="monotone" 
             dataKey="value" 
             stroke="#103d68" 
-            strokeWidth={1.5}
-            dot={false}
+            strokeWidth={2}
+            dot={true}
           />
         </LineChart>
       </ResponsiveContainer>
