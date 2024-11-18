@@ -65,7 +65,7 @@ export const DashboardContainer = () => {
           <div key={item.id} className="relative">
             <button
               onClick={() => item.id === 'practice' ? console.log('Navigate to other dashboard') : setActivePage(item.id)}
-              className={`w-10 h-8 md:w-14 md:h-12 mb-8 md:mb-12 rounded-lg flex items-center justify-center cursor-pointer transition-colors
+              className={`w-10 h-8 md:w-14 md:h-12 mb-4 md:mb-6 rounded-lg flex items-center justify-center cursor-pointer transition-colors
                          ${activePage === item.id 
                            ? 'bg-[#052b52] text-white shadow-sm' 
                            : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}`}
@@ -101,7 +101,7 @@ export const DashboardContainer = () => {
                 }}
               >
                 <div 
-                  className="relative px-3 py-2 md:px-4 md:py-3 rounded-lg"
+                  className="relative px-2.5 py-1.5 md:px-3.5 md:py-2.5 rounded-lg"
                   style={{
                     background: '#03203d',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
