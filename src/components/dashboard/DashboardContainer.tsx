@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Plug2, ArrowRight, Graph } from 'lucide-react';
+import { Home, Plug2, ArrowRight, BarChart2 } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
 export const DashboardContainer = () => {
@@ -52,7 +52,7 @@ export const DashboardContainer = () => {
       <div className="bg-white w-[50px] md:w-[80px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
         {[
           { id: 'home', icon: <Home size={24} /> },
-          { id: 'data', icon: <Graph size={24} /> }
+          { id: 'data', icon: <BarChart2 size={24} /> }
         ].map((item) => (
           <button
             key={item.id}
