@@ -150,7 +150,7 @@ export const DashboardContainer = () => {
     </div>
     <div className="w-2/3 h-full scale-110 transform translate-x-2 md:scale-115 md:-translate-y-2">  {/* Added md:scale-125 and md:-translate-y-3 */}
       <ResponsiveContainer width="100%" height="100%">
-        <PieChart margin={{ top: -3, right: 0, bottom: 1, left: 0 }}>  {/* Adjusted top margin */}
+        <PieChart margin={{ top: -5, right: 0, bottom: 1, left: 0 }}>  {/* Adjusted top margin */}
           <Pie
             data={donutData}
             innerRadius="40%"
