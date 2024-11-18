@@ -103,10 +103,10 @@ export const DashboardContainer = () => {
                   </div>
                 </div>
 
-               {/* Charts Row 1 */}
+{/* Charts Row 1 */}
 <div className="grid grid-cols-2 gap-2 md:gap-4">
   {/* Revenue Trends */}
-  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm w-[103%] md:w-auto">
+  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm w-[102%] md:w-auto">
     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
     <div className="h-[70px] md:h-[95px]">
       <ResponsiveContainer width="100%" height="100%">
@@ -136,7 +136,7 @@ export const DashboardContainer = () => {
   </div>
 
   {/* Services Distribution */}
-  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm w-[103%] md:w-auto">
+  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm w-[102%] md:w-auto">
     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Services Distribution</h3>
     <div className="h-[50px] md:h-[95px] flex items-center">
       <div className="w-1/3">
