@@ -117,63 +117,63 @@ export const DashboardContainer = () => {
 
              {/* Charts Row 1 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
-                  {/* Revenue Trends */}
-                  <div className="h-[65px] md:h-[110px]">
-                    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
-                    <div className="h-[50px] md:h-[95px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
-                          <XAxis 
-                            dataKey="month" 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <YAxis 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            width={15}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="value" 
-                            stroke="#103d68" 
-                            strokeWidth={1.5}
-                            dot={false}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
+  {/* Revenue Trends */}
+  <div className="bg-white rounded-lg p-2 md:p-3 shadow">
+    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
+    <div className="h-[50px] md:h-[95px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
+          <XAxis 
+            dataKey="month" 
+            tick={{ fontSize: 7, fill: '#103d68' }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis 
+            tick={{ fontSize: 7, fill: '#103d68' }}
+            width={15}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Line 
+            type="monotone" 
+            dataKey="value" 
+            stroke="#103d68" 
+            strokeWidth={1.5}
+            dot={false}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
 
-                  {/* Services Distribution */}
-                  <div className="h-[65px] md:h-[110px] pl-1 md:pl-4">
-                    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Services Distribution</h3>
-                    <div className="h-[50px] md:h-[95px] flex items-center">
-                      <div className="w-1/3">
-                        <CustomizedLegend />
-                      </div>
-                      <div className="w-2/3 h-full scale-110 transform translate-x-2">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-                            <Pie
-                              data={donutData}
-                              innerRadius="40%"
-                              outerRadius="85%"
-                              paddingAngle={2}
-                              dataKey="value"
-                            >
-                              {donutData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+  {/* Services Distribution */}
+  <div className="bg-white rounded-lg p-2 md:p-3 shadow">
+    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Services Distribution</h3>
+    <div className="h-[50px] md:h-[95px] flex items-center">
+      <div className="w-1/3">
+        <CustomizedLegend />
+      </div>
+      <div className="w-2/3 h-full scale-110 transform translate-x-2">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+            <Pie
+              data={donutData}
+              innerRadius="40%"
+              outerRadius="85%"
+              paddingAngle={2}
+              dataKey="value"
+            >
+              {donutData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </div>
+</div>
 
                 {/* Charts Row 2 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
