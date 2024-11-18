@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Plug2 } from 'lucide-react';
+import { Home, Plug2, ArrowRight } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
 export const DashboardContainer = () => {
