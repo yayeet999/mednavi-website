@@ -106,7 +106,7 @@ export const DashboardContainer = () => {
 
   {/* Monthly Revenue */}
   <div className="bg-white rounded-lg p-2 md:p-3 shadow space-y-0.5 md:space-y-1 w-[120%] md:w-auto">
-    <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Monthly Revenue</h3>
+    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
     <div className="flex items-center space-x-2">
       <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
       <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
