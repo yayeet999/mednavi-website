@@ -77,7 +77,7 @@ export const DashboardContainer = () => {
 
         {/* Content Area */}
         <div className="flex-1 p-2 md:p-4">
-          <div className="bg-white rounded-xl h-full">
+          <div className="bg-gray-200 rounded-xl h-full">
             {activePage === 'home' && (
               <div className="flex flex-col p-2 md:p-3 space-y-2 md:space-y-3">
                 <h2 className="text-base md:text-xl font-bold text-[#103d68] pl-1 md:pl-2">
