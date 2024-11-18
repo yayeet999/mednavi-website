@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Grid, MapPin, BarChart2 } from 'lucide-react';
+import { Home, Plug2, MapPin, BarChart2, ArrowRight } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
 export const DashboardContainer = () => {
@@ -52,7 +52,7 @@ export const DashboardContainer = () => {
       <div className="bg-[#E5F9FD] w-[30px] md:w-[54px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
         {[
           { id: 'home', icon: <Home className="text-[#103d68]" size={16} /> },
-          { id: 'practice', icon: <Grid className="text-[#103d68]" size={16} /> },
+          { id: 'practice', icon: <Plug2 className="text-[#103d68]" size={16} /> },
           { id: 'connect', icon: <MapPin className="text-[#103d68]" size={16} /> },
           { id: 'reports', icon: <BarChart2 className="text-[#103d68]" size={16} /> }
         ].map((item) => (
@@ -79,7 +79,7 @@ export const DashboardContainer = () => {
           <div className="bg-white rounded-xl h-full">
             {activePage === 'home' && (
               <div className="flex flex-col p-2 md:p-3 space-y-2 md:space-y-3">
-                <h2 className="text-base md:text-xl font-medium text-[#103d68] pl-1 md:pl-2">
+                <h2 className="text-base md:text-xl font-bold text-[#103d68] pl-1 md:pl-2">
                   Your Dental Practice
                 </h2>
 
@@ -220,25 +220,26 @@ export const DashboardContainer = () => {
 
             {activePage === 'practice' && (
               <div className="p-4 md:p-6 space-y-3 md:space-y-4">
-                <h2 className="text-base md:text-xl font-medium text-[#103d68]">Mednavi Setup & Connection</h2>
+                <h2 className="text-base md:text-xl font-bold text-[#103d68]">Mednavi Setup & Connection</h2>
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center justify-between border-b pb-2 md:pb-3">
                     <span className="text-[10px] md:text-sm text-[#103d68]">Practice Name</span>
-                    <span className="text-[10px] md:text-sm text-[#40C4FF] font-medium">Your Amazing Dental Practice</span>
+                    <span className="text-[10px] md:text-sm text-[#103d68] font-medium">Your Amazing Dental Practice</span>
                   </div>
                   <div className="flex items-center justify-between border-b pb-2 md:pb-3">
                     <span className="text-[10px] md:text-sm text-[#103d68]">Location</span>
-                    <span className="text-[10px] md:text-sm text-[#40C4FF] font-medium">Chicago, IL</span>
+                    <span className="text-[10px] md:text-sm text-[#103d68] font-medium">Chicago, IL</span>
                   </div>
                   <div className="flex items-center justify-between border-b pb-2 md:pb-3">
                     <span className="text-[10px] md:text-sm text-[#103d68]">Practitioners</span>
-                    <span className="text-[10px] md:text-sm text-[#40C4FF] font-medium">2</span>
+                    <span className="text-[10px] md:text-sm text-[#103d68] font-medium">2</span>
                   </div>
                   <button 
-                    className="w-full py-2 md:py-3 px-4 bg-[#40C4FF] hover:bg-[#0091ea] transition-colors text-white rounded-lg text-[11px] md:text-sm font-medium shadow-sm hover:shadow-md"
+                    className="w-full py-2 md:py-3 px-4 bg-[#103d68] hover:bg-[#0d2e4d] transition-colors text-white rounded-lg text-[11px] md:text-sm font-medium shadow-sm hover:shadow-md flex items-center justify-center"
                     onClick={() => console.log('Continue clicked')}
                   >
-                    Click to Continue!
+                    <span>Click to Continue!</span>
+                    <ArrowRight className="ml-2 w-4 h-4" />
                   </button>
                 </div>
               </div>
