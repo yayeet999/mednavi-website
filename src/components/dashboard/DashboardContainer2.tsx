@@ -3,7 +3,7 @@ import { Home, BarChart2, Map } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
 export const DashboardContainer2 = () => {
-  const [activePage, setActivePage] = useState('home');
+  const [activePage, setActivePage] = useState('practice');
 
   const revenueData = [
     { month: 'Jan', value: 30000 },
