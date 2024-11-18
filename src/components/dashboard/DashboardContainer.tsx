@@ -141,26 +141,26 @@ export const DashboardContainer = () => {
     </div>
   </div>
 
-  {/* Services Distribution */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
-    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
-    <div className="h-[50px] md:h-[90px] flex items-center md:-mb-4">
-      <div className="w-1/3">
-        <CustomizedLegend />
-      </div>
-      <div className="w-2/3 h-full scale-110 transform translate-x-2">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart margin={{ top: 0, right: 0, bottom: 1, left: 0 }}>
-            <Pie
-              data={donutData}
-              innerRadius="40%"
-              outerRadius="85%"
-              paddingAngle={2}
-              dataKey="value"
-              animationBegin={0}
-  animationDuration={1000}
-  animationEasing="ease-out"
-            >
+{/* Services Distribution */}
+<div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[130px]">
+  <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
+  <div className="h-[50px] md:h-[90px] flex items-center md:-mb-4">
+    <div className="w-1/3">
+      <CustomizedLegend />
+    </div>
+    <div className="w-2/3 h-full scale-110 transform translate-x-2 md:scale-125 md:-translate-y-3">  {/* Added md:scale-125 and md:-translate-y-3 */}
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart margin={{ top: -8, right: 0, bottom: 1, left: 0 }}>  {/* Adjusted top margin */}
+          <Pie
+            data={donutData}
+            innerRadius="40%"
+            outerRadius="85%"
+            paddingAngle={2}
+            dataKey="value"
+            animationBegin={0}
+            animationDuration={1000}
+            animationEasing="ease-out"
+          >
               {donutData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
