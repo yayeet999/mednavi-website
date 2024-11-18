@@ -57,7 +57,7 @@ export const DashboardContainer = () => {
           <button
             key={item.id}
             onClick={() => setActivePage(item.id)}
-            className={`w-8 h-8 md:w-12 md:h-12 mb-4 md:mb-6 rounded-lg flex items-center justify-center cursor-pointer transition-colors
+            className={`w-9 h-8 md:w-13 md:h-12 mb-4 md:mb-6 rounded-lg flex items-center justify-center cursor-pointer transition-colors
                        ${activePage === item.id 
                          ? 'bg-[#103d68] text-white shadow-sm' 
                          : 'bg-transparent text-[#103d68] hover:bg-[#103d68] hover:bg-opacity-10'}`}
@@ -86,21 +86,21 @@ export const DashboardContainer = () => {
 
                 {/* KPIs - Reduced height */}
 <div className="grid grid-cols-3 gap-2 md:gap-4">
-  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[87px]">
+  <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[87px]">
     <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
     <div className="flex items-center space-x-2 mt-1">
       <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
       <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
     </div>
   </div>
-  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[87px]">
+  <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[87px]">
     <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
     <div className="flex items-center space-x-2 mt-1">
       <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
       <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
     </div>
   </div>
-  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[87px]">
+  <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[87px]">
     <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
     <div className="flex items-center space-x-2 mt-1">
       <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
@@ -112,8 +112,8 @@ export const DashboardContainer = () => {
 {/* Charts Row 1 */}
 <div className="grid grid-cols-2 gap-2 md:gap-4">
   {/* Revenue Trends */}
-  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[130px]">
-    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
+  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[130px]">
+    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
     <div className="h-[60px] md:h-[95px]">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 0, left: 5 }}>
@@ -142,9 +142,9 @@ export const DashboardContainer = () => {
   </div>
 
   {/* Services Distribution */}
-  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[130px]">
-    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Services Distribution</h3>
-    <div className="h-[50px] md:h-[90px] flex items-center md:-mb-2">
+  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[130px]">
+    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
+    <div className="h-[50px] md:h-[90px] flex items-center md:-mb-4">
       <div className="w-1/3">
         <CustomizedLegend />
       </div>
@@ -157,6 +157,9 @@ export const DashboardContainer = () => {
               outerRadius="85%"
               paddingAngle={2}
               dataKey="value"
+              animationBegin={0}
+  animationDuration={1000}
+  animationEasing="ease-out"
             >
               {donutData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -172,8 +175,8 @@ export const DashboardContainer = () => {
                 {/* Charts Row 2 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4">
                   {/* Procedures */}
-                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm h-[85px] md:h-[130px]">
-                    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Procedures</h3>
+                  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[130px]">
+                    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Procedures</h3>
                     <div className="h-[70px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
@@ -197,8 +200,8 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Patient Categories */}
-                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm h-[85px] md:h-[130px]">
-                    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
+                  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[130px]">
+                    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Patient Categories</h3>
                     <div className="h-[70px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
