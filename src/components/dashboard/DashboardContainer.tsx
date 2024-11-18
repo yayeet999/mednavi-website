@@ -84,74 +84,136 @@ export const DashboardContainer = () => {
                   Dashboard Overview
                 </h2>
 
-                {/* KPIs */}
+                {/* KPIs - Reordered */}
                 <div className="grid grid-cols-3 gap-2 md:gap-8 px-2 md:px-6 mr-2 md:mr-4">
-                  <div className="bg-white rounded-lg p-2 md:p-3 shadow">
+                  <div className="space-y-0.5 md:space-y-1">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Active Patients</h3>
                     <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
                     <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
                   </div>
-                  <div className="bg-white rounded-lg p-2 md:p-3 shadow">
+                  <div className="space-y-0.5 md:space-y-1">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">New Patients</h3>
                     <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
                     <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
                   </div>
-                  <div className="bg-white rounded-lg p-2 md:p-3 shadow">
+                  <div className="space-y-0.5 md:space-y-1">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Monthly Revenue</h3>
                     <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
                     <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
                   </div>
                 </div>
 
-                {/* Charts Row 1 */}
+             {/* Charts Row 1 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
-                  <div className="bg-white rounded-lg p-2 md:p-3 shadow">
+                  {/* Revenue Trends */}
+                  <div className="h-[65px] md:h-[110px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={revenueData}>
-                        <XAxis dataKey="month" tick={{ fontSize: 7, fill: '#103d68' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fontSize: 7, fill: '#103d68' }} width={15} axisLine={false} tickLine={false} />
-                        <Line type="monotone" dataKey="value" stroke="#103d68" strokeWidth={1.5} dot={false} />
-                      </LineChart>
-                    </ResponsiveContainer>
+                    <div className="h-[50px] md:h-[95px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
+                          <XAxis 
+                            dataKey="month" 
+                            tick={{ fontSize: 7, fill: '#103d68' }}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <YAxis 
+                            tick={{ fontSize: 7, fill: '#103d68' }}
+                            width={15}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="value" 
+                            stroke="#103d68" 
+                            strokeWidth={1.5}
+                            dot={false}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
-                  <div className="bg-white rounded-lg p-2 md:p-3 shadow">
+
+                  {/* Services Distribution */}
+                  <div className="h-[65px] md:h-[110px] pl-1 md:pl-4">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Services Distribution</h3>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={donutData} innerRadius="40%" outerRadius="85%" dataKey="value">
-                          {donutData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                      </PieChart>
-                    </ResponsiveContainer>
+                    <div className="h-[50px] md:h-[95px] flex items-center">
+                      <div className="w-1/3">
+                        <CustomizedLegend />
+                      </div>
+                      <div className="w-2/3 h-full scale-110 transform translate-x-2">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                            <Pie
+                              data={donutData}
+                              innerRadius="40%"
+                              outerRadius="85%"
+                              paddingAngle={2}
+                              dataKey="value"
+                            >
+                              {donutData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Charts Row 2 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
-                  <div className="bg-white rounded-lg p-2 md:p-3 shadow">
+                  {/* Procedures */}
+                  <div className="h-[105px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Procedures</h3>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={proceduresData} layout="vertical">
-                        <XAxis type="number" tick={{ fontSize: 7, fill: '#103d68' }} axisLine={false} tickLine={false} />
-                        <YAxis dataKey="category" type="category" tick={{ fontSize: 7, fill: '#103d68' }} width={40} axisLine={false} tickLine={false} />
-                        <Bar dataKey="value" fill="#103d68" radius={[0, 2, 2, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    <div className="h-[90px] md:h-[105px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
+                          <XAxis type="number" 
+                            tick={{ fontSize: 7, fill: '#103d68' }}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <YAxis 
+                            dataKey="category" 
+                            type="category"
+                            tick={{ fontSize: 7, fill: '#103d68' }}
+                            width={40}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <Bar dataKey="value" fill="#103d68" radius={[0, 2, 2, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
-                  <div className="bg-white rounded-lg p-2 md:p-3 shadow">
+
+                  {/* Patient Categories */}
+                  <div className="h-[105px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={patientCategoriesData}>
-                        <XAxis dataKey="month" tick={{ fontSize: 7, fill: '#103d68' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fontSize: 7, fill: '#103d68' }} width={15} axisLine={false} tickLine={false} />
-                        <Bar dataKey="new" fill="#103d68" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="returning" fill="#40C4FF" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="referred" fill="#E5F9FD" radius={[2, 2, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    <div className="h-[90px] md:h-[105px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                          <XAxis 
+                            dataKey="month" 
+                            tick={{ fontSize: 7, fill: '#103d68' }}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <YAxis 
+                            tick={{ fontSize: 7, fill: '#103d68' }}
+                            width={15}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <Bar dataKey="new" fill="#103d68" radius={[2, 2, 0, 0]} />
+                          <Bar dataKey="returning" fill="#40C4FF" radius={[2, 2, 0, 0]} />
+                          <Bar dataKey="referred" fill="#E5F9FD" radius={[2, 2, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -183,7 +245,8 @@ export const DashboardContainer = () => {
                 </div>
               </div>
             )}
-          </div>
+
+           </div>
         </div>
       </div>
     </div>
