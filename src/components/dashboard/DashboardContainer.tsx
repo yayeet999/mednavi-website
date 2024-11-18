@@ -87,7 +87,7 @@ export const DashboardContainer = () => {
   );
 
   return (
-    <div className="flex h-full w-full max-h-[300px] md:max-h-[400px]">
+    <div className="flex h-full w-full max-h-[344px] md:max-h-[480px]">
       {/* Expanded Sidebar */}
       <div className="bg-[#E5F9FD] w-[36px] md:w-[54px] flex flex-col items-center pt-2 md:pt-3">
         {[
@@ -125,7 +125,7 @@ export const DashboardContainer = () => {
 
        {activePage === 'home' && (
           <div className="flex-1 flex flex-col px-3 md:px-4 pb-1 md:pb-2">
-            <div className="bg-white rounded-xl p-2 md:p-3 max-h-[300px] md:max-h-[400px] overflow-hidden">
+            <div className="bg-white rounded-xl p-2 md:p-3 max-h-[344px] md:max-h-[480px] overflow-hidden">
               <motion.div
                 initial="hidden"
                 animate="visible"
@@ -143,7 +143,7 @@ export const DashboardContainer = () => {
                 {/* Row 2: KPIs with increased spacing */}
                 <motion.div 
                   variants={itemVariants}
-                  className="grid grid-cols-3 gap-3 md:gap-6 px-4 md:px-6 mr-3 md:mr-4"
+                  className="grid grid-cols-3 gap-4 md:gap-8 px-4 md:px-6 mr-3 md:mr-4"
                 >
                   <div className="space-y-0.5 md:space-y-1">
                     <h3 className="text-[#103d68] text-[11px] md:text-base truncate">Active Patients</h3>
@@ -168,9 +168,9 @@ export const DashboardContainer = () => {
                   className="grid grid-cols-2 gap-3 md:gap-4 px-2 md:px-3"
                 >
                   {/* Revenue Trends Line Chart - Increased height */}
-                  <div className="h-[65px] md:h-[105px]"> {/* Reduced from h-[76px] md:h-[125px] */}
+                  <div className="h-[76px] md:h-[125px]"> {/* Reduced by ~5% for better fit */}
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
-                    <div className="h-[55px] md:h-[95px]"> {/* Reduced from h-[65px] md:h-[110px] */}
+                    <div className="h-[65px] md:h-[110px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis 
@@ -198,9 +198,9 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Services Distribution with increased size */}
-                  <div className="h-[65px] md:h-[105px] pl-2 md:pl-4"> {/* Reduced from h-[76px] md:h-[125px] */}
+                  <div className="h-[76px] md:h-[125px] pl-2 md:pl-4"> {/* Reduced by ~5% */}
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
-                    <div className="h-[55px] md:h-[95px] flex items-center"> {/* Reduced from h-[65px] md:h-[110px] */}
+                    <div className="h-[65px] md:h-[110px] flex items-center">
                       <div className="w-1/3">
                         <CustomizedLegend />
                       </div>
