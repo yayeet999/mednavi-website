@@ -105,9 +105,9 @@ export const DashboardContainer = () => {
                 {/* Charts Row 1 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
                   {/* Revenue Trends */}
-                  <div className="h-[60px] md:h-[110px]">
+                  <div className="h-[65px] md:h-[110px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
-                    <div className="h-[45px] md:h-[95px]">
+                    <div className="h-[50px] md:h-[95px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis 
@@ -135,9 +135,9 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Services Distribution */}
-                  <div className="h-[60px] md:h-[110px] pl-1 md:pl-4">
+                  <div className="h-[65px] md:h-[110px] pl-1 md:pl-4">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Services Distribution</h3>
-                    <div className="h-[45px] md:h-[95px] flex items-center">
+                    <div className="h-[50px] md:h-[95px] flex items-center">
                       <div className="w-1/3">
                         <CustomizedLegend />
                       </div>
@@ -165,9 +165,9 @@ export const DashboardContainer = () => {
                 {/* Charts Row 2 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
                   {/* Procedures */}
-                  <div className="h-[70px] md:h-[120px]">
+                  <div className="h-[85px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Procedures</h3>
-                    <div className="h-[55px] md:h-[105px]">
+                    <div className="h-[70px] md:h-[105px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis type="number" 
@@ -190,9 +190,9 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Patient Categories */}
-                  <div className="h-[70px] md:h-[120px]">
+                  <div className="h-[85px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
-                    <div className="h-[55px] md:h-[105px]">
+                    <div className="h-[70px] md:h-[105px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
@@ -239,88 +239,88 @@ export const DashboardContainer = () => {
             )}
 
             {activePage === 'connect' && (
-              <div className="p-4 md:p-6 space-y-3 md:space-y-4">
-                <h2 className="text-base md:text-xl font-medium text-[#103d68]">Available Integrations</h2>
-                <div className="space-y-2 md:space-y-3">
-                  <button className="w-full flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
-                    <span className="text-[10px] md:text-sm font-medium text-[#103d68]">Practice Fusion</span>
-                    <span className="text-[8px] md:text-xs text-green-500">Connected</span>
-                  </button>
-                  <button className="w-full flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
-                    <span className="text-[10px] md:text-sm font-medium text-[#103d68]">Epic Systems</span>
-                    <span className="text-[8px] md:text-xs text-[#40C4FF]">Connect</span>
-                  </button>
-                  <button className="w-full flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
-                    <span className="text-[10px] md:text-sm font-medium text-[#103d68]">Athenahealth</span>
-                    <span className="text-[8px] md:text-xs text-[#40C4FF]">Connect</span>
-                  </button>
-                </div>
-              </div>
-            )}
+             <div className="p-4 md:p-6 space-y-3 md:space-y-4">
+               <h2 className="text-base md:text-xl font-medium text-[#103d68]">Available Integrations</h2>
+               <div className="space-y-2 md:space-y-3">
+                 <button className="w-full flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
+                   <span className="text-[10px] md:text-sm font-medium text-[#103d68]">Practice Fusion</span>
+                   <span className="text-[8px] md:text-xs text-green-500">Connected</span>
+                 </button>
+                 <button className="w-full flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
+                   <span className="text-[10px] md:text-sm font-medium text-[#103d68]">Epic Systems</span>
+                   <span className="text-[8px] md:text-xs text-[#40C4FF]">Connect</span>
+                 </button>
+                 <button className="w-full flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-[#E5F9FD] transition-colors">
+                   <span className="text-[10px] md:text-sm font-medium text-[#103d68]">Athenahealth</span>
+                   <span className="text-[8px] md:text-xs text-[#40C4FF]">Connect</span>
+                 </button>
+               </div>
+             </div>
+           )}
 
-            {activePage === 'reports' && (
-              <div className="p-4 md:p-6 space-y-3 md:space-y-4">
-                <h2 className="text-base md:text-xl font-medium text-[#103d68]">Analytics Dashboard</h2>
-                <div className="space-y-3 md:space-y-4">
-                  <div className="border rounded-lg p-3 md:p-4">
-                    <h4 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Patient Demographics</h4>
-                    <div className="h-24 md:h-28 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
-                          <XAxis 
-                            dataKey="month" 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <YAxis 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            width={15}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <Bar dataKey="new" fill="#103d68" radius={[2, 2, 0, 0]} />
-                          <Bar dataKey="returning" fill="#40C4FF" radius={[2, 2, 0, 0]} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                  <div className="border rounded-lg p-3 md:p-4">
-                    <h4 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-2">Revenue Trends</h4>
-                    <div className="h-24 md:h-28 bg-[#E5F9FD] rounded-lg flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
-                          <XAxis 
-                            dataKey="month" 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <YAxis 
-                            tick={{ fontSize: 7, fill: '#103d68' }}
-                            width={15}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="value" 
-                            stroke="#103d68" 
-                            strokeWidth={1.5}
-                            dot={false}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+           {activePage === 'reports' && (
+             <div className="p-3 md:p-4 space-y-2 md:space-y-3">
+               <h2 className="text-base md:text-xl font-medium text-[#103d68]">Analytics Dashboard</h2>
+               <div className="space-y-2 md:space-y-3">
+                 <div className="border rounded-lg p-2 md:p-3">
+                   <h4 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-1 md:mb-2">Patient Demographics</h4>
+                   <div className="h-[85px] md:h-[100px] bg-[#E5F9FD] rounded-lg">
+                     <ResponsiveContainer width="100%" height="100%">
+                       <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                         <XAxis 
+                           dataKey="month" 
+                           tick={{ fontSize: 7, fill: '#103d68' }}
+                           axisLine={false}
+                           tickLine={false}
+                         />
+                         <YAxis 
+                           tick={{ fontSize: 7, fill: '#103d68' }}
+                           width={15}
+                           axisLine={false}
+                           tickLine={false}
+                         />
+                         <Bar dataKey="new" fill="#103d68" radius={[2, 2, 0, 0]} />
+                         <Bar dataKey="returning" fill="#40C4FF" radius={[2, 2, 0, 0]} />
+                       </BarChart>
+                     </ResponsiveContainer>
+                   </div>
+                 </div>
+                 <div className="border rounded-lg p-2 md:p-3">
+                   <h4 className="text-[10px] md:text-sm font-medium text-[#103d68] mb-1 md:mb-2">Revenue Trends</h4>
+                   <div className="h-[85px] md:h-[100px] bg-[#E5F9FD] rounded-lg">
+                     <ResponsiveContainer width="100%" height="100%">
+                       <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
+                         <XAxis 
+                           dataKey="month" 
+                           tick={{ fontSize: 7, fill: '#103d68' }}
+                           axisLine={false}
+                           tickLine={false}
+                         />
+                         <YAxis 
+                           tick={{ fontSize: 7, fill: '#103d68' }}
+                           width={15}
+                           axisLine={false}
+                           tickLine={false}
+                         />
+                         <Line 
+                           type="monotone" 
+                           dataKey="value" 
+                           stroke="#103d68" 
+                           strokeWidth={1.5}
+                           dot={false}
+                         />
+                       </LineChart>
+                     </ResponsiveContainer>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           )}
+         </div>
+       </div>
+     </div>
+   </div>
+ );
 };
 
 export default DashboardContainer;
