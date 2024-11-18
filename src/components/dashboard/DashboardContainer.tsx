@@ -57,7 +57,7 @@ export const DashboardContainer = () => {
           <button
             key={item.id}
             onClick={() => setActivePage(item.id)}
-            className={`w-10 h-8 md:w-14 md:h-12 mb-4 md:mb-6 rounded-lg flex items-center justify-center cursor-pointer transition-colors
+            className={`w-10 h-8 md:w-14 md:h-12 mb-8 md:mb-12 rounded-lg flex items-center justify-center cursor-pointer transition-colors
                        ${activePage === item.id 
                          ? 'bg-[#052b52] text-white shadow-sm' 
                          : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}`}
@@ -70,10 +70,10 @@ export const DashboardContainer = () => {
       {/* Main Content Area */}
       <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
         {/* Header Area */}
-<div className="flex-shrink-0 flex justify-between items-start px-3 pt-2 pb-0 md:px-5 md:pt-3 md:pb-0">  {/* changed items-end to items-start and adjusted padding */}
-  <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2 mt-auto mb-1 md:mb-1">Your Dental Practice</h1>  {/* added mt-auto and margin bottom */}
-  <h2 className="text-sm md:text-[28px] text-white font-medium pr-3 md:pr-8 mt-1 md:mt-2">mednavi</h2>  {/* added margin top */}
-</div>
+        <div className="flex-shrink-0 flex justify-between items-start px-3 pt-2 pb-0 md:px-5 md:pt-3 md:pb-0">
+          <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2 mt-auto mb-1 md:mb-1">Your Dental Practice</h1>
+          <h2 className="text-sm md:text-[28px] text-white font-medium pr-3 md:pr-8 mt-1 md:mt-2">mednavi</h2>
+        </div>
 
         {/* Content Area */}
         <div className="flex-1 p-2 md:p-4">
@@ -85,92 +85,92 @@ export const DashboardContainer = () => {
                 </h2>
 
                 {/* KPIs - Reduced height */}
-<div className="grid grid-cols-3 gap-2 md:gap-4">
-  <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
-    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
-    <div className="flex items-center space-x-1.5 mt-1">
-      <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
-      <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
-    </div>
-  </div>
-  <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
-    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
-    <div className="flex items-center space-x-1.5 mt-1">
-      <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
-      <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
-    </div>
-  </div>
-  <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
-    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
-    <div className="flex items-center space-x-0.5 mt-1">
-      <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
-      <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
-    </div>
-  </div>
-</div>
+                <div className="grid grid-cols-3 gap-2 md:gap-4">
+                  <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
+                    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
+                    <div className="flex items-center space-x-1.5 mt-1">
+                      <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
+                      <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
+                    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
+                    <div className="flex items-center space-x-1.5 mt-1">
+                      <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
+                      <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
+                    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
+                    <div className="flex items-center space-x-0.5 mt-1">
+                      <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
+                      <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
+                    </div>
+                  </div>
+                </div>
 
-{/* Charts Row 1 */}
-<div className="grid grid-cols-2 gap-2 md:gap-4">
-  {/* Revenue Trends */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
-    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
-    <div className="h-[60px] md:h-[95px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 0, left: 5 }}>
-          <XAxis 
-            dataKey="month" 
-            tick={{ fontSize: 8, fill: '#103d68' }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <YAxis 
-            tick={{ fontSize: 8, fill: '#103d68' }}
-            width={15}
-            axisLine={false}
-            tickLine={false}
-          />
-          <Line 
-            type="monotone" 
-            dataKey="value" 
-            stroke="#103d68" 
-            strokeWidth={2}
-            dot={true}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  </div>
+                {/* Charts Row 1 */}
+                <div className="grid grid-cols-2 gap-2 md:gap-4">
+                  {/* Revenue Trends */}
+                  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
+                    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
+                    <div className="h-[60px] md:h-[95px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 0, left: 5 }}>
+                          <XAxis 
+                            dataKey="month" 
+                            tick={{ fontSize: 8, fill: '#103d68' }}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <YAxis 
+                            tick={{ fontSize: 8, fill: '#103d68' }}
+                            width={15}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="value" 
+                            stroke="#103d68" 
+                            strokeWidth={2}
+                            dot={true}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
 
-{/* Services Distribution */}
-<div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
-  <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
-  <div className="h-[50px] md:h-[90px] flex items-center md:-mb-4">
-    <div className="w-1/3">
-      <CustomizedLegend />
-    </div>
-    <div className="w-2/3 h-full scale-110 transform translate-x-2 md:scale-115 md:-translate-y-2">  {/* Added md:scale-125 and md:-translate-y-3 */}
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart margin={{ top: -5, right: 0, bottom: 1, left: 0 }}>  {/* Adjusted top margin */}
-          <Pie
-            data={donutData}
-            innerRadius="40%"
-            outerRadius="85%"
-            paddingAngle={2}
-            dataKey="value"
-            animationBegin={0}
-            animationDuration={1000}
-            animationEasing="ease-out"
-          >
-              {donutData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  </div>
-</div>
+                  {/* Services Distribution */}
+                  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
+                    <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
+                    <div className="h-[50px] md:h-[90px] flex items-center md:-mb-4">
+                      <div className="w-1/3">
+                        <CustomizedLegend />
+                      </div>
+                      <div className="w-2/3 h-full scale-110 transform translate-x-2 md:scale-115 md:-translate-y-2">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart margin={{ top: -5, right: 0, bottom: 1, left: 0 }}>
+                            <Pie
+                              data={donutData}
+                              innerRadius="40%"
+                              outerRadius="85%"
+                              paddingAngle={2}
+                              dataKey="value"
+                              animationBegin={0}
+                              animationDuration={1000}
+                              animationEasing="ease-out"
+                            >
+                              {donutData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Charts Row 2 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4">
@@ -224,33 +224,6 @@ export const DashboardContainer = () => {
                       </ResponsiveContainer>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {activePage === 'practice' && (
-              <div className="bg-white rounded-xl p-4 md:p-6 space-y-3 md:space-y-4">
-                <h2 className="text-base md:text-xl font-bold text-[#103d68]">Mednavi Setup & Connection</h2>
-                <div className="space-y-3 md:space-y-4">
-                  <div className="flex items-center justify-between border-b pb-2 md:pb-3">
-                    <span className="text-[10px] md:text-sm text-[#103d68]">Practice Name</span>
-                    <span className="text-[10px] md:text-sm text-[#103d68] font-medium">Your Amazing Dental Practice</span>
-                  </div>
-                  <div className="flex items-center justify-between border-b pb-2 md:pb-3">
-                    <span className="text-[10px] md:text-sm text-[#103d68]">Location</span>
-                    <span className="text-[10px] md:text-sm text-[#103d68] font-medium">Chicago, IL</span>
-                  </div>
-                  <div className="flex items-center justify-between border-b pb-2 md:pb-3">
-                    <span className="text-[10px] md:text-sm text-[#103d68]">Practitioners</span>
-                    <span className="text-[10px] md:text-sm text-[#103d68] font-medium">2</span>
-                  </div>
-                  <button 
-                    className="w-full py-2 md:py-3 px-4 bg-[#103d68] hover:bg-[#0d2e4d] transition-colors text-white rounded-lg text-[11px] md:text-sm font-medium shadow-sm hover:shadow-md flex items-center justify-center"
-                    onClick={() => console.log('Continue clicked')}
-                  >
-                    <span>Click to Continue!</span>
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </button>
                 </div>
               </div>
             )}
