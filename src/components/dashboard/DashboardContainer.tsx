@@ -85,23 +85,29 @@ export const DashboardContainer = () => {
                 </h2>
 
                 {/* KPIs - Reduced height */}
-                <div className="grid grid-cols-3 gap-2 md:gap-4">
-                  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[60px] md:h-[110px]">
-                    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
-                    <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">2,547</p>
-                    <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+12.5%</p>
-                  </div>
-                  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[60px] md:h-[110px]">
-                    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
-                    <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">148</p>
-                    <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+8.3%</p>
-                  </div>
-                  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[60px] md:h-[110px]">
-                    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
-                    <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">$125.8K</p>
-                    <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+15.2%</p>
-                  </div>
-                </div>
+<div className="grid grid-cols-3 gap-2 md:gap-4">
+  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[60px] md:h-[110px]">
+    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
+    <div className="flex items-center space-x-2 mt-1">
+      <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
+      <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
+    </div>
+  </div>
+  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[60px] md:h-[110px]">
+    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
+    <div className="flex items-center space-x-2 mt-1">
+      <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
+      <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
+    </div>
+  </div>
+  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[60px] md:h-[110px]">
+    <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
+    <div className="flex items-center space-x-2 mt-1">
+      <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
+      <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
+    </div>
+  </div>
+</div>
 
 {/* Charts Row 1 */}
 <div className="grid grid-cols-2 gap-2 md:gap-4">
