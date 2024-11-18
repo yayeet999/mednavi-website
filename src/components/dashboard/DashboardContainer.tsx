@@ -118,7 +118,7 @@ export const DashboardContainer = () => {
              {/* Charts Row 1 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
   {/* Revenue Trends */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow transform -translate-x-2 md:translate-x-0 w-[105%] md:w-auto h-[90%] md:h-full">
+  <div className="bg-white rounded-lg p-2 md:p-3 shadow transform -translate-x-2 md:translate-x-0">
     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
     <div className="h-[50px] md:h-[95px]">
       <ResponsiveContainer width="100%" height="100%">
@@ -148,13 +148,13 @@ export const DashboardContainer = () => {
   </div>
 
   {/* Services Distribution */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow transform -translate-x-2 md:translate-x-0 w-[105%] md:w-auto h-[90%] md:h-full">
+  <div className="bg-white rounded-lg p-2 md:p-3 shadow transform -translate-x-2 md:translate-x-0">
     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Services Distribution</h3>
     <div className="h-[50px] md:h-[95px] flex items-center">
       <div className="w-1/3">
         <CustomizedLegend />
       </div>
-      <div className="w-2/3 h-full scale-95 md:scale-100">
+      <div className="w-2/3 h-full scale-110 transform translate-x-2">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
             <Pie
