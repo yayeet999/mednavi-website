@@ -59,8 +59,8 @@ export const DashboardContainer = () => {
             onClick={() => setActivePage(item.id)}
             className={`w-10 h-8 md:w-14 md:h-12 mb-4 md:mb-6 rounded-lg flex items-center justify-center cursor-pointer transition-colors
                        ${activePage === item.id 
-                         ? 'bg-[#00879f] text-white shadow-sm' 
-                         : 'bg-transparent text-[##00879f] hover:bg-[#103d68] hover:bg-opacity-10'}`}
+                         ? 'bg-[##03203d] text-white shadow-sm' 
+                         : 'bg-transparent text-[###03203d] hover:bg-[#103d68] hover:bg-opacity-10'}`}
           >
             {item.icon}
           </button>
