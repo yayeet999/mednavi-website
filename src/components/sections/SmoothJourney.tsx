@@ -395,7 +395,7 @@ const SmoothJourney: React.FC = () => {
                       1 - Math.abs(currentIndex - i) * 0.3 : 0,
             }}
           >
-            <div className={`w-full h-full bg-white rounded-xl transition-shadow duration-500
+            <div className={`w-full h-[306px] md:h-[432px] bg-white rounded-xl transition-shadow duration-500
                             ${i === currentIndex 
                               ? 'shadow-[0_8px_30px_rgba(59,130,246,0.15)]' 
                               : 'shadow-lg'}`} 
