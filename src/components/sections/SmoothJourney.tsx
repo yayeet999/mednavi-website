@@ -1,4 +1,4 @@
-'use client';  
+'use client';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import DashboardContainer from '@/components/dashboard/DashboardContainer'; // Updated import path
 
@@ -395,16 +395,19 @@ const SmoothJourney: React.FC = () => {
                       1 - Math.abs(currentIndex - i) * 0.3 : 0,
             }}
           >
-            <div className={`w-full h-full bg-white rounded-xl transition-shadow duration-500
-                            ${i === currentIndex 
-                              ? 'shadow-[0_8px_30px_rgba(59,130,246,0.15)]' 
-                              : 'shadow-lg'}`} 
-            >
-              {i === 0 ? (
-                <DashboardContainer />
-              ) : (
-                renderKPIBox(station.kpis)
-              )}
+            {/* Added Wrapper Div with Bottom Padding */}
+            <div className="pb-4 md:pb-6">
+              <div className={`w-full h-full bg-white rounded-xl transition-shadow duration-500
+                              ${i === currentIndex 
+                                ? 'shadow-[0_8px_30px_rgba(59,130,246,0.15)]' 
+                                : 'shadow-lg'}`} 
+              >
+                {i === 0 ? (
+                  <DashboardContainer />
+                ) : (
+                  renderKPIBox(station.kpis)
+                )}
+              </div>
             </div>
           </div>
         ))}
