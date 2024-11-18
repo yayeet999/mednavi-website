@@ -52,7 +52,7 @@ export const DashboardContainer = () => {
       <div className="bg-white w-[50px] md:w-[80px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
         {[
           { id: 'home', icon: <Home size={24} /> },
-          { id: 'practice', icon: <Plug2 size={24} /> }
+          { id: 'data', icon: <BarChart size={24} /> }
         ].map((item) => (
           <button
             key={item.id}
