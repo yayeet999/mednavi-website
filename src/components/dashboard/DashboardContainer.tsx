@@ -119,12 +119,12 @@ export const DashboardContainer = () => {
         <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 0, left: 5 }}>
           <XAxis 
             dataKey="month" 
-            tick={{ fontSize: 7, fill: '#103d68' }}
+            tick={{ fontSize: 8, fill: '#103d68' }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis 
-            tick={{ fontSize: 7, fill: '#103d68' }}
+            tick={{ fontSize: 8, fill: '#103d68' }}
             width={15}
             axisLine={false}
             tickLine={false}
