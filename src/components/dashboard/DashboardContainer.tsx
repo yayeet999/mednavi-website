@@ -49,7 +49,7 @@ export const DashboardContainer = () => {
   return (
     <div className="flex h-[340px] md:h-[480px] w-full">
       {/* Sidebar */}
-      <div className="bg-white w-[30px] md:w-[54px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
+      <div className="bg-white w-[30px] md:w-[54px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3 rounded-l-xl">
         {[
           { id: 'home', icon: <Home size={16} /> },
           { id: 'practice', icon: <Plug2 size={16} /> }
@@ -68,7 +68,7 @@ export const DashboardContainer = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
+      <div className="flex-1 bg-[#103d68] rounded-r-xl rounded-l-xl flex flex-col overflow-hidden">
         {/* Header Area */}
         <div className="flex-shrink-0 flex justify-between items-center px-3 py-2 md:px-5 md:py-3">
           <h1 className="text-xs md:text-lg text-white font-medium">Your Dental Practice</h1>
@@ -77,36 +77,36 @@ export const DashboardContainer = () => {
 
         {/* Content Area */}
         <div className="flex-1 p-2 md:p-4">
-          <div className="bg-white rounded-xl h-full">
+          <div className="bg-gray-50 rounded-xl h-full p-2 md:p-3">
             {activePage === 'home' && (
-              <div className="flex flex-col p-2 md:p-3 space-y-2 md:space-y-3">
+              <div className="flex flex-col space-y-2 md:space-y-3">
                 <h2 className="text-base md:text-xl font-bold text-[#103d68] pl-1 md:pl-2">
                   Dashboard Overview
                 </h2>
 
-                {/* KPIs - Reordered */}
-                <div className="grid grid-cols-3 gap-2 md:gap-8 px-2 md:px-6 mr-2 md:mr-4">
-                  <div className="space-y-0.5 md:space-y-1">
+                {/* KPIs - Reordered and in white containers */}
+                <div className="grid grid-cols-3 gap-2 md:gap-4">
+                  <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Active Patients</h3>
-                    <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
-                    <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
+                    <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">2,547</p>
+                    <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+12.5%</p>
                   </div>
-                  <div className="space-y-0.5 md:space-y-1">
+                  <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">New Patients</h3>
-                    <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
-                    <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
+                    <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">148</p>
+                    <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+8.3%</p>
                   </div>
-                  <div className="space-y-0.5 md:space-y-1">
+                  <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Monthly Revenue</h3>
-                    <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
-                    <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
+                    <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">$125.8K</p>
+                    <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+15.2%</p>
                   </div>
                 </div>
 
-             {/* Charts Row 1 */}
-                <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
+               {/* Charts Row 1 */}
+                <div className="grid grid-cols-2 gap-2 md:gap-4">
                   {/* Revenue Trends */}
-                  <div className="h-[65px] md:h-[110px]">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Revenue Trends</h3>
                     <div className="h-[50px] md:h-[95px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -136,7 +136,7 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Services Distribution */}
-                  <div className="h-[65px] md:h-[110px] pl-1 md:pl-4">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Services Distribution</h3>
                     <div className="h-[50px] md:h-[95px] flex items-center">
                       <div className="w-1/3">
@@ -164,9 +164,9 @@ export const DashboardContainer = () => {
                 </div>
 
                 {/* Charts Row 2 */}
-                <div className="grid grid-cols-2 gap-2 md:gap-4 px-2 md:px-3">
+                <div className="grid grid-cols-2 gap-2 md:gap-4">
                   {/* Procedures */}
-                  <div className="h-[105px] md:h-[120px]">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Procedures</h3>
                     <div className="h-[90px] md:h-[105px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -191,7 +191,7 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Patient Categories */}
-                  <div className="h-[105px] md:h-[120px]">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
                     <div className="h-[90px] md:h-[105px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -220,7 +220,7 @@ export const DashboardContainer = () => {
             )}
 
             {activePage === 'practice' && (
-              <div className="p-4 md:p-6 space-y-3 md:space-y-4">
+              <div className="bg-white rounded-xl p-4 md:p-6 space-y-3 md:space-y-4">
                 <h2 className="text-base md:text-xl font-bold text-[#103d68]">Mednavi Setup & Connection</h2>
                 <div className="space-y-3 md:space-y-4">
                   <div className="flex items-center justify-between border-b pb-2 md:pb-3">
@@ -245,8 +245,7 @@ export const DashboardContainer = () => {
                 </div>
               </div>
             )}
-
-           </div>
+          </div>
         </div>
       </div>
     </div>
