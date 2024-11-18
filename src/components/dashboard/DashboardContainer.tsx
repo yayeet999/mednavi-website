@@ -85,9 +85,9 @@ export const DashboardContainer = () => {
                 </h2>
 
                 {/* KPIs - Reordered */}
-                <div className="grid grid-cols-3 gap-2 md:gap-8 px-2 md:px-6 mr-2 md:mr-4">
+                <div className="grid grid-cols-3 gap-3 md:gap-8 px-2 md:px-6 mr-2 md:mr-4">
   {/* Active Patients */}
-  <div className="bg-white rounded-lg p-2 md:p-3 shadow space-y-0.5 md:space-y-1 w-[110%] md:w-auto">
+  <div className="bg-white rounded-lg p-2 md:p-3 shadow space-y-0.5 md:space-y-1 w-[110%] md:w-auto transform -translate-x-2 md:translate-x-0">
     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Active Patients</h3>
     <div className="flex items-center space-x-2">
       <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
