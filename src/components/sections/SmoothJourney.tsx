@@ -265,6 +265,11 @@ const SmoothJourney: React.FC = () => {
     setTimeout(() => setIsAnimating(false), 1000);
   }, [currentIndex, isAnimating]);
 
+  // Create navigateToContainer function for DashboardContainer
+  const navigateToContainer = useCallback(() => {
+    navigate(1); // Navigate to station index 1
+  }, [navigate]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -404,12 +409,12 @@ const SmoothJourney: React.FC = () => {
                                 : 'shadow-lg'}`} 
               >
                 {i === 0 ? (
-  <DashboardContainer />
-) : i === 1 ? (
-  <DashboardContainer2 />
-) : (
-  renderKPIBox(station.kpis)
-)}
+                  <DashboardContainer onNavigate={navigateToContainer} />
+                ) : i === 1 ? (
+                  <DashboardContainer2 />
+                ) : (
+                  renderKPIBox(station.kpis)
+                )}
               </div>
             </div>
           </div>
@@ -447,7 +452,7 @@ const SmoothJourney: React.FC = () => {
           {/* Progress Bar for Desktop */}
           {!isMobile && (
             <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 
-                           bg-blue-100 rounded-full overflow-hidden z-50">
+                             bg-blue-100 rounded-full overflow-hidden z-50">
               <div 
                 className="h-full bg-blue-600 transition-all duration-1000 ease-out will-change-transform"
                 style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
