@@ -384,17 +384,17 @@ const SmoothJourney: React.FC = () => {
 
         {stations.map((station, i) => (
           <div
-            key={station.id}
-            className={`absolute w-[360px] md:w-[840px] h-[340px] md:h-[480px] transition-transform duration-1000 ease-out will-change-transform
-                        ${i === currentIndex ? 'z-20' : 'z-10'}`}
-            style={{
-              left: station.x,
-              top: station.y,
-              transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
-              opacity: Math.abs(currentIndex - i) <= 1 ? 
-                      1 - Math.abs(currentIndex - i) * 0.3 : 0,
-            }}
-          >
+  key={station.id}
+  className={`absolute w-[360px] md:w-[840px] h-[306px] md:h-[432px] transition-transform duration-1000 ease-out will-change-transform
+              ${i === currentIndex ? 'z-20' : 'z-10'}`}
+  style={{
+    left: station.x,
+    top: station.y,
+    transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
+    opacity: Math.abs(currentIndex - i) <= 1 ? 
+            1 - Math.abs(currentIndex - i) * 0.3 : 0,
+  }}
+>
             <div className={`w-full h-full bg-white rounded-xl transition-shadow duration-500
                             ${i === currentIndex 
                               ? 'shadow-[0_8px_30px_rgba(59,130,246,0.15)]' 
