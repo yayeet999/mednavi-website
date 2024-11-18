@@ -70,9 +70,9 @@ export const DashboardContainer = () => {
       {/* Main Content Area */}
       <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
         {/* Header Area */}
-<div className="flex-shrink-0 flex justify-between items-end px-3 pb-4 md:px-5 md:pb-5">  {/* changed from items-center to items-end and added padding bottom */}
-  <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2">Your Dental Practice</h1>  {/* added font-bold and padding left */}
-  <h2 className="text-sm md:text-[28px] text-white font-medium pr-3 md:pr-8">mednavi</h2>  {/* increased from text-2xl to text-[28px] and added more right padding */}
+<div className="flex-shrink-0 flex justify-between items-start px-3 pt-2 pb-0 md:px-5 md:pt-3 md:pb-0">  {/* changed items-end to items-start and adjusted padding */}
+  <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2 mt-auto mb-3 md:mb-4">Your Dental Practice</h1>  {/* added mt-auto and margin bottom */}
+  <h2 className="text-sm md:text-[28px] text-white font-medium pr-3 md:pr-8 mt-1 md:mt-2">mednavi</h2>  {/* added margin top */}
 </div>
 
         {/* Content Area */}
