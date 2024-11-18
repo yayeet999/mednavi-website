@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Home, Plug2, ArrowRight, BarChart2 } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
-export const DashboardContainer = () => {
+interface DashboardContainerProps {
+  onNavigate?: () => void;
+}
+
+export const DashboardContainer: React.FC<DashboardContainerProps> = ({ onNavigate }) => {
   const [activePage, setActivePage] = useState('home');
   const [showTooltip, setShowTooltip] = useState(false);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowTooltip(true);
@@ -64,7 +67,7 @@ export const DashboardContainer = () => {
         ].map((item) => (
           <div key={item.id} className="relative">
             <button
-              onClick={() => item.id === 'practice' ? console.log('Navigate to other dashboard') : setActivePage(item.id)}
+              onClick={() => item.id === 'practice' ? onNavigate?.() : setActivePage(item.id)}
               className={`w-10 h-8 md:w-14 md:h-12 mb-1 md:mb-2 rounded-lg flex items-center justify-center cursor-pointer transition-colors
                          ${activePage === item.id 
                            ? 'bg-[#052b52] text-white shadow-sm' 
