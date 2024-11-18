@@ -49,15 +49,15 @@ export const DashboardContainer = () => {
   return (
     <div className="flex h-[340px] md:h-[480px] w-full">
       {/* Sidebar */}
-      <div className="bg-white w-[30px] md:w-[54px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
+      <div className="bg-white w-[50px] md:w-[80px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
         {[
-          { id: 'home', icon: <Home size={16} /> },
-          { id: 'practice', icon: <Plug2 size={16} /> }
+          { id: 'home', icon: <Home size={24} /> },
+          { id: 'practice', icon: <Plug2 size={24} /> }
         ].map((item) => (
           <button
             key={item.id}
             onClick={() => setActivePage(item.id)}
-            className={`w-5 h-5 md:w-9 md:h-9 mb-2 md:mb-3 rounded-lg flex items-center justify-center cursor-pointer transition-colors
+            className={`w-8 h-8 md:w-12 md:h-12 mb-4 md:mb-6 rounded-lg flex items-center justify-center cursor-pointer transition-colors
                        ${activePage === item.id 
                          ? 'bg-[#103d68] text-white shadow-sm' 
                          : 'bg-transparent text-[#103d68] hover:bg-[#103d68] hover:bg-opacity-10'}`}
