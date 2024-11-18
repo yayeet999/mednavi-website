@@ -150,7 +150,7 @@ export const DashboardContainer = () => {
       </div>
       <div className="w-2/3 h-full scale-110 transform translate-x-2">
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+          <PieChart margin={{ top: 0, right: 0, bottom: 1, left: 0 }}>
             <Pie
               data={donutData}
               innerRadius="40%"
@@ -174,7 +174,7 @@ export const DashboardContainer = () => {
                   {/* Procedures */}
                   <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Procedures</h3>
-                    <div className="h-[85px] md:h-[100px]">
+                    <div className="h-[60px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis type="number" 
@@ -199,7 +199,7 @@ export const DashboardContainer = () => {
                   {/* Patient Categories */}
                   <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
-                    <div className="h-[85px] md:h-[100px]">
+                    <div className="h-[60px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
