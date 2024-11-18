@@ -71,7 +71,7 @@ export const DashboardContainer = () => {
       <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
         {/* Header Area */}
 <div className="flex-shrink-0 flex justify-between items-start px-3 pt-2 pb-0 md:px-5 md:pt-3 md:pb-0">  {/* changed items-end to items-start and adjusted padding */}
-  <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2 mt-auto mb-3 md:mb-4">Your Dental Practice</h1>  {/* added mt-auto and margin bottom */}
+  <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2 mt-auto mb-6 md:mb-8">Your Dental Practice</h1>  {/* added mt-auto and margin bottom */}
   <h2 className="text-sm md:text-[28px] text-white font-medium pr-3 md:pr-8 mt-1 md:mt-2">mednavi</h2>  {/* added margin top */}
 </div>
 
