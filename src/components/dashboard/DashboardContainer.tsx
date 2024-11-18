@@ -70,10 +70,10 @@ export const DashboardContainer = () => {
       {/* Main Content Area */}
       <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
         {/* Header Area */}
-        <div className="flex-shrink-0 flex justify-between items-center px-3 py-2 md:px-5 md:py-3">
-          <h1 className="text-xs md:text-lg text-white font-medium">Your Dental Practice</h1>
-          <h2 className="text-sm md:text-xl text-white font-medium">mednavi</h2>
-        </div>
+<div className="flex-shrink-0 flex justify-between items-end px-3 pb-4 md:px-5 md:pb-5">  {/* changed from items-center to items-end and added padding bottom */}
+  <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2">Your Dental Practice</h1>  {/* added font-bold and padding left */}
+  <h2 className="text-sm md:text-[28px] text-white font-medium pr-3 md:pr-8">mednavi</h2>  {/* increased from text-2xl to text-[28px] and added more right padding */}
+</div>
 
         {/* Content Area */}
         <div className="flex-1 p-2 md:p-4">
