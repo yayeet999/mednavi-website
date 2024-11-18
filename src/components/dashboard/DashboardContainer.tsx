@@ -142,7 +142,7 @@ export const DashboardContainer = () => {
   </div>
 
 {/* Services Distribution */}
-<div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[130px]">
+<div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
   <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
   <div className="h-[50px] md:h-[90px] flex items-center md:-mb-4">
     <div className="w-1/3">
