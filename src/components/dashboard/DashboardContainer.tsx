@@ -93,7 +93,7 @@ export const DashboardContainer = () => {
 
             {item.id === 'practice' && showTooltip && (
               <div 
-                className="absolute left-1/2 -translate-x-1/2 w-36 md:w-40"
+                className="absolute left-1/2 -translate-x-1/2 w-32 md:w-36"
                 style={{
                   top: 'calc(100% + 12px)',
                   animation: 'smoothFloat 3s ease-in-out infinite',
@@ -116,8 +116,8 @@ export const DashboardContainer = () => {
                   />
                   <div className="relative z-10">
                     <p className="text-center font-medium">
-                      <span className="block text-[11px] md:text-sm leading-snug text-white">Example</span>
-                      <span className="block text-[11px] md:text-sm leading-snug text-white">Practice Analysis</span>
+                      <span className="block text-[10px] md:text-sm leading-snug text-white">Example</span>
+                      <span className="block text-[10px] md:text-sm leading-snug text-white">Practice Analysis</span>
                     </p>
                   </div>
                 </div>
