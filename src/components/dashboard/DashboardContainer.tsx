@@ -86,21 +86,21 @@ export const DashboardContainer = () => {
 
                 {/* KPIs - Reduced height */}
 <div className="grid grid-cols-3 gap-2 md:gap-4">
-  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[95px]">
+  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[87px]">
     <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
     <div className="flex items-center space-x-2 mt-1">
       <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
       <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
     </div>
   </div>
-  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[95px]">
+  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[87px]">
     <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
     <div className="flex items-center space-x-2 mt-1">
       <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
       <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
     </div>
   </div>
-  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[95px]">
+  <div className="bg-white rounded-xl p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[87px]">
     <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
     <div className="flex items-center space-x-2 mt-1">
       <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
@@ -172,9 +172,9 @@ export const DashboardContainer = () => {
                 {/* Charts Row 2 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4">
                   {/* Procedures */}
-                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm h-[85px] md:h-[130px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Procedures</h3>
-                    <div className="h-[60px] md:h-[90px]">
+                    <div className="h-[70px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis type="number" 
@@ -198,7 +198,7 @@ export const DashboardContainer = () => {
 
                   {/* Patient Categories */}
                   <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
-                    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
+                    <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1 h-[85px] md:h-[130px]">Patient Categories</h3>
                     <div className="h-[60px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
