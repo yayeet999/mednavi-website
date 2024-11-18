@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, Plug2, ArrowRight, BarChart2 } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
 export const DashboardContainer = () => {
   const [activePage, setActivePage] = useState('home');
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowTooltip(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const revenueData = [
     { month: 'Jan', value: 30000 },
@@ -54,16 +62,68 @@ export const DashboardContainer = () => {
           { id: 'home', icon: <Home size={24} /> },
           { id: 'practice', icon: <BarChart2 size={24} /> }
         ].map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setActivePage(item.id)}
-            className={`w-10 h-8 md:w-14 md:h-12 mb-8 md:mb-12 rounded-lg flex items-center justify-center cursor-pointer transition-colors
-                       ${activePage === item.id 
-                         ? 'bg-[#052b52] text-white shadow-sm' 
-                         : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}`}
-          >
-            {item.icon}
-          </button>
+          <div key={item.id} className="relative">
+            <button
+              onClick={() => item.id === 'practice' ? console.log('Navigate to other dashboard') : setActivePage(item.id)}
+              className={`w-10 h-8 md:w-14 md:h-12 mb-8 md:mb-12 rounded-lg flex items-center justify-center cursor-pointer transition-colors
+                         ${activePage === item.id 
+                           ? 'bg-[#052b52] text-white shadow-sm' 
+                           : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}`}
+            >
+              {item.icon}
+              {item.id === 'practice' && (
+                <>
+                  <div 
+                    className="absolute inset-0 rounded-lg"
+                    style={{
+                      animation: 'outerGlow 4s ease-in-out infinite',
+                      boxShadow: '0 0 0 2px rgba(79, 70, 229, 0.2)',
+                    }}
+                  />
+                  <div 
+                    className="absolute inset-0 rounded-lg"
+                    style={{
+                      animation: 'innerPulse 4s ease-in-out infinite',
+                      boxShadow: '0 0 25px rgba(79, 70, 229, 0.3)',
+                    }}
+                  />
+                </>
+              )}
+            </button>
+
+            {item.id === 'practice' && showTooltip && (
+              <div 
+                className="absolute left-1/2 -translate-x-1/2 w-36 md:w-40"
+                style={{
+                  top: 'calc(100% + 12px)',
+                  animation: 'smoothFloat 3s ease-in-out infinite',
+                  zIndex: 50
+                }}
+              >
+                <div 
+                  className="relative px-3 py-2 md:px-4 md:py-3 rounded-lg"
+                  style={{
+                    background: '#03203d',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    animation: 'fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                  }}
+                >
+                  <div 
+                    className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 rotate-45"
+                    style={{
+                      background: '#03203d',
+                    }}
+                  />
+                  <div className="relative z-10">
+                    <p className="text-center font-medium">
+                      <span className="block text-[11px] md:text-sm leading-snug text-white">Example</span>
+                      <span className="block text-[11px] md:text-sm leading-snug text-white">Practice Analysis</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
@@ -230,6 +290,55 @@ export const DashboardContainer = () => {
           </div>
         </div>
       </div>
+
+      <style>
+        {`
+          @keyframes outerGlow {
+            0%, 100% {
+              transform: scale(1);
+              opacity: 0.4;
+            }
+            50% {
+              transform: scale(1.2);
+              opacity: 0.2;
+            }
+          }
+
+          @keyframes innerPulse {
+            0%, 100% {
+              transform: scale(1);
+              opacity: 0.3;
+            }
+            50% {
+              transform: scale(1.12);
+              opacity: 0.5;
+            }
+          }
+
+          @keyframes fadeIn {
+            0% {
+              opacity: 0;
+              transform: translateY(8px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes smoothFloat {
+            0% {
+              transform: translate(-50%, 0px);
+            }
+            50% {
+              transform: translate(-50%, -4px);
+            }
+            100% {
+              transform: translate(-50%, 0px);
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };
