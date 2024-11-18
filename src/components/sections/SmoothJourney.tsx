@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import DashboardContainer from '@/components/dashboard/DashboardContainer'; // Updated import path
+import DashboardContainer2 from '@/components/dashboard/DashboardContainer2';
 
 const stations = [
   { 
@@ -403,10 +404,12 @@ const SmoothJourney: React.FC = () => {
                                 : 'shadow-lg'}`} 
               >
                 {i === 0 ? (
-                  <DashboardContainer />
-                ) : (
-                  renderKPIBox(station.kpis)
-                )}
+  <DashboardContainer />
+) : i === 1 ? (
+  <DashboardContainer2 />
+) : (
+  renderKPIBox(station.kpis)
+)}
               </div>
             </div>
           </div>
