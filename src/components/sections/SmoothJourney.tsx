@@ -1,4 +1,4 @@
-'use client';  
+'use client';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import DashboardContainer from '@/components/dashboard/DashboardContainer'; // Updated import path
 
@@ -61,7 +61,7 @@ const stations = [
 ];
 
 const renderKPIBox = (kpis: typeof stations[0]['kpis']) => (
-  <div className="grid grid-cols-2 gap-4 md:gap-8 p-6 md:p-12 h-full">
+  <div className="grid grid-cols-2 gap-4 md:gap-8 pb-4 md:pb-6 h-full">
     <div className="space-y-2 md:space-y-4">
       <div className="text-base md:text-lg text-gray-500">Revenue</div>
       <div className="text-xl md:text-3xl font-semibold text-gray-800">${kpis.revenue.value}k</div>
@@ -325,7 +325,7 @@ const SmoothJourney: React.FC = () => {
   return (
     <div 
       ref={sectionRef}
-      className="relative w-full h-[70vh] md:h-screen bg-[#EBF4FF] overflow-hidden"
+      className="relative w-full h-[60vh] md:h-[90vh] bg-[#EBF4FF] overflow-hidden"
     >
       <div 
         className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
@@ -385,7 +385,7 @@ const SmoothJourney: React.FC = () => {
         {stations.map((station, i) => (
           <div
             key={station.id}
-            className={`absolute w-[360px] md:w-[840px] h-[340px] md:h-[480px] transition-transform duration-1000 ease-out will-change-transform
+            className={`absolute w-[360px] md:w-[840px] max-h-[300px] md:max-h-[400px] transition-transform duration-1000 ease-out will-change-transform
                         ${i === currentIndex ? 'z-20' : 'z-10'}`}
             style={{
               left: station.x,
