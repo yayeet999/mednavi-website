@@ -175,7 +175,7 @@ export const DashboardContainer = () => {
                 {/* Charts Row 2 */}
                 <div className="grid grid-cols-2 gap-2 md:gap-4">
                   {/* Procedures */}
-                  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[130px]">
+                  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Procedures</h3>
                     <div className="h-[70px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -200,7 +200,7 @@ export const DashboardContainer = () => {
                   </div>
 
                   {/* Patient Categories */}
-                  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[130px]">
+                  <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Patient Categories</h3>
                     <div className="h-[70px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
