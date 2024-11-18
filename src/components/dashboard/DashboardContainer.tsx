@@ -49,7 +49,7 @@ export const DashboardContainer = () => {
   return (
     <div className="flex h-[340px] md:h-[480px] w-full">
       {/* Sidebar */}
-      <div className="bg-white w-[30px] md:w-[54px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3 rounded-l-xl">
+      <div className="bg-white w-[30px] md:w-[54px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
         {[
           { id: 'home', icon: <Home size={16} /> },
           { id: 'practice', icon: <Plug2 size={16} /> }
@@ -68,7 +68,7 @@ export const DashboardContainer = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 bg-[#103d68] rounded-r-xl rounded-l-xl flex flex-col overflow-hidden">
+      <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
         {/* Header Area */}
         <div className="flex-shrink-0 flex justify-between items-center px-3 py-2 md:px-5 md:py-3">
           <h1 className="text-xs md:text-lg text-white font-medium">Your Dental Practice</h1>
@@ -77,26 +77,26 @@ export const DashboardContainer = () => {
 
         {/* Content Area */}
         <div className="flex-1 p-2 md:p-4">
-          <div className="bg-gray-50 rounded-xl h-full p-2 md:p-3">
+          <div className="bg-gray-100 rounded-xl h-full p-2 md:p-3">
             {activePage === 'home' && (
               <div className="flex flex-col space-y-2 md:space-y-3">
                 <h2 className="text-base md:text-xl font-bold text-[#103d68] pl-1 md:pl-2">
                   Dashboard Overview
                 </h2>
 
-                {/* KPIs - Reordered and in white containers */}
+                {/* KPIs - Reduced height */}
                 <div className="grid grid-cols-3 gap-2 md:gap-4">
-                  <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm flex flex-col justify-center h-[85px] md:h-[110px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Active Patients</h3>
                     <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">2,547</p>
                     <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+12.5%</p>
                   </div>
-                  <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm flex flex-col justify-center h-[85px] md:h-[110px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">New Patients</h3>
                     <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">148</p>
                     <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+8.3%</p>
                   </div>
-                  <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm">
+                  <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm flex flex-col justify-center h-[85px] md:h-[110px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-base truncate">Monthly Revenue</h3>
                     <p className="text-[#103d68] text-xs md:text-2xl font-bold mt-1">$125.8K</p>
                     <p className="text-green-500 text-[8px] md:text-sm mt-0.5">+15.2%</p>
@@ -168,7 +168,7 @@ export const DashboardContainer = () => {
                   {/* Procedures */}
                   <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Procedures</h3>
-                    <div className="h-[90px] md:h-[105px]">
+                    <div className="h-[85px] md:h-[100px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
                           <XAxis type="number" 
@@ -193,7 +193,7 @@ export const DashboardContainer = () => {
                   {/* Patient Categories */}
                   <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1">Patient Categories</h3>
-                    <div className="h-[90px] md:h-[105px]">
+                    <div className="h-[85px] md:h-[100px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
