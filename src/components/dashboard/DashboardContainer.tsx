@@ -49,7 +49,7 @@ export const DashboardContainer = () => {
   return (
     <div className="flex h-[340px] md:h-[480px] w-full">
       {/* Sidebar */}
-      <div className="bg-white w-[50px] md:w-[80px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3">
+      <div className="bg-white w-[50px] md:w-[80px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3 rounded-l-xl">
         {[
           { id: 'home', icon: <Home size={24} /> },
           { id: 'data', icon: <BarChart2 size={24} /> }
@@ -199,7 +199,7 @@ export const DashboardContainer = () => {
                   {/* Patient Categories */}
                   <div className="bg-white rounded-xl p-2 md:p-3 shadow-sm">
                     <h3 className="text-[#103d68] text-[9px] md:text-sm mb-1 h-[85px] md:h-[130px]">Patient Categories</h3>
-                    <div className="h-[60px] md:h-[90px]">
+                    <div className="h-[70px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                           <XAxis 
