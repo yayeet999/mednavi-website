@@ -1,6 +1,211 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, DollarSign, Stethoscope } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+const DemographicsContent = () => {
+  // Retention data
+  const retentionData = [
+    {
+      age: '18-30',
+      initial: 1000,
+      retained: 850,
+    },
+    {
+      age: '31-45',
+      initial: 1380,
+      retained: 1200,
+    },
+    {
+      age: '46-60',
+      initial: 1100,
+      retained: 980,
+    },
+    {
+      age: '60+',
+      initial: 810,
+      retained: 720,
+    }
+  ];
+
+  // Demographics data
+  const demographicsData = [
+    {
+      ageRange: '18-30',
+      male: 320,
+      female: 380,
+      other: 25
+    },
+    {
+      ageRange: '31-45',
+      male: 480,
+      female: 520,
+      other: 35
+    },
+    {
+      ageRange: '46-60',
+      male: 420,
+      female: 460,
+      other: 30
+    },
+    {
+      ageRange: '61-75',
+      male: 280,
+      female: 310,
+      other: 20
+    },
+    {
+      ageRange: '75+',
+      male: 180,
+      female: 220,
+      other: 15
+    }
+  ];
+
+  // Color palette
+  const colors = {
+    male: '#1E40AF',    // Deep blue
+    female: '#3B82F6',  // Medium blue
+    other: '#93C5FD'    // Light blue
+  };
+
+  // Custom tooltip for demographics chart
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-2 border border-gray-200 shadow-sm rounded-md">
+          <p className="font-medium text-[9px] md:text-xs text-gray-700 mb-1">{`Age Range: ${label}`}</p>
+          {payload.map((entry, index) => (
+            <p 
+              key={index} 
+              className="text-[8px] md:text-[11px]"
+              style={{ color: entry.color }}
+            >
+              {`${entry.name}: ${entry.value.toLocaleString()}`}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="h-full p-2 overflow-y-auto space-y-3">
+      {/* Patient Retention Analysis */}
+      <div className="bg-white rounded-lg p-3 shadow-sm">
+        <h3 className="text-[10px] md:text-sm font-medium text-gray-700 mb-3">Patient Retention Analysis</h3>
+        <div className="space-y-4">
+          {retentionData.map((group, idx) => {
+            const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
+            const maxValue = Math.max(...retentionData.map(d => d.initial));
+            const widthScale = 0.7;
+            const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
+            const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
+            
+            return (
+              <div key={idx} className="relative">
+                <div className="text-[9px] md:text-xs text-gray-500 mb-1">Age {group.age}</div>
+                <div className="relative h-5 md:h-7">
+                  <div 
+                    className="absolute top-0 left-0 h-full bg-blue-100 rounded"
+                    style={{ width: initialWidth }}
+                  >
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[8px] md:text-xs text-gray-600">
+                      {group.initial.toLocaleString()}
+                    </span>
+                  </div>
+                  <div 
+                    className="absolute top-0 left-0 h-full bg-blue-600 rounded"
+                    style={{ width: retainedWidth }}
+                  >
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[8px] md:text-xs text-white">
+                      {group.retained.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 text-[8px] md:text-xs text-gray-500 whitespace-nowrap">
+                    {retentionRate}%
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Legend */}
+          <div className="flex gap-3 pt-2 border-t border-gray-100">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded bg-blue-100"></div>
+              <span className="text-[8px] md:text-xs text-gray-500">Initial Patients</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded bg-blue-600"></div>
+              <span className="text-[8px] md:text-xs text-gray-500">Retained Patients</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Age Distribution by Gender */}
+      <div className="bg-white rounded-lg p-3 shadow-sm">
+        <h3 className="text-[10px] md:text-sm font-medium text-gray-700 mb-3">Age Distribution by Gender</h3>
+        <div className="h-[180px] md:h-[240px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={demographicsData}
+              margin={{ top: 10, right: 10, left: -15, bottom: 5 }}
+              barSize={16}
+            >
+              <CartesianGrid 
+                strokeDasharray="3 3" 
+                stroke="#E5E7EB"
+                vertical={false}
+              />
+              <XAxis 
+                dataKey="ageRange"
+                tick={{ fontSize: 10, fill: '#4B5563' }}
+                tickLine={{ stroke: '#E5E7EB' }}
+                axisLine={{ stroke: '#E5E7EB' }}
+              />
+              <YAxis
+                tick={{ fontSize: 10, fill: '#4B5563' }}
+                tickLine={{ stroke: '#E5E7EB' }}
+                axisLine={{ stroke: '#E5E7EB' }}
+                tickFormatter={(value) => value.toLocaleString()}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend 
+                wrapperStyle={{
+                  fontSize: '10px',
+                  paddingTop: '8px'
+                }}
+                iconType="circle"
+                iconSize={6}
+              />
+              <Bar 
+                dataKey="male" 
+                name="Male" 
+                stackId="a" 
+                fill={colors.male}
+              />
+              <Bar 
+                dataKey="female" 
+                name="Female" 
+                stackId="a" 
+                fill={colors.female}
+              />
+              <Bar 
+                dataKey="other" 
+                name="Other" 
+                stackId="a" 
+                fill={colors.other}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PracticeTabContent = () => {
   return (
@@ -47,27 +252,7 @@ const PracticeTabContent = () => {
         {/* Content Area */}
         <div className="flex-1 overflow-hidden bg-gray-100 mt-2">
           <TabsContent value="demographics" className="h-full m-0">
-            <div className="h-full p-2 overflow-y-auto">
-              {/* KPI Cards */}
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-white rounded-lg p-2 h-[48px] shadow-sm">
-                  <div className="text-[9px] text-gray-500">Total Patients</div>
-                  <div className="text-xs font-medium mt-0.5">2,547</div>
-                </div>
-                <div className="bg-white rounded-lg p-2 h-[48px] shadow-sm">
-                  <div className="text-[9px] text-gray-500">Active Patients</div>
-                  <div className="text-xs font-medium mt-0.5">1,842</div>
-                </div>
-              </div>
-              
-              {/* Chart Area */}
-              <div className="bg-white rounded-lg p-2 mt-2 h-[120px] shadow-sm">
-                <div className="text-[9px] text-gray-500">Patient Growth</div>
-                <div className="h-[90px] flex items-center justify-center text-[9px] text-gray-400">
-                  Chart Area
-                </div>
-              </div>
-            </div>
+            <DemographicsContent />
           </TabsContent>
 
           <TabsContent value="financials" className="h-full m-0">
