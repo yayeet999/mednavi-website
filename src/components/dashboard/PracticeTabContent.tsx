@@ -12,7 +12,7 @@ const PracticeTabContent = () => {
             <TabsList className="w-full bg-transparent flex justify-between gap-1 items-center h-[28px]">
               <TabsTrigger 
                 value="demographics"
-                className="flex-1 rounded-lg px-2 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
+                className="flex-1 rounded-lg px-1 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
                   text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
                   transition-all duration-200"
               >
@@ -21,7 +21,7 @@ const PracticeTabContent = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="financials"
-                className="flex-1 rounded-lg px-2 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
+                className="flex-1 rounded-lg px-1 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
                   text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
                   transition-all duration-200"
               >
@@ -30,7 +30,7 @@ const PracticeTabContent = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="procedures"
-                className="flex-1 rounded-lg px-2 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
+                className="flex-1 rounded-lg px-1 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
                   text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
                   transition-all duration-200"
               >
