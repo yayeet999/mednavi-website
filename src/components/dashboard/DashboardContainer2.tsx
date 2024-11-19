@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Home, BarChart2, Map } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import PracticeTabContent from './PracticeTabContent';
 
 export const DashboardContainer2 = () => {
   const [activePage, setActivePage] = useState('practice');
 
+  // Sample data
   const revenueData = [
     { month: 'Jan', value: 30000 },
     { month: 'Feb', value: 35000 },
@@ -88,7 +90,7 @@ export const DashboardContainer2 = () => {
                   Dashboard Overview
                 </h2>
 
-                {/* KPIs - Reduced height */}
+                {/* KPIs */}
                 <div className="grid grid-cols-3 gap-2 md:gap-4">
                   <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
                     <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
@@ -231,8 +233,11 @@ export const DashboardContainer2 = () => {
                 </div>
               </div>
             )}
+            
             {activePage === 'practice' && (
-              <div className="h-full w-full bg-white rounded-lg" />
+              <div className="w-full h-full bg-white rounded-lg">
+                <PracticeTabContent />
+              </div>
             )}
           </div>
         </div>
