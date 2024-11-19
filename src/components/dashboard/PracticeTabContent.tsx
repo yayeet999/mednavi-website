@@ -8,7 +8,7 @@ const PracticeTabContent = () => {
       <Tabs defaultValue="demographics" className="h-full flex flex-col">
         {/* Tabs Container with Overflow Control */}
         <div className="overflow-hidden -mx-2">
-          <div className="w-[calc(100%+12px)] bg-[#1C2434] px-2 h-[32px] rounded-xl flex items-center">
+          <div className="w-[calc(100%+16px)] bg-[#1C2434] px-2 h-[32px] rounded-lg flex items-center">
             <TabsList className="w-full bg-transparent flex justify-between gap-1 items-center h-[28px]">
               <TabsTrigger 
                 value="demographics"
