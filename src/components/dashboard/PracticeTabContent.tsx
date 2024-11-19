@@ -9,7 +9,7 @@ const PracticeTabContent = () => {
         {/* Tabs Container */}
         <div className="flex justify-center">
           <div className="bg-[#1E2433] rounded-[14px] md:min-w-[632px] h-[32px] md:h-[40px] flex items-center px-0.5 md:px-1">
-            <TabsList className="flex bg-transparent h-[28px] md:h-[36px] gap-0.5 w-full justify-center data-[state=active]:bg-transparent">
+            <TabsList className="flex !bg-transparent h-[28px] md:h-[36px] gap-0.5 w-full justify-center data-[state=active]:!bg-transparent">
               <TabsTrigger 
                 value="demographics"
                 className="rounded-lg h-[23px] md:h-[31px] text-[9px] md:text-xs px-2.5 md:px-6 md:min-w-[210px] font-normal flex items-center justify-center gap-1 md:gap-2
