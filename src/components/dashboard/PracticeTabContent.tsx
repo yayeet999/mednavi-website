@@ -8,7 +8,7 @@ const PracticeTabContent = () => {
       <Tabs defaultValue="demographics" className="h-full flex flex-col">
         {/* Tabs Container */}
         <div className="flex justify-center">
-          <div className="bg-[#1E2433] rounded-xl md:min-w-[658px] h-[32px] md:h-[40px] flex items-center px-0.5 md:px-1">
+          <div className="bg-[#1E2433] rounded-xl md:min-w-[650px] h-[32px] md:h-[40px] flex items-center px-0.5 md:px-1">
             <TabsList className="flex bg-transparent h-[28px] md:h-[36px] gap-0.5 w-full justify-center">
               <TabsTrigger 
                 value="demographics"
