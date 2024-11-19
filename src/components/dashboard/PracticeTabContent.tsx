@@ -12,7 +12,7 @@ const PracticeTabContent = () => {
             <TabsList className="flex bg-transparent h-[28px] md:h-[36px] gap-0.5 w-full justify-center">
               <TabsTrigger 
                 value="demographics"
-                className="rounded-lg h-[24px] md:h-[32px] text-[9px] md:text-xs px-2.5 md:px-6 md:min-w-[200px] font-normal flex items-center justify-center gap-1 md:gap-2
+                className="rounded-lg h-[24px] md:h-[32px] text-[10px] md:text-xs px-2.5 md:px-6 md:min-w-[210px] font-normal flex items-center justify-center gap-1 md:gap-2
                   text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm
                   hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
                   transition-all duration-200"
@@ -22,7 +22,7 @@ const PracticeTabContent = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="financials"
-                className="rounded-lg h-[24px] md:h-[32px] text-[9px] md:text-xs px-2.5 md:px-6 md:min-w-[200px] font-normal flex items-center justify-center gap-1 md:gap-2
+                className="rounded-lg h-[24px] md:h-[32px] text-[10px] md:text-xs px-2.5 md:px-6 md:min-w-[210px] font-normal flex items-center justify-center gap-1 md:gap-2
                   text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm
                   hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
                   transition-all duration-200"
@@ -32,7 +32,7 @@ const PracticeTabContent = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="procedures"
-                className="rounded-lg h-[24px] md:h-[32px] text-[9px] md:text-xs px-2.5 md:px-6 md:min-w-[200px] font-normal flex items-center justify-center gap-1 md:gap-2
+                className="rounded-lg h-[24px] md:h-[32px] text-[10px] md:text-xs px-2.5 md:px-6 md:min-w-[210px] font-normal flex items-center justify-center gap-1 md:gap-2
                   text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm
                   hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
                   transition-all duration-200"
