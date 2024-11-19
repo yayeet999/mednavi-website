@@ -67,17 +67,27 @@ module.exports = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
-      // Adding the pulse-slow animation with longer duration and more pronounced effect
       animation: {
-        'pulse-slow': 'pulse-slow 14s infinite', // Increased duration for slower pulses
+        'pulse-slow': 'pulse-slow 14s infinite',
       },
       keyframes: {
         'pulse-slow': {
           '0%, 100%': { opacity: 1, boxShadow: '0 0 0 0 rgba(59,130,246, 0.7)' },
-          '50%': { opacity: 0.6, boxShadow: '0 0 0 15px rgba(59,130,246, 0)' }, // Larger spread for a more subtle fade
+          '50%': { opacity: 0.6, boxShadow: '0 0 0 15px rgba(59,130,246, 0)' },
         },
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function({ addUtilities }) {
+      addUtilities({
+        '.tabs-list-transparent': {
+          '& > [role="tablist"]': {
+            backgroundColor: 'transparent !important',
+          },
+        },
+      });
+    },
+  ],
 }
