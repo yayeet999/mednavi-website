@@ -4,42 +4,44 @@ import { Users, DollarSign, Stethoscope } from 'lucide-react';
 
 const PracticeTabContent = () => {
   return (
-    <div className="h-full w-full rounded-xl overflow-hidden">
+    <div className="h-full w-full overflow-hidden">
       <Tabs defaultValue="demographics" className="h-full flex flex-col">
-        {/* Tabs Container - Dark Nav Bar */}
-        <div className="w-[105%] -ml-[2.5%] bg-[#1C2434] px-2 h-[40px] rounded-xl flex items-center">
-          <TabsList className="w-full bg-transparent flex justify-between gap-1 items-center h-[28px]">
-            <TabsTrigger 
-              value="demographics"
-              className="flex-1 rounded-lg px-2 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
-                text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
-                transition-all duration-200"
-            >
-              <Users className="w-2.5 h-2.5" />
-              Demographics
-            </TabsTrigger>
-            <TabsTrigger 
-              value="financials"
-              className="flex-1 rounded-lg px-2 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
-                text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
-                transition-all duration-200"
-            >
-              <DollarSign className="w-2.5 h-2.5" />
-              Financials
-            </TabsTrigger>
-            <TabsTrigger 
-              value="procedures"
-              className="flex-1 rounded-lg px-2 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
-                text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
-                transition-all duration-200"
-            >
-              <Stethoscope className="w-2.5 h-2.5" />
-              Procedures
-            </TabsTrigger>
-          </TabsList>
+        {/* Tabs Container with Overflow Control */}
+        <div className="overflow-hidden -mx-2">
+          <div className="w-[calc(100%+16px)] bg-[#1C2434] px-2 h-[40px] rounded-b-xl flex items-center">
+            <TabsList className="w-full bg-transparent flex justify-between gap-1 items-center h-[28px]">
+              <TabsTrigger 
+                value="demographics"
+                className="flex-1 rounded-lg px-2 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
+                  text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
+                  transition-all duration-200"
+              >
+                <Users className="w-2.5 h-2.5" />
+                Demographics
+              </TabsTrigger>
+              <TabsTrigger 
+                value="financials"
+                className="flex-1 rounded-lg px-2 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
+                  text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
+                  transition-all duration-200"
+              >
+                <DollarSign className="w-2.5 h-2.5" />
+                Financials
+              </TabsTrigger>
+              <TabsTrigger 
+                value="procedures"
+                className="flex-1 rounded-lg px-2 h-[24px] text-[9px] font-normal flex items-center justify-center gap-1
+                  text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
+                  transition-all duration-200"
+              >
+                <Stethoscope className="w-2.5 h-2.5" />
+                Procedures
+              </TabsTrigger>
+            </TabsList>
+          </div>
         </div>
 
-        {/* Content Area with Gray Background */}
+        {/* Content Area */}
         <div className="flex-1 overflow-hidden bg-gray-100 mt-2">
           <TabsContent value="demographics" className="h-full m-0">
             <div className="h-full p-2 overflow-y-auto">
