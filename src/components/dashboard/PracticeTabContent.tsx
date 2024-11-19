@@ -5,7 +5,7 @@ import { Users, DollarSign, Stethoscope } from 'lucide-react';
 const PracticeTabContent = () => {
   return (
     <div className="h-full w-full overflow-hidden">
-      <Tabs defaultValue="demographics" className="h-full flex flex-col">
+      <Tabs defaultValue="demographics" className="h-full flex flex-col !bg-transparent">
         {/* Tabs Container */}
         <div className="flex justify-center">
           <div className="bg-[#1E2433] rounded-[14px] md:min-w-[632px] h-[32px] md:h-[40px] flex items-center px-0.5 md:px-1">
