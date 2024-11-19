@@ -105,7 +105,7 @@ const DemographicsContent = () => {
           {retentionData.map((group, idx) => {
             const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
             const maxValue = Math.max(...retentionData.map(d => d.initial));
-            const widthScale = 0.7;
+            const widthScale = 0.45; // Reduced from 0.7
             const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
             const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
             
@@ -129,7 +129,7 @@ const DemographicsContent = () => {
                       {group.retained.toLocaleString()}
                     </span>
                   </div>
-                  <div className="absolute left-full ml-1 md:ml-2 top-1/2 -translate-y-1/2 text-[6px] md:text-xs text-gray-500 whitespace-nowrap">
+                  <div className="absolute left-full ml-0.5 md:ml-1 top-1/2 -translate-y-1/2 text-[6px] md:text-xs text-gray-500 whitespace-nowrap">
                     {retentionRate}%
                   </div>
                 </div>
@@ -151,7 +151,7 @@ const DemographicsContent = () => {
         </div>
       </div>
 
-   {/* Age Distribution by Gender */}
+    {/* Age Distribution by Gender */}
       <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm">
         <h3 className="text-[8px] md:text-sm font-medium text-gray-700 mb-2 md:mb-3">Age Distribution by Gender</h3>
         <div className="h-[140px] md:h-[240px] w-full">
