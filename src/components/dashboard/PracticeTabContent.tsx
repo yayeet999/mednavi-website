@@ -9,42 +9,44 @@ const PracticeTabContent = () => {
         {/* Tabs Container with Overflow Control */}
         <div className="overflow-hidden -mx-2">
           <div className="w-[calc(100%+16px)] bg-[#1C2434] px-2 h-[32px] rounded-lg flex items-center">
-            <TabsList className="w-full md:w-[360px] mx-auto bg-transparent flex justify-between items-center h-[28px]">
-              <TabsTrigger 
-                value="demographics"
-                className="!flex-none w-[100px] rounded-lg h-[24px] text-[9px] md:text-[10px] font-normal flex items-center justify-center gap-1
-                  text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
-                  hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
-                  transition-all duration-200"
-              >
-                <Users className="w-2.5 h-2.5" />
-                Demographics
-              </TabsTrigger>
-              <TabsTrigger 
-                value="financials"
-                className="!flex-none w-[100px] rounded-lg h-[24px] text-[9px] md:text-[10px] font-normal flex items-center justify-center gap-1
-                  text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
-                  hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
-                  transition-all duration-200"
-              >
-                <DollarSign className="w-2.5 h-2.5" />
-                Financials
-              </TabsTrigger>
-              <TabsTrigger 
-                value="procedures"
-                className="!flex-none w-[100px] rounded-lg h-[24px] text-[9px] md:text-[10px] font-normal flex items-center justify-center gap-1
-                  text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
-                  hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
-                  transition-all duration-200"
-              >
-                <Stethoscope className="w-2.5 h-2.5" />
-                Procedures
-              </TabsTrigger>
+            <TabsList className="w-full flex justify-center items-center h-[28px] bg-transparent">
+              <div className="flex gap-1 md:gap-2 px-1 md:px-2">
+                <TabsTrigger 
+                  value="demographics"
+                  className="flex rounded-lg h-[24px] text-[9px] px-3 md:px-4 font-normal items-center justify-center gap-1
+                    text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
+                    hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
+                    transition-all duration-200"
+                >
+                  <Users className="w-2.5 h-2.5" />
+                  Demographics
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="financials"
+                  className="flex rounded-lg h-[24px] text-[9px] px-3 md:px-4 font-normal items-center justify-center gap-1
+                    text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
+                    hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
+                    transition-all duration-200"
+                >
+                  <DollarSign className="w-2.5 h-2.5" />
+                  Financials
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="procedures"
+                  className="flex rounded-lg h-[24px] text-[9px] px-3 md:px-4 font-normal items-center justify-center gap-1
+                    text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
+                    hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
+                    transition-all duration-200"
+                >
+                  <Stethoscope className="w-2.5 h-2.5" />
+                  Procedures
+                </TabsTrigger>
+              </div>
             </TabsList>
           </div>
         </div>
 
-        {/* Rest of the content remains exactly the same */}
+        {/* Content Area */}
         <div className="flex-1 overflow-hidden bg-gray-100 mt-2">
           <TabsContent value="demographics" className="h-full m-0">
             <div className="h-full p-2 overflow-y-auto">
