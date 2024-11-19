@@ -6,12 +6,12 @@ const PracticeTabContent = () => {
   return (
     <div className="h-full w-full bg-white rounded-xl overflow-hidden">
       <Tabs defaultValue="demographics" className="h-full flex flex-col">
-        {/* Tabs Container - Full Width, Matching Container Radius */}
-        <div className="w-full bg-[#1C2434] px-2 py-1.5">
+        {/* Tabs Container - Wider and Shorter with Rounded Bottom */}
+        <div className="w-[105%] -ml-[2.5%] bg-[#1C2434] px-2 py-1 h-[32px] rounded-b-xl">
           <TabsList className="w-full bg-transparent flex justify-between gap-1">
             <TabsTrigger 
               value="demographics"
-              className="flex-1 rounded-lg px-2 py-1 text-[9px] font-normal flex items-center justify-center gap-1
+              className="flex-1 rounded-lg px-2 py-0.5 text-[9px] font-normal flex items-center justify-center gap-1
                 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
                 transition-all duration-200"
             >
@@ -20,7 +20,7 @@ const PracticeTabContent = () => {
             </TabsTrigger>
             <TabsTrigger 
               value="financials"
-              className="flex-1 rounded-lg px-2 py-1 text-[9px] font-normal flex items-center justify-center gap-1
+              className="flex-1 rounded-lg px-2 py-0.5 text-[9px] font-normal flex items-center justify-center gap-1
                 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
                 transition-all duration-200"
             >
@@ -29,7 +29,7 @@ const PracticeTabContent = () => {
             </TabsTrigger>
             <TabsTrigger 
               value="procedures"
-              className="flex-1 rounded-lg px-2 py-1 text-[9px] font-normal flex items-center justify-center gap-1
+              className="flex-1 rounded-lg px-2 py-0.5 text-[9px] font-normal flex items-center justify-center gap-1
                 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
                 transition-all duration-200"
             >
@@ -43,30 +43,22 @@ const PracticeTabContent = () => {
         <div className="flex-1 overflow-hidden bg-gray-100">
           <TabsContent value="demographics" className="h-full m-0">
             <div className="h-full p-2 overflow-y-auto">
-              {/* KPI Cards - Reduced height */}
+              {/* KPI Cards - Only 2 cards now */}
               <div className="grid grid-cols-2 gap-2">
-                <div className="bg-white rounded-lg p-2 h-[52px]">
-                  <div className="text-[11px] text-gray-500">Total Patients</div>
-                  <div className="text-sm font-medium mt-0.5">2,547</div>
+                <div className="bg-white rounded-lg p-2 h-[48px]">
+                  <div className="text-[9px] text-gray-500">Total Patients</div>
+                  <div className="text-xs font-medium mt-0.5">2,547</div>
                 </div>
-                <div className="bg-white rounded-lg p-2 h-[52px]">
-                  <div className="text-[11px] text-gray-500">Active Patients</div>
-                  <div className="text-sm font-medium mt-0.5">1,842</div>
-                </div>
-                <div className="bg-white rounded-lg p-2 h-[52px]">
-                  <div className="text-[11px] text-gray-500">New This Month</div>
-                  <div className="text-sm font-medium mt-0.5">128</div>
-                </div>
-                <div className="bg-white rounded-lg p-2 h-[52px]">
-                  <div className="text-[11px] text-gray-500">Growth Rate</div>
-                  <div className="text-sm font-medium mt-0.5">+12.5%</div>
+                <div className="bg-white rounded-lg p-2 h-[48px]">
+                  <div className="text-[9px] text-gray-500">Active Patients</div>
+                  <div className="text-xs font-medium mt-0.5">1,842</div>
                 </div>
               </div>
               
-              {/* Chart Area - Reduced height */}
+              {/* Chart Area */}
               <div className="bg-white rounded-lg p-2 mt-2 h-[120px]">
-                <div className="text-[11px] text-gray-500">Patient Growth</div>
-                <div className="h-[90px] flex items-center justify-center text-[11px] text-gray-400">
+                <div className="text-[9px] text-gray-500">Patient Growth</div>
+                <div className="h-[90px] flex items-center justify-center text-[9px] text-gray-400">
                   Chart Area
                 </div>
               </div>
@@ -77,28 +69,28 @@ const PracticeTabContent = () => {
             <div className="h-full p-2 overflow-y-auto">
               {/* KPI Cards */}
               <div className="grid grid-cols-2 gap-2">
-                <div className="bg-white rounded-lg p-2 h-[52px]">
-                  <div className="text-[11px] text-gray-500">Revenue</div>
-                  <div className="text-sm font-medium mt-0.5">$124.5k</div>
+                <div className="bg-white rounded-lg p-2 h-[48px]">
+                  <div className="text-[9px] text-gray-500">Revenue</div>
+                  <div className="text-xs font-medium mt-0.5">$124.5k</div>
                 </div>
-                <div className="bg-white rounded-lg p-2 h-[52px]">
-                  <div className="text-[11px] text-gray-500">Expenses</div>
-                  <div className="text-sm font-medium mt-0.5">$67.8k</div>
+                <div className="bg-white rounded-lg p-2 h-[48px]">
+                  <div className="text-[9px] text-gray-500">Expenses</div>
+                  <div className="text-xs font-medium mt-0.5">$67.8k</div>
                 </div>
-                <div className="bg-white rounded-lg p-2 h-[52px]">
-                  <div className="text-[11px] text-gray-500">Net Profit</div>
-                  <div className="text-sm font-medium mt-0.5">$56.7k</div>
+                <div className="bg-white rounded-lg p-2 h-[48px]">
+                  <div className="text-[9px] text-gray-500">Net Profit</div>
+                  <div className="text-xs font-medium mt-0.5">$56.7k</div>
                 </div>
-                <div className="bg-white rounded-lg p-2 h-[52px]">
-                  <div className="text-[11px] text-gray-500">Growth</div>
-                  <div className="text-sm font-medium mt-0.5">+12.4%</div>
+                <div className="bg-white rounded-lg p-2 h-[48px]">
+                  <div className="text-[9px] text-gray-500">Growth</div>
+                  <div className="text-xs font-medium mt-0.5">+12.4%</div>
                 </div>
               </div>
 
               {/* Chart Area */}
               <div className="bg-white rounded-lg p-2 mt-2 h-[120px]">
-                <div className="text-[11px] text-gray-500">Financial Trends</div>
-                <div className="h-[90px] flex items-center justify-center text-[11px] text-gray-400">
+                <div className="text-[9px] text-gray-500">Financial Trends</div>
+                <div className="h-[90px] flex items-center justify-center text-[9px] text-gray-400">
                   Chart Area
                 </div>
               </div>
@@ -109,20 +101,20 @@ const PracticeTabContent = () => {
             <div className="h-full p-2 overflow-y-auto">
               {/* Distribution Chart */}
               <div className="bg-white rounded-lg p-2 h-[120px]">
-                <div className="text-[11px] text-gray-500">Procedure Distribution</div>
-                <div className="h-[90px] flex items-center justify-center text-[11px] text-gray-400">
+                <div className="text-[9px] text-gray-500">Procedure Distribution</div>
+                <div className="h-[90px] flex items-center justify-center text-[9px] text-gray-400">
                   Pie Chart
                 </div>
               </div>
 
               {/* Recent Procedures List */}
               <div className="bg-white rounded-lg p-2 mt-2">
-                <div className="text-[11px] text-gray-500 mb-1">Recent Procedures</div>
+                <div className="text-[9px] text-gray-500 mb-1">Recent Procedures</div>
                 <div className="space-y-1.5">
                   {['Cleaning', 'Check-up', 'Filling', 'Root Canal'].map((proc, i) => (
                     <div key={i} className="flex justify-between items-center bg-gray-50 rounded-lg p-1.5">
-                      <span className="text-[11px]">{proc}</span>
-                      <span className="text-[10px] text-gray-500">Today</span>
+                      <span className="text-[9px]">{proc}</span>
+                      <span className="text-[8px] text-gray-500">Today</span>
                     </div>
                   ))}
                 </div>
