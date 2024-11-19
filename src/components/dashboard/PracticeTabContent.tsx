@@ -7,7 +7,7 @@ const PracticeTabContent = () => {
     <div className="h-full w-full bg-white rounded-xl overflow-hidden">
       <Tabs defaultValue="demographics" className="h-full flex flex-col">
         {/* Tabs Container - Wider and Shorter with Rounded Bottom */}
-        <div className="w-[105%] -ml-[2.5%] bg-[#1C2434] px-2 py-1 h-[32px] rounded-b-xl">
+        <div className="w-[105%] -ml-[2.5%] bg-[#1C2434] px-2 py-1 h-[32px] rounded-xl">
           <TabsList className="w-full bg-transparent flex justify-between gap-1">
             <TabsTrigger 
               value="demographics"
