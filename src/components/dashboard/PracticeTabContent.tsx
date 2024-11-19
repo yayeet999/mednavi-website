@@ -9,38 +9,35 @@ const PracticeTabContent = () => {
         {/* Tabs Container with Overflow Control */}
         <div className="overflow-hidden -mx-2">
           <div className="w-[calc(100%+16px)] bg-[#1C2434] px-2 h-[32px] rounded-lg flex items-center">
-            <TabsList className="w-full bg-transparent flex justify-between md:gap-0.5 items-center h-[28px] md:px-1">
+            <TabsList className="w-full bg-transparent flex justify-between items-center h-[28px] md:px-2 md:gap-2">
               <TabsTrigger 
                 value="demographics"
-                className="flex-1 rounded-lg h-[24px] text-[9px] md:text-[10.35px] font-normal flex items-center justify-center gap-1
-                  md:max-w-[110px]
+                className="flex-1 rounded-lg h-[24px] text-[9px] md:text-[10px] font-normal flex items-center justify-center gap-1
                   text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
                   hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
                   transition-all duration-200"
               >
-                <Users className="w-2.5 h-2.5 md:w-[2.625rem] md:h-[2.625rem]" />
+                <Users className="w-2.5 h-2.5 md:w-3 md:h-3" />
                 Demographics
               </TabsTrigger>
               <TabsTrigger 
                 value="financials"
-                className="flex-1 rounded-lg h-[24px] text-[9px] md:text-[10.35px] font-normal flex items-center justify-center gap-1
-                  md:max-w-[110px]
+                className="flex-1 rounded-lg h-[24px] text-[9px] md:text-[10px] font-normal flex items-center justify-center gap-1
                   text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
                   hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
                   transition-all duration-200"
               >
-                <DollarSign className="w-2.5 h-2.5 md:w-[2.625rem] md:h-[2.625rem]" />
+                <DollarSign className="w-2.5 h-2.5 md:w-3 md:h-3" />
                 Financials
               </TabsTrigger>
               <TabsTrigger 
                 value="procedures"
-                className="flex-1 rounded-lg h-[24px] text-[9px] md:text-[10.35px] font-normal flex items-center justify-center gap-1
-                  md:max-w-[110px]
+                className="flex-1 rounded-lg h-[24px] text-[9px] md:text-[10px] font-normal flex items-center justify-center gap-1
                   text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434]
                   hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434]
                   transition-all duration-200"
               >
-                <Stethoscope className="w-2.5 h-2.5 md:w-[2.625rem] md:h-[2.625rem]" />
+                <Stethoscope className="w-2.5 h-2.5 md:w-3 md:h-3" />
                 Procedures
               </TabsTrigger>
             </TabsList>
