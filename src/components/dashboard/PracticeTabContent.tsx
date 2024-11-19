@@ -3,74 +3,83 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, DollarSign, Stethoscope } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    name: string;
+    color: string;
+  }>;
+  label?: string;
+}
+
 const DemographicsContent = () => {
-  // Retention data
+  // Realistic retention data for a medium-sized dental practice
   const retentionData = [
     {
       age: '18-30',
-      initial: 1000,
-      retained: 850,
+      initial: 450,
+      retained: 385,
     },
     {
       age: '31-45',
-      initial: 1380,
-      retained: 1200,
+      initial: 680,
+      retained: 598,
     },
     {
       age: '46-60',
-      initial: 1100,
-      retained: 980,
+      initial: 520,
+      retained: 472,
     },
     {
       age: '60+',
-      initial: 810,
-      retained: 720,
+      initial: 350,
+      retained: 308,
     }
   ];
 
-  // Demographics data
+  // Realistic demographics data
   const demographicsData = [
     {
       ageRange: '18-30',
-      male: 320,
-      female: 380,
-      other: 25
-    },
-    {
-      ageRange: '31-45',
-      male: 480,
-      female: 520,
-      other: 35
-    },
-    {
-      ageRange: '46-60',
-      male: 420,
-      female: 460,
-      other: 30
-    },
-    {
-      ageRange: '61-75',
-      male: 280,
-      female: 310,
+      male: 185,
+      female: 245,
       other: 20
     },
     {
+      ageRange: '31-45',
+      male: 290,
+      female: 368,
+      other: 22
+    },
+    {
+      ageRange: '46-60',
+      male: 228,
+      female: 276,
+      other: 16
+    },
+    {
+      ageRange: '61-75',
+      male: 146,
+      female: 182,
+      other: 12
+    },
+    {
       ageRange: '75+',
-      male: 180,
-      female: 220,
-      other: 15
+      male: 68,
+      female: 92,
+      other: 8
     }
   ];
 
-  // Color palette
+  // Professional color palette
   const colors = {
     male: '#1E40AF',    // Deep blue
     female: '#3B82F6',  // Medium blue
     other: '#93C5FD'    // Light blue
   };
 
-  // Custom tooltip for demographics chart
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-2 border border-gray-200 shadow-sm rounded-md">
