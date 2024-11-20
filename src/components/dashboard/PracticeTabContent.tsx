@@ -25,7 +25,9 @@ const GrowthRateIndicator = () => {
   const percentage = 14;
   const radius = 23;
   const radiusDesktop = 20;
-  const circumference = 2 * Math.PI * radius;
+  const circumference = typeof window !== 'undefined' && window.innerWidth >= 768 
+    ? 2 * Math.PI * radiusDesktop 
+    : 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
   const monthlyData = [
     { month: 'Jan', growth: 12 },
