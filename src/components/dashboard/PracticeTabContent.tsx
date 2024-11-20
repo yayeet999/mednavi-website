@@ -95,10 +95,9 @@ const DemographicsContent = () => {
     }
     return null;
   };
-
   return (
-    <div className="flex-1 overflow-y-auto px-1 md:px-3">
-      <div className="grid grid-cols-2 gap-2 md:gap-3">
+    <div className="flex-1 overflow-y-auto px-1 md:px-3 h-full flex items-end">
+      <div className="grid grid-cols-2 gap-2 md:gap-3 w-full pb-2 md:pb-3">
         <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-full md:w-[130%] border border-gray-200">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Patient Retention Analysis
@@ -166,110 +165,109 @@ const DemographicsContent = () => {
         </div>
 
         <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[117px] md:h-[186px] w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
-  <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
-    Age Distribution by Gender
-  </h3>
-  <div className="h-[98px] md:h-[138px] w-full">
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        data={demographicsData}
-        margin={{ 
-          top: window.innerWidth < 768 ? 5 : 0,
-          right: 0,
-          left: -2,
-          bottom: window.innerWidth < 768 ? 15 : 2
-        }}
-        barSize={window.innerWidth < 768 ? 12 : 20}
-        barGap={0}
-      >
-        <CartesianGrid 
-          strokeDasharray="3 3" 
-          stroke="#E5E7EB"
-          vertical={false}
-        />
-        <XAxis 
-          dataKey="ageRange"
-          tickLine={{ stroke: '#E5E7EB' }}
-          axisLine={{ stroke: '#E5E7EB' }}
-          interval={0}
-          tick={props => (
-            <g transform={`translate(${props.x},${props.y})`}>
-              <text
-                x={0}
-                y={0}
-                dy={window.innerWidth < 768 ? 10 : 8}
-                textAnchor="end"
-                fill="#4B5563"
-                fontSize={window.innerWidth < 768 ? 5.5 : 8}
-                className="select-none"
-                transform={window.innerWidth < 768 ? "rotate(-30)" : "rotate(-20)"}
+          <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
+            Age Distribution by Gender
+          </h3>
+          <div className="h-[98px] md:h-[138px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={demographicsData}
+                margin={{ 
+                  top: window.innerWidth < 768 ? 5 : 0,
+                  right: 0,
+                  left: -2,
+                  bottom: window.innerWidth < 768 ? 15 : 2
+                }}
+                barSize={window.innerWidth < 768 ? 12 : 20}
+                barGap={0}
               >
-                {props.payload.value}
-              </text>
-            </g>
-          )}
-        />
-        <YAxis
-          tickLine={{ stroke: '#E5E7EB' }}
-          axisLine={{ stroke: '#E5E7EB' }}
-          tickFormatter={(value) => value.toLocaleString()}
-          width={25}
-          tick={{
-            fontSize: window.innerWidth < 768 ? 6 : 8,
-            fill: '#4B5563'
-          }}
-          padding={{ top: 0 }}
-        />
-        <Tooltip 
-          content={<CustomTooltip />}
-          cursor={{ fill: 'rgba(229, 231, 235, 0.4)' }}
-        />
-        {window.innerWidth >= 768 && (
-          <div className="flex gap-2 pt-2">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded bg-[#1E40AF]"></div>
-              <span className="text-[9px] text-gray-500">Male</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded bg-[#3B82F6]"></div>
-              <span className="text-[9px] text-gray-500">Female</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded bg-[#93C5FD]"></div>
-              <span className="text-[9px] text-gray-500">Other</span>
-            </div>
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  stroke="#E5E7EB"
+                  vertical={false}
+                />
+                <XAxis 
+                  dataKey="ageRange"
+                  tickLine={{ stroke: '#E5E7EB' }}
+                  axisLine={{ stroke: '#E5E7EB' }}
+                  interval={0}
+                  tick={props => (
+                    <g transform={`translate(${props.x},${props.y})`}>
+                      <text
+                        x={0}
+                        y={0}
+                        dy={window.innerWidth < 768 ? 10 : 8}
+                        textAnchor="end"
+                        fill="#4B5563"
+                        fontSize={window.innerWidth < 768 ? 5.5 : 8}
+                        className="select-none"
+                        transform={window.innerWidth < 768 ? "rotate(-30)" : "rotate(-20)"}
+                      >
+                        {props.payload.value}
+                      </text>
+                    </g>
+                  )}
+                />
+                <YAxis
+                  tickLine={{ stroke: '#E5E7EB' }}
+                  axisLine={{ stroke: '#E5E7EB' }}
+                  tickFormatter={(value) => value.toLocaleString()}
+                  width={25}
+                  tick={{
+                    fontSize: window.innerWidth < 768 ? 6 : 8,
+                    fill: '#4B5563'
+                  }}
+                  padding={{ top: 0 }}
+                />
+                <Tooltip 
+                  content={<CustomTooltip />}
+                  cursor={{ fill: 'rgba(229, 231, 235, 0.4)' }}
+                />
+                {window.innerWidth >= 768 && (
+                  <div className="flex gap-2 pt-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded bg-[#1E40AF]"></div>
+                      <span className="text-[9px] text-gray-500">Male</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded bg-[#3B82F6]"></div>
+                      <span className="text-[9px] text-gray-500">Female</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded bg-[#93C5FD]"></div>
+                      <span className="text-[9px] text-gray-500">Other</span>
+                    </div>
+                  </div>
+                )}
+                <Bar 
+                  dataKey="male" 
+                  name="Male" 
+                  stackId="a" 
+                  fill={colors.male}
+                  maxBarSize={65}
+                />
+                <Bar 
+                  dataKey="female" 
+                  name="Female" 
+                  stackId="a" 
+                  fill={colors.female}
+                  maxBarSize={65}
+                />
+                <Bar 
+                  dataKey="other" 
+                  name="Other" 
+                  stackId="a" 
+                  fill={colors.other}
+                  maxBarSize={65}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-        )}
-        <Bar 
-          dataKey="male" 
-          name="Male" 
-          stackId="a" 
-          fill={colors.male}
-          maxBarSize={65}
-        />
-        <Bar 
-          dataKey="female" 
-          name="Female" 
-          stackId="a" 
-          fill={colors.female}
-          maxBarSize={65}
-        />
-        <Bar 
-          dataKey="other" 
-          name="Other" 
-          stackId="a" 
-          fill={colors.other}
-          maxBarSize={65}
-        />
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-</div>
+        </div>
       </div>
     </div>
   );
 };
-
 const PracticeTabContent = () => {
   return (
     <div className="h-full w-full overflow-hidden">
