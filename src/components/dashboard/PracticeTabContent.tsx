@@ -36,12 +36,12 @@ const GrowthRateIndicator = () => {
 
   return (
     <div className="bg-white p-1 md:p-2 rounded-lg h-full w-full shadow-sm border border-gray-100">
-      <div className="flex items-center gap-2 md:gap-3 md:h-[95%] md:pt-2">
+      <div className="flex items-center gap-2 md:gap-3 md:h-[95%] md:pt-4">
         <div className="flex flex-col -mr-1 translate-y-0.5 md:-translate-y-2">
   <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Avg Growth</span>
   <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Rate/Month</span>
 </div>
-<div className="relative w-14 h-14 flex items-center justify-center translate-y-0.5 md:-translate-y-2">
+<div className="relative w-14 h-14 md:w-12 md:h-12 flex items-center justify-center translate-y-0.5 md:-translate-y-2">
           <svg className="w-full h-full -rotate-90">
             <circle
               cx="28"
@@ -63,7 +63,7 @@ const GrowthRateIndicator = () => {
               className="transition-all duration-1000 ease-out"
             />
           </svg>
-          <span className="absolute text-[13px] md:text-[15px] font-medium text-blue-600">+14%</span>
+          <span className="absolute text-[13px] md:text-[13px] font-medium text-blue-600">+14%</span>
         </div>
         <div className="hidden md:block h-20 w-56">
           <ResponsiveContainer width="100%" height="100%">
