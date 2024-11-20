@@ -163,23 +163,24 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-    <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[103%] md:w-[85%]">
+    <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[103%] md:w-[85%] md:ml-auto">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
           <div className="h-[165px] md:h-[240px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={demographicsData}
-                margin={{ 
-                  top: 5,
-                  right: 0,
-                  left: -15,
-                  bottom: 5
-                }}
-                barSize={window.innerWidth < 768 ? 8 : 10}
-                barGap={0}
-              >
+  data={demographicsData}
+  margin={{ 
+    top: 5,
+    right: 0,
+    left: -15,
+    bottom: 5
+  }}
+  barSize={window.innerWidth < 768 ? 8 : 10}
+  barGap={0}
+  scaleX={window.innerWidth < 768 ? 0.95 : 0.75}
+>
                 <CartesianGrid 
                   strokeDasharray="3 3" 
                   stroke="#E5E7EB"
