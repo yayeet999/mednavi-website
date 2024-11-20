@@ -96,7 +96,7 @@ const DemographicsContent = () => {
     return null;
   };
   return (
-    <div className="flex-1 overflow-y-auto px-1 md:px-3 h-full flex flex-col">
+    <div className="flex-1 overflow-y-auto pr-1 md:pr-3 h-full flex flex-col">
       {/* KPI Row */}
 <div className="w-full flex gap-2 md:gap-3 px-2 md:px-4 mb-4">
   {/* First KPI */}
