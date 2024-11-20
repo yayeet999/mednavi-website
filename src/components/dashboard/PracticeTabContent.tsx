@@ -99,7 +99,7 @@ const DemographicsContent = () => {
   return (
     <div className="flex-1 overflow-y-auto px-1 md:px-3">
       <div className="grid grid-cols-2 gap-2 md:gap-3">
-        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-full md:w-[120%] border border-gray-200">
+        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-full md:w-[130%] border border-gray-200">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Patient Retention Analysis
           </h3>
@@ -107,7 +107,7 @@ const DemographicsContent = () => {
             {retentionData.map((group, idx) => {
               const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
               const maxValue = Math.max(...retentionData.map(d => d.initial));
-              const widthScale = window.innerWidth < 768 ? 0.39 : 0.85;
+              const widthScale = window.innerWidth < 768 ? 0.39 : 0.95;
               const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
               const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
               
