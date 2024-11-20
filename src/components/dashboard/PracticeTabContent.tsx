@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import FinancialsContent from './FinancialsContent';
 import { Users, DollarSign } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
@@ -522,7 +523,7 @@ const PracticeTabContent = () => {
           </TabsContent>
 
           <TabsContent value="financials" className="h-full m-0">
-            {/* Financials Content will be in a separate component */}
+            <FinancialsContent />
           </TabsContent>
         </div>
       </Tabs>
