@@ -102,8 +102,8 @@ const DemographicsContent = () => {
   {/* First KPI */}
   <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/20">
     <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-1 min-h-[20px] md:min-h-[26px] flex flex-col justify-center">
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Active</span>
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Active</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">2,547</span>
@@ -114,8 +114,8 @@ const DemographicsContent = () => {
   {/* Second KPI */}
   <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/25">
     <div className="text-xs text-blue-900/70 font-medium mb-1 md:mb-1.5 min-h-[22px] md:min-h-[29px] flex flex-col justify-center">
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal nowrap">Total Inactive</span>
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal nowrap">Total Inactive</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">854</span>
@@ -126,8 +126,8 @@ const DemographicsContent = () => {
   {/* Third KPI */}
   <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/30">
     <div className="text-xs text-blue-900/70 font-medium mb-1 md:mb-1.5 min-h-[22px] md:min-h-[29px] flex flex-col justify-center">
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patient</span>
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Population</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patient</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Population</span>
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">3,401</span>
@@ -138,8 +138,8 @@ const DemographicsContent = () => {
   {/* Fourth KPI */}
   <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/35">
     <div className="text-xs text-blue-900/70 font-medium mb-1 md:mb-1.5 min-h-[22px] md:min-h-[29px] flex flex-col justify-center">
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Unsched Active</span>
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Unsched Active</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">577</span>
@@ -151,8 +151,8 @@ const DemographicsContent = () => {
   {/* Fifth KPI */}
   <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/40">
     <div className="text-xs text-blue-900/70 font-medium mb-1 md:mb-1.5 min-h-[22px] md:min-h-[29px] flex flex-col justify-center">
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Days Between</span>
-      <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Apts</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Days Between</span>
+      <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Apts</span>
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">162.6</span>
