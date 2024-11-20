@@ -336,7 +336,7 @@ const DemographicsContent = () => {
 
 const PracticeTabContent = () => {
   return (
-    <div className="h-full w-full overflow-hidden bg-[#103d68]">
+    <div className="h-full w-full overflow-hidden">
       <Tabs defaultValue="demographics" className="h-full flex flex-col [&>div]:bg-transparent">
         <div className="flex justify-center">
           <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-0.5 md:px-1 mx-1">
