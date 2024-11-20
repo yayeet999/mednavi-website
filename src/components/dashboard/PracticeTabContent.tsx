@@ -15,9 +15,9 @@ interface TooltipProps {
 
 const PaymentDistribution = () => {
  const data = [
-   { name: 'Public Insurance', value: 45, color: '#1E40AF' },
-   { name: 'Private Insurance', value: 35, color: '#3B82F6' },
-   { name: 'Cash Payments', value: 20, color: '#93C5FD' }
+   { name: 'Public', value: 45, color: '#1E40AF' },
+   { name: 'Private', value: 35, color: '#3B82F6' },
+   { name: 'Cash', value: 20, color: '#93C5FD' }
  ];
 
  const generatePath = (startAngle: number, endAngle: number, radius: number, innerRadius: number) => {
@@ -50,36 +50,27 @@ const PaymentDistribution = () => {
  return (
    <div className="bg-white p-1.5 md:p-2 rounded-lg h-full w-full shadow-sm border border-gray-100">
      <div className="flex flex-row justify-between items-center h-full">
-       {/* Legend Column */}
        <div className="flex flex-col justify-center space-y-0.5 md:space-y-1">
          {data.map((entry, index) => (
            <div key={index} className="flex items-center gap-1 md:gap-2">
              <div 
-               className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.8)]"
+               className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.8)]"
                style={{ backgroundColor: entry.color }}
              />
-             <div className="flex flex-col">
-               <span className="text-[7px] md:text-[11px] font-medium text-gray-500">{entry.name}</span>
-               <span 
-                 className="text-[8px] md:text-[13px] font-semibold" 
-                 style={{ color: entry.color }}
-               >
-                 {entry.value}%
-               </span>
-             </div>
+             <span 
+               className="text-[7px] md:text-[11px] font-medium"
+               style={{ color: entry.color }}
+             >
+               {entry.name}: {entry.value}%
+             </span>
            </div>
          ))}
        </div>
        
-       {/* Chart Column */}
-       <div className="w-[130px] md:w-[160px]">
+       <div className="w-[120px] md:w-[140px]">
          <svg viewBox="0 0 300 170" className="w-full h-full">
            <path
-             d="M 40,150 
-                A 110,110 0 1 1 260,150
-                L 260,150 
-                A 70,70 0 1 0 40,150 
-                Z"
+             d="M 40,150 A 110,110 0 1 1 260,150 L 260,150 A 70,70 0 1 0 40,150 Z"
              fill="#F3F4F6"
              className="drop-shadow-sm"
            />
@@ -99,7 +90,7 @@ const PaymentDistribution = () => {
                  d={path}
                  fill={segment.color}
                  stroke="white"
-                 strokeWidth="2"
+                 strokeWidth="1.5"
                  className="drop-shadow-sm"
                >
                  <title>{segment.name}: {segment.value}%</title>
@@ -215,9 +206,9 @@ const DemographicsContent = () => {
         </div>
       </div>
 
-      <div className="flex gap-2 md:gap-3 px-2 md:px-4 mb-3 h-[70px] sm:h-[80px] md:h-[105px]">
+      <div className="flex gap-2 md:gap-3 px-2 md:px-4 mb-3 h-[70px] md:h-[105px]">
         <div className="flex-1"></div>
-        <div className="w-[55%] sm:w-[40%] md:w-[50%]">
+        <div className="w-[55%] md:w-[50%]">
           <PaymentDistribution />
         </div>
       </div>
