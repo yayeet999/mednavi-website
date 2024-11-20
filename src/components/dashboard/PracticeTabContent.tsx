@@ -206,7 +206,7 @@ const DemographicsContent = () => {
         </div>
       </div>
 
-      <div className="flex gap-1 md:gap-2 px-1 md:px-3 mb-2 h-[70px] md:h-[85px]">
+      <div className="flex gap-1 md:gap-2 px-1 md:px-3 mb-2 h-[70px] md:h-[80px]">
         <div className="flex-1"></div>
         <div className="w-[55%] md:w-[42%]">
           <PaymentDistribution />
