@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Users, DollarSign, Stethoscope } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { Users, DollarSign } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 interface TooltipProps {
   active?: boolean;
@@ -36,13 +36,13 @@ const GrowthRateIndicator = () => {
   ];
 
   return (
-    <div className="bg-white p-1 md:p-2 rounded-lg h-full w-full shadow-sm border border-gray-100">
-      <div className="flex items-center gap-2 md:gap-3 md:h-[95%] md:pt-4">
-        <div className="flex flex-col -mr-1 translate-y-0.5 md:-translate-y-2">
-  <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Avg Growth</span>
-  <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Rate/Month</span>
-</div>
-<div className="relative w-14 h-14 md:w-12 md:h-12 flex items-center justify-center translate-y-0.5 md:-translate-y-2">
+    <div className="bg-white p-1.5 md:p-2.5 rounded-lg h-full w-full shadow-sm border border-gray-100">
+      <div className="flex items-center gap-2 md:gap-3 h-full">
+        <div className="flex flex-col justify-center">
+          <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Avg Growth</span>
+          <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Rate/Month</span>
+        </div>
+        <div className="relative w-14 h-14 md:w-12 md:h-12 flex items-center justify-center">
           <svg className="w-full h-full -rotate-90">
             <circle
               cx="24"
@@ -51,6 +51,7 @@ const GrowthRateIndicator = () => {
               stroke="#EEF2FF"
               strokeWidth="5.5"
               fill="none"
+              className="animate-[appear_1.7s_ease-out]"
             />
             <circle
               cx="24"
@@ -61,16 +62,18 @@ const GrowthRateIndicator = () => {
               fill="none"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
-              className="transition-all duration-1000 ease-out"
+              className="animate-[progress-circle_1.7s_ease-out]"
             />
           </svg>
-          <span className="absolute text-[13px] md:text-[13px] font-medium text-blue-600">+14%</span>
+          <span className="absolute inset-0 flex items-center justify-center text-[13px] md:text-[13px] font-medium text-blue-600 animate-[fade-in_1.7s_ease-out]">
+            +14%
+          </span>
         </div>
-        <div className="hidden md:block h-20 w-56">
+        <div className="hidden md:block h-16 w-56">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={monthlyData} 
-              margin={{ top: 5, right: 8, bottom: 10, left: 5 }}
+              margin={{ top: 5, right: 8, bottom: 5, left: 5 }}
             >
               <CartesianGrid 
                 horizontal={true}
@@ -97,7 +100,7 @@ const GrowthRateIndicator = () => {
                 )}
                 axisLine={{ stroke: '#E5E7EB', strokeWidth: 1 }}
                 tickLine={false}
-                height={25}
+                height={20}
               />
               <YAxis 
                 tick={{ fontSize: 8, fill: '#6B7280', fontWeight: 500 }}
@@ -119,6 +122,7 @@ const GrowthRateIndicator = () => {
                 connectNulls={true}
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="animate-[grow-line_1.7s_ease-out]"
               />
             </LineChart>
           </ResponsiveContainer>
@@ -163,7 +167,7 @@ const PaymentDistribution = () => {
   let currentAngle = 180;
 
   return (
-    <div className="bg-white p-1.5 md:p-2 rounded-lg h-full w-full shadow-sm border border-gray-100">
+    <div className="bg-white p-1.5 md:p-2.5 rounded-lg h-full w-full shadow-sm border border-gray-100">
       <div className="flex flex-row justify-between items-center h-full">
         <div className="flex flex-col justify-center space-y-0.5 md:space-y-1">
           {data.map((entry, index) => (
@@ -173,7 +177,7 @@ const PaymentDistribution = () => {
                 style={{ backgroundColor: entry.color }}
               />
               <span 
-                className="text-[7px] md:text-[11px] font-medium"
+                className="text-[7px] md:text-[11px] font-medium animate-[fade-in_1.7s_ease-out]"
                 style={{ color: entry.color }}
               >
                 {entry.name}: {entry.value}%
@@ -206,7 +210,7 @@ const PaymentDistribution = () => {
                   fill={segment.color}
                   stroke="white"
                   strokeWidth="1.5"
-                  className="drop-shadow-sm"
+                  className="drop-shadow-sm animate-[fill-segment_1.7s_ease-out]"
                 >
                   <title>{segment.name}: {segment.value}%</title>
                 </path>
@@ -218,6 +222,7 @@ const PaymentDistribution = () => {
     </div>
   );
 };
+
 const DemographicsContent = () => {
   const retentionData = [
     { age: '18-30', initial: 450, retained: 385 },
@@ -240,7 +245,7 @@ const DemographicsContent = () => {
     other: '#93C5FD'
   };
 
-  const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
+const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-2 border border-gray-200 shadow-sm rounded-md">
@@ -263,7 +268,7 @@ const DemographicsContent = () => {
   return (
     <div className="flex-1 overflow-y-auto pr-1 md:pr-3 h-full flex flex-col">
       <div className="w-full flex gap-1 md:gap-2 px-2 md:px-4 mb-3">
-        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
+        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px] animate-[slide-up_1.7s_ease-out]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Active</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
@@ -274,7 +279,7 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
+        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px] animate-[slide-up_1.7s_ease-out]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Inactive</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
@@ -285,7 +290,7 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
+        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px] animate-[slide-up_1.7s_ease-out]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patient</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Population</span>
@@ -296,7 +301,7 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
+        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px] animate-[slide-up_1.7s_ease-out]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Unsched Active</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
@@ -308,7 +313,7 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
+        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px] animate-[slide-up_1.7s_ease-out]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Days Between</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Apts</span>
@@ -320,17 +325,17 @@ const DemographicsContent = () => {
         </div>
       </div>
 
-      <div className="flex gap-1 md:gap-2 px-1 md:px-3 mb-2 h-[70px] md:h-[80px]">
-        <div className="flex-1">
+<div className="flex gap-1 md:gap-2 px-1 md:px-3 mb-2 h-[70px] md:h-[80px]">
+        <div className="flex-1 animate-[fade-in_1.7s_ease-out]">
           <GrowthRateIndicator />
         </div>
-        <div className="w-[55%] md:w-[42%]">
+        <div className="w-[55%] md:w-[42%] animate-[fade-in_1.7s_ease-out]">
           <PaymentDistribution />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-x-2 md:gap-x-3 w-full mt-1">
-        <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-full md:w-[130%] border border-gray-200">
+        <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-full md:w-[130%] border border-gray-200 animate-[slide-up_1.7s_ease-out]">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Patient Retention Analysis
           </h3>
@@ -351,7 +356,7 @@ const DemographicsContent = () => {
                     </span>
                     <div className="relative flex-1 h-[12px] md:h-[16px]">
                       <div 
-                        className="absolute top-0 left-0 h-full bg-blue-100 rounded"
+                        className="absolute top-0 left-0 h-full bg-blue-100 rounded animate-[grow-width_1.7s_ease-out]"
                         style={{ width: initialWidth }}
                       >
                         <span className="absolute left-1 top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-gray-600">
@@ -359,7 +364,7 @@ const DemographicsContent = () => {
                         </span>
                       </div>
                       <div 
-                        className="absolute top-0 left-0 h-full bg-blue-600 rounded"
+                        className="absolute top-0 left-0 h-full bg-blue-600 rounded animate-[grow-width_1.7s_ease-out]"
                         style={{ width: retainedWidth }}
                       >
                         <span className="absolute left-1 top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-white">
@@ -367,7 +372,7 @@ const DemographicsContent = () => {
                         </span>
                       </div>
                       <span 
-                        className="absolute top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-gray-500"
+                        className="absolute top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-gray-500 animate-[fade-in_1.7s_ease-out]"
                         style={{ left: `calc(${initialWidth} + ${isMobile ? '4px' : '8px'})` }}
                       >
                         {retentionRate}%
@@ -397,7 +402,7 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
+  <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-[100%] md:w-[70%] md:ml-auto border border-gray-200 animate-[slide-up_1.7s_ease-out]">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Age Distribution by Gender
           </h3>
@@ -465,6 +470,7 @@ const DemographicsContent = () => {
                   stackId="a" 
                   fill={colors.male}
                   maxBarSize={55}
+                  className="animate-[grow-bar_1.7s_ease-out]"
                 />
                 <Bar 
                   dataKey="female" 
@@ -472,6 +478,7 @@ const DemographicsContent = () => {
                   stackId="a" 
                   fill={colors.female}
                   maxBarSize={55}
+                  className="animate-[grow-bar_1.7s_ease-out]"
                 />
                 <Bar 
                   dataKey="other" 
@@ -479,6 +486,7 @@ const DemographicsContent = () => {
                   stackId="a" 
                   fill={colors.other}
                   maxBarSize={55}
+                  className="animate-[grow-bar_1.7s_ease-out]"
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -504,10 +512,6 @@ const PracticeTabContent = () => {
                 <DollarSign className="w-2 h-2 md:w-4 md:h-4" />
                 Financials
               </TabsTrigger>
-              <TabsTrigger value="procedures" className="rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs px-2 md:px-6 w-[90px] md:min-w-[210px] font-normal flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200">
-                <Stethoscope className="w-2 h-2 md:w-4 md:h-4" />
-                Procedures
-              </TabsTrigger>
             </TabsList>
           </div>
         </div>
@@ -518,59 +522,37 @@ const PracticeTabContent = () => {
           </TabsContent>
 
           <TabsContent value="financials" className="h-full m-0">
-            <div className="h-full p-1 md:p-2 overflow-y-auto">
-              <div className="grid grid-cols-2 gap-1 md:gap-2">
-                <div className="bg-white rounded-lg p-1.5 md:p-2 h-[40px] md:h-[48px] shadow-sm">
-                  <div className="text-[7px] md:text-[9px] text-gray-500">Revenue</div>
-                  <div className="text-[9px] md:text-xs font-medium mt-0.5">$124.5k</div>
-                </div>
-                <div className="bg-white rounded-lg p-1.5 md:p-2 h-[40px] md:h-[48px] shadow-sm">
-                  <div className="text-[7px] md:text-[9px] text-gray-500">Expenses</div>
-                  <div className="text-[9px] md:text-xs font-medium mt-0.5">$67.8k</div>
-                </div>
-                <div className="bg-white rounded-lg p-1.5 md:p-2 h-[40px] md:h-[48px] shadow-sm">
-                  <div className="text-[7px] md:text-[9px] text-gray-500">Net Profit</div>
-                  <div className="text-[9px] md:text-xs font-medium mt-0.5">$56.7k</div>
-                </div>
-                <div className="bg-white rounded-lg p-1.5 md:p-2 h-[40px] md:h-[48px] shadow-sm">
-                  <div className="text-[7px] md:text-[9px] text-gray-500">Growth</div>
-                  <div className="text-[9px] md:text-xs font-medium mt-0.5">+12.4%</div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg p-1.5 md:p-2 mt-1 md:mt-2 h-[100px] md:h-[120px] shadow-sm">
-                <div className="text-[7px] md:text-[9px] text-gray-500">Financial Trends</div>
-                <div className="h-[80px] md:h-[90px] flex items-center justify-center text-[7px] md:text-[9px] text-gray-400">
-                  Chart Area
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="procedures" className="h-full m-0">
-            <div className="h-full p-1 md:p-2 overflow-y-auto">
-              <div className="bg-white rounded-lg p-1.5 md:p-2 h-[100px] md:h-[120px] shadow-sm">
-                <div className="text-[7px] md:text-[9px] text-gray-500">Procedure Distribution</div>
-                <div className="h-[80px] md:h-[90px] flex items-center justify-center text-[7px] md:text-[9px] text-gray-400">
-                  Pie Chart
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg p-1.5 md:p-2 mt-1 md:mt-2 shadow-sm">
-                <div className="text-[7px] md:text-[9px] text-gray-500 mb-1">Recent Procedures</div>
-                <div className="space-y-1 md:space-y-1.5">
-                  {['Cleaning', 'Check-up', 'Filling', 'Root Canal'].map((proc, i) => (
-                    <div key={i} className="flex justify-between items-center bg-gray-50 rounded-lg p-1 md:p-1.5">
-                      <span className="text-[7px] md:text-[9px]">{proc}</span>
-                      <span className="text-[6px] md:text-[8px] text-gray-500">Today</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            {/* Financials Content will be in a separate component */}
           </TabsContent>
         </div>
       </Tabs>
+
+      <style jsx>{`
+        @keyframes slide-up {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes grow-width {
+          from { width: 0; }
+        }
+        @keyframes grow-bar {
+          from { transform: scaleY(0); }
+          to { transform: scaleY(1); }
+        }
+        @keyframes grow-line {
+          from { stroke-dasharray: 1000;
+                 stroke-dashoffset: 1000; }
+          to { stroke-dasharray: 1000;
+               stroke-dashoffset: 0; }
+        }
+        @keyframes progress-circle {
+          from { stroke-dashoffset: ${2 * Math.PI * 23}; }
+        }
+      `}</style>
     </div>
   );
 };
