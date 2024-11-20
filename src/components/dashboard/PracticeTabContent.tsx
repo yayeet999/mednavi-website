@@ -172,9 +172,9 @@ const DemographicsContent = () => {
               <BarChart
                 data={demographicsData}
                 margin={{ 
-                  top: 12,
+                  top: 8,
                   right: 0,
-                  left: -7,
+                  left: -3,
                   bottom: 5
                 }}
                 barSize={window.innerWidth < 768 ? 12 : 16}
