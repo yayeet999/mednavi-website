@@ -162,7 +162,7 @@ const DemographicsContent = () => {
 </div>
 
       {/* Existing Charts Grid */}
-      <div className="grid grid-cols-2 gap-2 md:gap-3 w-full pb-2 md:pb-3 mt-auto">
+      <div className="grid grid-cols-2 gap-x-2 md:gap-x-3 w-full mt-auto">
         <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-full md:w-[130%] border border-gray-200">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Patient Retention Analysis
