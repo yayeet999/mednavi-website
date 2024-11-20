@@ -107,14 +107,14 @@ const DemographicsContent = () => {
             {retentionData.map((group, idx) => {
               const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
               const maxValue = Math.max(...retentionData.map(d => d.initial));
-              const widthScale = window.innerWidth < 768 ? 0.68 : 0.91;
+              const widthScale = window.innerWidth < 768 ? 0.70 : 0.91;
               const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
               const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
               
               return (
                 <div key={idx} className="flex items-center">
                   <div className="flex items-center w-full space-x-[2px] md:space-x-[10px]">
-                    <span className="text-[6px] md:text-[10px] text-gray-500 shrink-0 min-w-[36px] md:min-w-[52px]">
+                    <span className="text-[6px] md:text-[10px] text-gray-500 shrink-0 min-w-[34px] md:min-w-[52px]">
                       Age {group.age}
                     </span>
                     <div className="relative flex-1 h-[14px] md:h-[18px]">
