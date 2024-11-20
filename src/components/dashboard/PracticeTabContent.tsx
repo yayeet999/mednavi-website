@@ -215,7 +215,7 @@ const DemographicsContent = () => {
                     fontSize: window.innerWidth < 768 ? 6 : 8,
                     fill: '#4B5563'
                   }}
-                  padding={{ top: 5 }}
+                  padding={{ top: 0 }}
                 />
                 <Tooltip 
                   content={<CustomTooltip />}
