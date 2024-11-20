@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, DollarSign, Stethoscope } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 interface TooltipProps {
   active?: boolean;
@@ -11,6 +11,14 @@ interface TooltipProps {
     color: string;
   }>;
   label?: string;
+}
+
+interface AxisTickProps {
+  x: number;
+  y: number;
+  payload: {
+    value: string;
+  };
 }
 
 const GrowthRateIndicator = () => {
@@ -71,11 +79,25 @@ const GrowthRateIndicator = () => {
               />
               <XAxis 
                 dataKey="month"
-                tick={{ fontSize: 11, fill: '#6B7280', angle: 30, fontWeight: 500 }}
+                tick={(props: AxisTickProps) => (
+                  <g transform={`translate(${props.x},${props.y})`}>
+                    <text
+                      x={0}
+                      y={0}
+                      dy={8}
+                      textAnchor="end"
+                      fill="#6B7280"
+                      fontSize={11}
+                      fontWeight={500}
+                      transform="rotate(-30)"
+                    >
+                      {props.payload.value}
+                    </text>
+                  </g>
+                )}
                 axisLine={{ stroke: '#E5E7EB', strokeWidth: 1 }}
                 tickLine={false}
                 height={30}
-                dy={8}
               />
               <YAxis 
                 tick={{ fontSize: 11, fill: '#6B7280', fontWeight: 500 }}
@@ -316,7 +338,8 @@ const DemographicsContent = () => {
             {retentionData.map((group, idx) => {
               const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
               const maxValue = Math.max(...retentionData.map(d => d.initial));
-              const widthScale = typeof window !== 'undefined' && window.innerWidth < 768 ? 0.70 : 0.91;
+              const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+              const widthScale = isMobile ? 0.70 : 0.91;
               const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
               const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
               
@@ -345,7 +368,7 @@ const DemographicsContent = () => {
                       </div>
                       <span 
                         className="absolute top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-gray-500"
-                        style={{ left: `calc(${initialWidth} + ${window.innerWidth < 768 ? '4px' : '8px'})` }}
+                        style={{ left: `calc(${initialWidth} + ${isMobile ? '4px' : '8px'})` }}
                       >
                         {retentionRate}%
                       </span>
@@ -355,7 +378,7 @@ const DemographicsContent = () => {
               );
             })}
 
-            {window.innerWidth >= 768 && (
+            {typeof window !== 'undefined' && window.innerWidth >= 768 && (
               <div className="flex gap-2 md:gap-4 pt-1">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-blue-100"></div>
@@ -383,12 +406,12 @@ const DemographicsContent = () => {
               <BarChart
                 data={demographicsData}
                 margin={{ 
-                  top: window.innerWidth < 768 ? 4 : 0,
+                  top: typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 0,
                   right: 0,
                   left: -2,
-                  bottom: window.innerWidth < 768 ? 12 : 2
+                  bottom: typeof window !== 'undefined' && window.innerWidth < 768 ? 12 : 2
                 }}
-                barSize={window.innerWidth < 768 ? 10 : 17}
+                barSize={typeof window !== 'undefined' && window.innerWidth < 768 ? 10 : 17}
                 barGap={0}
               >
                 <CartesianGrid 
@@ -401,30 +424,33 @@ const DemographicsContent = () => {
                   tickLine={{ stroke: '#E5E7EB' }}
                   axisLine={{ stroke: '#E5E7EB' }}
                   interval={0}
-                  tick={props => (
-                    <g transform={`translate(${props.x},${props.y})`}>
-                      <text
-                        x={0}
-                        y={0}
-                        dy={window.innerWidth < 768 ? 8 : 6}
-                        textAnchor="end"
-                        fill="#4B5563"
-                        fontSize={window.innerWidth < 768 ? 5 : 7}
-                        className="select-none"
-                        transform={window.innerWidth < 768 ? "rotate(-30)" : "rotate(-20)"}
-                      >
-                        {props.payload.value}
-                      </text>
-                    </g>
-                  )}
+                  tick={(props: AxisTickProps) => {
+                    const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+                    return (
+                      <g transform={`translate(${props.x},${props.y})`}>
+                        <text
+                          x={0}
+                          y={0}
+                          dy={isMobile ? 8 : 6}
+                          textAnchor="end"
+                          fill="#4B5563"
+                          fontSize={isMobile ? 5 : 7}
+                          className="select-none"
+                          transform={isMobile ? "rotate(-30)" : "rotate(-20)"}
+                        >
+                          {props.payload.value}
+                        </text>
+                      </g>
+                    );
+                  }}
                 />
                 <YAxis
                   tickLine={{ stroke: '#E5E7EB' }}
                   axisLine={{ stroke: '#E5E7EB' }}
-                  tickFormatter={(value) => value.toLocaleString()}
+                  tickFormatter={(value: number) => value.toLocaleString()}
                   width={22}
                   tick={{
-                    fontSize: window.innerWidth < 768 ? 5 : 7,
+                    fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? 5 : 7,
                     fill: '#4B5563'
                   }}
                   padding={{ top: 0 }}
@@ -509,6 +535,13 @@ const PracticeTabContent = () => {
                 <div className="bg-white rounded-lg p-1.5 md:p-2 h-[40px] md:h-[48px] shadow-sm">
                   <div className="text-[7px] md:text-[9px] text-gray-500">Growth</div>
                   <div className="text-[9px] md:text-xs font-medium mt-0.5">+12.4%</div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg p-1.5 md:p-2 mt-1 md:mt-2 h-[100px] md:h-[120px] shadow-sm">
+                <div className="text-[7px] md:text-[9px] text-gray-500">Financial Trends</div>
+                <div className="h-[80px] md:h-[90px] flex items-center justify-center text-[7px] md:text-[9px] text-gray-400">
+                  Chart Area
                 </div>
               </div>
             </div>
