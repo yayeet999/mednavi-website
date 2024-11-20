@@ -181,26 +181,26 @@ const DemographicsContent = () => {
                     vertical={false}
                   />
                   <XAxis 
-                    dataKey="ageRange"
-                    tick={{ fontSize: 12, fill: '#4B5563' }}
-                    tickLine={{ stroke: '#E5E7EB' }}
-                    axisLine={{ stroke: '#E5E7EB' }}
-                    interval={0}
-                    tick={props => (
-                      <g transform={`translate(${props.x},${props.y})`}>
-                        <text
-                          x={0}
-                          y={0}
-                          dy={16}
-                          textAnchor="middle"
-                          fill="#4B5563"
-                          fontSize={12}
-                        >
-                          {props.payload.value}
-                        </text>
-                      </g>
-                    )}
-                  />
+  dataKey="ageRange"
+  tickLine={{ stroke: '#E5E7EB' }}
+  axisLine={{ stroke: '#E5E7EB' }}
+  interval={0}
+  tick={props => (
+    <g transform={`translate(${props.x},${props.y})`}>
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="middle"
+        fill="#4B5563"
+        fontSize={12}
+        className="select-none"
+      >
+        {props.payload.value}
+      </text>
+    </g>
+  )}
+/>
                   <YAxis
                     tick={{ fontSize: 12, fill: '#4B5563' }}
                     tickLine={{ stroke: '#E5E7EB' }}
