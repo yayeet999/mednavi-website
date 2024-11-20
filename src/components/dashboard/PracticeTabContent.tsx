@@ -101,7 +101,7 @@ const DemographicsContent = () => {
       {/* KPI Row */}
       <div className="w-full flex gap-1 md:gap-2 px-2 md:px-4 mb-3">
         {/* First KPI */}
-        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/20 h-[42px] md:h-[70px]">
+        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/20 h-[42px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0 md:mb-0.5 min-h-[17px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Active</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
@@ -113,7 +113,7 @@ const DemographicsContent = () => {
         </div>
 
         {/* Second KPI */}
-        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/25 h-[42px] md:h-[70px]">
+        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/25 h-[42px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0 md:mb-0.5 min-h-[17px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal nowrap">Total Inactive</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
@@ -125,7 +125,7 @@ const DemographicsContent = () => {
         </div>
 
         {/* Third KPI */}
-        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/30 h-[42px] md:h-[70px]">
+        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/30 h-[42px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0 md:mb-0.5 min-h-[17px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patient</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Population</span>
@@ -137,7 +137,7 @@ const DemographicsContent = () => {
         </div>
 
         {/* Fourth KPI */}
-        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/35 h-[42px] md:h-[70px]">
+        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/35 h-[42px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0 md:mb-0.5 min-h-[17px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Unsched Active</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
@@ -150,7 +150,7 @@ const DemographicsContent = () => {
         </div>
 
         {/* Fifth KPI */}
-        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/40 h-[42px] md:h-[70px]">
+        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-0.5 md:p-1.5 bg-blue-50/40 h-[42px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0 md:mb-0.5 min-h-[17px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Days Between</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Apts</span>
