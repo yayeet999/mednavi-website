@@ -169,7 +169,7 @@ const DemographicsContent = () => {
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
-          <div className="h-[98px] md:h-[141px] w-full">
+          <div className="h-[98px] md:h-[138px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={demographicsData}
@@ -227,7 +227,7 @@ const DemographicsContent = () => {
                 {window.innerWidth >= 768 && (
                   <Legend 
                     wrapperStyle={{
-                      fontSize: '8px',
+                      fontSize: '10px',
                       paddingTop: '-2px',
                       marginTop: '-4px',
                       textAlign: 'center',
