@@ -107,7 +107,7 @@ const DemographicsContent = () => {
             {retentionData.map((group, idx) => {
               const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
               const maxValue = Math.max(...retentionData.map(d => d.initial));
-              const widthScale = window.innerWidth < 768 ? 0.39 : 0.72; // Reduced mobile width
+              const widthScale = window.innerWidth < 768 ? 0.39 : 0.72;
               const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
               const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
               
@@ -163,24 +163,23 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-    <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[103%] md:w-[65%] md:ml-auto">
+     <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[103%] md:w-[65%] md:ml-auto">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
           <div className="h-[165px] md:h-[240px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-  data={demographicsData}
-  margin={{ 
-    top: 5,
-    right: 0,
-    left: -15,
-    bottom: 5
-  }}
-  barSize={window.innerWidth < 768 ? 8 : 10}
-  barGap={0}
-  scaleX={window.innerWidth < 768 ? 0.95 : 0.75}
->
+                data={demographicsData}
+                margin={{ 
+                  top: 5,
+                  right: 0,
+                  left: -15,
+                  bottom: 5
+                }}
+                barSize={window.innerWidth < 768 ? 8 : 10}
+                barGap={0}
+              >
                 <CartesianGrid 
                   strokeDasharray="3 3" 
                   stroke="#E5E7EB"
@@ -239,21 +238,21 @@ const DemographicsContent = () => {
                   name="Male" 
                   stackId="a" 
                   fill={colors.male}
-                  maxBarSize={65}
+                  maxBarSize={45}
                 />
                 <Bar 
                   dataKey="female" 
                   name="Female" 
                   stackId="a" 
                   fill={colors.female}
-                  maxBarSize={65}
+                  maxBarSize={45}
                 />
                 <Bar 
                   dataKey="other" 
                   name="Other" 
                   stackId="a" 
                   fill={colors.other}
-                  maxBarSize={65}
+                  maxBarSize={45}
                 />
               </BarChart>
             </ResponsiveContainer>
