@@ -163,7 +163,7 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-     <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[103%] md:w-[65%] md:ml-auto">
+        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[100%] md:w-[65%] md:ml-auto">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
@@ -172,12 +172,12 @@ const DemographicsContent = () => {
               <BarChart
                 data={demographicsData}
                 margin={{ 
-                  top: 5,
+                  top: 15,
                   right: 0,
                   left: -15,
                   bottom: 5
                 }}
-                barSize={window.innerWidth < 768 ? 8 : 10}
+                barSize={window.innerWidth < 768 ? 12 : 16}
                 barGap={0}
               >
                 <CartesianGrid 
@@ -215,6 +215,7 @@ const DemographicsContent = () => {
                     fontSize: window.innerWidth < 768 ? 6 : 8,
                     fill: '#4B5563'
                   }}
+                  padding={{ top: 20 }}
                 />
                 <Tooltip 
                   content={<CustomTooltip />}
@@ -238,21 +239,21 @@ const DemographicsContent = () => {
                   name="Male" 
                   stackId="a" 
                   fill={colors.male}
-                  maxBarSize={45}
+                  maxBarSize={65}
                 />
                 <Bar 
                   dataKey="female" 
                   name="Female" 
                   stackId="a" 
                   fill={colors.female}
-                  maxBarSize={45}
+                  maxBarSize={65}
                 />
                 <Bar 
                   dataKey="other" 
                   name="Other" 
                   stackId="a" 
                   fill={colors.other}
-                  maxBarSize={45}
+                  maxBarSize={65}
                 />
               </BarChart>
             </ResponsiveContainer>
