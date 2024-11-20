@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, DollarSign, Stethoscope } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface TooltipProps {
   active?: boolean;
@@ -13,97 +13,189 @@ interface TooltipProps {
   label?: string;
 }
 
-const PaymentDistribution = () => {
- const data = [
-   { name: 'Public', value: 45, color: '#1E40AF' },
-   { name: 'Private', value: 35, color: '#3B82F6' },
-   { name: 'Cash', value: 20, color: '#93C5FD' }
- ];
+const GrowthRateIndicator = () => {
+  const percentage = 14;
+  const radius = 23;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const monthlyData = [
+    { month: 'Jan', growth: 12 },
+    { month: 'Feb', growth: 18 },
+    { month: 'Mar', growth: 8 },
+    { month: 'Apr', growth: 22 },
+    { month: 'May', growth: 10 }
+  ];
 
- const generatePath = (startAngle: number, endAngle: number, radius: number, innerRadius: number) => {
-   const start = startAngle * Math.PI / 180;
-   const end = endAngle * Math.PI / 180;
-   
-   const outerX1 = 150 + radius * Math.cos(start);
-   const outerY1 = 150 + radius * Math.sin(start);
-   const outerX2 = 150 + radius * Math.cos(end);
-   const outerY2 = 150 + radius * Math.sin(end);
-   
-   const innerX1 = 150 + innerRadius * Math.cos(end);
-   const innerY1 = 150 + innerRadius * Math.sin(end);
-   const innerX2 = 150 + innerRadius * Math.cos(start);
-   const innerY2 = 150 + innerRadius * Math.sin(start);
-   
-   const largeArc = (endAngle - startAngle) > 180 ? 1 : 0;
-   
-   return `
-     M ${outerX1},${outerY1}
-     A ${radius},${radius} 0 ${largeArc} 1 ${outerX2},${outerY2}
-     L ${innerX1},${innerY1}
-     A ${innerRadius},${innerRadius} 0 ${largeArc} 0 ${innerX2},${innerY2}
-     Z
-   `;
- };
-
- let currentAngle = 180;
-
- return (
-   <div className="bg-white p-1.5 md:p-2 rounded-lg h-full w-full shadow-sm border border-gray-100">
-     <div className="flex flex-row justify-between items-center h-full">
-       <div className="flex flex-col justify-center space-y-0.5 md:space-y-1">
-         {data.map((entry, index) => (
-           <div key={index} className="flex items-center gap-1 md:gap-2">
-             <div 
-               className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.8)]"
-               style={{ backgroundColor: entry.color }}
-             />
-             <span 
-               className="text-[7px] md:text-[11px] font-medium"
-               style={{ color: entry.color }}
-             >
-               {entry.name}: {entry.value}%
-             </span>
-           </div>
-         ))}
-       </div>
-       
-       <div className="w-[120px] md:w-[140px]">
-         <svg viewBox="0 0 300 170" className="w-full h-full">
-           <path
-             d="M 40,150 A 110,110 0 1 1 260,150 L 260,150 A 70,70 0 1 0 40,150 Z"
-             fill="#F3F4F6"
-             className="drop-shadow-sm"
-           />
-           
-           {data.map((segment, i) => {
-             const angleSize = (segment.value / 100) * 180;
-             const path = generatePath(
-               currentAngle,
-               currentAngle + angleSize,
-               110,
-               70
-             );
-             currentAngle += angleSize;
-             return (
-               <path
-                 key={i}
-                 d={path}
-                 fill={segment.color}
-                 stroke="white"
-                 strokeWidth="1.5"
-                 className="drop-shadow-sm"
-               >
-                 <title>{segment.name}: {segment.value}%</title>
-               </path>
-             );
-           })}
-         </svg>
-       </div>
-     </div>
-   </div>
- );
+  return (
+    <div className="bg-white p-1.5 md:p-2 rounded-lg h-full w-full shadow-sm border border-gray-100">
+      <div className="flex items-center gap-3">
+        <div className="flex flex-col -mr-1 -translate-y-2">
+          <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Avg Growth</span>
+          <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Rate/Month</span>
+        </div>
+        <div className="relative w-14 h-14 flex items-center justify-center -translate-y-2">
+          <svg className="w-full h-full -rotate-90">
+            <circle
+              cx="28"
+              cy="28"
+              r={radius}
+              stroke="#EEF2FF"
+              strokeWidth="5.5"
+              fill="none"
+            />
+            <circle
+              cx="28"
+              cy="28"
+              r={radius}
+              stroke="#3B82F6"
+              strokeWidth="5.5"
+              fill="none"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              className="transition-all duration-1000 ease-out"
+            />
+          </svg>
+          <span className="absolute text-[13px] md:text-[15px] font-medium text-blue-600">+14%</span>
+        </div>
+        <div className="h-24 w-44">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart 
+              data={monthlyData} 
+              margin={{ top: 5, right: 8, bottom: 20, left: 5 }}
+            >
+              <CartesianGrid 
+                horizontal={true}
+                vertical={false}
+                stroke="#F3F4F6"
+                strokeDasharray="3 3"
+              />
+              <XAxis 
+                dataKey="month"
+                tick={{ fontSize: 11, fill: '#6B7280', angle: 30, fontWeight: 500 }}
+                axisLine={{ stroke: '#E5E7EB', strokeWidth: 1 }}
+                tickLine={false}
+                height={30}
+                dy={8}
+              />
+              <YAxis 
+                tick={{ fontSize: 11, fill: '#6B7280', fontWeight: 500 }}
+                tickFormatter={(value) => `${value}%`}
+                axisLine={{ stroke: '#E5E7EB', strokeWidth: 1 }}
+                tickLine={false}
+                width={35}
+                dx={0}
+                domain={[0, 25]}
+                ticks={[0, 5, 10, 15, 20, 25]}
+              />
+              <Line
+                type="monotone"
+                dataKey="growth"
+                stroke="#3B82F6"
+                strokeWidth={1.5}
+                dot={{ r: 2.5, fill: '#3B82F6', strokeWidth: 0 }}
+                activeDot={{ r: 4, strokeWidth: 0 }}
+                connectNulls={true}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
 };
 
+const PaymentDistribution = () => {
+  const data = [
+    { name: 'Public', value: 45, color: '#1E40AF' },
+    { name: 'Private', value: 35, color: '#3B82F6' },
+    { name: 'Cash', value: 20, color: '#93C5FD' }
+  ];
+
+  const generatePath = (startAngle: number, endAngle: number, radius: number, innerRadius: number) => {
+    const start = startAngle * Math.PI / 180;
+    const end = endAngle * Math.PI / 180;
+    
+    const outerX1 = 150 + radius * Math.cos(start);
+    const outerY1 = 150 + radius * Math.sin(start);
+    const outerX2 = 150 + radius * Math.cos(end);
+    const outerY2 = 150 + radius * Math.sin(end);
+    
+    const innerX1 = 150 + innerRadius * Math.cos(end);
+    const innerY1 = 150 + innerRadius * Math.sin(end);
+    const innerX2 = 150 + innerRadius * Math.cos(start);
+    const innerY2 = 150 + innerRadius * Math.sin(start);
+    
+    const largeArc = (endAngle - startAngle) > 180 ? 1 : 0;
+    
+    return `
+      M ${outerX1},${outerY1}
+      A ${radius},${radius} 0 ${largeArc} 1 ${outerX2},${outerY2}
+      L ${innerX1},${innerY1}
+      A ${innerRadius},${innerRadius} 0 ${largeArc} 0 ${innerX2},${innerY2}
+      Z
+    `;
+  };
+
+  let currentAngle = 180;
+
+  return (
+    <div className="bg-white p-1.5 md:p-2 rounded-lg h-full w-full shadow-sm border border-gray-100">
+      <div className="flex flex-row justify-between items-center h-full">
+        <div className="flex flex-col justify-center space-y-0.5 md:space-y-1">
+          {data.map((entry, index) => (
+            <div key={index} className="flex items-center gap-1 md:gap-2">
+              <div 
+                className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.8)]"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span 
+                className="text-[7px] md:text-[11px] font-medium"
+                style={{ color: entry.color }}
+              >
+                {entry.name}: {entry.value}%
+              </span>
+            </div>
+          ))}
+        </div>
+        
+        <div className="w-[120px] md:w-[140px]">
+          <svg viewBox="0 0 300 170" className="w-full h-full">
+            <path
+              d="M 40,150 A 110,110 0 1 1 260,150 L 260,150 A 70,70 0 1 0 40,150 Z"
+              fill="#F3F4F6"
+              className="drop-shadow-sm"
+            />
+            
+            {data.map((segment, i) => {
+              const angleSize = (segment.value / 100) * 180;
+              const path = generatePath(
+                currentAngle,
+                currentAngle + angleSize,
+                110,
+                70
+              );
+              currentAngle += angleSize;
+              return (
+                <path
+                  key={i}
+                  d={path}
+                  fill={segment.color}
+                  stroke="white"
+                  strokeWidth="1.5"
+                  className="drop-shadow-sm"
+                >
+                  <title>{segment.name}: {segment.value}%</title>
+                </path>
+              );
+            })}
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+};
 const DemographicsContent = () => {
   const retentionData = [
     { age: '18-30', initial: 450, retained: 385 },
@@ -207,7 +299,9 @@ const DemographicsContent = () => {
       </div>
 
       <div className="flex gap-1 md:gap-2 px-1 md:px-3 mb-2 h-[70px] md:h-[80px]">
-        <div className="flex-1"></div>
+        <div className="flex-1">
+          <GrowthRateIndicator />
+        </div>
         <div className="w-[55%] md:w-[42%]">
           <PaymentDistribution />
         </div>
@@ -415,13 +509,6 @@ const PracticeTabContent = () => {
                 <div className="bg-white rounded-lg p-1.5 md:p-2 h-[40px] md:h-[48px] shadow-sm">
                   <div className="text-[7px] md:text-[9px] text-gray-500">Growth</div>
                   <div className="text-[9px] md:text-xs font-medium mt-0.5">+12.4%</div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg p-1.5 md:p-2 mt-1 md:mt-2 h-[100px] md:h-[120px] shadow-sm">
-                <div className="text-[7px] md:text-[9px] text-gray-500">Financial Trends</div>
-                <div className="h-[80px] md:h-[90px] flex items-center justify-center text-[7px] md:text-[9px] text-gray-400">
-                  Chart Area
                 </div>
               </div>
             </div>
