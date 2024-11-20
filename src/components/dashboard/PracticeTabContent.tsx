@@ -175,7 +175,7 @@ const DemographicsContent = () => {
                   top: 0,
                   right: 0,
                   left: -2,
-                  bottom: 5
+                  bottom: 2
                 }}
                 barSize={window.innerWidth < 768 ? 12 : 20}
                 barGap={0}
@@ -228,8 +228,8 @@ const DemographicsContent = () => {
                     marginTop: window.innerWidth < 768 ? '-7px' : '-4px',
                     textAlign: 'center',
                     width: '100%',
-                    marginLeft: window.innerWidth < 768 ? '1px' : '6px',
-                    marginRight: window.innerWidth < 768 ? '1px' : '6px',
+                    marginLeft: window.innerWidth < 768 ? '-2px' : '6px',
+                    marginRight: window.innerWidth < 768 ? '-2px' : '6px',
                   }}
                   iconType="circle"
                   iconSize={4}
