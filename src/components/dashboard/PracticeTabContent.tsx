@@ -3,6 +3,16 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, DollarSign, Stethoscope } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    name: string;
+    color: string;
+  }>;
+  label?: string;
+}
+
 const PaymentDistribution = () => {
   const data = [
     { name: 'Public Insurance', value: 45, color: '#1E40AF' },
@@ -10,7 +20,7 @@ const PaymentDistribution = () => {
     { name: 'Cash Payments', value: 20, color: '#93C5FD' }
   ];
 
-  const generatePath = (startAngle, endAngle, radius, innerRadius) => {
+  const generatePath = (startAngle: number, endAngle: number, radius: number, innerRadius: number) => {
     const start = startAngle * Math.PI / 180;
     const end = endAngle * Math.PI / 180;
     
@@ -44,7 +54,6 @@ const PaymentDistribution = () => {
           Payment Distribution
         </h3>
         <div className="flex flex-col h-full">
-          {/* Legend */}
           <div className="flex flex-col justify-center space-y-1.5 md:space-y-2 mb-2 md:mb-3">
             {data.map((entry, index) => (
               <div key={index} className="flex items-center gap-1.5 md:gap-2">
@@ -65,10 +74,8 @@ const PaymentDistribution = () => {
             ))}
           </div>
           
-          {/* Half Donut */}
           <div className="flex-1 relative">
             <svg viewBox="0 0 300 170" className="w-full h-full absolute inset-0">
-              {/* Background */}
               <path
                 d="M 40,150 
                    A 110,110 0 1 1 260,150
@@ -87,7 +94,6 @@ const PaymentDistribution = () => {
                   110,
                   70
                 );
-                const current = currentAngle;
                 currentAngle += angleSize;
                 return (
                   <path
@@ -110,71 +116,20 @@ const PaymentDistribution = () => {
   );
 };
 
-interface TooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    value: number;
-    name: string;
-    color: string;
-  }>;
-  label?: string;
-}
-
 const DemographicsContent = () => {
   const retentionData = [
-    {
-      age: '18-30',
-      initial: 450,
-      retained: 385,
-    },
-    {
-      age: '31-45',
-      initial: 680,
-      retained: 598,
-    },
-    {
-      age: '46-60',
-      initial: 520,
-      retained: 472,
-    },
-    {
-      age: '60+',
-      initial: 350,
-      retained: 308,
-    }
+    { age: '18-30', initial: 450, retained: 385 },
+    { age: '31-45', initial: 680, retained: 598 },
+    { age: '46-60', initial: 520, retained: 472 },
+    { age: '60+', initial: 350, retained: 308 }
   ];
 
   const demographicsData = [
-    {
-      ageRange: '18-30',
-      male: 185,
-      female: 245,
-      other: 20
-    },
-    {
-      ageRange: '31-45',
-      male: 290,
-      female: 368,
-      other: 22
-    },
-    {
-      ageRange: '46-60',
-      male: 228,
-      female: 276,
-      other: 16
-    },
-    {
-      ageRange: '61-75',
-      male: 146,
-      female: 182,
-      other: 12
-    },
-    {
-      ageRange: '75+',
-      male: 68,
-      female: 92,
-      other: 8
-    }
+    { ageRange: '18-30', male: 185, female: 245, other: 20 },
+    { ageRange: '31-45', male: 290, female: 368, other: 22 },
+    { ageRange: '46-60', male: 228, female: 276, other: 16 },
+    { ageRange: '61-75', male: 146, female: 182, other: 12 },
+    { ageRange: '75+', male: 68, female: 92, other: 8 }
   ];
 
   const colors = {
@@ -205,39 +160,21 @@ const DemographicsContent = () => {
 
   return (
     <div className="flex-1 overflow-y-auto pr-1 md:pr-3 h-full flex flex-col">
-      {/* KPI Row */}
       <div className="w-full flex gap-1 md:gap-2 px-2 md:px-4 mb-3">
-        {/* First KPI */}
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Active</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
           </div>
           <div className="flex items-baseline gap-1 md:gap-1.5">
-            FS
-give me the entire code snippet of what's missing. specifically, absolteu everything that i can replace this code with to ensure completely full prodction ready code: <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">2,547</span>
-            <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">+12.5%</span>
-          </div>
-        </div>
-        {/* Other KPIs... (keeping same structure for all 5) /}
-        {/ Second through Fifth KPIs remain unchanged */}
-      </div>
-
-
-Here's the complete code to replace that section:
-
-jsx
-
-Copy
             <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">2,547</span>
             <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">+12.5%</span>
           </div>
         </div>
 
-        {/* Second KPI */}
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
-            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal nowrap">Total Inactive</span>
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Inactive</span>
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
           </div>
           <div className="flex items-baseline gap-1 md:gap-1.5">
@@ -246,7 +183,6 @@ Copy
           </div>
         </div>
 
-        {/* Third KPI */}
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patient</span>
@@ -258,7 +194,6 @@ Copy
           </div>
         </div>
 
-        {/* Fourth KPI */}
         <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Unsched Active</span>
@@ -271,7 +206,6 @@ Copy
           </div>
         </div>
 
-        {/* Fifth KPI */}
         <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Days Between</span>
@@ -284,7 +218,6 @@ Copy
         </div>
       </div>
 
-      {/* Middle Section with Payment Distribution */}
       <div className="flex gap-2 md:gap-3 px-2 md:px-4 mb-3 h-[110px] md:h-[140px]">
         <div className="flex-1"></div>
         <div className="w-[33%]">
@@ -292,7 +225,6 @@ Copy
         </div>
       </div>
 
-  {/* Charts Grid */}
       <div className="grid grid-cols-2 gap-x-2 md:gap-x-3 w-full mt-auto">
         <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-full md:w-[130%] border border-gray-200">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
@@ -302,7 +234,7 @@ Copy
             {retentionData.map((group, idx) => {
               const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
               const maxValue = Math.max(...retentionData.map(d => d.initial));
-              const widthScale = window.innerWidth < 768 ? 0.70 : 0.91;
+              const widthScale = typeof window !== 'undefined' && window.innerWidth < 768 ? 0.70 : 0.91;
               const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
               const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
               
