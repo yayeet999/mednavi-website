@@ -140,13 +140,13 @@ return (
       </div>
 
       {/* Main Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 px-2 md:px-4 flex-1 max-h-[400px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 px-2 md:px-4 flex-1 max-h-[400px] auto-rows-fr">
         {/* Monthly Production Chart */}
         <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm w-full border border-gray-200 animate-[slide-up_1.7s_ease-out] overflow-hidden">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Average Monthly Production/Patient
           </h3>
-          <div className="h-[200px] w-full">
+          <div className="h-[150px] md:h-[200px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={monthlyProductionData}
@@ -192,7 +192,7 @@ return (
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Total Expenses Distribution
           </h3>
-          <div className="h-[200px] w-full flex items-center">
+          <div className="h-[150px] md:h-[200px] w-full flex items-center">
             <div className="w-[35%] space-y-0.5 md:space-y-1">
               {expensesData.map((entry, index) => (
                 <div key={index} className="flex items-center gap-1 md:gap-2">
