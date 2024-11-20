@@ -1,4 +1,100 @@
-[First part of the code remains exactly the same until the return statement in DemographicsContent]
+import React from 'react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Users, DollarSign, Stethoscope } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    name: string;
+    color: string;
+  }>;
+  label?: string;
+}
+
+const DemographicsContent = () => {
+  const retentionData = [
+    {
+      age: '18-30',
+      initial: 450,
+      retained: 385,
+    },
+    {
+      age: '31-45',
+      initial: 680,
+      retained: 598,
+    },
+    {
+      age: '46-60',
+      initial: 520,
+      retained: 472,
+    },
+    {
+      age: '60+',
+      initial: 350,
+      retained: 308,
+    }
+  ];
+
+  const demographicsData = [
+    {
+      ageRange: '18-30',
+      male: 185,
+      female: 245,
+      other: 20
+    },
+    {
+      ageRange: '31-45',
+      male: 290,
+      female: 368,
+      other: 22
+    },
+    {
+      ageRange: '46-60',
+      male: 228,
+      female: 276,
+      other: 16
+    },
+    {
+      ageRange: '61-75',
+      male: 146,
+      female: 182,
+      other: 12
+    },
+    {
+      ageRange: '75+',
+      male: 68,
+      female: 92,
+      other: 8
+    }
+  ];
+
+  const colors = {
+    male: '#1E40AF',
+    female: '#3B82F6',
+    other: '#93C5FD'
+  };
+
+  const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-2 border border-gray-200 shadow-sm rounded-md">
+          <p className="font-medium text-[10px] text-gray-700 mb-1">{`Age Range: ${label}`}</p>
+          {payload.map((entry, index) => (
+            <p 
+              key={index} 
+              className="text-[10px]"
+              style={{ color: entry.color }}
+            >
+              {`${entry.name}: ${entry.value.toLocaleString()}`}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="flex-1 overflow-y-auto px-1 md:px-3">
@@ -69,7 +165,7 @@
           </div>
         </div>
 
-     <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
+        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
