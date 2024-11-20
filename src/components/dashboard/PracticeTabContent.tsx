@@ -221,20 +221,22 @@ const DemographicsContent = () => {
                   content={<CustomTooltip />}
                   cursor={{ fill: 'rgba(229, 231, 235, 0.4)' }}
                 />
-                <Legend 
-                  wrapperStyle={{
-                    fontSize: window.innerWidth < 768 ? '7px' : '10px',
-                    paddingTop: window.innerWidth < 768 ? '-4px' : '-2px',
-                    marginTop: window.innerWidth < 768 ? '-7px' : '-4px',
-                    textAlign: 'center',
-                    width: '100%',
-                    marginLeft: window.innerWidth < 768 ? '0px' : '6px',
-                    marginRight: window.innerWidth < 768 ? '-2px' : '6px',
-                  }}
-                  iconType="circle"
-                  iconSize={4}
-                  align="center"
-                />
+                {window.innerWidth >= 768 && (
+  <Legend 
+    wrapperStyle={{
+      fontSize: '10px',
+      paddingTop: '-2px',
+      marginTop: '-4px',
+      textAlign: 'center',
+      width: '100%',
+      marginLeft: '6px',
+      marginRight: '6px',
+    }}
+    iconType="circle"
+    iconSize={4}
+    align="center"
+  />
+)}
                 <Bar 
                   dataKey="male" 
                   name="Male" 
