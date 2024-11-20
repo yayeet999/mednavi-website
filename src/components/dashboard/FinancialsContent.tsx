@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { BarChart2X, X } from 'lucide-react';
+import { BarChart2, X } from 'lucide-react';
 
 interface AxisTickProps {
   x: number;
@@ -93,15 +93,15 @@ return (
             <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">+8.2%</span>
           </div>
           <button 
-            onClick={() => setShowDistributionPopup(true)}
-            className="hidden md:flex absolute top-1 right-1 p-1 rounded-full hover:bg-blue-50 transition-colors group"
-            title="View Production Distribution"
-          >
-            <BarChart2X 
-              className="w-4 h-4 text-blue-600 animate-[pulse-subtle_3s_ease-in-out_infinite]"
-            />
-            <div className="absolute -bottom-1 left-1/2 w-1 h-1 bg-blue-400 rounded-full opacity-75 animate-[glow_2s_ease-in-out_infinite]" />
-          </button>
+  onClick={() => setShowDistributionPopup(true)}
+  className="hidden md:flex absolute top-1 right-1 p-1 rounded-full hover:bg-blue-50 transition-colors group"
+  title="View Production Distribution"
+>
+  <BarChart2 
+    className="w-4 h-4 text-blue-600 animate-[pulse-subtle_3s_ease-in-out_infinite]"
+  />
+  <div className="absolute -bottom-1 left-1/2 w-1 h-1 bg-blue-400 rounded-full opacity-75 animate-[glow_2s_ease-in-out_infinite]" />
+</button>
         </div>
 
         {/* Other KPI boxes remain the same */}
