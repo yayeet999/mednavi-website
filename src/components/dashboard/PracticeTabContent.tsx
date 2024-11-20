@@ -223,7 +223,7 @@ const DemographicsContent = () => {
                 />
                 <Legend 
                   wrapperStyle={{
-                    fontSize: window.innerWidth < 768 ? '8px' : '10px',
+                    fontSize: window.innerWidth < 768 ? '7px' : '10px',
                     paddingTop: window.innerWidth < 768 ? '-4px' : '-2px',
                     marginTop: window.innerWidth < 768 ? '-7px' : '-4px',
                     textAlign: 'center',
