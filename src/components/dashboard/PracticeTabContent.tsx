@@ -113,7 +113,7 @@ const DemographicsContent = () => {
               
               return (
                 <div key={idx} className="flex items-center">
-                  <div className="flex items-center w-full space-x-[3px] md:space-x-[12px]">
+                  <div className="flex items-center w-full space-x-[2px] md:space-x-[10px]">
                     <span className="text-[6px] md:text-[10px] text-gray-500 shrink-0 min-w-[36px] md:min-w-[52px]">
                       Age {group.age}
                     </span>
@@ -225,21 +225,26 @@ const DemographicsContent = () => {
                   cursor={{ fill: 'rgba(229, 231, 235, 0.4)' }}
                 />
                 {window.innerWidth >= 768 && (
-                  <Legend 
-                    wrapperStyle={{
-                      fontSize: '10px',
-                      paddingTop: '-2px',
-                      marginTop: '-4px',
-                      textAlign: 'center',
-                      width: '100%',
-                      marginLeft: '6px',
-                      marginRight: '6px',
-                      marginBottom: '2px',
-                    }}
-                    iconType="circle"
-                    iconSize={4}
-                    align="center"
-                  />
+                  <div className="flex gap-2 md:gap-4 mt-1">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-[#1E40AF]"></div>
+                      <span className="text-[7px] md:text-[9px] text-gray-500">
+                        Male
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-[#3B82F6]"></div>
+                      <span className="text-[7px] md:text-[9px] text-gray-500">
+                        Female
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-[#93C5FD]"></div>
+                      <span className="text-[7px] md:text-[9px] text-gray-500">
+                        Other
+                      </span>
+                    </div>
+                  </div>
                 )}
                 <Bar 
                   dataKey="male" 
