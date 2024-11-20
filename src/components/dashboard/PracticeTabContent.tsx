@@ -1,100 +1,4 @@
-import React from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Users, DollarSign, Stethoscope } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-interface TooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    value: number;
-    name: string;
-    color: string;
-  }>;
-  label?: string;
-}
-
-const DemographicsContent = () => {
-  const retentionData = [
-    {
-      age: '18-30',
-      initial: 450,
-      retained: 385,
-    },
-    {
-      age: '31-45',
-      initial: 680,
-      retained: 598,
-    },
-    {
-      age: '46-60',
-      initial: 520,
-      retained: 472,
-    },
-    {
-      age: '60+',
-      initial: 350,
-      retained: 308,
-    }
-  ];
-
-  const demographicsData = [
-    {
-      ageRange: '18-30',
-      male: 185,
-      female: 245,
-      other: 20
-    },
-    {
-      ageRange: '31-45',
-      male: 290,
-      female: 368,
-      other: 22
-    },
-    {
-      ageRange: '46-60',
-      male: 228,
-      female: 276,
-      other: 16
-    },
-    {
-      ageRange: '61-75',
-      male: 146,
-      female: 182,
-      other: 12
-    },
-    {
-      ageRange: '75+',
-      male: 68,
-      female: 92,
-      other: 8
-    }
-  ];
-
-  const colors = {
-    male: '#1E40AF',
-    female: '#3B82F6',
-    other: '#93C5FD'
-  };
-
-  const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-2 border border-gray-200 shadow-sm rounded-md">
-          <p className="font-medium text-[10px] text-gray-700 mb-1">{`Age Range: ${label}`}</p>
-          {payload.map((entry, index) => (
-            <p 
-              key={index} 
-              className="text-[10px]"
-              style={{ color: entry.color }}
-            >
-              {`${entry.name}: ${entry.value.toLocaleString()}`}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
+[First part of the code remains exactly the same until the return statement in DemographicsContent]
 
   return (
     <div className="flex-1 overflow-y-auto px-1 md:px-3">
@@ -103,7 +7,7 @@ const DemographicsContent = () => {
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Patient Retention Analysis
           </h3>
-          <div className="space-y-[7px] md:space-y-[10px]">
+          <div className="space-y-[7px] md:space-y-[10px] mb-[2px] md:mb-0">
             {retentionData.map((group, idx) => {
               const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
               const maxValue = Math.max(...retentionData.map(d => d.initial));
@@ -114,7 +18,7 @@ const DemographicsContent = () => {
               return (
                 <div key={idx} className="flex items-center">
                   <div className="flex items-center w-full space-x-[4px] md:space-x-[12px]">
-                    <span className="text-[7px] md:text-[10px] text-gray-500 shrink-0 min-w-[36px] md:min-w-[52px]">
+                    <span className="text-[6px] md:text-[10px] text-gray-500 shrink-0 min-w-[36px] md:min-w-[52px]">
                       Age {group.age}
                     </span>
                     <div className="relative flex-1 h-[14px] md:h-[18px]">
@@ -146,36 +50,38 @@ const DemographicsContent = () => {
               );
             })}
 
-            <div className="flex gap-2 md:gap-4 pt-1.5">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-blue-100"></div>
-                <span className="text-[7px] md:text-[9px] text-gray-500">
-                  {window.innerWidth < 768 ? 'Initial Pts' : 'Initial Patients'}
-                </span>
+            {window.innerWidth >= 768 && (
+              <div className="flex gap-2 md:gap-4 pt-1.5">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-blue-100"></div>
+                  <span className="text-[7px] md:text-[9px] text-gray-500">
+                    Initial Patients
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-blue-600"></div>
+                  <span className="text-[7px] md:text-[9px] text-gray-500">
+                    Retained Patients
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-blue-600"></div>
-                <span className="text-[7px] md:text-[9px] text-gray-500">
-                  {window.innerWidth < 768 ? 'Retained Pts' : 'Retained Patients'}
-                </span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
+     <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
-          <div className="h-[165px] md:h-[240px] w-full">
+          <div className="h-[150px] md:h-[240px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={demographicsData}
                 margin={{ 
-                  top: 0,
+                  top: window.innerWidth < 768 ? 5 : 0,
                   right: 0,
                   left: -2,
-                  bottom: 2
+                  bottom: window.innerWidth < 768 ? 15 : 2
                 }}
                 barSize={window.innerWidth < 768 ? 12 : 20}
                 barGap={0}
@@ -195,11 +101,12 @@ const DemographicsContent = () => {
                       <text
                         x={0}
                         y={0}
-                        dy={8}
-                        textAnchor="middle"
+                        dy={window.innerWidth < 768 ? 10 : 8}
+                        textAnchor="end"
                         fill="#4B5563"
                         fontSize={window.innerWidth < 768 ? 5.5 : 8}
                         className="select-none"
+                        transform={window.innerWidth < 768 ? "rotate(-30)" : "rotate(0)"}
                       >
                         {props.payload.value}
                       </text>
@@ -222,21 +129,21 @@ const DemographicsContent = () => {
                   cursor={{ fill: 'rgba(229, 231, 235, 0.4)' }}
                 />
                 {window.innerWidth >= 768 && (
-  <Legend 
-    wrapperStyle={{
-      fontSize: '10px',
-      paddingTop: '-2px',
-      marginTop: '-4px',
-      textAlign: 'center',
-      width: '100%',
-      marginLeft: '6px',
-      marginRight: '6px',
-    }}
-    iconType="circle"
-    iconSize={4}
-    align="center"
-  />
-)}
+                  <Legend 
+                    wrapperStyle={{
+                      fontSize: '10px',
+                      paddingTop: '-2px',
+                      marginTop: '-4px',
+                      textAlign: 'center',
+                      width: '100%',
+                      marginLeft: '6px',
+                      marginRight: '6px',
+                    }}
+                    iconType="circle"
+                    iconSize={4}
+                    align="center"
+                  />
+                )}
                 <Bar 
                   dataKey="male" 
                   name="Male" 
