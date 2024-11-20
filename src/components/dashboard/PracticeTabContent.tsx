@@ -24,6 +24,7 @@ interface AxisTickProps {
 const GrowthRateIndicator = () => {
   const percentage = 14;
   const radius = 23;
+  const radiusDesktop = 20;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
   const monthlyData = [
@@ -46,15 +47,15 @@ const GrowthRateIndicator = () => {
             <circle
               cx="24"
               cy="24"
-              r={20}
+              r={typeof window !== 'undefined' && window.innerWidth >= 768 ? radiusDesktop : radius}
               stroke="#EEF2FF"
               strokeWidth="5.5"
               fill="none"
             />
             <circle
-              cx="28"
-              cy="28"
-              r={radius}
+              cx="24"
+              cy="24"
+              r={typeof window !== 'undefined' && window.innerWidth >= 768 ? radiusDesktop : radius}
               stroke="#3B82F6"
               strokeWidth="5.5"
               fill="none"
