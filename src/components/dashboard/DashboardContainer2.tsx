@@ -235,7 +235,7 @@ export const DashboardContainer2 = () => {
             )}
             
             {activePage === 'practice' && (
-              <div className="w-full h-full bg-white rounded-lg">
+              <div className="w-full h-full bg-[#103d68] rounded-lg">
                 <PracticeTabContent />
               </div>
             )}
