@@ -140,13 +140,13 @@ return (
       </div>
 
       {/* Main Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 px-2 md:px-4 max-h-[calc(100vh-220px)]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 px-2 md:px-4 h-[calc(100%-90px)]">
         {/* Monthly Production Chart */}
-        <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm w-full h-full border border-gray-200 animate-[slide-up_1.7s_ease-out]">
+        <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm w-full h-[250px] md:h-full border border-gray-200 animate-[slide-up_1.7s_ease-out]">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Average Monthly Production/Patient
           </h3>
-          <div className="min-h-[200px] md:h-[calc(100%-24px)] w-full">
+          <div className="min-h-[180px] md:min-h-0 md:h-[calc(100%-24px)] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={monthlyProductionData}
@@ -188,7 +188,7 @@ return (
         </div>
 
         {/* Expenses Pie Chart */}
-        <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm w-full h-full border border-gray-200 animate-[slide-up_1.7s_ease-out]">
+        <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm w-full h-[250px] md:h-full border border-gray-200 animate-[slide-up_1.7s_ease-out]">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Total Expenses Distribution
           </h3>
