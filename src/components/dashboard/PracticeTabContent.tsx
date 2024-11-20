@@ -375,7 +375,7 @@ const PracticeTabContent = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-hidden bg-gray-100 mt-1 md:mt-2">
+        <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2">
           <TabsContent value="demographics" className="h-full m-0">
             <DemographicsContent />
           </TabsContent>
