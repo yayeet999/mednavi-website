@@ -229,7 +229,7 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[117px] md:h-[186px] w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
+        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[117px] md:h-[186px] w-[103%] md:w-[78%] md:ml-auto border border-gray-200">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
