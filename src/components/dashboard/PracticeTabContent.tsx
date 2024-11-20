@@ -79,12 +79,12 @@ const DemographicsContent = () => {
   const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-1 md:p-2 border border-gray-200 shadow-sm rounded-md">
-          <p className="font-medium text-[7px] md:text-xs text-gray-700 mb-0.5 md:mb-1">{`Age Range: ${label}`}</p>
+        <div className="bg-white p-2 md:p-3 border border-gray-200 shadow-sm rounded-md">
+          <p className="font-medium text-xs md:text-sm text-gray-700 mb-1">{`Age Range: ${label}`}</p>
           {payload.map((entry, index) => (
             <p 
               key={index} 
-              className="text-[6px] md:text-[11px]"
+              className="text-xs md:text-sm"
               style={{ color: entry.color }}
             >
               {`${entry.name}: ${entry.value.toLocaleString()}`}
@@ -97,116 +97,151 @@ const DemographicsContent = () => {
   };
 
   return (
-    <div className="h-full p-1 md:p-2 overflow-y-auto space-y-2 md:space-y-3">
-      {/* Patient Retention Analysis */}
-      <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm">
-        <h3 className="text-[8px] md:text-sm font-medium text-gray-700 mb-2 md:mb-3">Patient Retention Analysis</h3>
-        <div className="space-y-2 md:space-y-4">
-          {retentionData.map((group, idx) => {
-            const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
-            const maxValue = Math.max(...retentionData.map(d => d.initial));
-            const widthScale = 0.35;
-            const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
-            const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
-            
-            return (
-              <div key={idx} className="relative">
-                <div className="text-[7px] md:text-xs text-gray-500 mb-0.5 md:mb-1">Age {group.age}</div>
-                <div className="relative h-4 md:h-7">
-                  <div 
-                    className="absolute top-0 left-0 h-full bg-blue-100 rounded"
-                    style={{ width: initialWidth }}
-                  >
-                    <span className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 text-[6px] md:text-xs text-gray-600">
-                      {group.initial.toLocaleString()}
-                    </span>
+    <div className="flex flex-col h-full">
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto px-2 md:px-4">
+        <div className="space-y-3 md:space-y-4 py-2">
+          {/* Patient Retention Analysis */}
+          <div className="bg-white rounded-lg p-3 md:p-4 shadow-sm">
+            <h3 className="text-xs md:text-sm font-medium text-gray-700 mb-3 md:mb-4">
+              Patient Retention Analysis
+            </h3>
+            <div className="space-y-3 md:space-y-4">
+              {retentionData.map((group, idx) => {
+                const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
+                const maxValue = Math.max(...retentionData.map(d => d.initial));
+                const widthScale = 0.65; // Increased for better visibility
+                const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
+                const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
+                
+                return (
+                  <div key={idx} className="relative">
+                    <div className="text-xs md:text-sm text-gray-500 mb-1 md:mb-2">
+                      Age {group.age}
+                    </div>
+                    <div className="relative h-6 md:h-8">
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-blue-100 rounded"
+                        style={{ width: initialWidth }}
+                      >
+                        <span className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 text-xs md:text-sm text-gray-600">
+                          {group.initial.toLocaleString()}
+                        </span>
+                      </div>
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-blue-600 rounded"
+                        style={{ width: retainedWidth }}
+                      >
+                        <span className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 text-xs md:text-sm text-white">
+                          {group.retained.toLocaleString()}
+                        </span>
+                        <span className="absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 text-xs md:text-sm text-gray-500">
+                          {retentionRate}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div 
-                    className="absolute top-0 left-0 h-full bg-blue-600 rounded"
-                    style={{ width: retainedWidth }}
-                  >
-                    <span className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 text-[6px] md:text-xs text-white">
-                      {group.retained.toLocaleString()}
-                    </span>
-                    <span className="absolute left-[calc(100%+4px)] top-1/2 -translate-y-1/2 text-[6px] md:text-xs text-gray-500">
-                      {retentionRate}%
-                    </span>
-                  </div>
+                );
+              })}
+
+              {/* Legend */}
+              <div className="flex gap-4 pt-2 md:pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-blue-100"></div>
+                  <span className="text-xs md:text-sm text-gray-500">Initial Patients</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-blue-600"></div>
+                  <span className="text-xs md:text-sm text-gray-500">Retained Patients</span>
                 </div>
               </div>
-            );
-          })}
-
-          {/* Legend */}
-          <div className="flex gap-2 md:gap-3 pt-1 md:pt-2 border-t border-gray-100">
-            <div className="flex items-center gap-1 md:gap-1.5">
-              <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-blue-100"></div>
-              <span className="text-[6px] md:text-xs text-gray-500">Initial Patients</span>
-            </div>
-            <div className="flex items-center gap-1 md:gap-1.5">
-              <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-blue-600"></div>
-              <span className="text-[6px] md:text-xs text-gray-500">Retained Patients</span>
             </div>
           </div>
-        </div>
-      </div>
 
-    {/* Age Distribution by Gender */}
-      <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm">
-        <h3 className="text-[8px] md:text-sm font-medium text-gray-700 mb-2 md:mb-3">Age Distribution by Gender</h3>
-        <div className="h-[140px] md:h-[240px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={demographicsData}
-              margin={{ top: 5, right: 5, left: -20, bottom: 0 }}
-              barSize={12}
-            >
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                stroke="#E5E7EB"
-                vertical={false}
-              />
-              <XAxis 
-                dataKey="ageRange"
-                tick={{ fontSize: 8, fill: '#4B5563' }}
-                tickLine={{ stroke: '#E5E7EB' }}
-                axisLine={{ stroke: '#E5E7EB' }}
-              />
-              <YAxis
-                tick={{ fontSize: 8, fill: '#4B5563' }}
-                tickLine={{ stroke: '#E5E7EB' }}
-                axisLine={{ stroke: '#E5E7EB' }}
-                tickFormatter={(value) => value.toLocaleString()}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend 
-                wrapperStyle={{
-                  fontSize: '8px',
-                  paddingTop: '4px'
-                }}
-                iconType="circle"
-                iconSize={4}
-              />
-              <Bar 
-                dataKey="male" 
-                name="Male" 
-                stackId="a" 
-                fill={colors.male}
-              />
-              <Bar 
-                dataKey="female" 
-                name="Female" 
-                stackId="a" 
-                fill={colors.female}
-              />
-              <Bar 
-                dataKey="other" 
-                name="Other" 
-                stackId="a" 
-                fill={colors.other}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          {/* Age Distribution by Gender */}
+          <div className="bg-white rounded-lg p-3 md:p-4 shadow-sm">
+            <h3 className="text-xs md:text-sm font-medium text-gray-700 mb-3 md:mb-4">
+              Age Distribution by Gender
+            </h3>
+            <div className="h-[45vh] min-h-[200px] max-h-[400px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={demographicsData}
+                  margin={{ 
+                    top: 10,
+                    right: 10,
+                    left: 0,
+                    bottom: 20
+                  }}
+                  barSize={20}
+                >
+                  <CartesianGrid 
+                    strokeDasharray="3 3" 
+                    stroke="#E5E7EB"
+                    vertical={false}
+                  />
+                  <XAxis 
+                    dataKey="ageRange"
+                    tick={{ fontSize: 12, fill: '#4B5563' }}
+                    tickLine={{ stroke: '#E5E7EB' }}
+                    axisLine={{ stroke: '#E5E7EB' }}
+                    interval={0}
+                    tick={props => (
+                      <g transform={`translate(${props.x},${props.y})`}>
+                        <text
+                          x={0}
+                          y={0}
+                          dy={16}
+                          textAnchor="middle"
+                          fill="#4B5563"
+                          fontSize={12}
+                        >
+                          {props.payload.value}
+                        </text>
+                      </g>
+                    )}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 12, fill: '#4B5563' }}
+                    tickLine={{ stroke: '#E5E7EB' }}
+                    axisLine={{ stroke: '#E5E7EB' }}
+                    tickFormatter={(value) => value.toLocaleString()}
+                    width={45}
+                  />
+                  <Tooltip 
+                    content={<CustomTooltip />}
+                    cursor={{ fill: 'rgba(229, 231, 235, 0.4)' }}
+                  />
+                  <Legend 
+                    wrapperStyle={{
+                      fontSize: '12px',
+                      paddingTop: '12px'
+                    }}
+                    iconType="circle"
+                    iconSize={8}
+                  />
+                  <Bar 
+                    dataKey="male" 
+                    name="Male" 
+                    stackId="a" 
+                    fill={colors.male}
+                  />
+                  <Bar 
+                    dataKey="female" 
+                    name="Female" 
+                    stackId="a" 
+                    fill={colors.female}
+                  />
+                  <Bar 
+                    dataKey="other" 
+                    name="Other" 
+                    stackId="a" 
+                    fill={colors.other}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
     </div>
