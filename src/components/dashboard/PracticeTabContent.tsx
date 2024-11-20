@@ -98,70 +98,76 @@ const DemographicsContent = () => {
 
   return (
     <div className="flex-1 overflow-y-auto px-1 md:px-3">
-      <div className="grid grid-cols-2 gap-2 md:gap-3 py-1 md:py-2">
-        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit">
-          <h3 className="text-[9px] md:text-[13px] font-medium text-gray-700 mb-2 md:mb-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 py-1 md:py-2">
+        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-full md:w-[110%]">
+          <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2 md:mb-3">
             Patient Retention Analysis
           </h3>
-          <div className="space-y-1.5 md:space-y-2.5">
+          <div className="space-y-2 md:space-y-3">
             {retentionData.map((group, idx) => {
               const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
               const maxValue = Math.max(...retentionData.map(d => d.initial));
-              const widthScale = window.innerWidth < 768 ? 0.45 : 0.6; // Mobile: 0.45, Desktop: 0.6
+              const widthScale = window.innerWidth < 768 ? 0.54 : 0.72; // Mobile: 0.54 (20% increase), Desktop: 0.72 (20% increase)
               const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
               const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
               
               return (
-                <div key={idx} className="flex items-center space-x-2 md:space-x-3">
-                  <span className="text-[7px] md:text-[10px] text-gray-500 w-[42px] md:w-[52px]">
-                    Age {group.age}
-                  </span>
-                  <div className="relative flex-1">
-                    <div 
-                      className="absolute top-0 left-0 h-[14px] md:h-[18px] bg-blue-100 rounded"
-                      style={{ width: initialWidth }}
-                    >
-                      <span className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-gray-600">
-                        {group.initial.toLocaleString()}
-                      </span>
-                    </div>
-                    <div 
-                      className="absolute top-0 left-0 h-[14px] md:h-[18px] bg-blue-600 rounded"
-                      style={{ width: retainedWidth }}
-                    >
-                      <span className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-white">
-                        {group.retained.toLocaleString()}
-                      </span>
-                    </div>
-                    <span 
-                      className="absolute top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-gray-500 ml-1"
-                      style={{ left: `calc(${retainedWidth} + ${window.innerWidth < 768 ? '3px' : '4px'})` }}
-                    >
-                      {retentionRate}%
+                <div key={idx} className="flex items-center">
+                  <div className="flex items-center w-full space-x-[6px] md:space-x-[12px]">
+                    <span className="text-[8px] md:text-[10px] text-gray-500 shrink-0 min-w-[42px] md:min-w-[52px]">
+                      Age {group.age}
                     </span>
+                    <div className="relative flex-1 h-[14px] md:h-[18px]">
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-blue-100 rounded"
+                        style={{ width: initialWidth }}
+                      >
+                        <span className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-gray-600">
+                          {group.initial.toLocaleString()}
+                        </span>
+                      </div>
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-blue-600 rounded"
+                        style={{ width: retainedWidth }}
+                      >
+                        <span className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-white">
+                          {group.retained.toLocaleString()}
+                        </span>
+                      </div>
+                      <span 
+                        className="absolute top-1/2 -translate-y-1/2 text-[7px] md:text-[9px] text-gray-500"
+                        style={{ left: `calc(${retainedWidth} + ${window.innerWidth < 768 ? '6px' : '12px'})` }}
+                      >
+                        {retentionRate}%
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
             })}
 
-            <div className="flex gap-2 md:gap-3 pt-1.5 md:pt-2 border-t border-gray-100">
-              <div className="flex items-center gap-1 md:gap-1.5">
+            <div className="flex gap-3 md:gap-4 mt-2 md:mt-3">
+              <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-blue-100"></div>
-                <span className="text-[7px] md:text-[9px] text-gray-500">Initial Patients</span>
+                <span className="text-[7px] md:text-[9px] text-gray-500">
+                  {window.innerWidth < 768 ? 'Initial Pts' : 'Initial Patients'}
+                </span>
               </div>
-              <div className="flex items-center gap-1 md:gap-1.5">
+              <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded bg-blue-600"></div>
-                <span className="text-[7px] md:text-[9px] text-gray-500">Retained Patients</span>
+                <span className="text-[7px] md:text-[9px] text-gray-500">
+                  {window.innerWidth < 768 ? 'Retained Pts' : 'Retained Patients'}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-full md:w-[65%]"> {/* Reduced width for desktop */}
-          <h3 className="text-[9px] md:text-[13px] font-medium text-gray-700 mb-2">
+    <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm md:ml-auto md:mr-0 w-[103%] md:w-[95%] h-[190px] md:h-[280px]">
+          <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
-          <div className="h-[220px] md:h-[280px] w-full">
+          <div className="h-[165px] md:h-[255px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={demographicsData}
@@ -171,7 +177,7 @@ const DemographicsContent = () => {
                   left: -15,
                   bottom: 15
                 }}
-                barSize={window.innerWidth < 768 ? 10 : 12}
+                barSize={window.innerWidth < 768 ? 9 : 12}
                 barGap={1}
               >
                 <CartesianGrid 
@@ -189,10 +195,10 @@ const DemographicsContent = () => {
                       <text
                         x={0}
                         y={0}
-                        dy={12}
+                        dy={8} // Reduced vertical distance for mobile
                         textAnchor="middle"
                         fill="#4B5563"
-                        fontSize={window.innerWidth < 768 ? 6 : 8}
+                        fontSize={window.innerWidth < 768 ? 5.5 : 8}
                         className="select-none"
                       >
                         {props.payload.value}
@@ -219,32 +225,35 @@ const DemographicsContent = () => {
                     fontSize: '8px',
                     paddingTop: '8px',
                     textAlign: 'center',
-                    width: '100%'
+                    width: '100%',
+                    marginLeft: 'auto',
+                    marginRight: 'auto'
                   }}
                   iconType="circle"
                   iconSize={4}
                   align="center"
+                  verticalAlign="bottom"
                 />
                 <Bar 
                   dataKey="male" 
                   name="Male" 
                   stackId="a" 
                   fill={colors.male}
-                  maxBarSize={80}
+                  maxBarSize={72}
                 />
                 <Bar 
                   dataKey="female" 
                   name="Female" 
                   stackId="a" 
                   fill={colors.female}
-                  maxBarSize={80}
+                  maxBarSize={72}
                 />
                 <Bar 
                   dataKey="other" 
                   name="Other" 
                   stackId="a" 
                   fill={colors.other}
-                  maxBarSize={80}
+                  maxBarSize={72}
                 />
               </BarChart>
             </ResponsiveContainer>
