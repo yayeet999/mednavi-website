@@ -98,10 +98,10 @@ const DemographicsContent = () => {
   return (
     <div className="flex-1 overflow-y-auto px-1 md:px-3 h-full flex flex-col">
       {/* KPI Row */}
-<div className="w-full flex gap-3 px-2 md:px-4 mb-4">
+<div className="w-full flex gap-2 md:gap-3 px-2 md:px-4 mb-4">
   {/* First KPI */}
   <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/20">
-    <div className="text-xs text-blue-900/70 font-medium mb-1 md:mb-1.5 min-h-[22px] md:min-h-[29px] flex flex-col justify-center">
+    <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-1 min-h-[20px] md:min-h-[26px] flex flex-col justify-center">
       <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Active</span>
       <span className="text-[5.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
     </div>
