@@ -36,7 +36,7 @@ const GrowthRateIndicator = () => {
 
   return (
     <div className="bg-white p-1 md:p-2 rounded-lg h-full w-full shadow-sm border border-gray-100">
-      <div className="flex items-center gap-2 md:gap-3 md:h-[95%] md:pt-1.5">
+      <div className="flex items-center gap-2 md:gap-3 md:h-[95%] md:pt-2">
         <div className="flex flex-col -mr-1 translate-y-0.5 md:-translate-y-2">
   <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Avg Growth</span>
   <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Rate/Month</span>
@@ -65,7 +65,7 @@ const GrowthRateIndicator = () => {
           </svg>
           <span className="absolute text-[13px] md:text-[15px] font-medium text-blue-600">+14%</span>
         </div>
-        <div className="hidden md:block h-24 w-56">
+        <div className="hidden md:block h-20 w-56">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={monthlyData} 
@@ -99,7 +99,7 @@ const GrowthRateIndicator = () => {
                 height={25}
               />
               <YAxis 
-                tick={{ fontSize: 11, fill: '#6B7280', fontWeight: 500 }}
+                tick={{ fontSize: 8, fill: '#6B7280', fontWeight: 500 }}
                 tickFormatter={(value) => `${value}%`}
                 axisLine={{ stroke: '#E5E7EB', strokeWidth: 1 }}
                 tickLine={false}
