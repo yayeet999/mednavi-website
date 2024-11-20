@@ -98,7 +98,7 @@ const DemographicsContent = () => {
   return (
     <div className="flex-1 overflow-y-auto px-1 md:px-3 h-full flex flex-col">
       {/* KPI Row */}
-<div className="w-full flex gap-2 px-2 md:px-4 mb-4">
+<div className="w-full flex gap-3 px-2 md:px-4 mb-4">
   {/* First KPI */}
   <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/20">
     <div className="text-xs text-blue-900/70 font-medium mb-1 md:mb-1.5 min-h-[22px] md:min-h-[29px] flex flex-col justify-center">
@@ -107,7 +107,7 @@ const DemographicsContent = () => {
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">2,547</span>
-      <span className="text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">+12.5%</span>
+      <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">+12.5%</span>
     </div>
   </div>
 
@@ -119,7 +119,7 @@ const DemographicsContent = () => {
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">854</span>
-      <span className="text-[4.1px] md:text-[9.7px] font-medium text-rose-600">-13.2%</span>
+      <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-rose-600">-13.2%</span>
     </div>
   </div>
 
@@ -131,7 +131,7 @@ const DemographicsContent = () => {
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">3,401</span>
-      <span className="text-[4.1px] md:text-[9.7px] text-blue-900/50">Total</span>
+      <span className="hidden md:inline text-[4.1px] md:text-[9.7px] text-blue-900/50">Total</span>
     </div>
   </div>
 
@@ -143,8 +143,8 @@ const DemographicsContent = () => {
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">577</span>
-      <span className="text-[6px] md:text-[10.5px] text-blue-900/70">23%</span>
-      <span className="text-[4.1px] md:text-[9px] font-medium text-rose-600">High</span>
+      <span className="hidden md:inline text-[6px] md:text-[10.5px] text-blue-900/70">23%</span>
+      <span className="hidden md:inline text-[4.1px] md:text-[9px] font-medium text-rose-600">High</span>
     </div>
   </div>
 
@@ -156,7 +156,7 @@ const DemographicsContent = () => {
     </div>
     <div className="flex items-baseline gap-1.5">
       <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">162.6</span>
-      <span className="text-[4.1px] md:text-[9.7px] text-blue-900/50">Avg</span>
+      <span className="hidden md:inline text-[4.1px] md:text-[9.7px] text-blue-900/50">Avg</span>
     </div>
   </div>
 </div>
