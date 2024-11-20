@@ -65,7 +65,7 @@ const GrowthRateIndicator = () => {
           </svg>
           <span className="absolute text-[13px] md:text-[15px] font-medium text-blue-600">+14%</span>
         </div>
-        <div className="hidden md:block h-24 w-48">
+        <div className="hidden md:block h-24 w-52">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={monthlyData} 
@@ -85,11 +85,10 @@ const GrowthRateIndicator = () => {
                       x={0}
                       y={0}
                       dy={8}
-                      textAnchor="end"
+                      textAnchor="middle"
                       fill="#6B7280"
-                      fontSize={11}
+                      fontSize={8}
                       fontWeight={500}
-                      transform="rotate(-30)"
                     >
                       {props.payload.value}
                     </text>
@@ -97,7 +96,7 @@ const GrowthRateIndicator = () => {
                 )}
                 axisLine={{ stroke: '#E5E7EB', strokeWidth: 1 }}
                 tickLine={false}
-                height={30}
+                height={25}
               />
               <YAxis 
                 tick={{ fontSize: 11, fill: '#6B7280', fontWeight: 500 }}
