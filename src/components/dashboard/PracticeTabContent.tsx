@@ -97,31 +97,31 @@ const DemographicsContent = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto px-2 md:px-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 py-2">
-        <div className="bg-white rounded-lg p-3 md:p-4 shadow-sm">
-          <h3 className="text-[11px] md:text-[13px] font-medium text-gray-700 mb-3 md:mb-4">
+    <div className="flex-1 overflow-y-auto px-1 md:px-3">
+      <div className="grid grid-cols-2 gap-2 md:gap-3 py-1 md:py-2">
+        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-full md:w-full">
+          <h3 className="text-[11px] md:text-[13px] font-medium text-gray-700 mb-2">
             Patient Retention Analysis
           </h3>
-          <div className="space-y-3 md:space-y-4">
+          <div className="space-y-2 md:space-y-3">
             {retentionData.map((group, idx) => {
               const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
               const maxValue = Math.max(...retentionData.map(d => d.initial));
-              const widthScale = 0.45;
+              const widthScale = 0.35; // Reduced for mobile
               const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
               const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
               
               return (
                 <div key={idx} className="relative">
-                  <div className="text-xs md:text-sm text-gray-500 mb-1 md:mb-2">
+                  <div className="text-[8px] md:text-[10px] text-gray-500 mb-0.5 md:mb-1">
                     Age {group.age}
                   </div>
-                  <div className="relative h-6 md:h-8">
+                  <div className="relative h-4 md:h-5">
                     <div 
                       className="absolute top-0 left-0 h-full bg-blue-100 rounded"
                       style={{ width: initialWidth }}
                     >
-                      <span className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 text-xs md:text-sm text-gray-600">
+                      <span className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 text-[8px] md:text-[10px] text-gray-600">
                         {group.initial.toLocaleString()}
                       </span>
                     </div>
@@ -129,11 +129,12 @@ const DemographicsContent = () => {
                       className="absolute top-0 left-0 h-full bg-blue-600 rounded"
                       style={{ width: retainedWidth }}
                     >
-                      <span className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 text-xs md:text-sm text-white">
+                      <span className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 text-[8px] md:text-[10px] text-white">
                         {group.retained.toLocaleString()}
                       </span>
                     </div>
-                    <span className="absolute left-[calc(45%+16px)] top-1/2 -translate-y-1/2 text-xs md:text-sm text-gray-500">
+                    <span className="absolute top-1/2 -translate-y-1/2 text-[8px] md:text-[10px] text-gray-500"
+                          style={{ left: `calc(${retainedWidth} + 4px)` }}>
                       {retentionRate}%
                     </span>
                   </div>
@@ -141,34 +142,35 @@ const DemographicsContent = () => {
               );
             })}
 
-            <div className="flex gap-4 pt-2 md:pt-3 border-t border-gray-100">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-blue-100"></div>
-                <span className="text-xs md:text-sm text-gray-500">Initial Patients</span>
+            <div className="flex gap-3 pt-1 md:pt-2 border-t border-gray-100">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 md:w-3 md:h-3 rounded bg-blue-100"></div>
+                <span className="text-[8px] md:text-[10px] text-gray-500">Initial Patients</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-blue-600"></div>
-                <span className="text-xs md:text-sm text-gray-500">Retained Patients</span>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 md:w-3 md:h-3 rounded bg-blue-600"></div>
+                <span className="text-[8px] md:text-[10px] text-gray-500">Retained Patients</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-3 md:p-4 shadow-sm">
-          <h3 className="text-[11px] md:text-[13px] font-medium text-gray-700 mb-3 md:mb-4">
+     <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm">
+          <h3 className="text-[11px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
-          <div className="h-[250px] md:h-[300px] w-full">
+          <div className="h-[220px] md:h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={demographicsData}
                 margin={{ 
-                  top: 10,
-                  right: 10,
-                  left: 0,
-                  bottom: 20
+                  top: 5,
+                  right: 5,
+                  left: -15,
+                  bottom: 15
                 }}
-                barSize={16}
+                barSize={12}
+                barGap={2}
               >
                 <CartesianGrid 
                   strokeDasharray="3 3" 
@@ -185,10 +187,10 @@ const DemographicsContent = () => {
                       <text
                         x={0}
                         y={0}
-                        dy={16}
+                        dy={12}
                         textAnchor="middle"
                         fill="#4B5563"
-                        fontSize={10}
+                        fontSize={8}
                         className="select-none"
                       >
                         {props.payload.value}
@@ -200,9 +202,9 @@ const DemographicsContent = () => {
                   tickLine={{ stroke: '#E5E7EB' }}
                   axisLine={{ stroke: '#E5E7EB' }}
                   tickFormatter={(value) => value.toLocaleString()}
-                  width={45}
+                  width={30}
                   tick={{
-                    fontSize: 10,
+                    fontSize: 8,
                     fill: '#4B5563'
                   }}
                 />
@@ -212,29 +214,32 @@ const DemographicsContent = () => {
                 />
                 <Legend 
                   wrapperStyle={{
-                    fontSize: '11px',
-                    paddingTop: '12px'
+                    fontSize: '9px',
+                    paddingTop: '8px'
                   }}
                   iconType="circle"
-                  iconSize={6}
+                  iconSize={5}
                 />
                 <Bar 
                   dataKey="male" 
                   name="Male" 
                   stackId="a" 
                   fill={colors.male}
+                  maxBarSize={90}
                 />
                 <Bar 
                   dataKey="female" 
                   name="Female" 
                   stackId="a" 
                   fill={colors.female}
+                  maxBarSize={90}
                 />
                 <Bar 
                   dataKey="other" 
                   name="Other" 
                   stackId="a" 
                   fill={colors.other}
+                  maxBarSize={90}
                 />
               </BarChart>
             </ResponsiveContainer>
