@@ -107,7 +107,7 @@ const DemographicsContent = () => {
             {retentionData.map((group, idx) => {
               const retentionRate = ((group.retained / group.initial) * 100).toFixed(1);
               const maxValue = Math.max(...retentionData.map(d => d.initial));
-              const widthScale = window.innerWidth < 768 ? 0.39 : 0.91;
+              const widthScale = window.innerWidth < 768 ? 0.44 : 0.91;
               const initialWidth = `${(group.initial / maxValue) * 100 * widthScale}%`;
               const retainedWidth = `${(group.retained / maxValue) * 100 * widthScale}%`;
               
