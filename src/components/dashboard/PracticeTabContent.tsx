@@ -163,7 +163,7 @@ const DemographicsContent = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[100%] md:w-[70%] md:ml-auto">
+        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-fit w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-2">
             Age Distribution by Gender
           </h3>
@@ -224,11 +224,12 @@ const DemographicsContent = () => {
                 <Legend 
                   wrapperStyle={{
                     fontSize: '8px',
-                    paddingTop: window.innerWidth < 768 ? '0px' : '0px',
+                    paddingTop: window.innerWidth < 768 ? '-2px' : '0px',
+                    marginTop: window.innerWidth < 768 ? '-5px' : '-2px',
                     textAlign: 'center',
                     width: '100%',
-                    marginLeft: 'auto',
-                    marginRight: 'auto'
+                    marginLeft: window.innerWidth < 768 ? '3px' : '8px',
+                    marginRight: window.innerWidth < 768 ? '3px' : '8px',
                   }}
                   iconType="circle"
                   iconSize={4}
