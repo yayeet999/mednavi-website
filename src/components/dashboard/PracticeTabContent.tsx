@@ -62,9 +62,9 @@ const PaymentDistribution = () => {
                   style={{ backgroundColor: entry.color }}
                 />
                 <div className="flex flex-col">
-                  <span className="text-[8px] md:text-[11px] font-medium text-gray-500">{entry.name}</span>
+                  <span className="text-[6px] md:text-[10px] font-medium text-gray-500">{entry.name}</span>
                   <span 
-                    className="text-[9px] md:text-[13px] font-semibold" 
+                    className="text-[8px] md:text-[12px] font-semibold" 
                     style={{ color: entry.color }}
                   >
                     {entry.value}%
@@ -218,9 +218,9 @@ const DemographicsContent = () => {
         </div>
       </div>
 
-      <div className="flex gap-2 md:gap-3 px-2 md:px-4 mb-3 h-[70px] sm:h-[80px] md:h-[115px] lg:h-[160px]">
+      <div className="flex gap-2 md:gap-3 px-2 md:px-4 mb-3 h-[75px] sm:h-[80px] md:h-[115px]">
         <div className="flex-1"></div>
-        <div className="w-[55%] sm:w-[40%] md:w-[60%] lg:w-[30%]">
+        <div className="w-[60%] sm:w-[40%] md:w-[80%]">
           <PaymentDistribution />
         </div>
       </div>
