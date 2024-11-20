@@ -228,7 +228,7 @@ const DemographicsContent = () => {
                     marginTop: window.innerWidth < 768 ? '-7px' : '-4px',
                     textAlign: 'center',
                     width: '100%',
-                    marginLeft: window.innerWidth < 768 ? '-2px' : '6px',
+                    marginLeft: window.innerWidth < 768 ? '0px' : '6px',
                     marginRight: window.innerWidth < 768 ? '-2px' : '6px',
                   }}
                   iconType="circle"
