@@ -214,13 +214,74 @@ const DemographicsContent = () => {
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
           </div>
           <div className="flex items-baseline gap-1 md:gap-1.5">
+            FS
+give me the entire code snippet of what's missing. specifically, absolteu everything that i can replace this code with to ensure completely full prodction ready code: <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">2,547</span>
+            <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">+12.5%</span>
+          </div>
+        </div>
+        {/* Other KPIs... (keeping same structure for all 5) /}
+        {/ Second through Fifth KPIs remain unchanged */}
+      </div>
+
+
+Here's the complete code to replace that section:
+
+jsx
+
+Copy
             <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">2,547</span>
             <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">+12.5%</span>
           </div>
         </div>
 
-        {/* Other KPIs... (keeping same structure for all 5) */}
-        {/* Second through Fifth KPIs remain unchanged */}
+        {/* Second KPI */}
+        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
+          <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal nowrap">Total Inactive</span>
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
+          </div>
+          <div className="flex items-baseline gap-1 md:gap-1.5">
+            <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">854</span>
+            <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-rose-600">-13.2%</span>
+          </div>
+        </div>
+
+        {/* Third KPI */}
+        <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
+          <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patient</span>
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Population</span>
+          </div>
+          <div className="flex items-baseline gap-1 md:gap-1.5">
+            <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">3,401</span>
+            <span className="hidden md:inline text-[4.1px] md:text-[9.7px] text-blue-900/50">Total</span>
+          </div>
+        </div>
+
+        {/* Fourth KPI */}
+        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
+          <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Unsched Active</span>
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
+          </div>
+          <div className="flex items-baseline gap-1 md:gap-1.5">
+            <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">577</span>
+            <span className="hidden md:inline text-[6px] md:text-[10.5px] text-blue-900/70">23%</span>
+            <span className="hidden md:inline text-[4.1px] md:text-[9px] font-medium text-rose-600">High</span>
+          </div>
+        </div>
+
+        {/* Fifth KPI */}
+        <div className="flex-[1.05] min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px]">
+          <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Days Between</span>
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Apts</span>
+          </div>
+          <div className="flex items-baseline gap-1 md:gap-1.5">
+            <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">162.6</span>
+            <span className="hidden md:inline text-[4.1px] md:text-[9.7px] text-blue-900/50">Avg</span>
+          </div>
+        </div>
       </div>
 
       {/* Middle Section with Payment Distribution */}
