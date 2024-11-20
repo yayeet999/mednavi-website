@@ -172,7 +172,7 @@ const DemographicsContent = () => {
               <BarChart
                 data={demographicsData}
                 margin={{ 
-                  top: 8,
+                  top: 0,
                   right: 0,
                   left: -2,
                   bottom: 5
@@ -215,7 +215,7 @@ const DemographicsContent = () => {
                     fontSize: window.innerWidth < 768 ? 6 : 8,
                     fill: '#4B5563'
                   }}
-                  padding={{ top: 10 }}
+                  padding={{ top: 5 }}
                 />
                 <Tooltip 
                   content={<CustomTooltip />}
@@ -224,7 +224,7 @@ const DemographicsContent = () => {
                 <Legend 
                   wrapperStyle={{
                     fontSize: '8px',
-                    paddingTop: '4px',
+                    paddingTop: window.innerWidth < 768 ? '0px' : '0px',
                     textAlign: 'center',
                     width: '100%',
                     marginLeft: 'auto',
