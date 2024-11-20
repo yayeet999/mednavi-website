@@ -80,7 +80,7 @@ const FinancialsContent = () => {
   };
 
 return (
-    <div className="flex-1 overflow-y-auto pr-1 md:pr-3 h-full flex flex-col">
+    <div className="flex-1 h-full pr-1 md:pr-3 flex flex-col">
       {/* Top Stats Row */}
       <div className="w-full flex gap-1 md:gap-2 px-2 md:px-4 mb-3">
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px] animate-[slide-up_1.7s_ease-out] relative">
@@ -140,7 +140,7 @@ return (
       </div>
 
       {/* Main Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 px-2 md:px-4 flex-1">
+      <div className="grid md:grid-cols-2 gap-2 md:gap-3 px-2 md:px-4 h-[calc(100%-100px)]">
         {/* Monthly Production Chart */}
         <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm w-full h-full border border-gray-200 animate-[slide-up_1.7s_ease-out]">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
