@@ -72,6 +72,7 @@ const DemographicsContent = () => {
             </span>
           </div>
         </div>
+
         {/* Second KPI */}
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/25">
           <div className="text-xs text-blue-900/70 font-medium mb-1 md:mb-1.5 min-h-[22px] md:min-h-[29px] flex flex-col justify-center">
@@ -92,7 +93,7 @@ const DemographicsContent = () => {
       </div>
 
       {/* Retention Analysis */}
-      <div className="bg-white rounded-lg p-1.5 md:p-2 shadow-sm h-fit w-full md:w-[130%] border border-gray-200">
+      <div className="bg-white rounded-lg p-1.5 md:p-2 shadow-sm w-full md:w-[130%] border border-gray-200">
         <h3 className="text-[7.5px] md:text-[12px] font-medium text-gray-700 mb-1.5 md:mb-2">
           Patient Retention Analysis
         </h3>
@@ -136,7 +137,7 @@ const DemographicsContent = () => {
       </div>
 
       {/* Age Distribution by Gender */}
-      <div className="bg-white rounded-lg p-1.5 md:p-2 shadow-sm h-[100px] md:h-[160px] w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
+      <div className="bg-white rounded-lg p-1.5 md:p-2 shadow-sm mt-2 md:mt-3 w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
         <h3 className="text-[7.5px] md:text-[12px] font-medium text-gray-700 mb-1.5 md:mb-2">
           Age Distribution by Gender
         </h3>
@@ -208,7 +209,7 @@ const PracticeTabContent = () => {
         <TabsContent value="demographics">
           <DemographicsContent />
         </TabsContent>
-        {/* Include other TabsContent as needed */}
+        {/* Other TabsContent components can be included here */}
       </Tabs>
     </div>
   );
