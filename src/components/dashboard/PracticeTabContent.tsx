@@ -44,9 +44,9 @@ const GrowthRateIndicator = () => {
 <div className="relative w-14 h-14 md:w-12 md:h-12 flex items-center justify-center translate-y-0.5 md:-translate-y-2">
           <svg className="w-full h-full -rotate-90">
             <circle
-              cx="28"
-              cy="28"
-              r={radius}
+              cx="24"
+              cy="24"
+              r={20}
               stroke="#EEF2FF"
               strokeWidth="5.5"
               fill="none"
