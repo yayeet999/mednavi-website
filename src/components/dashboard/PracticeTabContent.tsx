@@ -65,7 +65,7 @@ const GrowthRateIndicator = () => {
           </svg>
           <span className="absolute text-[13px] md:text-[15px] font-medium text-blue-600">+14%</span>
         </div>
-        <div className="hidden md:block h-21 w-53">
+        <div className="hidden md:block h-21 w-50">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={monthlyData} 
