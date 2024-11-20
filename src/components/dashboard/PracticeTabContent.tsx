@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, DollarSign, Stethoscope } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface TooltipProps {
   active?: boolean;
@@ -15,65 +15,24 @@ interface TooltipProps {
 
 const DemographicsContent = () => {
   const retentionData = [
-    {
-      age: '18-30',
-      initial: 450,
-      retained: 385,
-    },
-    {
-      age: '31-45',
-      initial: 680,
-      retained: 598,
-    },
-    {
-      age: '46-60',
-      initial: 520,
-      retained: 472,
-    },
-    {
-      age: '60+',
-      initial: 350,
-      retained: 308,
-    }
+    { age: '18-30', initial: 450, retained: 385 },
+    { age: '31-45', initial: 680, retained: 598 },
+    { age: '46-60', initial: 520, retained: 472 },
+    { age: '60+', initial: 350, retained: 308 },
   ];
 
   const demographicsData = [
-    {
-      ageRange: '18-30',
-      male: 185,
-      female: 245,
-      other: 20
-    },
-    {
-      ageRange: '31-45',
-      male: 290,
-      female: 368,
-      other: 22
-    },
-    {
-      ageRange: '46-60',
-      male: 228,
-      female: 276,
-      other: 16
-    },
-    {
-      ageRange: '61-75',
-      male: 146,
-      female: 182,
-      other: 12
-    },
-    {
-      ageRange: '75+',
-      male: 68,
-      female: 92,
-      other: 8
-    }
+    { ageRange: '18-30', male: 185, female: 245, other: 20 },
+    { ageRange: '31-45', male: 290, female: 368, other: 22 },
+    { ageRange: '46-60', male: 228, female: 276, other: 16 },
+    { ageRange: '61-75', male: 146, female: 182, other: 12 },
+    { ageRange: '75+', male: 68, female: 92, other: 8 },
   ];
 
   const colors = {
     male: '#1E40AF',
     female: '#3B82F6',
-    other: '#93C5FD'
+    other: '#93C5FD',
   };
 
   const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
@@ -82,11 +41,7 @@ const DemographicsContent = () => {
         <div className="bg-white p-2 border border-gray-200 shadow-sm rounded-md">
           <p className="font-medium text-[10px] text-gray-700 mb-1">{`Age Range: ${label}`}</p>
           {payload.map((entry, index) => (
-            <p 
-              key={index} 
-              className="text-[10px]"
-              style={{ color: entry.color }}
-            >
+            <p key={index} className="text-[10px]" style={{ color: entry.color }}>
               {`${entry.name}: ${entry.value.toLocaleString()}`}
             </p>
           ))}
@@ -103,30 +58,41 @@ const DemographicsContent = () => {
         {/* First KPI */}
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/20">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-1 min-h-[20px] md:min-h-[26px] flex flex-col justify-center">
-            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Active</span>
-            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">
+              Total Active
+            </span>
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">
+              Patients
+            </span>
           </div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">2,547</span>
-            <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">+12.5%</span>
+            <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">
+              +12.5%
+            </span>
           </div>
         </div>
-
         {/* Second KPI */}
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-2 bg-blue-50/25">
           <div className="text-xs text-blue-900/70 font-medium mb-1 md:mb-1.5 min-h-[22px] md:min-h-[29px] flex flex-col justify-center">
-            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal nowrap">Total Inactive</span>
-            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Patients</span>
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal nowrap">
+              Total Inactive
+            </span>
+            <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">
+              Patients
+            </span>
           </div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-[9px] md:text-[19px] font-semibold text-blue-900">854</span>
-            <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-rose-600">-13.2%</span>
+            <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-rose-600">
+              -13.2%
+            </span>
           </div>
         </div>
       </div>
 
       {/* Retention Analysis */}
-      <div className="bg-white rounded-lg p-1.5 md:p-2 shadow-sm h-[90px] md:h-[158px] w-full md:w-[130%] border border-gray-200">
+      <div className="bg-white rounded-lg p-1.5 md:p-2 shadow-sm h-fit w-full md:w-[130%] border border-gray-200">
         <h3 className="text-[7.5px] md:text-[12px] font-medium text-gray-700 mb-1.5 md:mb-2">
           Patient Retention Analysis
         </h3>
@@ -145,17 +111,19 @@ const DemographicsContent = () => {
                     Age {group.age}
                   </span>
                   <div className="relative flex-1 h-[12px] md:h-[15px]">
-                    <div 
+                    <div
                       className="absolute top-0 left-0 h-full bg-blue-100 rounded"
                       style={{ width: initialWidth }}
                     />
-                    <div 
+                    <div
                       className="absolute top-0 left-0 h-full bg-blue-600 rounded"
                       style={{ width: retainedWidth }}
                     />
-                    <span 
+                    <span
                       className="absolute top-1/2 -translate-y-1/2 text-[6px] md:text-[8px] text-gray-500"
-                      style={{ left: `calc(${initialWidth} + ${window.innerWidth < 768 ? '4px' : '6px'})` }}
+                      style={{
+                        left: `calc(${initialWidth} + ${window.innerWidth < 768 ? '4px' : '6px'})`,
+                      }}
                     >
                       {retentionRate}%
                     </span>
@@ -167,7 +135,7 @@ const DemographicsContent = () => {
         </div>
       </div>
 
-      {/* Age Distribution */}
+      {/* Age Distribution by Gender */}
       <div className="bg-white rounded-lg p-1.5 md:p-2 shadow-sm h-[100px] md:h-[160px] w-[100%] md:w-[70%] md:ml-auto border border-gray-200">
         <h3 className="text-[7.5px] md:text-[12px] font-medium text-gray-700 mb-1.5 md:mb-2">
           Age Distribution by Gender
@@ -176,43 +144,36 @@ const DemographicsContent = () => {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={demographicsData}
-              margin={{ 
-                top: 5, 
-                right: 0, 
-                left: -2, 
-                bottom: window.innerWidth < 768 ? 15 : 2 
+              margin={{
+                top: 5,
+                right: 0,
+                left: -2,
+                bottom: window.innerWidth < 768 ? 15 : 2,
               }}
-              barSize={10}
+              barSize={window.innerWidth < 768 ? 10 : 17}
               barGap={2}
             >
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                stroke="#E5E7EB"
-                vertical={false}
-              />
-              <XAxis 
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+              <XAxis
                 dataKey="ageRange"
                 tickLine={{ stroke: '#E5E7EB' }}
                 axisLine={{ stroke: '#E5E7EB' }}
                 tick={{
                   fontSize: window.innerWidth < 768 ? 5 : 7,
-                  fill: '#4B5563'
+                  fill: '#4B5563',
                 }}
               />
               <YAxis
                 tickLine={{ stroke: '#E5E7EB' }}
                 axisLine={{ stroke: '#E5E7EB' }}
+                tickFormatter={value => value.toLocaleString()}
+                width={22}
                 tick={{
                   fontSize: window.innerWidth < 768 ? 5 : 7,
-                  fill: '#4B5563'
+                  fill: '#4B5563',
                 }}
-                tickFormatter={(value) => value.toLocaleString()}
-                width={22}
               />
-              <Tooltip 
-                content={<CustomTooltip />}
-                cursor={{ fill: 'rgba(229, 231, 235, 0.4)' }}
-              />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(229, 231, 235, 0.4)' }} />
               <Bar dataKey="male" name="Male" stackId="a" fill={colors.male} />
               <Bar dataKey="female" name="Female" stackId="a" fill={colors.female} />
               <Bar dataKey="other" name="Other" stackId="a" fill={colors.other} />
@@ -230,14 +191,24 @@ const PracticeTabContent = () => {
       <Tabs defaultValue="demographics" className="h-full flex flex-col [&>div]:bg-transparent">
         <TabsList className="flex justify-center">
           <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-0.5 md:px-1 mx-1">
-            <TabsTrigger value="demographics" className="rounded-lg text-[8px] md:text-xs px-2">Demographics</TabsTrigger>
-            <TabsTrigger value="financials" className="rounded-lg text-[8px] md:text-xs px-2">Financials</TabsTrigger>
-            <TabsTrigger value="procedures" className="rounded-lg text-[8px] md:text-xs px-2">Procedures</TabsTrigger>
+            <TabsTrigger
+              value="demographics"
+              className="rounded-lg text-[8px] md:text-xs px-2"
+            >
+              Demographics
+            </TabsTrigger>
+            <TabsTrigger value="financials" className="rounded-lg text-[8px] md:text-xs px-2">
+              Financials
+            </TabsTrigger>
+            <TabsTrigger value="procedures" className="rounded-lg text-[8px] md:text-xs px-2">
+              Procedures
+            </TabsTrigger>
           </div>
         </TabsList>
         <TabsContent value="demographics">
           <DemographicsContent />
         </TabsContent>
+        {/* Include other TabsContent as needed */}
       </Tabs>
     </div>
   );
