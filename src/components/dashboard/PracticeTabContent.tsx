@@ -206,14 +206,14 @@ const DemographicsContent = () => {
         </div>
       </div>
 
-      <div className="flex gap-1 md:gap-2 px-1 md:px-3 mb-3 h-[70px] md:h-[90px]">
+      <div className="flex gap-1 md:gap-2 px-1 md:px-3 mb-2 h-[70px] md:h-[90px]">
         <div className="flex-1"></div>
         <div className="w-[55%] md:w-[42%]">
           <PaymentDistribution />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-2 md:gap-x-3 w-full mt-auto">
+      <div className="grid grid-cols-2 gap-x-2 md:gap-x-3 w-full mt-1">
         <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-full md:w-[130%] border border-gray-200">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Patient Retention Analysis
