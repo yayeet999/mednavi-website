@@ -43,7 +43,7 @@ const GrowthRateIndicator = () => {
           <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Avg Growth</span>
           <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Rate/Month</span>
         </div>
-        <div className="relative w-14 h-14 md:w-12 md:h-12 flex items-center justify-center">
+        <div className="relative w-12 h-12 md:w-12 md:h-12 flex items-center justify-center">
           <svg className="w-full h-full -rotate-90">
             <circle
               cx="24"
@@ -335,8 +335,8 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-2 md:gap-x-3 w-full mt-1">
-        <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-full md:w-[130%] border border-gray-200 animate-[slide-up_1.7s_ease-out]">
+      <div className="grid grid-cols-2 gap-1 md:gap-2 w-full mt-1">
+  <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-full md:w-[115%] border border-blue-100/50 animate-[slide-up_1.7s_ease-out]">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Patient Retention Analysis
           </h3>
@@ -403,7 +403,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
           </div>
         </div>
 
-  <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-[100%] md:w-[70%] md:ml-auto border border-gray-200 animate-[slide-up_1.7s_ease-out]">
+  <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-[100%] md:w-[70%] md:ml-auto border border-blue-100/50 animate-[slide-up_1.7s_ease-out]">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Age Distribution by Gender
           </h3>
@@ -547,9 +547,9 @@ const PracticeTabContent = () => {
           from { width: 0; }
         }
         @keyframes grow-bar {
-          from { transform: scaleY(0); }
-          to { transform: scaleY(1); }
-        }
+  from { transform: scaleY(0); transform-origin: bottom; }
+  to { transform: scaleY(1); transform-origin: bottom; }
+}
         @keyframes grow-line {
           from { stroke-dasharray: 1000;
                  stroke-dashoffset: 1000; }
