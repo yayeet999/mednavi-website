@@ -505,16 +505,22 @@ const PracticeTabContent = () => {
         <div className="flex justify-center">
           <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2 mx-1">
   <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
-    <TabsTrigger value="demographics" className="flex-1 rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-normal flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200">
-                <Users className="w-2 h-2 md:w-4 md:h-4" />
-                Demographics
-              </TabsTrigger>
-              <TabsTrigger value="financials" className="rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs px-2 md:px-6 w-[90px] md:min-w-[210px] font-normal flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200">
-                <DollarSign className="w-2 h-2 md:w-4 md:h-4" />
-                Financials
-              </TabsTrigger>
-            </TabsList>
-          </div>
+    <TabsTrigger 
+      value="demographics" 
+      className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-normal flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
+    >
+      <Users className="w-2 h-2 md:w-4 md:h-4" />
+      Demographics
+    </TabsTrigger>
+    <TabsTrigger 
+      value="financials" 
+      className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-normal flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
+    >
+      <DollarSign className="w-2 h-2 md:w-4 md:h-4" />
+      Financials
+    </TabsTrigger>
+  </TabsList>
+</div>
         </div>
 
         <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2">
