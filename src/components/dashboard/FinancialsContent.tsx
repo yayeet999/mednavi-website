@@ -140,7 +140,7 @@ return (
       </div>
 
       {/* Main Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-3 px-2 md:px-4 flex-1 h-[190px] md:max-h-[400px]">
+      <div className="grid grid-cols-2 gap-0.75 md:gap-3 px-2 md:px-4 flex-1 h-[190px] md:max-h-[400px]">
         {/* Monthly Production Chart */}
         <div className="bg-white rounded-lg p-0.5 md:p-2.5 shadow-sm w-full h-[90px] md:h-full border border-gray-200 animate-[slide-up_1.7s_ease-out] overflow-hidden">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
@@ -193,25 +193,24 @@ return (
             Total Expenses Distribution
           </h3>
           <div className="h-[75px] md:h-[200px] w-full flex items-center">
-            <div className="w-[35%] space-y-0.25 md:space-y-1 text-[6px] md:text-[7px]">
+            <div className="w-[35%] space-y-[0.15rem] md:space-y-1 text-[6px] md:text-[7px]">
               {expensesData.map((entry, index) => (
                 <div key={index} className="flex items-center gap-1 md:gap-2">
-                  <div 
-                    className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full"
+                  <div className="w-1.25 h-1.25 md:w-2 md:h-2 rounded-full"
                     style={{ backgroundColor: entry.color }}
                   />
-                  <span className="text-[7px] md:text-[9px] text-gray-600">
+                  <span className="text-[6px] md:text-[9px] text-gray-600">
                     {entry.name}: ${(entry.value / 1000).toFixed(1)}k
                   </span>
                 </div>
               ))}
             </div>
-            <div className="w-[65%] h-full flex items-center justify-center relative">
+            <div className="w-[65%] h-full flex items-center justify-center relative -mt-2 md:mt-0">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-[8px] md:text-xs text-gray-500">Total</div>
-                  <div className="text-[10px] md:text-sm font-semibold text-gray-800">$79,355</div>
-                </div>
+  <div className="text-[8px] md:text-xs text-gray-500">Total</div>
+  <div className="text-[8px] md:text-sm font-semibold text-gray-800">$79,355</div>
+</div>
               </div>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
