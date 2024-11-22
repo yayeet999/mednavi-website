@@ -43,12 +43,12 @@ const GrowthRateIndicator = () => {
           <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Avg Growth</span>
           <span className="text-[11px] md:text-[13px] text-gray-600 leading-tight font-semibold">Rate/Month</span>
         </div>
-        <div className="relative w-12 h-12 md:w-12 md:h-12 flex items-center justify-center">
+        <div className="relative w-10 h-10 md:w-14 md:h-14 flex items-center justify-center">
           <svg className="w-full h-full -rotate-90">
             <circle
-              cx="24"
-              cy="24"
-              r={typeof window !== 'undefined' && window.innerWidth >= 768 ? radiusDesktop : radius}
+  cx="20"
+  cy="20"
+  r={typeof window !== 'undefined' && window.innerWidth >= 768 ? radiusDesktop : 18}
               stroke="#EEF2FF"
               strokeWidth="5.5"
               fill="none"
@@ -66,7 +66,7 @@ const GrowthRateIndicator = () => {
               className="animate-[progress-circle_1.7s_ease-out]"
             />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-[13px] md:text-[13px] font-medium text-blue-600 animate-[fade-in_1.7s_ease-out]">
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] md:text-[13px] font-medium text-blue-600 animate-[fade-in_1.7s_ease-out]">
             +14%
           </span>
         </div>
