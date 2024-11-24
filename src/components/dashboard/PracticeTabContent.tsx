@@ -178,7 +178,7 @@ const PaymentDistribution = () => {
                 style={{ backgroundColor: entry.color }}
               />
               <span 
-                className="text-[7px] md:text-[11px] font-medium animate-[fade-in_1.7s_ease-out]"
+                className="text-[7px] md:text-[11px] font-medium animate-[label-fade_1.2s_cubic-bezier(0.34, 1.56, 0.64, 1)]"
                 style={{ color: entry.color }}
               >
                 {entry.name}: {entry.value}%
@@ -330,7 +330,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
         <div className="flex-1 animate-[fade-in_1.7s_ease-out]">
           <GrowthRateIndicator />
         </div>
-        <div className="w-[49%] md:w-[42%] animate-[fade-in_1.7s_ease-out]">
+        <div className="w-[50%] md:w-[42%] animate-[fade-in_1.7s_ease-out]">
           <PaymentDistribution />
         </div>
       </div>
@@ -539,10 +539,33 @@ const PracticeTabContent = () => {
           from { transform: translateY(20px); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }
         }
+        @keyframes fill-segment {
+  0% { 
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
         @keyframes fade-in {
           from { opacity: 0; }
           to { opacity: 1; }
         }
+        @keyframes label-fade {
+  0% { 
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  100% { 
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
         @keyframes grow-width {
           from { width: 0; }
         }
