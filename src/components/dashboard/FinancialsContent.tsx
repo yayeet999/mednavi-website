@@ -213,22 +213,23 @@ const FinancialsContent = () => {
                 </div>
               </div>
               <div className="relative w-full h-full transform translate-y-[-8%] md:translate-y-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={expensesData}
-                    innerRadius="60%"
-                    outerRadius="90%"
-                    paddingAngle={2}
-                    dataKey="value"
-                    className="animate-[rotate-pie_1.7s_ease-out]
-                  >
-                    {expensesData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={expensesData}
+                      innerRadius="60%"
+                      outerRadius="90%"
+                      paddingAngle={2}
+                      dataKey="value"
+                      className="animate-[rotate-pie_1.7s_ease-out]"
+                    >
+                      {expensesData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         </div>
@@ -298,15 +299,15 @@ const FinancialsContent = () => {
           to { transform: scaleX(1); transform-origin: left; }
         }
         @keyframes rotate-pie {
-    from { 
-      transform: rotate(-180deg); 
-      opacity: 0;
-    }
-    to { 
-      transform: rotate(0deg);
-      opacity: 1;
-    }
-  }
+          from { 
+            transform: rotate(-180deg); 
+            opacity: 0;
+          }
+          to { 
+            transform: rotate(0deg);
+            opacity: 1;
+          }
+        }
         @keyframes pulse-subtle {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.7; }
