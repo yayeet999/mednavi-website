@@ -79,7 +79,7 @@ const FinancialsContent = () => {
     return null;
   };
 
-return (
+  return (
     <div className="flex-1 h-full pr-1 md:pr-3 flex flex-col min-h-0">
       {/* Top Stats Row */}
       <div className="w-full flex gap-1 md:gap-2 px-2 md:px-4 mb-3">
@@ -93,18 +93,17 @@ return (
             <span className="hidden md:inline text-[4.1px] md:text-[9.7px] font-medium text-emerald-600">+8.2%</span>
           </div>
           <button 
-  onClick={() => setShowDistributionPopup(true)}
-  className="hidden md:flex absolute top-1 right-1 p-1 rounded-full hover:bg-blue-50 transition-colors group"
-  title="View Production Distribution"
->
-  <BarChart2 
-    className="w-4 h-4 text-blue-600 animate-[pulse-subtle_3s_ease-in-out_infinite]"
-  />
-  <div className="absolute -bottom-1 left-1/2 w-1 h-1 bg-blue-400 rounded-full opacity-75 animate-[glow_2s_ease-in-out_infinite]" />
-</button>
+            onClick={() => setShowDistributionPopup(true)}
+            className="hidden md:flex absolute top-1 right-1 p-1 rounded-full hover:bg-blue-50 transition-colors group"
+            title="View Production Distribution"
+          >
+            <BarChart2 
+              className="w-4 h-4 text-blue-600 animate-[pulse-subtle_3s_ease-in-out_infinite]"
+            />
+            <div className="absolute -bottom-1 left-1/2 w-1 h-1 bg-blue-400 rounded-full opacity-75 animate-[glow_2s_ease-in-out_infinite]" />
+          </button>
         </div>
 
-        {/* Other KPI boxes remain the same */}
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px] animate-[slide-up_1.7s_ease-out]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Practice</span>
@@ -206,7 +205,7 @@ return (
                 </div>
               ))}
             </div>
-            <div className="w-[65%] h-full flex items-center justify-center relative -mt-2 md:mt-0">
+            <div className="w-[65%] h-full flex items-center justify-center relative -mt-2 md:mt-0 transform scale-[1.15] md:transform-none">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-[8px] md:text-xs text-gray-500">Total</div>
@@ -215,11 +214,10 @@ return (
               </div>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <PieChart>
-  <Pie
-    data={expensesData}
-    innerRadius={typeof window !== 'undefined' && window.innerWidth < 768 ? "55%" : "60%"}
-    outerRadius={typeof window !== 'undefined' && window.innerWidth < 768 ? "95%" : "90%"}
+                  <Pie
+                    data={expensesData}
+                    innerRadius={typeof window !== 'undefined' && window.innerWidth < 768 ? "55%" : "60%"}
+                    outerRadius={typeof window !== 'undefined' && window.innerWidth < 768 ? "95%" : "90%"}
                     paddingAngle={2}
                     dataKey="value"
                     className="animate-[rotate-pie_1.7s_ease-out]"
