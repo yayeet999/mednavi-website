@@ -205,13 +205,13 @@ const FinancialsContent = () => {
                 </div>
               ))}
             </div>
-            <div className="w-[65%] h-full flex items-center justify-center relative -mt-3.5 md:mt-0">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-[8px] md:text-xs text-gray-500">Total</div>
-                  <div className="text-[10px] md:text-sm font-semibold text-gray-800">$79,355</div>
-                </div>
-              </div>
+            <div className="w-[65%] h-full flex items-center justify-center relative -mt-2 md:mt-0">
+  <div className="absolute inset-0 flex items-center justify-center translate-y-[-4px] md:translate-y-0">
+    <div className="text-center">
+      <div className="text-[7.5px] md:text-xs text-gray-500">Total</div>
+      <div className="text-[9.5px] md:text-sm font-semibold text-gray-800">$79,355</div>
+    </div>
+  </div>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
