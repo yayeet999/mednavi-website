@@ -336,7 +336,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
       </div>
 
       <div className="grid grid-cols-2 gap-1 md:gap-2 w-full mt-1">
-  <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-full md:w-[115%] border border-blue-100/50 animate-[slide-up_1.7s_ease-out]">
+  <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-full md:w-[105%] border border-blue-100/50 animate-[slide-up_1.7s_ease-out]">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Patient Retention Analysis
           </h3>
@@ -403,7 +403,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
           </div>
         </div>
 
-  <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-[100%] md:w-[70%] md:ml-auto border border-blue-100/50 animate-[slide-up_1.7s_ease-out]">
+  <div className="bg-white rounded-lg p-1.5 md:p-2.5 shadow-sm h-[100px] md:h-[158px] w-[100%] md:w-[85%] md:ml-auto border border-blue-100/50 animate-[slide-up_1.7s_ease-out]">
           <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
             Age Distribution by Gender
           </h3>
