@@ -186,7 +186,7 @@ const FinancialsContent = () => {
         </div>
         {/* Expenses Pie Chart */}
         <div className="bg-white rounded-lg p-0.5 md:p-2.5 shadow-sm w-full h-[90px] md:h-full border border-gray-200 animate-[slide-up_1.7s_ease-out] overflow-hidden">
-          <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
+          <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-0.5 md:mb-1.5">
             Total Expenses Distribution
           </h3>
           <div className="h-[75px] md:h-[200px] w-full flex items-center">
