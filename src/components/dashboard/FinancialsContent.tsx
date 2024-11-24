@@ -186,11 +186,11 @@ const FinancialsContent = () => {
         </div>
         {/* Expenses Pie Chart */}
         <div className="bg-white rounded-lg p-0.5 md:p-2.5 shadow-sm w-full h-[90px] md:h-full border border-gray-200 animate-[slide-up_1.7s_ease-out] overflow-hidden">
-          <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-0.5 md:mb-1.5">
+          <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-0.5 md:mb-1.5 pl-1 md:pl-0">
             Total Expenses Distribution
           </h3>
           <div className="h-[75px] md:h-[200px] w-full flex items-center">
-            <div className="w-[35%] space-y-0.25 md:space-y-1 text-[6px] md:text-[7px]">
+            <div className="w-[35%] space-y-0.25 md:space-y-1 text-[6px] md:text-[7px] pl-1 md:pl-0">
               {expensesData.map((entry, index) => (
                 <div key={index} className="flex items-center gap-1 md:gap-2">
                   <div 
