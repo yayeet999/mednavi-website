@@ -82,7 +82,7 @@ const FinancialsContent = () => {
   return (
     <div className="flex-1 h-full pr-1 md:pr-3 flex flex-col min-h-0">
       {/* Top Stats Row */}
-      <div className="w-full flex gap-1 md:gap-2 px-2 md:px-4 mb-3">
+      <div className="w-full flex gap-1 md:gap-2 px-2 md:px-4 mb-2 md:mb-3">
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px] animate-[slide-up_1.7s_ease-out] relative">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Gross</span>
