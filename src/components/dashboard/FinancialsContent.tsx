@@ -187,50 +187,51 @@ const FinancialsContent = () => {
         </div>
 
         {/* Expenses Pie Chart */}
-<div className="bg-white rounded-lg p-0.5 md:p-2.5 shadow-sm w-full h-[90px] md:h-full border border-gray-200 animate-[slide-up_1.7s_ease-out] overflow-hidden">
-  <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
-    Total Expenses Distribution
-  </h3>
-  <div className="h-[75px] md:h-[200px] w-full flex items-center">
-    <div className="w-[35%] space-y-0.25 md:space-y-1 text-[6px] md:text-[7px]">
-      {expensesData.map((entry, index) => (
-        <div key={index} className="flex items-center gap-1 md:gap-2">
-          <div 
-            className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full"
-            style={{ backgroundColor: entry.color }}
-          />
-          <span className="text-[7px] md:text-[9px] text-gray-600">
-            {entry.name}: ${(entry.value / 1000).toFixed(1)}k
-          </span>
-        </div>
-      ))}
-    </div>
-    <div className="w-[65%] h-full flex items-center justify-center relative">
-      <div className="absolute inset-0 flex items-center justify-center translate-y-[-15%] md:translate-y-0">
-        <div className="text-center">
-          <div className="text-[7.5px] md:text-xs text-gray-500">Total</div>
-          <div className="text-[9.5px] md:text-sm font-semibold text-gray-800">$79,355</div>
+        <div className="bg-white rounded-lg p-0.5 md:p-2.5 shadow-sm w-full h-[90px] md:h-full border border-gray-200 animate-[slide-up_1.7s_ease-out] overflow-hidden">
+          <h3 className="text-[8.5px] md:text-[13px] font-medium text-gray-700 mb-1.5">
+            Total Expenses Distribution
+          </h3>
+          <div className="h-[75px] md:h-[200px] w-full flex items-center">
+            <div className="w-[35%] space-y-0.25 md:space-y-1 text-[6px] md:text-[7px]">
+              {expensesData.map((entry, index) => (
+                <div key={index} className="flex items-center gap-1 md:gap-2">
+                  <div 
+                    className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full"
+                    style={{ backgroundColor: entry.color }}
+                  />
+                  <span className="text-[7px] md:text-[9px] text-gray-600">
+                    {entry.name}: ${(entry.value / 1000).toFixed(1)}k
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="w-[65%] h-full flex items-center justify-center relative">
+              <div className="absolute inset-0 flex items-center justify-center translate-y-[-15%] md:translate-y-0">
+                <div className="text-center">
+                  <div className="text-[7.5px] md:text-xs text-gray-500">Total</div>
+                  <div className="text-[9.5px] md:text-sm font-semibold text-gray-800">$79,355</div>
+                </div>
+              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={expensesData}
+                    innerRadius="60%"
+                    outerRadius="90%"
+                    paddingAngle={2}
+                    dataKey="value"
+                    className="animate-[rotate-pie_1.7s_ease-out] translate-y-[-8%] md:translate-y-0"
+                  >
+                    {expensesData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={expensesData}
-            innerRadius="60%"
-            outerRadius="90%"
-            paddingAngle={2}
-            dataKey="value"
-            className="animate-[rotate-pie_1.7s_ease-out]"
-          >
-            {expensesData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  </div>
-</div>
 
       {/* Production Distribution Popup */}
       {showDistributionPopup && (
