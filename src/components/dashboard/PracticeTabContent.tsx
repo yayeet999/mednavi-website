@@ -24,7 +24,7 @@ interface AxisTickProps {
 
 const GrowthRateIndicator = () => {
   const percentage = 14;
-  const radius = 23;
+  const radius = 20;
   const radiusDesktop = 20;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
@@ -59,14 +59,14 @@ const GrowthRateIndicator = () => {
               cy="24"
               r={typeof window !== 'undefined' && window.innerWidth >= 768 ? radiusDesktop : radius}
               stroke="#3B82F6"
-              strokeWidth="5.5"
+              strokeWidth={typeof window !== 'undefined' && window.innerWidth >= 768 ? "5.5" : "4.7"}
               fill="none"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
               className="animate-[progress-circle_1.7s_ease-out]"
             />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-[13px] md:text-[13px] font-medium text-blue-600 animate-[fade-in_1.7s_ease-out]">
+          <span className="absolute inset-0 flex items-center justify-center text-[11px] md:text-[11px] font-medium text-blue-600 animate-[fade-in_1.7s_ease-out]">
             +14%
           </span>
         </div>
@@ -471,7 +471,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
                   stackId="a" 
                   fill={colors.male}
                   maxBarSize={55}
-                  className="animate-[grow-bar_1.7s_ease-out]"
+                  className="animate-[grow-bar_1.2s_cubic-bezier(0.34, 1.56, 0.64, 1)]"
                 />
                 <Bar 
                   dataKey="female" 
@@ -479,7 +479,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
                   stackId="a" 
                   fill={colors.female}
                   maxBarSize={55}
-                  className="animate-[grow-bar_1.7s_ease-out]"
+                  className="animate-[grow-bar_1.2s_cubic-bezier(0.34, 1.56, 0.64, 1)]"
                 />
                 <Bar 
                   dataKey="other" 
@@ -487,7 +487,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
                   stackId="a" 
                   fill={colors.other}
                   maxBarSize={55}
-                  className="animate-[grow-bar_1.7s_ease-out]"
+                  className="animate-[grow-bar_1.2s_cubic-bezier(0.34, 1.56, 0.64, 1)]"
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -547,8 +547,19 @@ const PracticeTabContent = () => {
           from { width: 0; }
         }
         @keyframes grow-bar {
-  from { transform: scaleY(0); transform-origin: bottom; }
-  to { transform: scaleY(1); transform-origin: bottom; }
+  0% { 
+    transform: scaleY(0);
+    transform-origin: bottom;
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% { 
+    transform: scaleY(1);
+    transform-origin: bottom;
+    opacity: 1;
+  }
 }
         @keyframes grow-line {
           from { stroke-dasharray: 1000;
