@@ -205,31 +205,32 @@ const FinancialsContent = () => {
                 </div>
               ))}
             </div>
-            <div className="w-[65%] h-full flex items-start justify-center relative pt-2 md:items-center md:pt-0">
-  <div className="absolute inset-0 flex items-center justify-center">
-    <div className="text-center translate-y-[2px] md:translate-y-0">
+            <div className="w-[65%] h-full flex items-center justify-center relative">
+  <div className="absolute inset-0 flex items-center justify-center translate-y-[-15%] md:translate-y-0">
+    <div className="text-center">
       <div className="text-[7.5px] md:text-xs text-gray-500">Total</div>
       <div className="text-[9.5px] md:text-sm font-semibold text-gray-800">$79,355</div>
     </div>
   </div>
-  <ResponsiveContainer width="100%" height="100%">
-    <PieChart>
-      <Pie
-        data={expensesData}
-        innerRadius="60%"
-        outerRadius="90%"
-        paddingAngle={2}
-        dataKey="value"
-        className="animate-[rotate-pie_1.7s_ease-out]"
-      >
-        {expensesData.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={entry.color} />
-        ))}
-      </Pie>
-    </PieChart>
-  </ResponsiveContainer>
+  <div className="w-full h-full flex items-center justify-center translate-y-[-15%] md:translate-y-0">
+    <ResponsiveContainer width="100%" height="100%">
+      <PieChart>
+        <Pie
+          data={expensesData}
+          innerRadius="60%"
+          outerRadius="90%"
+          paddingAngle={2}
+          dataKey="value"
+          className="animate-[rotate-pie_1.7s_ease-out]"
+        >
+          {expensesData.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color} />
+          ))}
+        </Pie>
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
 </div>
-          </div>
         </div>
       </div>
 
