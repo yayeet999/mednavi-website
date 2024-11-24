@@ -205,7 +205,7 @@ const FinancialsContent = () => {
                 </div>
               ))}
             </div>
-            <div className="w-[65%] h-full flex items-center justify-center relative -mt-2 md:mt-0 transform scale-[1.15] md:transform-none">
+            <div className="w-[65%] h-full flex items-center justify-center relative -mt-3.5 md:mt-0">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-[8px] md:text-xs text-gray-500">Total</div>
@@ -215,13 +215,13 @@ const FinancialsContent = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={expensesData}
-                    innerRadius={typeof window !== 'undefined' && window.innerWidth < 768 ? "55%" : "60%"}
-                    outerRadius={typeof window !== 'undefined' && window.innerWidth < 768 ? "95%" : "90%"}
-                    paddingAngle={2}
-                    dataKey="value"
-                    className="animate-[rotate-pie_1.7s_ease-out]"
-                  >
+  data={expensesData}
+  innerRadius={typeof window !== 'undefined' && window.innerWidth < 768 ? "60%" : "60%"}
+  outerRadius={typeof window !== 'undefined' && window.innerWidth < 768 ? "90%" : "90%"}
+  paddingAngle={2}
+  dataKey="value"
+  className="animate-[rotate-pie_1.7s_ease-out] translate-y-[-8px] md:translate-y-0"
+>
                     {expensesData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
