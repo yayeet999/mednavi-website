@@ -206,12 +206,13 @@ const FinancialsContent = () => {
               ))}
             </div>
             <div className="w-[65%] h-full flex items-center justify-center relative">
-              <div className="absolute inset-0 flex items-center justify-center translate-y-[-8%] md:translate-y-0">
+              <div className="absolute inset-0 flex items-center justify-center transform translate-y-[-8%] md:translate-y-0">
                 <div className="text-center">
                   <div className="text-[6.7px] md:text-xs text-gray-500">Total</div>
                   <div className="text-[8.5px] md:text-sm font-semibold text-gray-800">$79,355</div>
                 </div>
               </div>
+              <div className="relative w-full h-full transform translate-y-[-8%] md:translate-y-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -220,7 +221,7 @@ const FinancialsContent = () => {
                     outerRadius="90%"
                     paddingAngle={2}
                     dataKey="value"
-                    className="animate-[rotate-pie_1.7s_ease-out] translate-y-[-8%] md:translate-y-0"
+                    className="animate-[rotate-pie_1.7s_ease-out]
                   >
                     {expensesData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -297,9 +298,15 @@ const FinancialsContent = () => {
           to { transform: scaleX(1); transform-origin: left; }
         }
         @keyframes rotate-pie {
-          from { transform: rotate(-180deg); }
-          to { transform: rotate(0); }
-        }
+    from { 
+      transform: rotate(-180deg); 
+      opacity: 0;
+    }
+    to { 
+      transform: rotate(0deg);
+      opacity: 1;
+    }
+  }
         @keyframes pulse-subtle {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.7; }
