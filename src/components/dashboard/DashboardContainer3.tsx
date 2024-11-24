@@ -1,7 +1,15 @@
+'use client';
 import React, { useState } from 'react';
-import { Home, BarChart2, Map, Braces, Users, ArrowUpRight } from 'lucide-react';
+import { Home, Map, BarChart2, Braces, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ResponsiveContainer, LineChart, Line, Tooltip } from 'recharts';
+import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { LineChart, Line, ResponsiveContainer } from 'recharts';
 
 // Types
 interface DataPoint {
