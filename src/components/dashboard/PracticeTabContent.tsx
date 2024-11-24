@@ -330,7 +330,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
         <div className="flex-1 animate-[fade-in_1.7s_ease-out]">
           <GrowthRateIndicator />
         </div>
-        <div className="w-[52%] md:w-[42%] animate-[fade-in_1.7s_ease-out]">
+        <div className="w-[49%] md:w-[42%] animate-[fade-in_1.7s_ease-out]">
           <PaymentDistribution />
         </div>
       </div>
