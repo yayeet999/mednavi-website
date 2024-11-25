@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { MapContainer, TileLayer, GeoJSON, ZoomControl } from 'react-leaflet';
@@ -16,6 +16,9 @@ interface Icon {
   label: string;
 }
 
+const CHICAGO_CENTER: [number, number] = [42.0451, -87.8450];
+const INITIAL_ZOOM = 11;
+
 const zipCodes: ZipCode[] = [
   { id: "60714", name: "Niles" },
   { id: "60631", name: "Edison Park" },
@@ -28,7 +31,6 @@ const RegionalTabContent: React.FC = () => {
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
 
   const icons: Icon[] = useMemo(() => [
     { id: "financial", icon: DollarSign, label: "Financial" },
@@ -37,33 +39,31 @@ const RegionalTabContent: React.FC = () => {
   ], []);
 
   useEffect(() => {
-    const loadGeoJson = async () => {
-      try {
-        const response = await fetch('/chicago-zipcodes.json');
-        const data = await response.json();
+    fetch('/chicago-zipcodes.json')
+      .then(response => response.json())
+      .then(data => {
+        // Filter to only include our specific ZIP codes
+        data.features = data.features.filter((feature: any) => 
+          zipCodes.some(zip => zip.id === feature.properties.zip)
+        );
         setGeoJsonData(data);
-        setMapLoaded(true);
-      } catch (error) {
-        console.error('Error loading GeoJSON:', error);
-      }
-    };
-    loadGeoJson();
+      });
   }, []);
 
-  const handleZipClick = (zipId: string) => {
+  const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
-  };
+  }, []);
 
-  const handleIconClick = (iconId: Icon['id']) => {
+  const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
     setSelectedSubData(null);
-  };
+  }, []);
 
-  const handleSubDataClick = (subDataId: string) => {
+  const handleSubDataClick = useCallback((subDataId: string) => {
     setSelectedSubData(subDataId);
-  };
+  }, []);
 
   const mapContainerVariants = {
     full: { width: "100%" },
@@ -91,49 +91,60 @@ const RegionalTabContent: React.FC = () => {
     }
   };
 
-  // Memoized style function for better performance
-  const style = useMemo(() => (feature: any) => {
+  const onEachFeature = useCallback((feature: any, layer: L.Layer) => {
+    const zip = feature.properties.zip;
+    if (zipCodes.some(z => z.id === zip)) {
+      layer.bindTooltip(zipCodes.find(z => z.id === zip)?.name || '', {
+        permanent: false,
+        direction: 'center',
+        className: 'bg-white/90 px-2 py-1 rounded text-xs'
+      });
+      
+      layer.on({
+        click: () => handleZipClick(zip),
+        mouseover: (e) => {
+          const layer = e.target;
+          layer.setStyle({
+            fillOpacity: 0.7,
+            fillColor: '#CBD5E1'
+          });
+          layer.openTooltip();
+        },
+        mouseout: (e) => {
+          const layer = e.target;
+          layer.setStyle(style(feature));
+          layer.closeTooltip();
+        }
+      });
+    }
+  }, [handleZipClick]);
+
+  const style = useCallback((feature: any) => {
     const zip = feature.properties.zip;
     const isClickable = zipCodes.some(z => z.id === zip);
     const isSelected = zip === selectedZip;
 
     return {
       fillColor: isSelected ? '#052b52' : isClickable ? '#E2E8F0' : '#F1F5F9',
-      weight: isSelected ? 2 : 0.5,
+      weight: isSelected ? 2 : 1,
       opacity: 1,
-      color: isSelected ? '#052b52' : isClickable ? '#94A3B8' : '#CBD5E1',
-      fillOpacity: 0.5,
-      className: isClickable ? 'cursor-pointer' : ''
+      color: isSelected ? '#052b52' : '#94A3B8',
+      fillOpacity: isSelected ? 0.6 : 0.4,
+      className: 'transition-all duration-200'
     };
   }, [selectedZip]);
 
-  // Memoized event handlers for GeoJSON features
-  const eventHandlers = useMemo(() => ({
-    onEachFeature: (feature: any, layer: L.Layer) => {
-      const zip = feature.properties.zip;
-      const isClickable = zipCodes.some(z => z.id === zip);
-      
-      if (isClickable) {
-        layer.on({
-          click: () => handleZipClick(zip),
-          mouseover: (e: L.LeafletMouseEvent) => {
-            const layer = e.target;
-            layer.setStyle({
-              fillColor: selectedZip === zip ? '#052b52' : '#CBD5E1',
-              fillOpacity: 0.7
-            });
-          },
-          mouseout: (e: L.LeafletMouseEvent) => {
-            const layer = e.target;
-            layer.setStyle({
-              fillColor: selectedZip === zip ? '#052b52' : '#E2E8F0',
-              fillOpacity: 0.5
-            });
-          }
-        });
-      }
-    }
-  }), [selectedZip]);
+  const mapOptions = useMemo(() => ({
+    zoomSnap: 0.5,
+    zoomDelta: 0.5,
+    minZoom: 10,
+    maxZoom: 13,
+    maxBounds: [
+      [41.8, -88.2], // Southwest coordinates
+      [42.2, -87.5]  // Northeast coordinates
+    ],
+    maxBoundsViscosity: 1.0
+  }), []);
 
   return (
     <div className="w-full h-full flex">
@@ -175,32 +186,30 @@ const RegionalTabContent: React.FC = () => {
         </AnimatePresence>
 
         <div className="h-full w-full">
-          {mapLoaded && (
-            <MapContainer
-              center={[42.05, -87.85]}
-              zoom={11}
-              style={{ height: '100%', width: '100%' }}
-              zoomControl={false}
-              minZoom={10}
-              maxZoom={13}
-              attributionControl={false}
-              whenReady={() => setMapLoaded(true)}
-            >
-              <ZoomControl position="bottomright" />
-              <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png"
-                noWrap={true}
+          <MapContainer
+            center={CHICAGO_CENTER}
+            zoom={INITIAL_ZOOM}
+            style={{ height: '100%', width: '100%' }}
+            zoomControl={false}
+            {...mapOptions}
+          >
+            <ZoomControl position="bottomright" />
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
+              subdomains={['a', 'b', 'c', 'd']}
+              maxZoom={19}
+              attribution=""
+              className="map-tiles"
+            />
+            {geoJsonData && (
+              <GeoJSON
+                key={selectedZip || 'default'}
+                data={geoJsonData}
+                style={style}
+                onEachFeature={onEachFeature}
               />
-              {geoJsonData && (
-                <GeoJSON
-                  key={selectedZip || 'default'}
-                  data={geoJsonData}
-                  style={style}
-                  onEachFeature={eventHandlers.onEachFeature}
-                />
-              )}
-            </MapContainer>
-          )}
+            )}
+          </MapContainer>
         </div>
 
         <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-xs z-[1000]">
