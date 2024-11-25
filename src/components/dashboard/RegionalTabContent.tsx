@@ -23,6 +23,13 @@ interface ZipBoundary {
   southwest: google.maps.LatLng;
 }
 
+interface GeocodeResult extends google.maps.GeocoderResult {
+  geometry: {
+    location: google.maps.LatLng;
+    viewport: google.maps.LatLngBounds;
+  };
+}
+
 const zipCodes: ZipCode[] = [
   { id: "60714", name: "Niles" },
   { id: "60631", name: "Edison Park" },
@@ -88,67 +95,67 @@ const RegionalTabContent: React.FC = () => {
   ];
 
   const fetchZipBoundaries = useCallback(async () => {
-    const geocoder = new google.maps.Geocoder();
-    const boundaries = {
-      type: "FeatureCollection",
-      features: []
-    };
-    const boundariesMap = new Map<string, ZipBoundary>();
+  const geocoder = new google.maps.Geocoder();
+  const boundaries = {
+    type: "FeatureCollection",
+    features: []
+  };
+  const boundariesMap = new Map<string, ZipBoundary>();
 
-    for (const zipCode of zipCodes) {
-      try {
-        const result = await new Promise((resolve, reject) => {
-          geocoder.geocode(
-            { 
-              address: `${zipCode.id} IL`,
-              componentRestrictions: {
-                country: 'US',
-                postalCode: zipCode.id
-              }
-            },
-            (results, status) => {
-              if (status === 'OK' && results && results[0]) {
-                resolve(results[0]);
-              } else {
-                reject(status);
-              }
+  for (const zipCode of zipCodes) {
+    try {
+      const result = await new Promise<GeocodeResult>((resolve, reject) => {
+        geocoder.geocode(
+          { 
+            address: `${zipCode.id} IL`,
+            componentRestrictions: {
+              country: 'US',
+              postalCode: zipCode.id
             }
-          );
-        });
-
-        const bounds = result.geometry.viewport;
-        const ne = bounds.getNorthEast();
-        const sw = bounds.getSouthWest();
-        
-        boundariesMap.set(zipCode.id, {
-          northeast: ne,
-          southwest: sw
-        });
-
-        const feature = {
-          type: "Feature",
-          properties: { zip: zipCode.id },
-          geometry: {
-            type: "Polygon",
-            coordinates: [[
-              [sw.lng(), sw.lat()],
-              [ne.lng(), sw.lat()],
-              [ne.lng(), ne.lat()],
-              [sw.lng(), ne.lat()],
-              [sw.lng(), sw.lat()]
-            ]]
+          },
+          (results, status) => {
+            if (status === 'OK' && results && results[0]) {
+              resolve(results[0] as GeocodeResult);
+            } else {
+              reject(status);
+            }
           }
-        };
-        
-        boundaries.features.push(feature);
-      } catch (error) {
-        console.error(`Error fetching boundary for ${zipCode.id}:`, error);
-      }
-    }
+        );
+      });
 
-    setZipBoundaries(boundariesMap);
-    return boundaries;
-  }, []);
+      const bounds = result.geometry.viewport;
+      const ne = bounds.getNorthEast();
+      const sw = bounds.getSouthWest();
+      
+      boundariesMap.set(zipCode.id, {
+        northeast: ne,
+        southwest: sw
+      });
+
+      const feature = {
+        type: "Feature",
+        properties: { zip: zipCode.id },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [sw.lng(), sw.lat()],
+            [ne.lng(), sw.lat()],
+            [ne.lng(), ne.lat()],
+            [sw.lng(), ne.lat()],
+            [sw.lng(), sw.lat()]
+          ]]
+        }
+      };
+      
+      boundaries.features.push(feature);
+    } catch (error) {
+      console.error(`Error fetching boundary for ${zipCode.id}:`, error);
+    }
+  }
+
+  setZipBoundaries(boundariesMap);
+  return boundaries;
+}, []);
 
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
