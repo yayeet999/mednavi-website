@@ -62,8 +62,8 @@ const mapOptions = {
   clickableIcons: false,
   zoomControl: true,
   zoomControlOptions: {
-    position: google.maps.ControlPosition.LEFT_BOTTOM
-  }
+  position: typeof google !== 'undefined' ? google.maps.ControlPosition.LEFT_BOTTOM : null
+}
 };
 
 const RegionalTabContent: React.FC = () => {
