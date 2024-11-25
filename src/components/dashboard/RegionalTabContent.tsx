@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { MapContainer, TileLayer, GeoJSON, ZoomControl } from 'react-leaflet';
+import { LatLngBoundsExpression, LatLngTuple } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -16,8 +17,13 @@ interface Icon {
   label: string;
 }
 
-const CHICAGO_CENTER: [number, number] = [42.0451, -87.8450];
+const CHICAGO_CENTER: LatLngTuple = [42.0451, -87.8450];
 const INITIAL_ZOOM = 11;
+
+const CHICAGO_BOUNDS: LatLngBoundsExpression = [
+  [41.8, -88.2] as LatLngTuple, // Southwest coordinates
+  [42.2, -87.5] as LatLngTuple  // Northeast coordinates
+];
 
 const zipCodes: ZipCode[] = [
   { id: "60714", name: "Niles" },
@@ -139,10 +145,7 @@ const RegionalTabContent: React.FC = () => {
     zoomDelta: 0.5,
     minZoom: 10,
     maxZoom: 13,
-    maxBounds: [
-      [41.8, -88.2], // Southwest coordinates
-      [42.2, -87.5]  // Northeast coordinates
-    ],
+    maxBounds: CHICAGO_BOUNDS,
     maxBoundsViscosity: 1.0
   }), []);
 
