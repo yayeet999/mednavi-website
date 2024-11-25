@@ -18,6 +18,11 @@ interface GoogleMapsEvent {
   feature: google.maps.Data.Feature;
 }
 
+interface ZipBoundary {
+  northeast: google.maps.LatLng;
+  southwest: google.maps.LatLng;
+}
+
 const zipCodes: ZipCode[] = [
   { id: "60714", name: "Niles" },
   { id: "60631", name: "Edison Park" },
@@ -61,9 +66,10 @@ const mapOptions = {
   disableDefaultUI: true,
   clickableIcons: false,
   zoomControl: true,
+  gestureHandling: 'greedy', // Enables one-finger panning on mobile
   zoomControlOptions: {
-  position: typeof google !== 'undefined' ? google.maps.ControlPosition.LEFT_BOTTOM : null
-}
+    position: typeof google !== 'undefined' ? google.maps.ControlPosition.LEFT_BOTTOM : null
+  }
 };
 
 const RegionalTabContent: React.FC = () => {
@@ -72,6 +78,8 @@ const RegionalTabContent: React.FC = () => {
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
+  const [zipBoundaries, setZipBoundaries] = useState<Map<string, ZipBoundary>>(new Map());
+  const [isLoading, setIsLoading] = useState(true);
 
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
@@ -79,11 +87,88 @@ const RegionalTabContent: React.FC = () => {
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
 
+  const fetchZipBoundaries = useCallback(async () => {
+    const geocoder = new google.maps.Geocoder();
+    const boundaries = {
+      type: "FeatureCollection",
+      features: []
+    };
+    const boundariesMap = new Map<string, ZipBoundary>();
+
+    for (const zipCode of zipCodes) {
+      try {
+        const result = await new Promise((resolve, reject) => {
+          geocoder.geocode(
+            { 
+              address: `${zipCode.id} IL`,
+              componentRestrictions: {
+                country: 'US',
+                postalCode: zipCode.id
+              }
+            },
+            (results, status) => {
+              if (status === 'OK' && results && results[0]) {
+                resolve(results[0]);
+              } else {
+                reject(status);
+              }
+            }
+          );
+        });
+
+        const bounds = result.geometry.viewport;
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
+        
+        boundariesMap.set(zipCode.id, {
+          northeast: ne,
+          southwest: sw
+        });
+
+        const feature = {
+          type: "Feature",
+          properties: { zip: zipCode.id },
+          geometry: {
+            type: "Polygon",
+            coordinates: [[
+              [sw.lng(), sw.lat()],
+              [ne.lng(), sw.lat()],
+              [ne.lng(), ne.lat()],
+              [sw.lng(), ne.lat()],
+              [sw.lng(), sw.lat()]
+            ]]
+          }
+        };
+        
+        boundaries.features.push(feature);
+      } catch (error) {
+        console.error(`Error fetching boundary for ${zipCode.id}:`, error);
+      }
+    }
+
+    setZipBoundaries(boundariesMap);
+    return boundaries;
+  }, []);
+
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
-  }, []);
+
+    // Pan and zoom to the selected zip code
+    if (map && zipBoundaries.has(zipId)) {
+      const bounds = zipBoundaries.get(zipId);
+      if (bounds) {
+        const newBounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(bounds.southwest),
+          new google.maps.LatLng(bounds.northeast)
+        );
+        map.fitBounds(newBounds, {
+          padding: { top: 50, right: 50, bottom: 50, left: 50 }
+        });
+      }
+    }
+  }, [map, zipBoundaries]);
 
   const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
@@ -94,60 +179,57 @@ const RegionalTabContent: React.FC = () => {
     setSelectedSubData(subDataId);
   }, []);
 
-  const onMapLoad = useCallback((map: google.maps.Map) => {
+  const onMapLoad = useCallback(async (map: google.maps.Map) => {
     setMap(map);
+    setIsLoading(true);
     
     const dataLayer = new google.maps.Data({ map });
     setZipDataLayer(dataLayer);
-    
-    fetch('/chicago-zipcodes.json')
-      .then(response => response.json())
-      .then(data => {
-        const filteredFeatures = data.features.filter((feature: any) => 
-          zipCodes.some(zip => zip.id === feature.properties.zip)
-        );
+
+    try {
+      const boundaryData = await fetchZipBoundaries();
+      dataLayer.addGeoJson(boundaryData);
+
+      dataLayer.setStyle((feature: google.maps.Data.Feature) => {
+        const zipCode = feature.getProperty('zip');
+        const isSelected = zipCode === selectedZip;
         
-        dataLayer.addGeoJson({
-          type: "FeatureCollection",
-          features: filteredFeatures
-        });
-
-        dataLayer.setStyle((feature: google.maps.Data.Feature) => {
-          const zipCode = feature.getProperty('zip');
-          const isSelected = zipCode === selectedZip;
-          
-          return {
-            fillColor: isSelected ? '#052b52' : '#E2E8F0',
-            fillOpacity: 0.6,
-            strokeColor: isSelected ? '#052b52' : '#94A3B8',
-            strokeWeight: isSelected ? 2 : 1
-          };
-        });
-
-        dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
-  const zipCode = event.feature.getProperty('zip');
-  if (typeof zipCode === 'string' && zipCodes.some(zip => zip.id === zipCode)) {
-    handleZipClick(zipCode);
-  }
-});
-
-        dataLayer.addListener('mouseover', (event: google.maps.Data.MouseEvent) => {
-          const zipCode = event.feature.getProperty('zip');
-          if (zipCodes.some(zip => zip.id === zipCode) && zipCode !== selectedZip) {
-            dataLayer.overrideStyle(event.feature, {
-              fillColor: '#CBD5E1'
-            });
-          }
-        });
-
-        dataLayer.addListener('mouseout', (event: google.maps.Data.MouseEvent) => {
-          const zipCode = event.feature.getProperty('zip');
-          if (zipCode !== selectedZip) {
-            dataLayer.revertStyle(event.feature);
-          }
-        });
+        return {
+          fillColor: isSelected ? '#052b52' : '#E2E8F0',
+          fillOpacity: 0.6,
+          strokeColor: isSelected ? '#052b52' : '#94A3B8',
+          strokeWeight: isSelected ? 2 : 1
+        };
       });
-  }, [handleZipClick, selectedZip]);
+
+      dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
+        const zipCode = event.feature.getProperty('zip');
+        if (typeof zipCode === 'string' && zipCodes.some(zip => zip.id === zipCode)) {
+          handleZipClick(zipCode);
+        }
+      });
+
+      dataLayer.addListener('mouseover', (event: google.maps.Data.MouseEvent) => {
+        const zipCode = event.feature.getProperty('zip');
+        if (zipCodes.some(zip => zip.id === zipCode) && zipCode !== selectedZip) {
+          dataLayer.overrideStyle(event.feature, {
+            fillColor: '#CBD5E1'
+          });
+        }
+      });
+
+      dataLayer.addListener('mouseout', (event: google.maps.Data.MouseEvent) => {
+        const zipCode = event.feature.getProperty('zip');
+        if (zipCode !== selectedZip) {
+          dataLayer.revertStyle(event.feature);
+        }
+      });
+    } catch (error) {
+      console.error('Error loading map data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [handleZipClick, selectedZip, fetchZipBoundaries]);
 
   useEffect(() => {
     if (zipDataLayer) {
