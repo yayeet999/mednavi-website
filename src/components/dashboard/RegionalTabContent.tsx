@@ -104,7 +104,7 @@ const RegionalTabContent: React.FC = () => {
 
   for (const zipCode of zipCodes) {
     try {
-      const result = await new Promise<GeocodeResult>((resolve, reject) => {
+      const result = await new Promise<google.maps.GeocoderResult>((resolve, reject) => {
         geocoder.geocode(
           { 
             address: `${zipCode.id} IL`,
@@ -114,8 +114,8 @@ const RegionalTabContent: React.FC = () => {
             }
           },
           (results, status) => {
-            if (status === 'OK' && results && results[0]) {
-              resolve(results[0] as GeocodeResult);
+            if (status === 'OK' && results?.[0]) {
+              resolve(results[0]);
             } else {
               reject(status);
             }
@@ -123,31 +123,33 @@ const RegionalTabContent: React.FC = () => {
         );
       });
 
-      const bounds = result.geometry.viewport;
-      const ne = bounds.getNorthEast();
-      const sw = bounds.getSouthWest();
-      
-      boundariesMap.set(zipCode.id, {
-        northeast: ne,
-        southwest: sw
-      });
+      if (result.geometry?.viewport) {
+        const bounds = result.geometry.viewport;
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
+        
+        boundariesMap.set(zipCode.id, {
+          northeast: ne,
+          southwest: sw
+        });
 
-      const feature = {
-        type: "Feature",
-        properties: { zip: zipCode.id },
-        geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [sw.lng(), sw.lat()],
-            [ne.lng(), sw.lat()],
-            [ne.lng(), ne.lat()],
-            [sw.lng(), ne.lat()],
-            [sw.lng(), sw.lat()]
-          ]]
-        }
-      };
-      
-      boundaries.features.push(feature);
+        const feature = {
+          type: "Feature",
+          properties: { zip: zipCode.id },
+          geometry: {
+            type: "Polygon",
+            coordinates: [[
+              [sw.lng(), sw.lat()],
+              [ne.lng(), sw.lat()],
+              [ne.lng(), ne.lat()],
+              [sw.lng(), ne.lat()],
+              [sw.lng(), sw.lat()]
+            ]]
+          }
+        };
+        
+        boundaries.features.push(feature);
+      }
     } catch (error) {
       console.error(`Error fetching boundary for ${zipCode.id}:`, error);
     }
