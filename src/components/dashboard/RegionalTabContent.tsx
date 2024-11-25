@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
-import { GoogleMap, LoadScript, Data } from '@react-google-maps/api';
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 
 interface ZipCode {
   id: string;
@@ -12,6 +12,10 @@ interface Icon {
   id: 'financial' | 'patients' | 'procedures';
   icon: React.ElementType;
   label: string;
+}
+
+interface GoogleMapsEvent {
+  feature: google.maps.Data.Feature;
 }
 
 const zipCodes: ZipCode[] = [
@@ -96,11 +100,9 @@ const RegionalTabContent: React.FC = () => {
     const dataLayer = new google.maps.Data({ map });
     setZipDataLayer(dataLayer);
     
-    // Load ZIP code boundaries
     fetch('/chicago-zipcodes.json')
       .then(response => response.json())
       .then(data => {
-        // Filter for our specific ZIP codes
         const filteredFeatures = data.features.filter((feature: any) => 
           zipCodes.some(zip => zip.id === feature.properties.zip)
         );
@@ -110,8 +112,7 @@ const RegionalTabContent: React.FC = () => {
           features: filteredFeatures
         });
 
-        // Style the ZIP code areas
-        dataLayer.setStyle((feature) => {
+        dataLayer.setStyle((feature: google.maps.Data.Feature) => {
           const zipCode = feature.getProperty('zip');
           const isSelected = zipCode === selectedZip;
           
@@ -123,16 +124,14 @@ const RegionalTabContent: React.FC = () => {
           };
         });
 
-        // Add click listeners
-        dataLayer.addListener('click', (event) => {
+        dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
           const zipCode = event.feature.getProperty('zip');
           if (zipCodes.some(zip => zip.id === zipCode)) {
             handleZipClick(zipCode);
           }
         });
 
-        // Add hover effect
-        dataLayer.addListener('mouseover', (event) => {
+        dataLayer.addListener('mouseover', (event: google.maps.Data.MouseEvent) => {
           const zipCode = event.feature.getProperty('zip');
           if (zipCodes.some(zip => zip.id === zipCode) && zipCode !== selectedZip) {
             dataLayer.overrideStyle(event.feature, {
@@ -141,7 +140,7 @@ const RegionalTabContent: React.FC = () => {
           }
         });
 
-        dataLayer.addListener('mouseout', (event) => {
+        dataLayer.addListener('mouseout', (event: google.maps.Data.MouseEvent) => {
           const zipCode = event.feature.getProperty('zip');
           if (zipCode !== selectedZip) {
             dataLayer.revertStyle(event.feature);
@@ -152,7 +151,7 @@ const RegionalTabContent: React.FC = () => {
 
   useEffect(() => {
     if (zipDataLayer) {
-      zipDataLayer.setStyle((feature) => {
+      zipDataLayer.setStyle((feature: google.maps.Data.Feature) => {
         const zipCode = feature.getProperty('zip');
         const isSelected = zipCode === selectedZip;
         
