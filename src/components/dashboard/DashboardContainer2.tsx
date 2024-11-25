@@ -1,10 +1,30 @@
 import React, { useState } from 'react';
 import { Home, BarChart2, Map } from 'lucide-react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import { 
+ ResponsiveContainer, 
+ LineChart, 
+ Line, 
+ XAxis, 
+ YAxis, 
+ PieChart, 
+ Pie, 
+ Cell, 
+ BarChart, 
+ Bar 
+} from 'recharts';
 import PracticeTabContent from './PracticeTabContent';
+import DashboardContainer3 from './DashboardContainer3';
+
+interface AxisTickProps {
+ x: number;
+ y: number;
+ payload: {
+   value: string | number;
+ };
+}
 
 export const DashboardContainer2 = () => {
-  const [activePage, setActivePage] = useState('practice');
+ const [activePage, setActivePage] = useState('practice');
 
   // Sample data
   const revenueData = [
@@ -49,6 +69,7 @@ export const DashboardContainer2 = () => {
   );
 
   return (
+  <div className="h-full w-full">
     <div className="flex h-[340px] md:h-[480px] w-full">
       {/* Sidebar */}
       <div className="bg-white w-[50px] md:w-[80px] flex-shrink-0 flex flex-col items-center pt-2 md:pt-3 rounded-l-xl">
@@ -60,14 +81,16 @@ export const DashboardContainer2 = () => {
           <div key={item.id} className="relative">
             <button
               onClick={() => setActivePage(item.id)}
-              className={`w-10 h-8 md:w-14 md:h-12 mb-1 md:mb-2 rounded-lg flex items-center justify-center cursor-pointer transition-colors
-                         ${activePage === item.id 
-                           ? 'bg-[#052b52] text-white shadow-sm' 
-                           : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}
-                         ${item.id === 'map' ? 'cursor-default' : ''}`}
-              disabled={item.id === 'map'}
+              className={`w-10 h-8 md:w-14 md:h-12 mb-1 md:mb-2 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 ease-in-out
+                       ${activePage === item.id 
+                         ? 'bg-[#052b52] text-white shadow-sm scale-105' 
+                         : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}`}
+              aria-label={`Switch to ${item.id} view`}
             >
-              {item.icon}
+              {React.cloneElement(item.icon, {
+                size: typeof window !== 'undefined' && window.innerWidth < 768 ? 20 : 24,
+                className: 'transition-transform duration-200'
+              })}
             </button>
           </div>
         ))}
