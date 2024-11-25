@@ -14,20 +14,23 @@ interface Icon {
   label: string;
 }
 
-interface GoogleMapsEvent {
-  feature: google.maps.Data.Feature;
-}
-
 interface ZipBoundary {
   northeast: google.maps.LatLng;
   southwest: google.maps.LatLng;
 }
 
-interface GeocodeResult extends google.maps.GeocoderResult {
+interface GeoJsonFeature {
+  type: "Feature";
+  properties: { zip: string };
   geometry: {
-    location: google.maps.LatLng;
-    viewport: google.maps.LatLngBounds;
+    type: "Polygon";
+    coordinates: number[][][];
   };
+}
+
+interface GeoJsonCollection {
+  type: "FeatureCollection";
+  features: GeoJsonFeature[];
 }
 
 const zipCodes: ZipCode[] = [
@@ -73,7 +76,7 @@ const mapOptions = {
   disableDefaultUI: true,
   clickableIcons: false,
   zoomControl: true,
-  gestureHandling: 'greedy', // Enables one-finger panning on mobile
+  gestureHandling: 'greedy',
   zoomControlOptions: {
     position: typeof google !== 'undefined' ? google.maps.ControlPosition.LEFT_BOTTOM : null
   }
@@ -94,83 +97,82 @@ const RegionalTabContent: React.FC = () => {
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
 
-  const fetchZipBoundaries = useCallback(async () => {
-  const geocoder = new google.maps.Geocoder();
-  const boundaries = {
-    type: "FeatureCollection",
-    features: []
-  };
-  const boundariesMap = new Map<string, ZipBoundary>();
+  const fetchZipBoundaries = useCallback(async (): Promise<GeoJsonCollection> => {
+    const geocoder = new google.maps.Geocoder();
+    const boundaries: GeoJsonCollection = {
+      type: "FeatureCollection",
+      features: []
+    };
+    const boundariesMap = new Map<string, ZipBoundary>();
 
-  for (const zipCode of zipCodes) {
-    try {
-      const result = await new Promise<google.maps.GeocoderResult>((resolve, reject) => {
-        geocoder.geocode(
-          { 
-            address: `${zipCode.id} IL`,
-            componentRestrictions: {
-              country: 'US',
-              postalCode: zipCode.id
+    for (const zipCode of zipCodes) {
+      try {
+        const results = await new Promise<google.maps.GeocoderResult[]>((resolve, reject) => {
+          geocoder.geocode(
+            { 
+              address: `${zipCode.id} IL`,
+              componentRestrictions: {
+                country: 'US',
+                postalCode: zipCode.id
+              }
+            },
+            (results, status) => {
+              if (status === 'OK' && results) {
+                resolve(results);
+              } else {
+                reject(status);
+              }
             }
-          },
-          (results, status) => {
-            if (status === 'OK' && results?.[0]) {
-              resolve(results[0]);
-            } else {
-              reject(status);
-            }
-          }
-        );
-      });
-
-      if (result.geometry?.viewport) {
-        const bounds = result.geometry.viewport;
-        const ne = bounds.getNorthEast();
-        const sw = bounds.getSouthWest();
-        
-        boundariesMap.set(zipCode.id, {
-          northeast: ne,
-          southwest: sw
+          );
         });
 
-        const feature = {
-          type: "Feature",
-          properties: { zip: zipCode.id },
-          geometry: {
-            type: "Polygon",
-            coordinates: [[
-              [sw.lng(), sw.lat()],
-              [ne.lng(), sw.lat()],
-              [ne.lng(), ne.lat()],
-              [sw.lng(), ne.lat()],
-              [sw.lng(), sw.lat()]
-            ]]
-          }
-        };
-        
-        boundaries.features.push(feature);
-      }
-    } catch (error) {
-      console.error(`Error fetching boundary for ${zipCode.id}:`, error);
-    }
-  }
+        if (results[0]?.geometry?.viewport) {
+          const bounds = results[0].geometry.viewport;
+          const ne = bounds.getNorthEast();
+          const sw = bounds.getSouthWest();
+          
+          boundariesMap.set(zipCode.id, {
+            northeast: ne,
+            southwest: sw
+          });
 
-  setZipBoundaries(boundariesMap);
-  return boundaries;
-}, []);
+          const feature: GeoJsonFeature = {
+            type: "Feature",
+            properties: { zip: zipCode.id },
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [sw.lng(), sw.lat()],
+                [ne.lng(), sw.lat()],
+                [ne.lng(), ne.lat()],
+                [sw.lng(), ne.lat()],
+                [sw.lng(), sw.lat()]
+              ]]
+            }
+          };
+          
+          boundaries.features.push(feature);
+        }
+      } catch (error) {
+        console.error(`Error fetching boundary for ${zipCode.id}:`, error);
+      }
+    }
+
+    setZipBoundaries(boundariesMap);
+    return boundaries;
+  }, []);
 
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
 
-    // Pan and zoom to the selected zip code
     if (map && zipBoundaries.has(zipId)) {
       const bounds = zipBoundaries.get(zipId);
       if (bounds) {
         const newBounds = new google.maps.LatLngBounds(
-          new google.maps.LatLng(bounds.southwest),
-          new google.maps.LatLng(bounds.northeast)
+          bounds.southwest,
+          bounds.northeast
         );
         map.fitBounds(newBounds, {
           padding: { top: 50, right: 50, bottom: 50, left: 50 }
@@ -332,6 +334,12 @@ const RegionalTabContent: React.FC = () => {
             />
           </LoadScript>
         </div>
+
+        {isLoading && (
+          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
+            <div className="w-4 h-4 border-2 border-blue-600 rounded-full border-t-transparent animate-spin" />
+          </div>
+        )}
       </motion.div>
 
       <AnimatePresence>
