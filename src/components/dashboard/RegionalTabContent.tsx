@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DollarSign, Users, Stethoscope, ChevronLeft } from 'lucide-react';
+import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,6 +12,29 @@ interface Icon {
   id: 'financial' | 'patients' | 'procedures';
   icon: React.ElementType;
   label: string;
+}
+
+interface GeographyType {
+  rsmKey: string;
+  properties: {
+    zip: string;
+    [key: string]: any;
+  };
+  geometry: {
+    coordinates: number[][];
+    type: string;
+  };
+}
+
+interface GeographiesProps {
+  geographies: GeographyType[];
+}
+
+interface GeographyStyleProps {
+  outline: string;
+  transition?: string;
+  fill?: string;
+  cursor?: string;
 }
 
 const zipCodes: ZipCode[] = [
@@ -123,8 +146,8 @@ const RegionalTabContent: React.FC = () => {
                   maxZoom={2}
                 >
                   <Geographies geography="/chicago-zipcodes.json">
-                    {({ geographies }) =>
-                      geographies.map((geo) => {
+                    {({ geographies }: GeographiesProps) =>
+                      geographies.map((geo: GeographyType) => {
                         const isClickable = zipCodes.some(zip => zip.id === geo.properties.zip);
                         return (
                           <Geography
@@ -137,16 +160,16 @@ const RegionalTabContent: React.FC = () => {
                               default: { 
                                 outline: "none",
                                 transition: 'all 0.3s'
-                              },
+                              } as GeographyStyleProps,
                               hover: { 
                                 outline: "none",
                                 fill: isClickable ? '#CBD5E1' : '#F1F5F9',
                                 cursor: isClickable ? 'pointer' : 'default'
-                              },
+                              } as GeographyStyleProps,
                               pressed: { 
                                 outline: "none",
                                 fill: '#94A3B8'
-                              },
+                              } as GeographyStyleProps,
                             }}
                             onClick={() => {
                               if (isClickable) {
@@ -242,10 +265,11 @@ const RegionalTabContent: React.FC = () => {
                 {zipCodes.find(zip => zip.id === selectedZip)?.name || selectedZip}
               </span>
             </div>
-            {/* Add your detailed analysis content here */}
-            <p className="text-sm text-gray-600">
-              Detailed analysis data for {selectedSubData} in {zipCodes.find(zip => zip.id === selectedZip)?.name}
-            </p>
+            <div className="text-sm text-gray-600">
+              <p>Analysis data for {selectedSubData.toLowerCase()} in {zipCodes.find(zip => zip.id === selectedZip)?.name}.</p>
+              <p className="mt-2">ZIP Code: {selectedZip}</p>
+              <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
