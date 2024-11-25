@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
-import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 import { motion, AnimatePresence } from "framer-motion";
+import { MapContainer, TileLayer, GeoJSON, ZoomControl } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 interface ZipCode {
   id: string;
@@ -12,22 +14,6 @@ interface Icon {
   id: 'financial' | 'patients' | 'procedures';
   icon: React.ElementType;
   label: string;
-}
-
-interface GeographyType {
-  rsmKey: string;
-  properties: {
-    zip: string;
-    [key: string]: any;
-  };
-  geometry: {
-    coordinates: number[][];
-    type: string;
-  };
-}
-
-interface GeographiesProps {
-  geographies: GeographyType[];
 }
 
 const zipCodes: ZipCode[] = [
@@ -41,13 +27,19 @@ const RegionalTabContent: React.FC = () => {
   const [selectedZip, setSelectedZip] = useState<string | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
-  const [position, setPosition] = useState({ coordinates: [-87.85, 42.05], zoom: 1 });
+  const [geoJsonData, setGeoJsonData] = useState<any>(null);
 
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
     { id: "patients", icon: Users, label: "Patients" },
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
+
+  useEffect(() => {
+    fetch('/chicago-zipcodes.json')
+      .then(response => response.json())
+      .then(data => setGeoJsonData(data));
+  }, []);
 
   const handleZipClick = (zipId: string) => {
     setSelectedZip(zipId);
@@ -90,6 +82,45 @@ const RegionalTabContent: React.FC = () => {
     }
   };
 
+  const onEachFeature = (feature: any, layer: L.Layer) => {
+    const zip = feature.properties.zip;
+    const isClickable = zipCodes.some(z => z.id === zip);
+    
+    if (isClickable) {
+      layer.on({
+        click: () => handleZipClick(zip),
+        mouseover: (e) => {
+          const layer = e.target;
+          layer.setStyle({
+            fillColor: selectedZip === zip ? '#052b52' : '#CBD5E1',
+            fillOpacity: 0.7
+          });
+        },
+        mouseout: (e) => {
+          const layer = e.target;
+          layer.setStyle({
+            fillColor: selectedZip === zip ? '#052b52' : '#E2E8F0',
+            fillOpacity: 0.5
+          });
+        }
+      });
+    }
+  };
+
+  const style = (feature: any) => {
+    const zip = feature.properties.zip;
+    const isClickable = zipCodes.some(z => z.id === zip);
+    const isSelected = zip === selectedZip;
+
+    return {
+      fillColor: isSelected ? '#052b52' : isClickable ? '#E2E8F0' : '#F1F5F9',
+      weight: isSelected ? 2 : 0.5,
+      opacity: 1,
+      color: isSelected ? '#052b52' : isClickable ? '#94A3B8' : '#CBD5E1',
+      fillOpacity: 0.5
+    };
+  };
+
   return (
     <div className="w-full h-full flex">
       <motion.div 
@@ -104,7 +135,7 @@ const RegionalTabContent: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-4 left-4 right-4 z-10"
+              className="absolute top-4 left-4 right-4 z-[1000]"
             >
               <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
                 <div className="flex justify-center gap-2">
@@ -129,71 +160,29 @@ const RegionalTabContent: React.FC = () => {
           )}
         </AnimatePresence>
 
-        <div className="h-full">
-          <ComposableMap
-  projection="geoMercator"
-  projectionConfig={{
-    scale: 60000,
-    center: [-87.85, 42.05],
-  }}
-  width={800}
-  height={400}
-  style={{
-    width: "100%",
-    height: "100%",
-    border: "1px solid red" // temporary to see bounds
-  }}
->
-            <ZoomableGroup
-              zoom={position.zoom}
-              center={position.coordinates as [number, number]}
-              onMoveEnd={setPosition}
-              minZoom={0.8}
-              maxZoom={2}
-            >
-              <Geographies geography="/chicago-zipcodes.json">
-                {({ geographies }: GeographiesProps) =>
-                  geographies.map((geo) => {
-                    const isClickable = zipCodes.some(zip => zip.id === geo.properties.zip);
-                    const isSelected = geo.properties.zip === selectedZip;
-                    
-                    return (
-                      <Geography
-                        key={geo.rsmKey}
-                        geography={geo}
-                        fill={isSelected ? '#052b52' : isClickable ? '#E2E8F0' : '#F1F5F9'}
-                        stroke={isSelected ? '#052b52' : isClickable ? '#94A3B8' : '#CBD5E1'}
-                        strokeWidth={isSelected ? 2 : 0.5}
-                        style={{
-                          default: { 
-                            outline: "none",
-                            transition: 'all 0.3s'
-                          },
-                          hover: { 
-                            outline: "none",
-                            fill: isClickable ? (isSelected ? '#052b52' : '#CBD5E1') : '#F1F5F9',
-                            cursor: isClickable ? 'pointer' : 'default'
-                          },
-                          pressed: { 
-                            outline: "none",
-                            fill: '#052b52'
-                          }
-                        }}
-                        onClick={() => {
-                          if (isClickable) {
-                            handleZipClick(geo.properties.zip);
-                          }
-                        }}
-                      />
-                    );
-                  })
-                }
-              </Geographies>
-            </ZoomableGroup>
-          </ComposableMap>
+        <div className="h-full w-full">
+          <MapContainer
+            center={[42.05, -87.85]}
+            zoom={11}
+            style={{ height: '100%', width: '100%' }}
+            zoomControl={false}
+          >
+            <ZoomControl position="bottomright" />
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            />
+            {geoJsonData && (
+              <GeoJSON
+                data={geoJsonData}
+                style={style}
+                onEachFeature={onEachFeature}
+              />
+            )}
+          </MapContainer>
         </div>
 
-        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-xs">
+        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-xs z-[1000]">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-[#E2E8F0] border border-[#94A3B8]" />
             <span className="text-gray-600">Available Regions</span>
