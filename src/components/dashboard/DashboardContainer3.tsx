@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { MapPin, Users } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import PracticeTabContent from './PracticeTabContent';
+import RegionalTabContent from './RegionalTabContent';
 
 interface DashboardContainer3Props {
   onNavigateToBot?: () => void;
@@ -275,10 +276,8 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
 
                     <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
                       <TabsContent value="regional" className="h-full m-0 p-4">
-                        <div className="w-full h-full bg-white rounded-lg p-4">
-                          {/* Regional content */}
-                        </div>
-                      </TabsContent>
+  <RegionalTabContent />
+</TabsContent>
 
                       <TabsContent value="geoplot" className="h-full m-0 p-4">
                         <div className="w-full h-full bg-white rounded-lg p-4">
