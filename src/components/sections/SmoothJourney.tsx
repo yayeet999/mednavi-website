@@ -408,7 +408,7 @@ const SmoothJourney: React.FC = () => {
         {i === 0 ? (
           <DashboardContainer onNavigate={navigateToContainer} />
         ) : i === 1 ? (
-          <DashboardContainer2 />
+  <DashboardContainer2 onNavigateToMap={() => navigate(2)} />
         ) : i === 2 ? (
           <DashboardContainer3 />
         ) : (
