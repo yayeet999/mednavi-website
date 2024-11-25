@@ -1,10 +1,6 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
-import { MapContainer, TileLayer, GeoJSON, ZoomControl } from 'react-leaflet';
-import { LatLngBoundsExpression, LatLngTuple } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
 
 interface ZipCode {
   id: string;
@@ -17,14 +13,6 @@ interface Icon {
   label: string;
 }
 
-const CHICAGO_CENTER: LatLngTuple = [42.0451, -87.8450];
-const INITIAL_ZOOM = 11;
-
-const CHICAGO_BOUNDS: LatLngBoundsExpression = [
-  [41.8, -88.2] as LatLngTuple, // Southwest coordinates
-  [42.2, -87.5] as LatLngTuple  // Northeast coordinates
-];
-
 const zipCodes: ZipCode[] = [
   { id: "60714", name: "Niles" },
   { id: "60631", name: "Edison Park" },
@@ -36,40 +24,61 @@ const RegionalTabContent: React.FC = () => {
   const [selectedZip, setSelectedZip] = useState<string | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
-  const [geoJsonData, setGeoJsonData] = useState<any>(null);
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  const icons: Icon[] = useMemo(() => [
+  const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
     { id: "patients", icon: Users, label: "Patients" },
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
-  ], []);
+  ];
 
-  useEffect(() => {
-    fetch('/chicago-zipcodes.json')
-      .then(response => response.json())
-      .then(data => {
-        // Filter to only include our specific ZIP codes
-        data.features = data.features.filter((feature: any) => 
-          zipCodes.some(zip => zip.id === feature.properties.zip)
-        );
-        setGeoJsonData(data);
-      });
-  }, []);
-
-  const handleZipClick = useCallback((zipId: string) => {
+  const handleZipClick = (zipId: string) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
-  }, []);
+  };
 
-  const handleIconClick = useCallback((iconId: Icon['id']) => {
+  const handleIconClick = (iconId: Icon['id']) => {
     setSelectedIcon(iconId);
     setSelectedSubData(null);
-  }, []);
+  };
 
-  const handleSubDataClick = useCallback((subDataId: string) => {
+  const handleSubDataClick = (subDataId: string) => {
     setSelectedSubData(subDataId);
-  }, []);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY * -0.01;
+    const newScale = Math.min(Math.max(scale + delta, 1), 2.5);
+    setScale(newScale);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 0) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.clientX - position.x,
+        y: e.clientY - position.y
+      });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging) {
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
 
   const mapContainerVariants = {
     full: { width: "100%" },
@@ -97,58 +106,6 @@ const RegionalTabContent: React.FC = () => {
     }
   };
 
-  const onEachFeature = useCallback((feature: any, layer: L.Layer) => {
-    const zip = feature.properties.zip;
-    if (zipCodes.some(z => z.id === zip)) {
-      layer.bindTooltip(zipCodes.find(z => z.id === zip)?.name || '', {
-        permanent: false,
-        direction: 'center',
-        className: 'bg-white/90 px-2 py-1 rounded text-xs'
-      });
-      
-      layer.on({
-        click: () => handleZipClick(zip),
-        mouseover: (e) => {
-          const layer = e.target;
-          layer.setStyle({
-            fillOpacity: 0.7,
-            fillColor: '#CBD5E1'
-          });
-          layer.openTooltip();
-        },
-        mouseout: (e) => {
-          const layer = e.target;
-          layer.setStyle(style(feature));
-          layer.closeTooltip();
-        }
-      });
-    }
-  }, [handleZipClick]);
-
-  const style = useCallback((feature: any) => {
-    const zip = feature.properties.zip;
-    const isClickable = zipCodes.some(z => z.id === zip);
-    const isSelected = zip === selectedZip;
-
-    return {
-      fillColor: isSelected ? '#052b52' : isClickable ? '#E2E8F0' : '#F1F5F9',
-      weight: isSelected ? 2 : 1,
-      opacity: 1,
-      color: isSelected ? '#052b52' : '#94A3B8',
-      fillOpacity: isSelected ? 0.6 : 0.4,
-      className: 'transition-all duration-200'
-    };
-  }, [selectedZip]);
-
-  const mapOptions = useMemo(() => ({
-    zoomSnap: 0.5,
-    zoomDelta: 0.5,
-    minZoom: 10,
-    maxZoom: 13,
-    maxBounds: CHICAGO_BOUNDS,
-    maxBoundsViscosity: 1.0
-  }), []);
-
   return (
     <div className="w-full h-full flex">
       <motion.div 
@@ -163,7 +120,7 @@ const RegionalTabContent: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-4 left-4 right-4 z-[1000]"
+              className="absolute top-4 left-4 right-4 z-10"
             >
               <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
                 <div className="flex justify-center gap-2">
@@ -188,34 +145,115 @@ const RegionalTabContent: React.FC = () => {
           )}
         </AnimatePresence>
 
-        <div className="h-full w-full">
-          <MapContainer
-            center={CHICAGO_CENTER}
-            zoom={INITIAL_ZOOM}
-            style={{ height: '100%', width: '100%' }}
-            zoomControl={false}
-            {...mapOptions}
+        <div 
+          className="h-full relative"
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          <svg
+            viewBox="0 0 1000 1000"
+            className="w-full h-full"
+            style={{
+              transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
+              transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+              cursor: isDragging ? 'grabbing' : 'grab'
+            }}
           >
-            <ZoomControl position="bottomright" />
-            <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
-              subdomains={['a', 'b', 'c', 'd']}
-              maxZoom={19}
-              attribution=""
-              className="map-tiles"
+            {/* Background grid pattern */}
+            <defs>
+              <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#f0f0f0" strokeWidth="0.5" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+
+            {/* Niles (60714) */}
+            <path
+              d="M 450 300 L 550 300 L 550 400 L 450 400 Z"
+              className={`transition-all duration-200 ${
+                selectedZip === "60714"
+                  ? 'fill-[#052b52] stroke-[#052b52]'
+                  : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
+              }`}
+              strokeWidth="1"
+              onClick={() => handleZipClick("60714")}
+              style={{ cursor: 'pointer' }}
             />
-            {geoJsonData && (
-              <GeoJSON
-                key={selectedZip || 'default'}
-                data={geoJsonData}
-                style={style}
-                onEachFeature={onEachFeature}
-              />
-            )}
-          </MapContainer>
+            <text x="500" y="350" textAnchor="middle" className="text-[8px] pointer-events-none">
+              Niles
+            </text>
+
+            {/* Edison Park (60631) */}
+            <path
+              d="M 550 300 L 650 300 L 650 400 L 550 400 Z"
+              className={`transition-all duration-200 ${
+                selectedZip === "60631"
+                  ? 'fill-[#052b52] stroke-[#052b52]'
+                  : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
+              }`}
+              strokeWidth="1"
+              onClick={() => handleZipClick("60631")}
+              style={{ cursor: 'pointer' }}
+            />
+            <text x="600" y="350" textAnchor="middle" className="text-[8px] pointer-events-none">
+              Edison Park
+            </text>
+
+            {/* Norwood Park (60656) */}
+            <path
+              d="M 450 400 L 550 400 L 550 500 L 450 500 Z"
+              className={`transition-all duration-200 ${
+                selectedZip === "60656"
+                  ? 'fill-[#052b52] stroke-[#052b52]'
+                  : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
+              }`}
+              strokeWidth="1"
+              onClick={() => handleZipClick("60656")}
+              style={{ cursor: 'pointer' }}
+            />
+            <text x="500" y="450" textAnchor="middle" className="text-[8px] pointer-events-none">
+              Norwood Park
+            </text>
+
+            {/* Park Ridge (60068) */}
+            <path
+              d="M 550 400 L 650 400 L 650 500 L 550 500 Z"
+              className={`transition-all duration-200 ${
+                selectedZip === "60068"
+                  ? 'fill-[#052b52] stroke-[#052b52]'
+                  : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
+              }`}
+              strokeWidth="1"
+              onClick={() => handleZipClick("60068")}
+              style={{ cursor: 'pointer' }}
+            />
+            <text x="600" y="450" textAnchor="middle" className="text-[8px] pointer-events-none">
+              Park Ridge
+            </text>
+          </svg>
         </div>
 
-        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-xs z-[1000]">
+        {/* Controls */}
+        <div className="absolute bottom-4 left-4 space-y-2">
+          <button
+            onClick={() => setScale(Math.min(scale + 0.2, 2.5))}
+            className="bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-sm text-xs"
+          >
+            Zoom In
+          </button>
+          <button
+            onClick={() => setScale(Math.max(scale - 0.2, 1))}
+            className="bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-sm text-xs"
+          >
+            Zoom Out
+          </button>
+        </div>
+
+        {/* Legend */}
+        <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-xs">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-[#E2E8F0] border border-[#94A3B8]" />
             <span className="text-gray-600">Available Regions</span>
