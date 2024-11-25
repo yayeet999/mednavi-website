@@ -266,6 +266,7 @@ export const DashboardContainer2 = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 
