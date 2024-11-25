@@ -30,13 +30,6 @@ interface GeographiesProps {
   geographies: GeographyType[];
 }
 
-interface GeographyStyleProps {
-  outline: string;
-  transition?: string;
-  fill?: string;
-  cursor?: string;
-}
-
 const zipCodes: ZipCode[] = [
   { id: "60714", name: "Niles" },
   { id: "60631", name: "Edison Park" },
@@ -44,16 +37,17 @@ const zipCodes: ZipCode[] = [
   { id: "60068", name: "Park Ridge" },
 ];
 
-const icons: Icon[] = [
-  { id: "financial", icon: DollarSign, label: "Financial" },
-  { id: "patients", icon: Users, label: "Patients" },
-  { id: "procedures", icon: Stethoscope, label: "Procedures" },
-];
-
 const RegionalTabContent: React.FC = () => {
   const [selectedZip, setSelectedZip] = useState<string | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
+  const [position, setPosition] = useState({ coordinates: [-87.85, 42.05], zoom: 1 });
+
+  const icons: Icon[] = [
+    { id: "financial", icon: DollarSign, label: "Financial" },
+    { id: "patients", icon: Users, label: "Patients" },
+    { id: "procedures", icon: Stethoscope, label: "Procedures" },
+  ];
 
   const handleZipClick = (zipId: string) => {
     setSelectedZip(zipId);
@@ -101,10 +95,9 @@ const RegionalTabContent: React.FC = () => {
       <motion.div 
         className="relative bg-gray-50 rounded-xl shadow-sm overflow-hidden"
         variants={mapContainerVariants}
-        animate={selectedIcon ? 'reduced' : 'full'}
+        animate={selectedIcon && window.innerWidth >= 768 ? 'reduced' : 'full'}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
-        {/* Icons Section Inside Map Container */}
         <AnimatePresence>
           {selectedZip && (
             <motion.div
@@ -127,7 +120,7 @@ const RegionalTabContent: React.FC = () => {
                       `}
                     >
                       <icon.icon className="w-4 h-4" />
-                      <span className="ml-2 text-xs font-medium">{icon.label}</span>
+                      <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
                     </button>
                   ))}
                 </div>
@@ -136,14 +129,11 @@ const RegionalTabContent: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Map Area */}
         <div className="h-full">
           <ComposableMap
-            width={800}
-            height={600}
-            projection="geoAlbers"
+            projection="geoMercator"
             projectionConfig={{
-              scale: 80000,
+              scale: 60000,
               center: [-87.85, 42.05],
               rotate: [0, 0, 0]
             }}
@@ -152,17 +142,19 @@ const RegionalTabContent: React.FC = () => {
               height: "100%"
             }}
           >
-            <ZoomableGroup 
-              center={[-87.85, 42.05]}
-              zoom={1}
+            <ZoomableGroup
+              zoom={position.zoom}
+              center={position.coordinates as [number, number]}
+              onMoveEnd={setPosition}
               minZoom={0.8}
               maxZoom={2}
             >
               <Geographies geography="/chicago-zipcodes.json">
                 {({ geographies }: GeographiesProps) =>
-                  geographies.map((geo: GeographyType) => {
+                  geographies.map((geo) => {
                     const isClickable = zipCodes.some(zip => zip.id === geo.properties.zip);
                     const isSelected = geo.properties.zip === selectedZip;
+                    
                     return (
                       <Geography
                         key={geo.rsmKey}
@@ -174,16 +166,16 @@ const RegionalTabContent: React.FC = () => {
                           default: { 
                             outline: "none",
                             transition: 'all 0.3s'
-                          } as GeographyStyleProps,
+                          },
                           hover: { 
                             outline: "none",
                             fill: isClickable ? (isSelected ? '#052b52' : '#CBD5E1') : '#F1F5F9',
                             cursor: isClickable ? 'pointer' : 'default'
-                          } as GeographyStyleProps,
+                          },
                           pressed: { 
                             outline: "none",
                             fill: '#052b52'
-                          } as GeographyStyleProps,
+                          }
                         }}
                         onClick={() => {
                           if (isClickable) {
@@ -199,7 +191,6 @@ const RegionalTabContent: React.FC = () => {
           </ComposableMap>
         </div>
 
-        {/* Map Legend */}
         <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-xs">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-[#E2E8F0] border border-[#94A3B8]" />
@@ -213,7 +204,7 @@ const RegionalTabContent: React.FC = () => {
       </motion.div>
 
       <AnimatePresence>
-        {selectedIcon && (
+        {selectedIcon && window.innerWidth >= 768 && (
           <motion.div 
             className="w-[30%] ml-4 bg-gray-50 rounded-xl shadow-sm"
             variants={sideContainerVariants}
