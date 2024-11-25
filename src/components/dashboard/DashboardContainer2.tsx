@@ -23,10 +23,13 @@ interface AxisTickProps {
  };
 }
 
-export const DashboardContainer2 = () => {
+interface DashboardContainer2Props {
+  onNavigateToMap?: () => void;
+}
+
+export const DashboardContainer2: React.FC<DashboardContainer2Props> = ({ onNavigateToMap }) => {
  const [activePage, setActivePage] = useState('practice');
 
-  // Sample data
   const revenueData = [
     { month: 'Jan', value: 30000 },
     { month: 'Feb', value: 35000 },
@@ -80,7 +83,7 @@ export const DashboardContainer2 = () => {
         ].map((item) => (
           <div key={item.id} className="relative">
             <button
-              onClick={() => setActivePage(item.id)}
+              onClick={() => item.id === 'map' ? onNavigateToMap?.() : setActivePage(item.id)}
               className={`w-10 h-8 md:w-14 md:h-12 mb-1 md:mb-2 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 ease-in-out
                        ${activePage === item.id 
                          ? 'bg-[#052b52] text-white shadow-sm scale-105' 
