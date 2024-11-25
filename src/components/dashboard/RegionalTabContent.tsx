@@ -121,29 +121,70 @@ const RegionalTabContent: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full bg-white rounded-lg p-4 flex flex-col">
-      <div className="flex flex-1 min-h-0">
-        <motion.div 
-          className="bg-gray-50 rounded-xl shadow-sm"
-          variants={mapContainerVariants}
-          animate={selectedIcon ? 'reduced' : 'full'}
-          transition={{
-            duration: 0.3,
-            ease: "easeInOut"
-          }}
-        >
-          <div className="p-4 h-full flex flex-col">
-            <div className="flex-1 relative min-h-0">
+    <div className="w-full h-full bg-white rounded-lg overflow-hidden">
+      <div className="flex flex-col h-full max-h-full">
+        {/* Icons Section - Always at top */}
+        <AnimatePresence>
+          {selectedZip && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex justify-center px-4 py-3 bg-gray-50 border-b border-gray-100"
+            >
+              <div className="flex gap-3 md:gap-4">
+                {icons.map((icon) => (
+                  <button
+                    key={icon.id}
+                    onClick={() => handleIconClick(icon.id)}
+                    className={`
+                      p-2 md:p-3 rounded-xl flex items-center transition-all duration-200
+                      ${selectedIcon === icon.id 
+                        ? 'bg-[#052b52] text-white shadow-md scale-105' 
+                        : 'bg-white text-gray-600 hover:bg-gray-100 shadow-sm'
+                      }
+                    `}
+                  >
+                    <icon.icon className="w-4 h-4 md:w-5 md:h-5" />
+                    <span className="hidden md:inline ml-2 text-sm font-medium">{icon.label}</span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Main Content Area */}
+        <div className="flex flex-1 min-h-0 p-4">
+          <motion.div 
+            className="bg-gray-50 rounded-xl shadow-sm overflow-hidden"
+            variants={mapContainerVariants}
+            animate={selectedIcon ? 'reduced' : 'full'}
+            transition={{
+              duration: 0.3,
+              ease: "easeInOut"
+            }}
+          >
+            <div className="h-full relative">
               <ComposableMap 
-                projection="geoAlbers" 
-                projectionConfig={{ scale: 20000 }}
-                className="w-full h-full"
+                projection="geoMercator"
+                projectionConfig={{
+                  scale: 60000,
+                  center: [-87.8, 42.05] // Centered between all zip codes
+                }}
+                style={{
+                  width: "100%",
+                  height: "100%"
+                }}
               >
                 <ZoomableGroup 
-                  center={[-87.8, 42.0]} 
                   zoom={1}
                   minZoom={0.8}
                   maxZoom={2}
+                  translateExtent={[
+                    [-88.0, 41.9], // Southwest corner
+                    [-87.6, 42.2]  // Northeast corner
+                  ]}
                 >
                   <Geographies geography="/chicago-zipcodes.json">
                     {({ geographies }: GeographiesProps) =>
@@ -183,96 +224,81 @@ const RegionalTabContent: React.FC = () => {
                   </Geographies>
                 </ZoomableGroup>
               </ComposableMap>
+              
+              {/* Map Labels */}
+              <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-xs text-gray-600">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-[#E2E8F0] border border-[#94A3B8]" />
+                  <span>Clickable Areas</span>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="w-3 h-3 bg-[#F1F5F9] border border-[#CBD5E1]" />
+                  <span>Non-interactive Areas</span>
+                </div>
+              </div>
             </div>
+          </motion.div>
 
-            <AnimatePresence>
-              {selectedZip && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  className="flex justify-center mt-4 space-x-3 md:space-x-4"
-                >
-                  {icons.map((icon) => (
+          <AnimatePresence mode="wait">
+            {selectedIcon && (
+              <motion.div 
+                className="w-[30%] ml-4 bg-gray-50 rounded-xl p-4 shadow-sm overflow-y-auto"
+                variants={sideContainerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <h3 className="text-sm md:text-base font-bold text-gray-800 mb-3">Analysis Options</h3>
+                <div className="space-y-2">
+                  {['Monthly Trends', 'Demographics', 'Growth Rate'].map((option, index) => (
                     <button
-                      key={icon.id}
-                      onClick={() => handleIconClick(icon.id)}
+                      key={index}
+                      onClick={() => handleSubDataClick(option)}
                       className={`
-                        p-2 md:p-3 rounded-xl flex items-center transition-all duration-200
-                        ${selectedIcon === icon.id 
-                          ? 'bg-[#052b52] text-white shadow-md scale-105' 
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        w-full p-2 md:p-3 text-left rounded-lg transition-all duration-200
+                        ${selectedSubData === option 
+                          ? 'bg-[#052b52] text-white' 
+                          : 'bg-white text-gray-600 hover:bg-gray-100'
                         }
+                        text-xs md:text-sm font-medium
                       `}
                     >
-                      <icon.icon className="w-4 h-4 md:w-5 md:h-5" />
-                      <span className="hidden md:inline ml-2 text-sm font-medium">{icon.label}</span>
+                      {option}
                     </button>
                   ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-        <AnimatePresence mode="wait">
-          {selectedIcon && (
+        {/* Bottom Analysis Panel */}
+        <AnimatePresence>
+          {selectedSubData && (
             <motion.div 
-              className="w-[30%] ml-4 bg-gray-50 rounded-xl p-4 shadow-sm"
-              variants={sideContainerVariants}
+              className="mt-auto mx-4 mb-4 bg-gray-50 rounded-xl p-4 shadow-sm"
+              variants={dataContainerVariants}
               initial="hidden"
               animate="visible"
-              exit="exit"
+              exit="hidden"
             >
-              <h3 className="text-sm md:text-base font-bold text-gray-800 mb-3">Analysis Options</h3>
-              <div className="space-y-2">
-                {['Monthly Trends', 'Demographics', 'Growth Rate'].map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleSubDataClick(option)}
-                    className={`
-                      w-full p-2 md:p-3 text-left rounded-lg transition-all duration-200
-                      ${selectedSubData === option 
-                        ? 'bg-[#052b52] text-white' 
-                        : 'bg-white text-gray-600 hover:bg-gray-100'
-                      }
-                      text-xs md:text-sm font-medium
-                    `}
-                  >
-                    {option}
-                  </button>
-                ))}
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-sm md:text-base font-bold text-gray-800">
+                  {selectedSubData} Analysis
+                </h3>
+                <span className="text-xs md:text-sm text-gray-500">
+                  {zipCodes.find(zip => zip.id === selectedZip)?.name || selectedZip}
+                </span>
+              </div>
+              <div className="text-sm text-gray-600">
+                <p>Analysis data for {selectedSubData.toLowerCase()} in {zipCodes.find(zip => zip.id === selectedZip)?.name}.</p>
+                <p className="mt-2">ZIP Code: {selectedZip}</p>
+                <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-
-      <AnimatePresence>
-        {selectedSubData && (
-          <motion.div 
-            className="mt-4 bg-gray-50 rounded-xl p-4 shadow-sm"
-            variants={dataContainerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-          >
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-sm md:text-base font-bold text-gray-800">
-                {selectedSubData} Analysis
-              </h3>
-              <span className="text-xs md:text-sm text-gray-500">
-                {zipCodes.find(zip => zip.id === selectedZip)?.name || selectedZip}
-              </span>
-            </div>
-            <div className="text-sm text-gray-600">
-              <p>Analysis data for {selectedSubData.toLowerCase()} in {zipCodes.find(zip => zip.id === selectedZip)?.name}.</p>
-              <p className="mt-2">ZIP Code: {selectedZip}</p>
-              <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
