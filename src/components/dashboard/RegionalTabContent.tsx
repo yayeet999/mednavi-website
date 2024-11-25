@@ -163,23 +163,27 @@ const RegionalTabContent: React.FC = () => {
   }, []);
 
   const handleZipClick = useCallback((zipId: string) => {
-    setSelectedZip(zipId);
-    setSelectedIcon(null);
-    setSelectedSubData(null);
+  setSelectedZip(zipId);
+  setSelectedIcon(null);
+  setSelectedSubData(null);
 
-    if (map && zipBoundaries.has(zipId)) {
-      const bounds = zipBoundaries.get(zipId);
-      if (bounds) {
-        const newBounds = new google.maps.LatLngBounds(
-          bounds.southwest,
-          bounds.northeast
-        );
-        map.fitBounds(newBounds, {
-          padding: { top: 50, right: 50, bottom: 50, left: 50 }
-        });
-      }
+  if (map && zipBoundaries.has(zipId)) {
+    const bounds = zipBoundaries.get(zipId);
+    if (bounds) {
+      const newBounds = new google.maps.LatLngBounds(
+        bounds.southwest,
+        bounds.northeast
+      );
+      const padding = 50;
+      map.fitBounds(newBounds, {
+        top: padding,
+        right: padding,
+        bottom: padding,
+        left: padding
+      });
     }
-  }, [map, zipBoundaries]);
+  }
+}, [map, zipBoundaries]);
 
   const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
