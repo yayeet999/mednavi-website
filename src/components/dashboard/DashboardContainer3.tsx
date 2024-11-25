@@ -4,10 +4,10 @@ import { MapPin, Users } from 'lucide-react';
 
 const DashboardContainer3 = () => {
   return (
-    <div className="h-full w-full overflow-hidden">
+    <div className="h-full w-full bg-white rounded-xl overflow-hidden">
       <Tabs defaultValue="regional" className="h-full flex flex-col [&>div]:bg-transparent">
-        <div className="flex justify-center">
-          <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2 mx-1">
+        <div className="flex justify-center bg-white px-4 pt-3">
+          <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2">
             <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
               <TabsTrigger 
                 value="regional" 
@@ -27,13 +27,17 @@ const DashboardContainer3 = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2">
-          <TabsContent value="regional" className="h-full m-0">
-            {/* Regional content will go here */}
+        <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
+          <TabsContent value="regional" className="h-full m-0 p-4">
+            <div className="w-full h-full bg-white rounded-lg p-4">
+              {/* Regional content will go here */}
+            </div>
           </TabsContent>
 
-          <TabsContent value="geoplot" className="h-full m-0">
-            {/* GeoPlot content will go here */}
+          <TabsContent value="geoplot" className="h-full m-0 p-4">
+            <div className="w-full h-full bg-white rounded-lg p-4">
+              {/* GeoPlot content will go here */}
+            </div>
           </TabsContent>
         </div>
       </Tabs>
