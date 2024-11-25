@@ -125,11 +125,11 @@ const RegionalTabContent: React.FC = () => {
         });
 
         dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
-          const zipCode = event.feature.getProperty('zip');
-          if (zipCodes.some(zip => zip.id === zipCode)) {
-            handleZipClick(zipCode);
-          }
-        });
+  const zipCode = event.feature.getProperty('zip');
+  if (typeof zipCode === 'string' && zipCodes.some(zip => zip.id === zipCode)) {
+    handleZipClick(zipCode);
+  }
+});
 
         dataLayer.addListener('mouseover', (event: google.maps.Data.MouseEvent) => {
           const zipCode = event.feature.getProperty('zip');
