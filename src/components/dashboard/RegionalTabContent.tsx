@@ -154,7 +154,7 @@ const RegionalTabContent: React.FC = () => {
           onMouseLeave={handleMouseUp}
         >
           <svg
-            viewBox="0 0 1000 1000"
+            viewBox="0 0 1000 800"
             className="w-full h-full"
             style={{
               transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
@@ -163,85 +163,105 @@ const RegionalTabContent: React.FC = () => {
             }}
           >
             <defs>
-              <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#f8fafc" strokeWidth="0.5" />
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f8fafc" strokeWidth="0.5" />
               </pattern>
             </defs>
-            <rect width="100%" height="100%" fill="#f8fafc" />
             
-            {/* Major Roads */}
-            <path
-              d="M 400 250 L 800 250 M 400 600 L 800 600 M 425 200 L 425 650"
-              stroke="#e2e8f0"
-              strokeWidth="8"
-              fill="none"
-            />
-            <path
-              d="M 600 200 L 600 650"
-              stroke="#e2e8f0"
-              strokeWidth="8"
-              fill="none"
-            />
+            {/* Background */}
+            <rect width="100%" height="100%" fill="#f8fafc" />
+
+            {/* Main road network */}
+            <g className="roads" stroke="#e2e8f0" fill="none">
+              <path d="M 300 200 L 700 200" strokeWidth="2" />
+              <path d="M 350 150 L 350 600" strokeWidth="2" />
+              <path d="M 500 150 L 500 600" strokeWidth="2" />
+              <path d="M 650 150 L 650 600" strokeWidth="2" />
+            </g>
 
             {/* Niles (60714) */}
             <path
-              d="M 450 300 C 475 290, 525 290, 550 300 L 560 375 C 535 385, 485 385, 460 375 Z"
+              d="M 420 280 
+                 L 520 250 
+                 L 580 270
+                 L 560 370
+                 L 490 390
+                 L 430 360
+                 Z"
               className={`transition-all duration-200 ${
                 selectedZip === "60714"
                   ? 'fill-[#052b52] stroke-[#052b52]'
                   : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
               }`}
-              strokeWidth="1.5"
+              strokeWidth="1"
               onClick={() => handleZipClick("60714")}
               style={{ cursor: 'pointer' }}
             />
 
             {/* Edison Park (60631) */}
             <path
-              d="M 575 300 C 600 290, 650 290, 675 300 L 685 375 C 660 385, 610 385, 585 375 Z"
+              d="M 430 360
+                 L 490 390
+                 L 560 370
+                 L 550 440
+                 L 480 460
+                 L 420 430
+                 Z"
               className={`transition-all duration-200 ${
                 selectedZip === "60631"
                   ? 'fill-[#052b52] stroke-[#052b52]'
                   : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
               }`}
-              strokeWidth="1.5"
+              strokeWidth="1"
               onClick={() => handleZipClick("60631")}
               style={{ cursor: 'pointer' }}
             />
 
             {/* Norwood Park (60656) */}
             <path
-              d="M 460 400 C 485 390, 535 390, 560 400 L 570 475 C 545 485, 495 485, 470 475 Z"
+              d="M 420 430
+                 L 480 460
+                 L 550 440
+                 L 540 510
+                 L 470 530
+                 L 410 500
+                 Z"
               className={`transition-all duration-200 ${
                 selectedZip === "60656"
                   ? 'fill-[#052b52] stroke-[#052b52]'
                   : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
               }`}
-              strokeWidth="1.5"
+              strokeWidth="1"
               onClick={() => handleZipClick("60656")}
               style={{ cursor: 'pointer' }}
             />
 
             {/* Park Ridge (60068) */}
             <path
-              d="M 585 400 C 610 390, 660 390, 685 400 L 695 475 C 670 485, 620 485, 595 475 Z"
+              d="M 320 300
+                 L 420 280
+                 L 430 360
+                 L 420 430
+                 L 410 500
+                 L 310 480
+                 Z"
               className={`transition-all duration-200 ${
                 selectedZip === "60068"
                   ? 'fill-[#052b52] stroke-[#052b52]'
                   : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
               }`}
-              strokeWidth="1.5"
+              strokeWidth="1"
               onClick={() => handleZipClick("60068")}
               style={{ cursor: 'pointer' }}
             />
 
-            {/* Labels */}
+            {/* ZIP Labels */}
             {zipCodes.map((zip) => {
               const labelPositions = {
-                "60714": { x: 505, y: 340 },
-                "60631": { x: 630, y: 340 },
-                "60656": { x: 515, y: 440 },
-                "60068": { x: 640, y: 440 }
+                "60714": { x: 500, y: 320 },
+                "60631": { x: 490, y: 400 },
+                "60656": { x: 480, y: 480 },
+                "60068": { x: 370, y: 390 }
               };
               const pos = labelPositions[zip.id as keyof typeof labelPositions];
               return (
@@ -255,6 +275,30 @@ const RegionalTabContent: React.FC = () => {
                   } pointer-events-none`}
                 >
                   {zip.name}
+                </text>
+              );
+            })}
+
+            {/* ZIP Code Numbers */}
+            {zipCodes.map((zip) => {
+              const numPositions = {
+                "60714": { x: 500, y: 335 },
+                "60631": { x: 490, y: 415 },
+                "60656": { x: 480, y: 495 },
+                "60068": { x: 370, y: 405 }
+              };
+              const pos = numPositions[zip.id as keyof typeof numPositions];
+              return (
+                <text
+                  key={`num-${zip.id}`}
+                  x={pos.x}
+                  y={pos.y}
+                  textAnchor="middle"
+                  className={`text-[9px] ${
+                    selectedZip === zip.id ? 'fill-white' : 'fill-gray-500'
+                  } pointer-events-none`}
+                >
+                  {zip.id}
                 </text>
               );
             })}
