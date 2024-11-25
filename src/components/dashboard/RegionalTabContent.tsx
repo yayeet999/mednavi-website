@@ -131,17 +131,19 @@ const RegionalTabContent: React.FC = () => {
 
         <div className="h-full">
           <ComposableMap
-            projection="geoMercator"
-            projectionConfig={{
-              scale: 60000,
-              center: [-87.85, 42.05],
-              rotate: [0, 0, 0]
-            }}
-            style={{
-              width: "100%",
-              height: "100%"
-            }}
-          >
+  projection="geoMercator"
+  projectionConfig={{
+    scale: 60000,
+    center: [-87.85, 42.05],
+  }}
+  width={800}
+  height={400}
+  style={{
+    width: "100%",
+    height: "100%",
+    border: "1px solid red" // temporary to see bounds
+  }}
+>
             <ZoomableGroup
               zoom={position.zoom}
               center={position.coordinates as [number, number]}
