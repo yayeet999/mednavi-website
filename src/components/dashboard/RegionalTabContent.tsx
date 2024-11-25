@@ -78,7 +78,7 @@ const RegionalTabContent: React.FC = () => {
   const sideContainerVariants = {
     hidden: { 
       opacity: 0, 
-      x: 50,
+      x: 20,
       transition: {
         type: "spring",
         stiffness: 300,
@@ -93,212 +93,180 @@ const RegionalTabContent: React.FC = () => {
         stiffness: 300,
         damping: 30
       }
-    },
-    exit: {
-      opacity: 0,
-      x: 50,
-      transition: {
-        duration: 0.2
-      }
-    }
-  };
-
-  const dataContainerVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 20,
-      height: 0
-    },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      height: "auto",
-      transition: {
-        duration: 0.3,
-        ease: "easeOut"
-      }
     }
   };
 
   return (
-    <div className="w-full h-full bg-white rounded-lg overflow-hidden">
-      <div className="flex flex-col h-full max-h-full">
-        {/* Icons Section - Always at top */}
+    <div className="w-full h-full flex">
+      <motion.div 
+        className="relative bg-gray-50 rounded-xl shadow-sm overflow-hidden"
+        variants={mapContainerVariants}
+        animate={selectedIcon ? 'reduced' : 'full'}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
+        {/* Icons Section Inside Map Container */}
         <AnimatePresence>
           {selectedZip && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="flex justify-center px-4 py-3 bg-gray-50 border-b border-gray-100"
+              className="absolute top-4 left-4 right-4 z-10"
             >
-              <div className="flex gap-3 md:gap-4">
-                {icons.map((icon) => (
-                  <button
-                    key={icon.id}
-                    onClick={() => handleIconClick(icon.id)}
-                    className={`
-                      p-2 md:p-3 rounded-xl flex items-center transition-all duration-200
-                      ${selectedIcon === icon.id 
-                        ? 'bg-[#052b52] text-white shadow-md scale-105' 
-                        : 'bg-white text-gray-600 hover:bg-gray-100 shadow-sm'
-                      }
-                    `}
-                  >
-                    <icon.icon className="w-4 h-4 md:w-5 md:h-5" />
-                    <span className="hidden md:inline ml-2 text-sm font-medium">{icon.label}</span>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Main Content Area */}
-        <div className="flex flex-1 min-h-0 p-4">
-          <motion.div 
-            className="bg-gray-50 rounded-xl shadow-sm overflow-hidden"
-            variants={mapContainerVariants}
-            animate={selectedIcon ? 'reduced' : 'full'}
-            transition={{
-              duration: 0.3,
-              ease: "easeInOut"
-            }}
-          >
-            <div className="h-full relative">
-              <ComposableMap 
-                projection="geoMercator"
-                projectionConfig={{
-                  scale: 60000,
-                  center: [-87.8, 42.05] // Centered between all zip codes
-                }}
-                style={{
-                  width: "100%",
-                  height: "100%"
-                }}
-              >
-                <ZoomableGroup 
-                  zoom={1}
-                  minZoom={0.8}
-                  maxZoom={2}
-                  translateExtent={[
-                    [-88.0, 41.9], // Southwest corner
-                    [-87.6, 42.2]  // Northeast corner
-                  ]}
-                >
-                  <Geographies geography="/chicago-zipcodes.json">
-                    {({ geographies }: GeographiesProps) =>
-                      geographies.map((geo: GeographyType) => {
-                        const isClickable = zipCodes.some(zip => zip.id === geo.properties.zip);
-                        return (
-                          <Geography
-                            key={geo.rsmKey}
-                            geography={geo}
-                            fill={isClickable ? '#E2E8F0' : '#F1F5F9'}
-                            stroke={isClickable ? '#94A3B8' : '#CBD5E1'}
-                            strokeWidth={0.5}
-                            style={{
-                              default: { 
-                                outline: "none",
-                                transition: 'all 0.3s'
-                              } as GeographyStyleProps,
-                              hover: { 
-                                outline: "none",
-                                fill: isClickable ? '#CBD5E1' : '#F1F5F9',
-                                cursor: isClickable ? 'pointer' : 'default'
-                              } as GeographyStyleProps,
-                              pressed: { 
-                                outline: "none",
-                                fill: '#94A3B8'
-                              } as GeographyStyleProps,
-                            }}
-                            onClick={() => {
-                              if (isClickable) {
-                                handleZipClick(geo.properties.zip);
-                              }
-                            }}
-                          />
-                        );
-                      })
-                    }
-                  </Geographies>
-                </ZoomableGroup>
-              </ComposableMap>
-              
-              {/* Map Labels */}
-              <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-xs text-gray-600">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-[#E2E8F0] border border-[#94A3B8]" />
-                  <span>Clickable Areas</span>
-                </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="w-3 h-3 bg-[#F1F5F9] border border-[#CBD5E1]" />
-                  <span>Non-interactive Areas</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          <AnimatePresence mode="wait">
-            {selectedIcon && (
-              <motion.div 
-                className="w-[30%] ml-4 bg-gray-50 rounded-xl p-4 shadow-sm overflow-y-auto"
-                variants={sideContainerVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
-                <h3 className="text-sm md:text-base font-bold text-gray-800 mb-3">Analysis Options</h3>
-                <div className="space-y-2">
-                  {['Monthly Trends', 'Demographics', 'Growth Rate'].map((option, index) => (
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
+                <div className="flex justify-center gap-2">
+                  {icons.map((icon) => (
                     <button
-                      key={index}
-                      onClick={() => handleSubDataClick(option)}
+                      key={icon.id}
+                      onClick={() => handleIconClick(icon.id)}
                       className={`
-                        w-full p-2 md:p-3 text-left rounded-lg transition-all duration-200
-                        ${selectedSubData === option 
-                          ? 'bg-[#052b52] text-white' 
-                          : 'bg-white text-gray-600 hover:bg-gray-100'
-                        }
-                        text-xs md:text-sm font-medium
+                        px-3 py-2 rounded-lg flex items-center transition-all duration-200
+                        ${selectedIcon === icon.id 
+                          ? 'bg-[#052b52] text-white shadow-sm' 
+                          : 'bg-white/80 text-gray-600 hover:bg-white'}
                       `}
                     >
-                      {option}
+                      <icon.icon className="w-4 h-4" />
+                      <span className="ml-2 text-xs font-medium">{icon.label}</span>
                     </button>
                   ))}
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Bottom Analysis Panel */}
-        <AnimatePresence>
-          {selectedSubData && (
-            <motion.div 
-              className="mt-auto mx-4 mb-4 bg-gray-50 rounded-xl p-4 shadow-sm"
-              variants={dataContainerVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-            >
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-sm md:text-base font-bold text-gray-800">
-                  {selectedSubData} Analysis
-                </h3>
-                <span className="text-xs md:text-sm text-gray-500">
-                  {zipCodes.find(zip => zip.id === selectedZip)?.name || selectedZip}
-                </span>
-              </div>
-              <div className="text-sm text-gray-600">
-                <p>Analysis data for {selectedSubData.toLowerCase()} in {zipCodes.find(zip => zip.id === selectedZip)?.name}.</p>
-                <p className="mt-2">ZIP Code: {selectedZip}</p>
-                <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+
+        {/* Map Area */}
+        <div className="h-full">
+          <ComposableMap
+            width={800}
+            height={600}
+            projection="geoAlbers"
+            projectionConfig={{
+              scale: 80000,
+              center: [-87.85, 42.05],
+              rotate: [0, 0, 0]
+            }}
+            style={{
+              width: "100%",
+              height: "100%"
+            }}
+          >
+            <ZoomableGroup 
+              center={[-87.85, 42.05]}
+              zoom={1}
+              minZoom={0.8}
+              maxZoom={2}
+            >
+              <Geographies geography="/chicago-zipcodes.json">
+                {({ geographies }: GeographiesProps) =>
+                  geographies.map((geo: GeographyType) => {
+                    const isClickable = zipCodes.some(zip => zip.id === geo.properties.zip);
+                    const isSelected = geo.properties.zip === selectedZip;
+                    return (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        fill={isSelected ? '#052b52' : isClickable ? '#E2E8F0' : '#F1F5F9'}
+                        stroke={isSelected ? '#052b52' : isClickable ? '#94A3B8' : '#CBD5E1'}
+                        strokeWidth={isSelected ? 2 : 0.5}
+                        style={{
+                          default: { 
+                            outline: "none",
+                            transition: 'all 0.3s'
+                          } as GeographyStyleProps,
+                          hover: { 
+                            outline: "none",
+                            fill: isClickable ? (isSelected ? '#052b52' : '#CBD5E1') : '#F1F5F9',
+                            cursor: isClickable ? 'pointer' : 'default'
+                          } as GeographyStyleProps,
+                          pressed: { 
+                            outline: "none",
+                            fill: '#052b52'
+                          } as GeographyStyleProps,
+                        }}
+                        onClick={() => {
+                          if (isClickable) {
+                            handleZipClick(geo.properties.zip);
+                          }
+                        }}
+                      />
+                    );
+                  })
+                }
+              </Geographies>
+            </ZoomableGroup>
+          </ComposableMap>
+        </div>
+
+        {/* Map Legend */}
+        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-[#E2E8F0] border border-[#94A3B8]" />
+            <span className="text-gray-600">Available Regions</span>
+          </div>
+          <div className="flex items-center gap-2 mt-1">
+            <div className="w-3 h-3 bg-[#052b52]" />
+            <span className="text-gray-600">Selected Region</span>
+          </div>
+        </div>
+      </motion.div>
+
+      <AnimatePresence>
+        {selectedIcon && (
+          <motion.div 
+            className="w-[30%] ml-4 bg-gray-50 rounded-xl shadow-sm"
+            variants={sideContainerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            <div className="p-4">
+              <h3 className="text-sm font-bold text-gray-800 mb-3">Analysis Options</h3>
+              <div className="space-y-2">
+                {['Monthly Trends', 'Demographics', 'Growth Rate'].map((option) => (
+                  <motion.button
+                    key={option}
+                    onClick={() => handleSubDataClick(option)}
+                    className={`
+                      w-full p-3 text-left rounded-lg transition-all duration-200
+                      ${selectedSubData === option 
+                        ? 'bg-[#052b52] text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-100'}
+                      text-xs font-medium
+                    `}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {option}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            {selectedSubData && (
+              <motion.div 
+                className="p-4 mt-2 border-t border-gray-100"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-sm font-bold text-gray-800">{selectedSubData}</h4>
+                  <span className="text-xs text-gray-500">
+                    {zipCodes.find(zip => zip.id === selectedZip)?.name}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-600 space-y-1">
+                  <p>Analysis data for {selectedSubData.toLowerCase()}</p>
+                  <p>Region: {zipCodes.find(zip => zip.id === selectedZip)?.name}</p>
+                  <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
