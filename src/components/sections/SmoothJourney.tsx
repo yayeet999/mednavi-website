@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import DashboardContainer from '@/components/dashboard/DashboardContainer'; // Updated import path
 import DashboardContainer2 from '@/components/dashboard/DashboardContainer2';
+import DashboardContainer3 from '@/components/dashboard/DashboardContainer3';
 
 const stations = [
   { 
@@ -403,22 +404,20 @@ const SmoothJourney: React.FC = () => {
           >
             {/* Added Wrapper Div with Bottom Padding */}
             <div className="pb-4 md:pb-6">
-              <div className={`w-full h-full bg-white rounded-xl transition-shadow duration-500
-                              ${i === currentIndex 
-                                ? 'shadow-[0_8px_30px_rgba(59,130,246,0.15)]' 
-                                : 'shadow-lg'}`} 
-              >
-                {i === 0 ? (
-                  <DashboardContainer onNavigate={navigateToContainer} />
-                ) : i === 1 ? (
-                  <DashboardContainer2 />
-                ) : (
-                  renderKPIBox(station.kpis)
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className={`w-full h-full bg-white rounded-xl transition-shadow...`}>
+        {i === 0 ? (
+          <DashboardContainer onNavigate={navigateToContainer} />
+        ) : i === 1 ? (
+          <DashboardContainer2 />
+        ) : i === 2 ? (
+          <DashboardContainer3 />
+        ) : (
+          renderKPIBox(station.kpis)
+        )}
+      </div>
+    </div>
+  </div>
+))}
       </div>
 
       {isVisible && (
