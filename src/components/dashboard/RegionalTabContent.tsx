@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
+import { GoogleMap, LoadScript, Data } from '@react-google-maps/api';
 
 interface ZipCode {
   id: string;
@@ -20,14 +21,53 @@ const zipCodes: ZipCode[] = [
   { id: "60068", name: "Park Ridge" },
 ];
 
+const mapCenter = {
+  lat: 42.0451,
+  lng: -87.8450
+};
+
+const mapOptions = {
+  styles: [
+    {
+      featureType: "all",
+      elementType: "labels",
+      stylers: [{ visibility: "off" }]
+    },
+    {
+      featureType: "administrative",
+      elementType: "geometry.stroke",
+      stylers: [{ color: "#94A3B8" }]
+    },
+    {
+      featureType: "landscape",
+      elementType: "geometry",
+      stylers: [{ color: "#F8FAFC" }]
+    },
+    {
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [{ color: "#E2E8F0" }]
+    },
+    {
+      featureType: "water",
+      elementType: "geometry",
+      stylers: [{ color: "#BFDBFE" }]
+    }
+  ],
+  disableDefaultUI: true,
+  clickableIcons: false,
+  zoomControl: true,
+  zoomControlOptions: {
+    position: google.maps.ControlPosition.LEFT_BOTTOM
+  }
+};
+
 const RegionalTabContent: React.FC = () => {
   const [selectedZip, setSelectedZip] = useState<string | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
 
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
@@ -35,50 +75,96 @@ const RegionalTabContent: React.FC = () => {
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
 
-  const handleZipClick = (zipId: string) => {
+  const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
-  };
+  }, []);
 
-  const handleIconClick = (iconId: Icon['id']) => {
+  const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
     setSelectedSubData(null);
-  };
+  }, []);
 
-  const handleSubDataClick = (subDataId: string) => {
+  const handleSubDataClick = useCallback((subDataId: string) => {
     setSelectedSubData(subDataId);
-  };
+  }, []);
 
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY * -0.01;
-    const newScale = Math.min(Math.max(scale + delta, 1), 2.5);
-    setScale(newScale);
-  };
+  const onMapLoad = useCallback((map: google.maps.Map) => {
+    setMap(map);
+    
+    const dataLayer = new google.maps.Data({ map });
+    setZipDataLayer(dataLayer);
+    
+    // Load ZIP code boundaries
+    fetch('/chicago-zipcodes.json')
+      .then(response => response.json())
+      .then(data => {
+        // Filter for our specific ZIP codes
+        const filteredFeatures = data.features.filter((feature: any) => 
+          zipCodes.some(zip => zip.id === feature.properties.zip)
+        );
+        
+        dataLayer.addGeoJson({
+          type: "FeatureCollection",
+          features: filteredFeatures
+        });
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 0) {
-      setIsDragging(true);
-      setDragStart({
-        x: e.clientX - position.x,
-        y: e.clientY - position.y
+        // Style the ZIP code areas
+        dataLayer.setStyle((feature) => {
+          const zipCode = feature.getProperty('zip');
+          const isSelected = zipCode === selectedZip;
+          
+          return {
+            fillColor: isSelected ? '#052b52' : '#E2E8F0',
+            fillOpacity: 0.6,
+            strokeColor: isSelected ? '#052b52' : '#94A3B8',
+            strokeWeight: isSelected ? 2 : 1
+          };
+        });
+
+        // Add click listeners
+        dataLayer.addListener('click', (event) => {
+          const zipCode = event.feature.getProperty('zip');
+          if (zipCodes.some(zip => zip.id === zipCode)) {
+            handleZipClick(zipCode);
+          }
+        });
+
+        // Add hover effect
+        dataLayer.addListener('mouseover', (event) => {
+          const zipCode = event.feature.getProperty('zip');
+          if (zipCodes.some(zip => zip.id === zipCode) && zipCode !== selectedZip) {
+            dataLayer.overrideStyle(event.feature, {
+              fillColor: '#CBD5E1'
+            });
+          }
+        });
+
+        dataLayer.addListener('mouseout', (event) => {
+          const zipCode = event.feature.getProperty('zip');
+          if (zipCode !== selectedZip) {
+            dataLayer.revertStyle(event.feature);
+          }
+        });
+      });
+  }, [handleZipClick, selectedZip]);
+
+  useEffect(() => {
+    if (zipDataLayer) {
+      zipDataLayer.setStyle((feature) => {
+        const zipCode = feature.getProperty('zip');
+        const isSelected = zipCode === selectedZip;
+        
+        return {
+          fillColor: isSelected ? '#052b52' : '#E2E8F0',
+          fillOpacity: 0.6,
+          strokeColor: isSelected ? '#052b52' : '#94A3B8',
+          strokeWeight: isSelected ? 2 : 1
+        };
       });
     }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging) {
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
-      });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+  }, [selectedZip, zipDataLayer]);
 
   const mapContainerVariants = {
     full: { width: "100%" },
@@ -145,235 +231,74 @@ const RegionalTabContent: React.FC = () => {
           )}
         </AnimatePresence>
 
-        <div 
-          className="h-full relative"
-          onWheel={handleWheel}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        >
-          <svg
-            viewBox="0 0 1000 800"
-            className="w-full h-full"
-            style={{
-              transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-              transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-              cursor: isDragging ? 'grabbing' : 'grab'
-            }}
-          >
-            <defs>
-              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f8fafc" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            
-            {/* Background */}
-            <rect width="100%" height="100%" fill="#f8fafc" />
-
-            {/* Main road network */}
-            <g className="roads" stroke="#e2e8f0" fill="none">
-              <path d="M 300 200 L 700 200" strokeWidth="2" />
-              <path d="M 350 150 L 350 600" strokeWidth="2" />
-              <path d="M 500 150 L 500 600" strokeWidth="2" />
-              <path d="M 650 150 L 650 600" strokeWidth="2" />
-            </g>
-
-            {/* Niles (60714) */}
-            <path
-              d="M 420 280 
-                 L 520 250 
-                 L 580 270
-                 L 560 370
-                 L 490 390
-                 L 430 360
-                 Z"
-              className={`transition-all duration-200 ${
-                selectedZip === "60714"
-                  ? 'fill-[#052b52] stroke-[#052b52]'
-                  : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
-              }`}
-              strokeWidth="1"
-              onClick={() => handleZipClick("60714")}
-              style={{ cursor: 'pointer' }}
+        <div className="h-full w-full">
+          <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
+            <GoogleMap
+              mapContainerClassName="w-full h-full"
+              center={mapCenter}
+              zoom={12}
+              options={mapOptions}
+              onLoad={onMapLoad}
             />
-
-            {/* Edison Park (60631) */}
-            <path
-              d="M 430 360
-                 L 490 390
-                 L 560 370
-                 L 550 440
-                 L 480 460
-                 L 420 430
-                 Z"
-              className={`transition-all duration-200 ${
-                selectedZip === "60631"
-                  ? 'fill-[#052b52] stroke-[#052b52]'
-                  : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
-              }`}
-              strokeWidth="1"
-              onClick={() => handleZipClick("60631")}
-              style={{ cursor: 'pointer' }}
-            />
-
-            {/* Norwood Park (60656) */}
-            <path
-              d="M 420 430
-                 L 480 460
-                 L 550 440
-                 L 540 510
-                 L 470 530
-                 L 410 500
-                 Z"
-              className={`transition-all duration-200 ${
-                selectedZip === "60656"
-                  ? 'fill-[#052b52] stroke-[#052b52]'
-                  : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
-              }`}
-              strokeWidth="1"
-              onClick={() => handleZipClick("60656")}
-              style={{ cursor: 'pointer' }}
-            />
-
-            {/* Park Ridge (60068) */}
-            <path
-              d="M 320 300
-                 L 420 280
-                 L 430 360
-                 L 420 430
-                 L 410 500
-                 L 310 480
-                 Z"
-              className={`transition-all duration-200 ${
-                selectedZip === "60068"
-                  ? 'fill-[#052b52] stroke-[#052b52]'
-                  : 'fill-[#E2E8F0] stroke-[#94A3B8] hover:fill-[#CBD5E1]'
-              }`}
-              strokeWidth="1"
-              onClick={() => handleZipClick("60068")}
-              style={{ cursor: 'pointer' }}
-            />
-
-            {/* ZIP Labels */}
-            {zipCodes.map((zip) => {
-              const labelPositions = {
-                "60714": { x: 500, y: 320 },
-                "60631": { x: 490, y: 400 },
-                "60656": { x: 480, y: 480 },
-                "60068": { x: 370, y: 390 }
-              };
-              const pos = labelPositions[zip.id as keyof typeof labelPositions];
-              return (
-                <text
-                  key={zip.id}
-                  x={pos.x}
-                  y={pos.y}
-                  textAnchor="middle"
-                  className={`text-[11px] font-medium ${
-                    selectedZip === zip.id ? 'fill-white' : 'fill-gray-600'
-                  } pointer-events-none`}
-                >
-                  {zip.name}
-                </text>
-              );
-            })}
-
-            {/* ZIP Code Numbers */}
-            {zipCodes.map((zip) => {
-              const numPositions = {
-                "60714": { x: 500, y: 335 },
-                "60631": { x: 490, y: 415 },
-                "60656": { x: 480, y: 495 },
-                "60068": { x: 370, y: 405 }
-              };
-              const pos = numPositions[zip.id as keyof typeof numPositions];
-              return (
-                <text
-                  key={`num-${zip.id}`}
-                  x={pos.x}
-                  y={pos.y}
-                  textAnchor="middle"
-                  className={`text-[9px] ${
-                    selectedZip === zip.id ? 'fill-white' : 'fill-gray-500'
-                  } pointer-events-none`}
-                >
-                  {zip.id}
-                </text>
-              );
-            })}
-          </svg>
-        </div>
-
-        <div className="absolute bottom-4 left-4 space-y-2">
-          <button
-            onClick={() => setScale(Math.min(scale + 0.2, 2.5))}
-            className="bg-white/90 backdrop-blur-sm rounded-lg w-8 h-8 shadow-sm text-sm flex items-center justify-center"
-          >
-            +
-          </button>
-          <button
-            onClick={() => setScale(Math.max(scale - 0.2, 1))}
-            className="bg-white/90 backdrop-blur-sm rounded-lg w-8 h-8 shadow-sm text-sm flex items-center justify-center"
-          >
-            -
-          </button>
+          </LoadScript>
         </div>
       </motion.div>
 
-      {selectedIcon && (
-        <motion.div 
-          className="w-full md:w-[30%] md:ml-4 bg-gray-50 rounded-xl shadow-sm mt-4 md:mt-0"
-          variants={sideContainerVariants}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-        >
-          <div className="p-4">
-            <h3 className="text-sm font-bold text-gray-800 mb-3">Analysis Options</h3>
-            <div className="space-y-2">
-              {['Monthly Trends', 'Demographics', 'Growth Rate'].map((option) => (
-                <motion.button
-                  key={option}
-                  onClick={() => handleSubDataClick(option)}
-                  className={`
-                    w-full p-3 text-left rounded-lg transition-all duration-200
-                    ${selectedSubData === option 
-                      ? 'bg-[#052b52] text-white' 
-                      : 'bg-white text-gray-600 hover:bg-gray-100'}
-                    text-xs font-medium
-                  `}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {option}
-                </motion.button>
-              ))}
+      <AnimatePresence>
+        {selectedIcon && (
+          <motion.div 
+            className="w-full md:w-[30%] md:ml-4 bg-gray-50 rounded-xl shadow-sm mt-4 md:mt-0"
+            variants={sideContainerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            <div className="p-4">
+              <h3 className="text-sm font-bold text-gray-800 mb-3">Analysis Options</h3>
+              <div className="space-y-2">
+                {['Monthly Trends', 'Demographics', 'Growth Rate'].map((option) => (
+                  <motion.button
+                    key={option}
+                    onClick={() => handleSubDataClick(option)}
+                    className={`
+                      w-full p-3 text-left rounded-lg transition-all duration-200
+                      ${selectedSubData === option 
+                        ? 'bg-[#052b52] text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-100'}
+                      text-xs font-medium
+                    `}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {option}
+                  </motion.button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {selectedSubData && (
-            <motion.div 
-              className="p-4 mt-2 border-t border-gray-100"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <div className="flex justify-between items-center mb-2">
-                <h4 className="text-sm font-bold text-gray-800">{selectedSubData}</h4>
-                <span className="text-xs text-gray-500">
-                  {zipCodes.find(zip => zip.id === selectedZip)?.name}
-                </span>
-              </div>
-              <div className="text-xs text-gray-600 space-y-1">
-                <p>Analysis data for {selectedSubData.toLowerCase()}</p>
-                <p>Region: {zipCodes.find(zip => zip.id === selectedZip)?.name}</p>
-                <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
-              </div>
-            </motion.div>
-          )}
-        </motion.div>
-      )}
+            {selectedSubData && (
+              <motion.div 
+                className="p-4 mt-2 border-t border-gray-100"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-sm font-bold text-gray-800">{selectedSubData}</h4>
+                  <span className="text-xs text-gray-500">
+                    {zipCodes.find(zip => zip.id === selectedZip)?.name}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-600 space-y-1">
+                  <p>Analysis data for {selectedSubData.toLowerCase()}</p>
+                  <p>Region: {zipCodes.find(zip => zip.id === selectedZip)?.name}</p>
+                  <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
