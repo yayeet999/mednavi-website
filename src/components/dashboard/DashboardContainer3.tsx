@@ -10,7 +10,7 @@ interface DashboardContainer3Props {
 }
 
 export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavigateToBot }) => {
-  const [activePage, setActivePage] = useState('home');
+  const [activePage, setActivePage] = useState('map');
 
   return (
     <div className="h-full w-full">
