@@ -306,13 +306,16 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
   const mapContainerVariants = {
     full: { width: "100%" },
-    reduced: { width: "68%" },
+    reduced: { 
+      width: window.innerWidth >= 768 ? "68%" : "62%",
+      marginRight: window.innerWidth >= 768 ? "0" : "35%"
+    }
   };
 
   const sideContainerVariants = {
     hidden: { 
       opacity: 0, 
-      x: 20,
+      x: window.innerWidth >= 768 ? 20 : "100%",
       transition: {
         type: "spring",
         stiffness: 300,
@@ -336,11 +339,13 @@ const RegionalTabContent = forwardRef((props, ref) => {
         className="relative bg-gray-50 rounded-xl shadow-sm overflow-hidden flex-1"
         variants={mapContainerVariants}
         animate={selectedIcon ? {
-          width: window.innerWidth >= 768 ? "68%" : "75%",
-          marginLeft: window.innerWidth >= 768 ? "0px" : "-10px"
+          width: window.innerWidth >= 768 ? "68%" : "62%",
+          marginLeft: "0px",
+          marginRight: window.innerWidth >= 768 ? "0" : "35%"
         } : {
           width: "100%",
-          marginLeft: "0px"
+          marginLeft: "0px",
+          marginRight: "0"
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
@@ -398,9 +403,10 @@ const RegionalTabContent = forwardRef((props, ref) => {
         {selectedIcon && (
           <motion.div 
             className={`
-              w-full md:w-[30%] md:ml-4 bg-gray-50 rounded-xl shadow-sm 
-              ${window.innerWidth >= 768 ? 'mt-0' : 'mt-0 absolute right-0 top-0 h-full'} 
-              ${window.innerWidth >= 768 ? '' : 'w-[20%]'}
+              bg-gray-50 rounded-xl shadow-sm 
+              ${window.innerWidth >= 768 
+                ? 'w-[30%] ml-4 relative' 
+                : 'w-[35%] absolute right-0 top-0 h-full'}
             `}
             variants={sideContainerVariants}
             initial="hidden"
