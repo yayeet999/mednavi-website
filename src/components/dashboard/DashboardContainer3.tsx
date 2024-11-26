@@ -93,9 +93,9 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
 
           {/* Content Area */}
           <div className="flex-1 p-2 md:p-4">
-            <div className="bg-gray-100 rounded-lg h-full p-2 md:p-3">
+            <div className="bg-gray-100 rounded-lg h-full">
               {activePage === 'home' && (
-                <div className="flex flex-col space-y-2 md:space-y-3">
+                <div className="flex flex-col space-y-2 md:space-y-3 p-2 md:p-3">
                   <h2 className="text-base md:text-xl font-bold text-[#103d68] pl-1 md:pl-2">
                     Dashboard Overview
                   </h2>
@@ -252,46 +252,63 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
 
               {activePage === 'map' && (
                 <div className="w-full h-full bg-white rounded-lg overflow-hidden">
-                  <Tabs defaultValue="regional" className="h-full flex flex-col [&>div]:bg-transparent">
-                    <div className="flex justify-center bg-white px-4 pt-3">
-                      <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2">
-                        <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
-                          <TabsTrigger 
-                            value="regional" 
-                            className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
-                          >
-                            <MapPin className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
-                            Regional
-                          </TabsTrigger>
-                          <TabsTrigger 
-                            value="geoplot" 
-                            className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
-                          >
-                            <Users className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
-                            GeoPlot
-                          </TabsTrigger>
-                        </TabsList>
+                  <div className="flex flex-col h-full">
+                    <div className="flex justify-center bg-white pt-2 md:pt-2">
+                      <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2 mx-4">
+                        <Tabs defaultValue="regional" className="w-full">
+                          <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
+                            <TabsTrigger 
+                              value="regional" 
+                              className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
+                            >
+                              <MapPin className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
+                              Regional
+                            </TabsTrigger>
+                            <TabsTrigger 
+                              value="geoplot" 
+                              className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
+                            >
+                              <Users className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
+                              GeoPlot
+                            </TabsTrigger>
+                          </TabsList>
+
+                          <div className="flex-1 bg-[#103d68] mt-1 md:mt-2 rounded-lg overflow-hidden">
+                            <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
+                              <RegionalTabContent />
+                            </TabsContent>
+
+                            <TabsContent value="geoplot" className="h-full m-0 p-4">
+                              <div className="w-full h-full bg-white rounded-lg p-4">
+                                {/* GeoPlot content */}
+                              </div>
+                            </TabsContent>
+                          </div>
+                        </Tabs>
                       </div>
                     </div>
-
-                    <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
-                      <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
-  <RegionalTabContent />
-</TabsContent>
-
-                      <TabsContent value="geoplot" className="h-full m-0 p-4">
-                        <div className="w-full h-full bg-white rounded-lg p-4">
-                          {/* GeoPlot content */}
-                        </div>
-                      </TabsContent>
-                    </div>
-                  </Tabs>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      <style jsx global>{`
+        .gm-style-cc {
+          display: none !important;
+        }
+        .gmnoprint {
+          display: none !important;
+        }
+        .gm-style a[href^="https://maps.google.com/maps"] {
+          display: none !important;
+        }
+        .gm-style-iw {
+          display: none !important;
+        }
+      `}</style>
     </div>
   );
 };
