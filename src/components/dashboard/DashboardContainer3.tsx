@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Home, BarChart2, Map, Bot } from 'lucide-react';
+import { Home, BarChart2, Map, Bot, MapPin, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RegionalTabContent from './RegionalTabContent';
 
@@ -107,12 +107,14 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                                 value="regional" 
                                 className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
                               >
+                                <MapPin className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
                                 Regional
                               </TabsTrigger>
                               <TabsTrigger 
                                 value="geoplot" 
                                 className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
                               >
+                                <Users className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
                                 GeoPlot
                               </TabsTrigger>
                             </TabsList>
