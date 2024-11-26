@@ -275,7 +275,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
                     </div>
 
                     <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
-                      <TabsContent value="regional" className="h-full m-0 p-4">
+                      <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
   <RegionalTabContent />
 </TabsContent>
 
