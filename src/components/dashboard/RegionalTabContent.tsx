@@ -43,6 +43,17 @@ const zipCodes: ZipCode[] = [
   { id: "60068", name: "Park Ridge" },
 ];
 
+const surroundingCities = [
+  { name: "Morton Grove", position: { lat: 42.0401, lng: -87.7829 } },
+  { name: "Glenview", position: { lat: 42.0698, lng: -87.7873 } },
+  { name: "Des Plaines", position: { lat: 42.0334, lng: -87.8834 } },
+  { name: "Skokie", position: { lat: 42.0324, lng: -87.7416 } },
+  { name: "Lincolnwood", position: { lat: 42.0064, lng: -87.7329 } },
+  { name: "Harwood Heights", position: { lat: 41.9639, lng: -87.8069 } },
+  { name: "Rosemont", position: { lat: 41.9865, lng: -87.8709 } },
+  { name: "Elk Grove Village", position: { lat: 42.0037, lng: -87.9705 } },
+];
+
 const mapCenter = {
   lat: 42.0451,
   lng: -87.8450
@@ -87,7 +98,12 @@ const RegionalTabContent: React.FC = () => {
     disableDefaultUI: true,
     clickableIcons: false,
     zoomControl: true,
-    gestureHandling: 'greedy'
+    gestureHandling: 'greedy',
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+    scaleControl: false,
+    rotateControl: false,
   } as google.maps.MapOptions), []);
 
   const icons: Icon[] = [
@@ -125,6 +141,61 @@ const RegionalTabContent: React.FC = () => {
       });
     }
   }, [map, zipDataLayer]);
+
+  const addZipCodeLabels = useCallback((dataLayer: google.maps.Data) => {
+    zipCodes.forEach(zipCode => {
+      dataLayer.forEach((feature: google.maps.Data.Feature) => {
+        const featureZip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
+        if (featureZip === zipCode.id) {
+          const bounds = new google.maps.LatLngBounds();
+          const geometry = feature.getGeometry();
+          
+          if (geometry) {
+            geometry.forEachLatLng((latLng: google.maps.LatLng) => {
+              bounds.extend(latLng);
+            });
+            
+            const center = bounds.getCenter();
+            new google.maps.Marker({
+              position: center,
+              map,
+              label: {
+                text: zipCode.id,
+                fontSize: window.innerWidth < 768 ? "10px" : "16px",
+                color: selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
+                fontWeight: "500",
+                className: "zip-code-label"
+              },
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 0,
+              }
+            });
+          }
+        }
+      });
+    });
+  }, [map, selectedZip]);
+
+  const addSurroundingCityLabels = useCallback(() => {
+    surroundingCities.forEach(city => {
+      new google.maps.Marker({
+        position: city.position,
+        map,
+        label: {
+          text: city.name,
+          fontSize: window.innerWidth < 768 ? "9px" : "14px",
+          color: "#999999",
+          fontWeight: "400",
+          className: "city-label"
+        },
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 0,
+        }
+      });
+    });
+  }, [map]);
 
   const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
@@ -184,6 +255,9 @@ const RegionalTabContent: React.FC = () => {
         }
       });
 
+      addZipCodeLabels(dataLayer);
+      addSurroundingCityLabels();
+
       const bounds = new google.maps.LatLngBounds();
       let hasValidGeometry = false;
 
@@ -217,7 +291,7 @@ const RegionalTabContent: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [handleZipClick, selectedZip]);
+  }, [handleZipClick, selectedZip, addZipCodeLabels, addSurroundingCityLabels]);
 
   useEffect(() => {
     if (zipDataLayer) {
