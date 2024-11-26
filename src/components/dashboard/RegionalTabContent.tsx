@@ -1,3 +1,4 @@
+```typescript
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,7 +46,7 @@ const RegionalTabContent: React.FC = () => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const markersRef = useRef<google.maps.Marker[]>([]);
+  const [labels, setLabels] = useState<google.maps.Marker[]>([]);
 
   const mapOptions = useMemo(() => ({
     styles: [
@@ -67,7 +68,17 @@ const RegionalTabContent: React.FC = () => {
       {
         featureType: "road",
         elementType: "geometry",
-        stylers: [{ color: "#E2E8F0" }]
+        stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "road.highway",
+        elementType: "all",
+        stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "transit",
+        elementType: "all",
+        stylers: [{ visibility: "off" }]
       },
       {
         featureType: "water",
@@ -92,66 +103,71 @@ const RegionalTabContent: React.FC = () => {
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
 
-  const clearExistingMarkers = useCallback(() => {
-    markersRef.current.forEach(marker => marker.setMap(null));
-    markersRef.current = [];
-  }, []);
-
-  const createMarker = useCallback((position: google.maps.LatLng, text: string, fontSize: string, color: string, isZip: boolean = false) => {
-    const marker = new google.maps.Marker({
-      position,
-      map,
-      label: {
-        text,
-        fontSize,
-        color,
-        fontWeight: isZip ? "500" : "400",
-        className: isZip ? "zip-code-label" : "city-label"
-      },
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 0,
-      }
-    });
-    markersRef.current.push(marker);
-    return marker;
-  }, [map]);
+  const clearLabels = useCallback(() => {
+    labels.forEach(label => label.setMap(null));
+    setLabels([]);
+  }, [labels]);
 
   const addLabels = useCallback(() => {
-    clearExistingMarkers();
-    
-    const isMobile = window.innerWidth < 768;
-    
-    // Add zip code labels
+    if (!map) return;
+
+    clearLabels();
+    const newLabels: google.maps.Marker[] = [];
+
     zipCodes.forEach(zipCode => {
       if (zipCode.center) {
-        createMarker(
-          new google.maps.LatLng(zipCode.center.lat, zipCode.center.lng),
-          zipCode.id,
-          isMobile ? "10px" : "16px",
-          selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
-          true
-        );
+        const marker = new google.maps.Marker({
+          position: zipCode.center,
+          map,
+          label: {
+            text: zipCode.id,
+            fontSize: window.innerWidth < 768 ? "10px" : "16px",
+            color: selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
+            fontWeight: "500",
+            className: "zip-code-label"
+          },
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 0,
+          }
+        });
+        newLabels.push(marker);
       }
     });
 
-    // Add surrounding city labels
     surroundingCities.forEach(city => {
-      createMarker(
-        new google.maps.LatLng(city.position.lat, city.position.lng),
-        city.name,
-        isMobile ? "9px" : "14px",
-        "#999999",
-        false
-      );
+      const marker = new google.maps.Marker({
+        position: city.position,
+        map,
+        label: {
+          text: city.name,
+          fontSize: window.innerWidth < 768 ? "9px" : "14px",
+          color: "#999999",
+          fontWeight: "400",
+          className: "city-label"
+        },
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 0,
+        }
+      });
+      newLabels.push(marker);
     });
-  }, [map, selectedZip, createMarker, clearExistingMarkers]);
+
+    setLabels(newLabels);
+  }, [map, selectedZip, clearLabels]);
 
   useEffect(() => {
     if (map && zipDataLayer) {
       addLabels();
     }
   }, [map, zipDataLayer, selectedZip, addLabels]);
+
+  useEffect(() => {
+    return () => {
+      clearLabels();
+    };
+  }, [clearLabels]);
 
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
@@ -372,53 +388,67 @@ const RegionalTabContent: React.FC = () => {
             exit="hidden"
           >
             <div className="p-4">
-              <h3 className="text-sm font-bold text-gray-800 mb-3">Analysis Options</h3>
-              <div className="space-y-2">
-                {['Monthly Trends', 'Demographics', 'Growth Rate'].map((option) => (
-                  <motion.button
-                    key={option}
-                    onClick={() => handleSubDataClick(option)}
-                    className={`
-                      w-full p-3 text-left rounded-lg transition-all duration-200
-                      ${selectedSubData === option 
-                        ? 'bg-[#052b52] text-white' 
-                        : 'bg-white text-gray-600 hover:bg-gray-100'}
-                      text-xs font-medium
-                    `}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {option}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
+             <h3 className="text-sm font-bold text-gray-800 mb-3">Analysis Options</h3>
+             <div className="space-y-2">
+               {['Monthly Trends', 'Demographics', 'Growth Rate'].map((option) => (
+                 <motion.button
+                   key={option}
+                   onClick={() => handleSubDataClick(option)}
+                   className={`
+                     w-full p-3 text-left rounded-lg transition-all duration-200
+                     ${selectedSubData === option 
+                       ? 'bg-[#052b52] text-white' 
+                       : 'bg-white text-gray-600 hover:bg-gray-100'}
+                     text-xs font-medium
+                   `}
+                   whileHover={{ scale: 1.02 }}
+                   whileTap={{ scale: 0.98 }}
+                 >
+                   {option}
+                 </motion.button>
+               ))}
+             </div>
+           </div>
 
-            {selectedSubData && (
-              <motion.div 
-                className="p-4 mt-2 border-t border-gray-100"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="text-sm font-bold text-gray-800">{selectedSubData}</h4>
-                  <span className="text-xs text-gray-500">
-                    {zipCodes.find(zip => zip.id === selectedZip)?.name}
-                  </span>
-                </div>
-                <div className="text-xs text-gray-600 space-y-1">
-                  <p>Analysis data for {selectedSubData.toLowerCase()}</p>
-                  <p>Region: {zipCodes.find(zip => zip.id === selectedZip)?.name}</p>
-                  <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
+           {selectedSubData && (
+             <motion.div 
+               className="p-4 mt-2 border-t border-gray-100"
+               initial={{ opacity: 0, y: 10 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.1 }}
+             >
+               <div className="flex justify-between items-center mb-2">
+                 <h4 className="text-sm font-bold text-gray-800">{selectedSubData}</h4>
+                 <span className="text-xs text-gray-500">
+                   {zipCodes.find(zip => zip.id === selectedZip)?.name}
+                 </span>
+               </div>
+               <div className="text-xs text-gray-600 space-y-1">
+                 <p>Analysis data for {selectedSubData.toLowerCase()}</p>
+                 <p>Region: {zipCodes.find(zip => zip.id === selectedZip)?.name}</p>
+                 <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
+               </div>
+             </motion.div>
+           )}
+         </motion.div>
+       )}
+     </AnimatePresence>
+
+     <style jsx global>{`
+       .gm-style-cc,
+       .gmnoprint,
+       .gm-style-iw-a,
+       .gm-style-iw-t,
+       .gm-style > div:last-child {
+         display: none !important;
+       }
+       .gm-style a[href^="https://maps.google.com/maps"],
+       .gm-style-pbc {
+         display: none !important;
+       }
+     `}</style>
+   </div>
+ );
 };
 
 export default RegionalTabContent;
