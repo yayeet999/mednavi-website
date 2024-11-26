@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef, forwardRef, useImperativeHandle } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
@@ -37,18 +37,14 @@ const mapCenter = {
   lng: -87.8450
 };
 
-interface MarkerElement extends google.maps.marker.AdvancedMarkerElement {
-  map: google.maps.Map | null;
-}
-
-const RegionalTabContent = () => {
+const RegionalTabContent = forwardRef((props, ref) => {
   const [selectedZip, setSelectedZip] = useState<string | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [markers, setMarkers] = useState<MarkerElement[]>([]);
+  const markersRef = useRef<google.maps.Marker[]>([]);
 
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
@@ -56,72 +52,20 @@ const RegionalTabContent = () => {
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
 
-  const createAdvancedMarker = async (position: google.maps.LatLngLiteral, text: string, options: { fontSize: string; color: string; fontWeight: string }) => {
-    // @ts-ignore - AdvancedMarkerElement exists but types aren't available yet
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-    const container = document.createElement('div');
-    container.className = 'marker-label';
-    container.textContent = text;
-    container.style.fontSize = options.fontSize;
-    container.style.color = options.color;
-    container.style.fontWeight = options.fontWeight;
-    container.style.textAlign = 'center';
-    
-    // @ts-ignore
-    return new AdvancedMarkerElement({
-      position,
-      content: container,
-      map
-    });
-  };
-
-  const clearMarkers = useCallback(() => {
-    markers.forEach(marker => {
-      marker.map = null;
-    });
-    setMarkers([]);
-  }, [markers]);
-
-  const createLabels = useCallback(async () => {
-    if (!map) return;
-    
-    clearMarkers();
-    const newMarkers: MarkerElement[] = [];
-
-    try {
-      // Create zip code markers
-      for (const zipCode of zipCodes) {
-        const marker = await createAdvancedMarker(
-          zipCode.center,
-          zipCode.id,
-          {
-            fontSize: window.innerWidth < 768 ? "10px" : "16px",
-            color: selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
-            fontWeight: "500"
-          }
-        );
-        newMarkers.push(marker);
+  useImperativeHandle(ref, () => ({
+    cleanup: () => {
+      if (map) {
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
+        
+        if (zipDataLayer) {
+          zipDataLayer.setMap(null);
+        }
+        
+        setMap(null);
       }
-
-      // Create surrounding cities markers
-      for (const city of surroundingCities) {
-        const marker = await createAdvancedMarker(
-          city.position,
-          city.name,
-          {
-            fontSize: window.innerWidth < 768 ? "9px" : "14px",
-            color: "#999999",
-            fontWeight: "400"
-          }
-        );
-        newMarkers.push(marker);
-      }
-
-      setMarkers(newMarkers);
-    } catch (error) {
-      console.error('Error creating markers:', error);
     }
-  }, [map, selectedZip, clearMarkers]);
+  }));
 
   const mapOptions = useMemo(() => ({
     styles: [
@@ -173,8 +117,53 @@ const RegionalTabContent = () => {
     rotateControl: false,
     draggableCursor: 'default',
     draggingCursor: 'grab',
-    mapId: 'medical_map', // Required for AdvancedMarkerElement
+    preserveDrawingBuffer: false,
+    maxZoom: 18,
+    minZoom: 8
   }), []);
+
+  const createLabels = useCallback(() => {
+    if (!map) return;
+    
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+
+    zipCodes.forEach(zipCode => {
+      const marker = new google.maps.Marker({
+        position: zipCode.center,
+        map,
+        label: {
+          text: zipCode.id,
+          fontSize: window.innerWidth < 768 ? "10px" : "16px",
+          color: selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
+          fontWeight: "500"
+        },
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 0
+        }
+      });
+      markersRef.current.push(marker);
+    });
+
+    surroundingCities.forEach(city => {
+      const marker = new google.maps.Marker({
+        position: city.position,
+        map,
+        label: {
+          text: city.name,
+          fontSize: window.innerWidth < 768 ? "9px" : "14px",
+          color: "#999999",
+          fontWeight: "400"
+        },
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 0
+        }
+      });
+      markersRef.current.push(marker);
+    });
+  }, [map, selectedZip]);
 
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
@@ -291,7 +280,7 @@ const RegionalTabContent = () => {
         map.setZoom(12);
       }
 
-      await createLabels();
+      createLabels();
 
     } catch (error) {
       console.error('Error loading map data:', error);
@@ -308,16 +297,12 @@ const RegionalTabContent = () => {
     }
   }, [map, selectedZip, createLabels]);
 
-  // Cleanup effect
   useEffect(() => {
     return () => {
-      clearMarkers();
-      if (zipDataLayer) {
-        zipDataLayer.setMap(null);
-      }
-      setMap(null);
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
     };
-  }, [clearMarkers, zipDataLayer]);
+  }, []);
 
   const mapContainerVariants = {
     full: { width: "100%" },
@@ -492,15 +477,10 @@ const RegionalTabContent = () => {
         .gm-bundled-control .gmnoprint {
           display: block !important;
         }
-        .marker-label {
-          padding: 2px 6px;
-          white-space: nowrap;
-          user-select: none;
-        }
       `}</style>
     </div>
   );
-};
+});
 
 RegionalTabContent.displayName = 'RegionalTabContent';
 
