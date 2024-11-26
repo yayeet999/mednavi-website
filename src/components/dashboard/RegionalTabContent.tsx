@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
@@ -6,6 +6,7 @@ import { GoogleMap, LoadScript } from '@react-google-maps/api';
 interface ZipCode {
   id: string;
   name: string;
+  center?: { lat: number; lng: number };
 }
 
 interface Icon {
@@ -14,33 +15,11 @@ interface Icon {
   label: string;
 }
 
-interface ZipBoundary {
-  northeast: google.maps.LatLng;
-  southwest: google.maps.LatLng;
-}
-
-interface GeoJsonFeature {
-  type: "Feature";
-  properties: { 
-    ZCTA5CE20?: string;
-    zip?: string;
-  };
-  geometry: {
-    type: "Polygon" | "MultiPolygon";
-    coordinates: number[][][];
-  } | null;
-}
-
-interface GeoJsonCollection {
-  type: "FeatureCollection";
-  features: GeoJsonFeature[];
-}
-
 const zipCodes: ZipCode[] = [
-  { id: "60714", name: "Niles" },
-  { id: "60631", name: "Edison Park" },
-  { id: "60656", name: "Norwood Park" },
-  { id: "60068", name: "Park Ridge" },
+  { id: "60714", name: "Niles", center: { lat: 42.0294, lng: -87.7925 } },
+  { id: "60631", name: "Edison Park", center: { lat: 42.0072, lng: -87.8139 } },
+  { id: "60656", name: "Norwood Park", center: { lat: 41.9856, lng: -87.8087 } },
+  { id: "60068", name: "Park Ridge", center: { lat: 42.0111, lng: -87.8406 } }
 ];
 
 const surroundingCities = [
@@ -51,7 +30,7 @@ const surroundingCities = [
   { name: "Lincolnwood", position: { lat: 42.0064, lng: -87.7329 } },
   { name: "Harwood Heights", position: { lat: 41.9639, lng: -87.8069 } },
   { name: "Rosemont", position: { lat: 41.9865, lng: -87.8709 } },
-  { name: "Elk Grove Village", position: { lat: 42.0037, lng: -87.9705 } },
+  { name: "Elk Grove Village", position: { lat: 42.0037, lng: -87.9705 } }
 ];
 
 const mapCenter = {
@@ -66,12 +45,13 @@ const RegionalTabContent: React.FC = () => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const markersRef = useRef<google.maps.Marker[]>([]);
 
   const mapOptions = useMemo(() => ({
     styles: [
       {
         featureType: "all",
-        elementType: "labels",
+        elementType: "labels.text",
         stylers: [{ visibility: "off" }]
       },
       {
@@ -112,6 +92,67 @@ const RegionalTabContent: React.FC = () => {
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
 
+  const clearExistingMarkers = useCallback(() => {
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+  }, []);
+
+  const createMarker = useCallback((position: google.maps.LatLng, text: string, fontSize: string, color: string, isZip: boolean = false) => {
+    const marker = new google.maps.Marker({
+      position,
+      map,
+      label: {
+        text,
+        fontSize,
+        color,
+        fontWeight: isZip ? "500" : "400",
+        className: isZip ? "zip-code-label" : "city-label"
+      },
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 0,
+      }
+    });
+    markersRef.current.push(marker);
+    return marker;
+  }, [map]);
+
+  const addLabels = useCallback(() => {
+    clearExistingMarkers();
+    
+    const isMobile = window.innerWidth < 768;
+    
+    // Add zip code labels
+    zipCodes.forEach(zipCode => {
+      if (zipCode.center) {
+        createMarker(
+          new google.maps.LatLng(zipCode.center.lat, zipCode.center.lng),
+          zipCode.id,
+          isMobile ? "10px" : "16px",
+          selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
+          true
+        );
+      }
+    });
+
+    // Add surrounding city labels
+    surroundingCities.forEach(city => {
+      createMarker(
+        new google.maps.LatLng(city.position.lat, city.position.lng),
+        city.name,
+        isMobile ? "9px" : "14px",
+        "#999999",
+        false
+      );
+    });
+  }, [map, selectedZip, createMarker, clearExistingMarkers]);
+
+  useEffect(() => {
+    if (map && zipDataLayer) {
+      addLabels();
+    }
+  }, [map, zipDataLayer, selectedZip, addLabels]);
+
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
@@ -142,61 +183,6 @@ const RegionalTabContent: React.FC = () => {
     }
   }, [map, zipDataLayer]);
 
-  const addZipCodeLabels = useCallback((dataLayer: google.maps.Data) => {
-    zipCodes.forEach(zipCode => {
-      dataLayer.forEach((feature: google.maps.Data.Feature) => {
-        const featureZip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
-        if (featureZip === zipCode.id) {
-          const bounds = new google.maps.LatLngBounds();
-          const geometry = feature.getGeometry();
-          
-          if (geometry) {
-            geometry.forEachLatLng((latLng: google.maps.LatLng) => {
-              bounds.extend(latLng);
-            });
-            
-            const center = bounds.getCenter();
-            new google.maps.Marker({
-              position: center,
-              map,
-              label: {
-                text: zipCode.id,
-                fontSize: window.innerWidth < 768 ? "10px" : "16px",
-                color: selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
-                fontWeight: "500",
-                className: "zip-code-label"
-              },
-              icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 0,
-              }
-            });
-          }
-        }
-      });
-    });
-  }, [map, selectedZip]);
-
-  const addSurroundingCityLabels = useCallback(() => {
-    surroundingCities.forEach(city => {
-      new google.maps.Marker({
-        position: city.position,
-        map,
-        label: {
-          text: city.name,
-          fontSize: window.innerWidth < 768 ? "9px" : "14px",
-          color: "#999999",
-          fontWeight: "400",
-          className: "city-label"
-        },
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 0,
-        }
-      });
-    });
-  }, [map]);
-
   const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
     setSelectedSubData(null);
@@ -217,7 +203,7 @@ const RegionalTabContent: React.FC = () => {
       const response = await fetch('/chicago-zipcodes.json');
       if (!response.ok) throw new Error('Failed to fetch GeoJSON data');
       
-      const geoJson: GeoJsonCollection = await response.json();
+      const geoJson = await response.json();
       dataLayer.addGeoJson(geoJson);
 
       dataLayer.setStyle((feature: google.maps.Data.Feature) => {
@@ -255,9 +241,6 @@ const RegionalTabContent: React.FC = () => {
         }
       });
 
-      addZipCodeLabels(dataLayer);
-      addSurroundingCityLabels();
-
       const bounds = new google.maps.LatLngBounds();
       let hasValidGeometry = false;
 
@@ -284,6 +267,8 @@ const RegionalTabContent: React.FC = () => {
         map.setZoom(12);
       }
 
+      addLabels();
+
     } catch (error) {
       console.error('Error loading map data:', error);
       map.setCenter(mapCenter);
@@ -291,23 +276,7 @@ const RegionalTabContent: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [handleZipClick, selectedZip, addZipCodeLabels, addSurroundingCityLabels]);
-
-  useEffect(() => {
-    if (zipDataLayer) {
-      zipDataLayer.setStyle((feature: google.maps.Data.Feature) => {
-        const zipCode = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
-        const isSelected = zipCode === selectedZip;
-        
-        return {
-          fillColor: isSelected ? '#052b52' : '#E2E8F0',
-          fillOpacity: 0.6,
-          strokeColor: isSelected ? '#052b52' : '#94A3B8',
-          strokeWeight: isSelected ? 2 : 1
-        };
-      });
-    }
-  }, [selectedZip, zipDataLayer]);
+  }, [handleZipClick, selectedZip, addLabels]);
 
   const mapContainerVariants = {
     full: { width: "100%" },
@@ -336,7 +305,7 @@ const RegionalTabContent: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col md:flex-row">
+    <div className="w-full h-full flex flex-col md:flex-row relative">
       <motion.div 
         className="relative bg-gray-50 rounded-xl shadow-sm overflow-hidden flex-1"
         variants={mapContainerVariants}
