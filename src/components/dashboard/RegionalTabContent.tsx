@@ -1,4 +1,3 @@
-```typescript
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
