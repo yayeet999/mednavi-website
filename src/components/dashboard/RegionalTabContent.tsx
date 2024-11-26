@@ -87,7 +87,7 @@ const RegionalTabContent: React.FC = () => {
     disableDefaultUI: true,
     zoomControl: true,
     clickableIcons: false,
-    gestureHandling: 'cooperative',
+    gestureHandling: window.innerWidth >= 768 ? 'cooperative' : 'greedy',
     scrollwheel: true,
     mapTypeControl: false,
     streetViewControl: false,
@@ -382,7 +382,7 @@ const RegionalTabContent: React.FC = () => {
             className={`
               w-full md:w-[30%] md:ml-4 bg-gray-50 rounded-xl shadow-sm 
               ${window.innerWidth >= 768 ? 'mt-0' : 'mt-0 absolute right-0 top-0 h-full'} 
-              ${window.innerWidth >= 768 ? '' : 'w-[38%]'}
+              ${window.innerWidth >= 768 ? '' : 'w-[20%]'}
             `}
             variants={sideContainerVariants}
             initial="hidden"
