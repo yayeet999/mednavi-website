@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Home, BarChart2, Map, Bot } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { MapPin, Users } from 'lucide-react';
@@ -12,7 +12,33 @@ interface DashboardContainer3Props {
 
 export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavigateToBot }) => {
   const [activePage, setActivePage] = useState('map');
-  const mapComponentRef = useRef<any>(null);
+  const [shouldRenderMap, setShouldRenderMap] = useState(true);
+
+  const handlePageChange = (pageId: string) => {
+    if (pageId === 'bot') {
+      onNavigateToBot?.();
+      return;
+    }
+
+    if (activePage === 'map') {
+      // First unmount map component
+      setShouldRenderMap(false);
+      // Change page after brief delay to allow cleanup
+      setTimeout(() => {
+        setActivePage(pageId);
+      }, 50);
+    } else {
+      setActivePage(pageId);
+    }
+  };
+
+  useEffect(() => {
+    if (activePage === 'map' && !shouldRenderMap) {
+      setTimeout(() => {
+        setShouldRenderMap(true);
+      }, 50);
+    }
+  }, [activePage]);
 
   const revenueData = [
     { month: 'Jan', value: 30000 },
@@ -55,17 +81,6 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
     </div>
   );
 
-  useEffect(() => {
-    if (activePage !== 'map' && mapComponentRef.current) {
-      const cleanup = () => {
-        if (mapComponentRef.current?.cleanup) {
-          mapComponentRef.current.cleanup();
-        }
-      };
-      cleanup();
-    }
-  }, [activePage]);
-
   return (
     <div className="h-full w-full">
       <div className="flex h-[340px] md:h-[480px] w-full">
@@ -78,7 +93,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
           ].map((item) => (
             <div key={item.id} className="relative">
               <button
-                onClick={() => item.id === 'bot' ? onNavigateToBot?.() : setActivePage(item.id)}
+                onClick={() => handlePageChange(item.id)}
                 className={`w-10 h-8 md:w-14 md:h-12 mb-1 md:mb-2 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 ease-in-out
                          ${activePage === item.id 
                            ? 'bg-[#052b52] text-white shadow-sm scale-105' 
@@ -251,7 +266,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
                 </div>
               )}
 
-              {activePage === 'map' && (
+              {activePage === 'map' && shouldRenderMap && (
                 <div className="w-full h-full bg-white rounded-lg overflow-hidden">
                   <Tabs defaultValue="regional" className="h-full flex flex-col [&>div]:bg-transparent">
                     <div className="flex justify-center bg-white px-4 pt-3">
@@ -277,7 +292,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
 
                     <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
                       <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
-                        <RegionalTabContent ref={mapComponentRef} />
+                        <RegionalTabContent />
                       </TabsContent>
 
                       <TabsContent value="geoplot" className="h-full m-0 p-4">
