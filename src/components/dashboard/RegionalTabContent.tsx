@@ -100,23 +100,28 @@ const RegionalTabContent: React.FC = () => {
  ];
 
  const handleZipClick = useCallback((zipId: string) => {
-   setSelectedZip(zipId);
-   setSelectedIcon(null);
-   setSelectedSubData(null);
+  setSelectedZip(zipId);
+  setSelectedIcon(null);
+  setSelectedSubData(null);
 
-   if (map && zipDataLayer) {
-     zipDataLayer.forEach((feature: google.maps.Data.Feature) => {
-       const featureZip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
-       if (featureZip === zipId) {
-         const bounds = new google.maps.LatLngBounds();
-         feature.getGeometry().forEachLatLng((latLng: google.maps.LatLng) => {
-           bounds.extend(latLng);
-         });
-         map.fitBounds(bounds, 20);
-       }
-     });
-   }
- }, [map, zipDataLayer]);
+  if (map && zipDataLayer) {
+    zipDataLayer.forEach((feature: google.maps.Data.Feature) => {
+      const featureZip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
+      if (featureZip === zipId) {
+        const bounds = new google.maps.LatLngBounds();
+        const geometry = feature.getGeometry();
+        
+        // Add null check for geometry
+        if (geometry) {
+          geometry.forEachLatLng((latLng: google.maps.LatLng) => {
+            bounds.extend(latLng);
+          });
+          map.fitBounds(bounds, 20);
+        }
+      }
+    });
+  }
+}, [map, zipDataLayer]);
 
  const handleIconClick = useCallback((iconId: Icon['id']) => {
    setSelectedIcon(iconId);
