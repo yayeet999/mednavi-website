@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
@@ -48,43 +48,6 @@ const mapCenter = {
   lng: -87.8450
 };
 
-const mapOptions = {
-  styles: [
-    {
-      featureType: "all",
-      elementType: "labels",
-      stylers: [{ visibility: "off" }]
-    },
-    {
-      featureType: "administrative",
-      elementType: "geometry.stroke",
-      stylers: [{ color: "#94A3B8" }]
-    },
-    {
-      featureType: "landscape",
-      elementType: "geometry",
-      stylers: [{ color: "#F8FAFC" }]
-    },
-    {
-      featureType: "road",
-      elementType: "geometry",
-      stylers: [{ color: "#E2E8F0" }]
-    },
-    {
-      featureType: "water",
-      elementType: "geometry",
-      stylers: [{ color: "#BFDBFE" }]
-    }
-  ],
-  disableDefaultUI: true,
-  clickableIcons: false,
-  zoomControl: true,
-  gestureHandling: 'greedy',
-  zoomControlOptions: {
-    position: google?.maps?.ControlPosition?.LEFT_BOTTOM || null
-  }
-} as google.maps.MapOptions;
-
 const RegionalTabContent: React.FC = () => {
   const [selectedZip, setSelectedZip] = useState<string | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
@@ -92,6 +55,40 @@ const RegionalTabContent: React.FC = () => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const mapOptions = useMemo(() => ({
+    styles: [
+      {
+        featureType: "all",
+        elementType: "labels",
+        stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "administrative",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#94A3B8" }]
+      },
+      {
+        featureType: "landscape",
+        elementType: "geometry",
+        stylers: [{ color: "#F8FAFC" }]
+      },
+      {
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [{ color: "#E2E8F0" }]
+      },
+      {
+        featureType: "water",
+        elementType: "geometry",
+        stylers: [{ color: "#BFDBFE" }]
+      }
+    ],
+    disableDefaultUI: true,
+    clickableIcons: false,
+    zoomControl: true,
+    gestureHandling: 'greedy'
+  } as google.maps.MapOptions), []);
 
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
