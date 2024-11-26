@@ -13,6 +13,7 @@ interface DashboardContainer3Props {
 export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavigateToBot }) => {
   const [activePage, setActivePage] = useState('map');
   const [shouldRenderMap, setShouldRenderMap] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handlePageChange = (pageId: string) => {
     if (pageId === 'bot') {
@@ -20,26 +21,37 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
       return;
     }
 
+    setIsTransitioning(true);
+
     if (activePage === 'map') {
-      // First unmount map component
       setShouldRenderMap(false);
-      // Change page after brief delay to allow cleanup
       setTimeout(() => {
         setActivePage(pageId);
-      }, 50);
+        setIsTransitioning(false);
+      }, 100);
     } else {
       setActivePage(pageId);
+      setIsTransitioning(false);
     }
   };
 
   useEffect(() => {
     if (activePage === 'map' && !shouldRenderMap) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setShouldRenderMap(true);
-      }, 50);
+      }, 100);
+      return () => clearTimeout(timer);
     }
-  }, [activePage]);
+  }, [activePage, shouldRenderMap]);
 
+  useEffect(() => {
+    return () => {
+      setShouldRenderMap(false);
+      setIsTransitioning(false);
+    };
+  }, []);
+
+  // Keep all your existing data constants exactly as they are
   const revenueData = [
     { month: 'Jan', value: 30000 },
     { month: 'Feb', value: 35000 },
@@ -93,11 +105,13 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
           ].map((item) => (
             <div key={item.id} className="relative">
               <button
-                onClick={() => handlePageChange(item.id)}
+                onClick={() => !isTransitioning && handlePageChange(item.id)}
+                disabled={isTransitioning}
                 className={`w-10 h-8 md:w-14 md:h-12 mb-1 md:mb-2 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 ease-in-out
                          ${activePage === item.id 
                            ? 'bg-[#052b52] text-white shadow-sm scale-105' 
-                           : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}`}
+                           : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}
+                         ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
                 aria-label={`Switch to ${item.id} view`}
               >
                 {React.cloneElement(item.icon, {
@@ -110,6 +124,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
         </div>
 
         <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
+          {/* Rest of your existing JSX structure remains exactly the same */}
           <div className="flex-shrink-0 flex justify-between items-start px-3 pt-2 pb-0 md:px-5 md:pt-3 md:pb-0">
             <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2 mt-auto mb-1 md:mb-1">Your Dental Practice</h1>
             <h2 className="text-sm md:text-[28px] text-white font-medium pr-3 md:pr-8 mt-1 md:mt-2">mednavi</h2>
@@ -117,192 +132,203 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ onNavi
 
           <div className="flex-1 p-2 md:p-4">
             <div className="bg-gray-100 rounded-lg h-full">
-              {activePage === 'home' && (
-                <div className="flex flex-col space-y-2 md:space-y-3 p-2 md:p-3">
-                  <h2 className="text-base md:text-xl font-bold text-[#103d68] pl-1 md:pl-2">
-                    Dashboard Overview
-                  </h2>
+              {isTransitioning ? (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : (
+                <>
+                  {activePage === 'home' && (
+                    <div className="flex flex-col space-y-2 md:space-y-3 p-2 md:p-3">
+                      {/* Keep your existing home content exactly as is */}
+                      <h2 className="text-base md:text-xl font-bold text-[#103d68] pl-1 md:pl-2">
+                        Dashboard Overview
+                      </h2>
 
-                  <div className="grid grid-cols-3 gap-2 md:gap-4">
-                    <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
-                      <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
-                      <div className="flex items-center space-x-1.5 mt-1">
-                        <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
-                        <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
-                      <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
-                      <div className="flex items-center space-x-1.5 mt-1">
-                        <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
-                        <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
-                      <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
-                      <div className="flex items-center space-x-0.5 mt-1">
-                        <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
-                        <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 md:gap-4">
-                    <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
-                      <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
-                      <div className="h-[60px] md:h-[95px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 0, left: 5 }}>
-                            <XAxis 
-                              dataKey="month" 
-                              tick={{ fontSize: 8, fill: '#103d68' }}
-                              axisLine={false}
-                              tickLine={false}
-                            />
-                            <YAxis 
-                              tick={{ fontSize: 8, fill: '#103d68' }}
-                              width={15}
-                              axisLine={false}
-                              tickLine={false}
-                            />
-                            <Line 
-                              type="monotone" 
-                              dataKey="value" 
-                              stroke="#103d68" 
-                              strokeWidth={2}
-                              dot={true}
-                            />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-
-                    <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
-                      <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
-                      <div className="h-[50px] md:h-[90px] flex items-center md:-mb-4">
-                        <div className="w-1/3">
-                          <CustomizedLegend />
+                      <div className="grid grid-cols-3 gap-2 md:gap-4">
+                        <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
+                          <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Active Patients</h3>
+                          <div className="flex items-center space-x-1.5 mt-1">
+                            <p className="text-[#103d68] text-xs md:text-2xl font-bold">2,547</p>
+                            <p className="text-green-500 text-[8px] md:text-sm">+12.5%</p>
+                          </div>
                         </div>
-                        <div className="w-2/3 h-full scale-110 transform translate-x-2 md:scale-115 md:-translate-y-2">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <PieChart margin={{ top: -5, right: 0, bottom: 1, left: 0 }}>
-                              <Pie
-                                data={donutData}
-                                innerRadius="40%"
-                                outerRadius="85%"
-                                paddingAngle={2}
-                                dataKey="value"
-                                animationBegin={0}
-                                animationDuration={1000}
-                                animationEasing="ease-out"
+                        <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
+                          <h3 className="text-[#103d68] text-[9px] md:text-base truncate">New Patients</h3>
+                          <div className="flex items-center space-x-1.5 mt-1">
+                            <p className="text-[#103d68] text-xs md:text-2xl font-bold">148</p>
+                            <p className="text-green-500 text-[8px] md:text-sm">+8.3%</p>
+                          </div>
+                        </div>
+                        <div className="bg-white rounded-lg p-1.5 md:p-3 shadow-sm flex flex-col justify-center h-[50px] md:h-[83px]">
+                          <h3 className="text-[#103d68] text-[9px] md:text-base truncate">Monthly Revenue</h3>
+                          <div className="flex items-center space-x-0.5 mt-1">
+                            <p className="text-[#103d68] text-xs md:text-2xl font-bold">$125.8K</p>
+                            <p className="text-green-500 text-[8px] md:text-sm">+15.2%</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 md:gap-4">
+                        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
+                          <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
+                          <div className="h-[60px] md:h-[95px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 0, left: 5 }}>
+                                <XAxis 
+                                  dataKey="month" 
+                                  tick={{ fontSize: 8, fill: '#103d68' }}
+                                  axisLine={false}
+                                  tickLine={false}
+                                />
+                                <YAxis 
+                                  tick={{ fontSize: 8, fill: '#103d68' }}
+                                  width={15}
+                                  axisLine={false}
+                                  tickLine={false}
+                                />
+                                <Line 
+                                  type="monotone" 
+                                  dataKey="value" 
+                                  stroke="#103d68" 
+                                  strokeWidth={2}
+                                  dot={true}
+                                />
+                              </LineChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
+                          <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Services Distribution</h3>
+                          <div className="h-[50px] md:h-[90px] flex items-center md:-mb-4">
+                            <div className="w-1/3">
+                              <CustomizedLegend />
+                            </div>
+                            <div className="w-2/3 h-full scale-110 transform translate-x-2 md:scale-115 md:-translate-y-2">
+                              <ResponsiveContainer width="100%" height="100%">
+                                <PieChart margin={{ top: -5, right: 0, bottom: 1, left: 0 }}>
+                                  <Pie
+                                    data={donutData}
+                                    innerRadius="40%"
+                                    outerRadius="85%"
+                                    paddingAngle={2}
+                                    dataKey="value"
+                                    animationBegin={0}
+                                    animationDuration={1000}
+                                    animationEasing="ease-out"
+                                  >
+                                    {donutData.map((entry, index) => (
+                                      <Cell key={`cell-${index}`} fill={entry.color} />
+                                    ))}
+                                  </Pie>
+                                </PieChart>
+                              </ResponsiveContainer>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 md:gap-4">
+                        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[120px]">
+                          <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Procedures</h3>
+                          <div className="h-[70px] md:h-[90px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
+                                <XAxis type="number" 
+                                  tick={{ fontSize: 7, fill: '#103d68' }}
+                                  axisLine={false}
+                                  tickLine={false}
+                                />
+                                <YAxis 
+                                  dataKey="category" 
+                                  type="category"
+                                  tick={{ fontSize: 7, fill: '#103d68' }}
+                                  width={40}
+                                  axisLine={false}
+                                  tickLine={false}
+                                />
+                                <Bar dataKey="value" fill="#103d68" radius={[0, 2, 2, 0]} />
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[120px]">
+                          <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Patient Categories</h3>
+                          <div className="h-[70px] md:h-[90px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                                <XAxis 
+                                  dataKey="month" 
+                                  tick={{ fontSize: 7, fill: '#103d68' }}
+                                  axisLine={false}
+                                  tickLine={false}
+                                />
+                                <YAxis 
+                                  tick={{ fontSize: 7, fill: '#103d68' }}
+                                  width={15}
+                                  axisLine={false}
+                                  tickLine={false}
+                                />
+                                <Bar dataKey="new" fill="#103d68" radius={[2, 2, 0, 0]} />
+                                <Bar dataKey="returning" fill="#40C4FF" radius={[2, 2, 0, 0]} />
+                                <Bar dataKey="referred" fill="#E5F9FD" radius={[2, 2, 0, 0]} />
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activePage === 'practice' && (
+                    <div className="w-full h-full bg-white rounded-lg">
+                      <PracticeTabContent />
+                    </div>
+                  )}
+
+                  {activePage === 'map' && shouldRenderMap && (
+                    <div className="w-full h-full bg-white rounded-lg overflow-hidden">
+                      <Tabs defaultValue="regional" className="h-full flex flex-col [&>div]:bg-transparent">
+                        <div className="flex justify-center bg-white px-4 pt-3">
+                          <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2">
+                            <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
+                              <TabsTrigger 
+                                value="regional" 
+                                className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
                               >
-                                {donutData.map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
-                              </Pie>
-                            </PieChart>
-                          </ResponsiveContainer>
+                                <MapPin className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
+                                Regional
+                              </TabsTrigger>
+                              <TabsTrigger 
+                                value="geoplot" 
+                                className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
+                              >
+                                <Users className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
+                                GeoPlot
+                              </TabsTrigger>
+                            </TabsList>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-2 gap-2 md:gap-4">
-                    <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[120px]">
-                      <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Procedures</h3>
-                      <div className="h-[70px] md:h-[90px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={proceduresData} layout="vertical" margin={{ top: 5, right: 10, bottom: 5, left: 5 }}>
-                            <XAxis type="number" 
-                              tick={{ fontSize: 7, fill: '#103d68' }}
-                              axisLine={false}
-                              tickLine={false}
-                            />
-                            <YAxis 
-                              dataKey="category" 
-                              type="category"
-                              tick={{ fontSize: 7, fill: '#103d68' }}
-                              width={40}
-                              axisLine={false}
-                              tickLine={false}
-                            />
-                            <Bar dataKey="value" fill="#103d68" radius={[0, 2, 2, 0]} />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
+                        <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
+                          <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
+                            <RegionalTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
+                          </TabsContent>
 
-                    <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm h-[85px] md:h-[120px]">
-                      <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Patient Categories</h3>
-                      <div className="h-[70px] md:h-[90px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={patientCategoriesData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
-                            <XAxis 
-                              dataKey="month" 
-                              tick={{ fontSize: 7, fill: '#103d68' }}
-                              axisLine={false}
-                              tickLine={false}
-                            />
-                            <YAxis 
-                              tick={{ fontSize: 7, fill: '#103d68' }}
-                              width={15}
-                              axisLine={false}
-                              tickLine={false}
-                            />
-                            <Bar dataKey="new" fill="#103d68" radius={[2, 2, 0, 0]} />
-                            <Bar dataKey="returning" fill="#40C4FF" radius={[2, 2, 0, 0]} />
-                            <Bar dataKey="referred" fill="#E5F9FD" radius={[2, 2, 0, 0]} />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activePage === 'practice' && (
-                <div className="w-full h-full bg-white rounded-lg">
-                  <PracticeTabContent />
-                </div>
-              )}
-
-              {activePage === 'map' && shouldRenderMap && (
-                <div className="w-full h-full bg-white rounded-lg overflow-hidden">
-                  <Tabs defaultValue="regional" className="h-full flex flex-col [&>div]:bg-transparent">
-                    <div className="flex justify-center bg-white px-4 pt-3">
-                      <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2">
-                        <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
-                          <TabsTrigger 
-                            value="regional" 
-                            className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
-                          >
-                            <MapPin className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
-                            Regional
-                          </TabsTrigger>
-                          <TabsTrigger 
-                            value="geoplot" 
-                            className="w-[calc(50%-2px)] rounded-lg h-[20px] md:h-[31px] text-[8px] md:text-xs font-bold flex items-center justify-center gap-1 md:gap-2 text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#1C2434] md:data-[state=active]:shadow-sm hover:bg-white/10 hover:text-white data-[state=active]:hover:bg-white data-[state=active]:hover:text-[#1C2434] transition-all duration-200"
-                          >
-                            <Users className="w-2 h-2 md:w-4 md:h-4 stroke-[3]" />
-                            GeoPlot
-                          </TabsTrigger>
-                        </TabsList>
-                      </div>
-                    </div>
-
-                    <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
-                      <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
-                        <RegionalTabContent />
-                      </TabsContent>
-
-                      <TabsContent value="geoplot" className="h-full m-0 p-4">
-                        <div className="w-full h-full bg-white rounded-lg p-4">
-                          {/* GeoPlot content */}
+                          <TabsContent value="geoplot" className="h-full m-0 p-4">
+                            <div className="w-full h-full bg-white rounded-lg p-4">
+                              <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                GeoPlot visualization coming soon
+                              </div>
+                            </div>
+                          </TabsContent>
                         </div>
-                      </TabsContent>
+                      </Tabs>
                     </div>
-                  </Tabs>
-                </div>
+                  )}
+                </>
               )}
             </div>
           </div>
