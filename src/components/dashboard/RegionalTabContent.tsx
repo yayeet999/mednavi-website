@@ -318,7 +318,7 @@ const RegionalTabContent: React.FC = () => {
         className="relative bg-gray-50 rounded-xl shadow-sm overflow-hidden flex-1"
         variants={mapContainerVariants}
         animate={selectedIcon ? {
-          width: window.innerWidth >= 768 ? "68%" : "60%",
+          width: window.innerWidth >= 768 ? "68%" : "75%",
           marginLeft: window.innerWidth >= 768 ? "0px" : "-10px"
         } : {
           width: "100%",
