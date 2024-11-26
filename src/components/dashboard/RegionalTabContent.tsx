@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef, forwardRef, useImperativeHandle } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
@@ -37,7 +37,7 @@ const mapCenter = {
   lng: -87.8450
 };
 
-const RegionalTabContent: React.FC = () => {
+const RegionalTabContent = forwardRef((props, ref) => {
   const [selectedZip, setSelectedZip] = useState<string | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
@@ -45,6 +45,27 @@ const RegionalTabContent: React.FC = () => {
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const markersRef = useRef<google.maps.Marker[]>([]);
+
+  const icons: Icon[] = [
+    { id: "financial", icon: DollarSign, label: "Financial" },
+    { id: "patients", icon: Users, label: "Patients" },
+    { id: "procedures", icon: Stethoscope, label: "Procedures" },
+  ];
+
+  useImperativeHandle(ref, () => ({
+    cleanup: () => {
+      if (map) {
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
+        
+        if (zipDataLayer) {
+          zipDataLayer.setMap(null);
+        }
+        
+        setMap(null);
+      }
+    }
+  }));
 
   const mapOptions = useMemo(() => ({
     styles: [
@@ -95,14 +116,11 @@ const RegionalTabContent: React.FC = () => {
     scaleControl: false,
     rotateControl: false,
     draggableCursor: 'default',
-    draggingCursor: 'grab'
+    draggingCursor: 'grab',
+    preserveDrawingBuffer: false,
+    maxZoom: 18,
+    minZoom: 8
   }), []);
-
-  const icons: Icon[] = [
-    { id: "financial", icon: DollarSign, label: "Financial" },
-    { id: "patients", icon: Users, label: "Patients" },
-    { id: "procedures", icon: Stethoscope, label: "Procedures" },
-  ];
 
   const createLabels = useCallback(() => {
     if (!map) return;
@@ -146,19 +164,6 @@ const RegionalTabContent: React.FC = () => {
       markersRef.current.push(marker);
     });
   }, [map, selectedZip]);
-
-  useEffect(() => {
-    if (map) {
-      createLabels();
-    }
-  }, [map, selectedZip, createLabels]);
-
-  useEffect(() => {
-    return () => {
-      markersRef.current.forEach(marker => marker.setMap(null));
-      markersRef.current = [];
-    };
-  }, []);
 
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
@@ -285,6 +290,19 @@ const RegionalTabContent: React.FC = () => {
       setIsLoading(false);
     }
   }, [handleZipClick, selectedZip, createLabels]);
+
+  useEffect(() => {
+    if (map) {
+      createLabels();
+    }
+  }, [map, selectedZip, createLabels]);
+
+  useEffect(() => {
+    return () => {
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
+    };
+  }, []);
 
   const mapContainerVariants = {
     full: { width: "100%" },
@@ -462,6 +480,8 @@ const RegionalTabContent: React.FC = () => {
       `}</style>
     </div>
   );
-};
+});
+
+RegionalTabContent.displayName = 'RegionalTabContent';
 
 export default RegionalTabContent;
