@@ -118,7 +118,7 @@ const RegionalTabContent: React.FC = () => {
               });
               
               if (!bounds.isEmpty()) {
-                map.fitBounds(bounds, { padding: 20 });
+                map.fitBounds(bounds);
               }
             } catch (error) {
               console.error('Error processing geometry:', error);
