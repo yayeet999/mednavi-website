@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import DashboardContainer from '@/components/dashboard/DashboardContainer'; // Updated import path
+import DashboardContainer from '@/components/dashboard/DashboardContainer';
 import DashboardContainer2 from '@/components/dashboard/DashboardContainer2';
 import DashboardContainer3 from '@/components/dashboard/DashboardContainer3';
 
@@ -96,12 +96,10 @@ const SmoothJourney: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Scroll Lock States
   const [scrollLockTop, setScrollLockTop] = useState(false);
   const [scrollLockBottom, setScrollLockBottom] = useState(false);
   const scrollLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Initialize and update window size and mobile status
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -114,19 +112,15 @@ const SmoothJourney: React.FC = () => {
       console.log(`Window resized: width=${width}, height=${height}, isMobile=${width < 768}`);
     };
 
-    // Set mounted to true after component mounts
     setMounted(true);
     console.log('Component mounted');
 
-    // Initial check
     handleResize();
 
-    // Add event listener
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Visibility detection for mobile
   useEffect(() => {
     if (!isMobile || !mounted) return;
 
@@ -140,12 +134,11 @@ const SmoothJourney: React.FC = () => {
       console.log(`Mobile Scroll: isVisibleNow=${isVisibleNow}`);
     };
 
-    handleScroll(); // Check initial position
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile, mounted]);
 
-  // Visibility detection for desktop using Intersection Observer
   useEffect(() => {
     if (isMobile || !mounted) return;
 
@@ -156,16 +149,14 @@ const SmoothJourney: React.FC = () => {
         console.log('Desktop Visibility:', isVisibleNow);
         setIsVisible(isVisibleNow);
 
-        // Scroll Locking
         if (isVisibleNow) {
-          // Automatically scroll to center the component
           if (sectionRef.current) {
             sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
             console.log('Auto-scrolled to center SmoothJourney');
           }
         }
       },
-      { threshold: 0.2 } // Trigger when 20% is visible
+      { threshold: 0.2 }
     );
 
     if (sectionRef.current) {
@@ -183,15 +174,12 @@ const SmoothJourney: React.FC = () => {
     };
   }, [isMobile, mounted]);
 
-  // Handle scroll to navigate between stations
   const handleScroll = useCallback((e: WheelEvent) => {
     if (!isVisible || isAnimating || isMobile) return;
 
-    // Determine scroll direction
     const direction = e.deltaY > 0 ? 'down' : 'up';
     console.log(`Wheel scrolling ${direction}`);
 
-    // Check for scroll locks
     if (direction === 'up' && scrollLockTop) {
       e.preventDefault();
       console.log('Scroll up is temporarily locked');
@@ -214,7 +202,6 @@ const SmoothJourney: React.FC = () => {
       setTimeout(() => setIsAnimating(false), 1000);
     }
 
-    // Check if at top or bottom and set scroll locks
     if (nextIndex === 0 && direction === 'up') {
       setScrollLockTop(true);
       console.log('Scroll up locked for 2.5 seconds');
@@ -236,7 +223,6 @@ const SmoothJourney: React.FC = () => {
     }
   }, [currentIndex, isAnimating, isVisible, isMobile, scrollLockTop, scrollLockBottom]);
 
-  // Attach wheel event listener for desktop
   useEffect(() => {
     if (isMobile || !mounted) return;
 
@@ -257,7 +243,6 @@ const SmoothJourney: React.FC = () => {
     };
   }, [handleScroll, isMobile, mounted]);
 
-  // Navigate to specific station
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
     console.log(`Button clicked to navigate to station ${index + 1}`);
@@ -266,12 +251,18 @@ const SmoothJourney: React.FC = () => {
     setTimeout(() => setIsAnimating(false), 1000);
   }, [currentIndex, isAnimating]);
 
-  // Create navigateToContainer function for DashboardContainer
   const navigateToContainer = useCallback(() => {
-    navigate(1); // Navigate to station index 1
+    navigate(1);
   }, [navigate]);
 
-  // Cleanup on unmount
+  const navigateToHome = useCallback(() => {
+    navigate(0);
+  }, [navigate]);
+
+  const navigateToPractice = useCallback(() => {
+    navigate(1);
+  }, [navigate]);
+
   useEffect(() => {
     return () => {
       if (scrollLockTimeoutRef.current) {
@@ -282,15 +273,13 @@ const SmoothJourney: React.FC = () => {
     };
   }, []);
 
-  // **Added Code Below: Temporary Scroll Lock on First and Last Containers for Desktop and Very Wide Screens**
   useEffect(() => {
-    const isVeryWideScreen = windowSize.width >= 1200; // Define "very wide" as 1200px or more
+    const isVeryWideScreen = windowSize.width >= 1200;
     if (!isMobile && isVeryWideScreen) {
-      if (currentIndex >= 1 && currentIndex <= 3) { // Containers 2, 3, 4 (zero-based indices 1, 2, 3)
+      if (currentIndex >= 1 && currentIndex <= 3) {
         document.body.style.overflow = 'hidden';
         console.log('Full page scroll locked');
-      } else if (currentIndex === 0 || currentIndex === 4) { // Containers 1 and 5
-        // Lock scrolling for 1 second
+      } else if (currentIndex === 0 || currentIndex === 4) {
         document.body.style.overflow = 'hidden';
         console.log('Full page scroll temporarily locked for 1 second');
 
@@ -299,28 +288,22 @@ const SmoothJourney: React.FC = () => {
           console.log('Full page scroll unlocked after 1 second');
         }, 1000);
 
-        // Cleanup timeout if component unmounts or currentIndex changes
         return () => clearTimeout(timeout);
       } else {
-        // Ensure scroll is unlocked
         document.body.style.overflow = '';
         console.log('Full page scroll unlocked');
       }
     } else {
-      // For mobile or not very wide screens, ensure scroll is not locked
       document.body.style.overflow = '';
       console.log('Full page scroll unlocked for non-desktop or not very wide screens');
     }
 
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = '';
       console.log('Full page scroll unlocked on cleanup');
     };
   }, [currentIndex, isMobile, windowSize.width]);
-  // **End of Added Code**
 
-  // Ensure window size is set before rendering
   if (!mounted) {
     console.log('Component not mounted yet');
     return null;
@@ -370,47 +353,49 @@ const SmoothJourney: React.FC = () => {
           })}
 
           {stations.map((station, i) => (
-            <g key={i}>
-              <circle
-                cx={station.x}
-                cy={station.y}
-                r="12"
-                fill="#3B82F6"
-                className="opacity-30"
-              />
-              <circle
-                cx={station.x}
-                cy={station.y}
-                r="6"
-                fill="#3B82F6"
-                className="opacity-70"
-              />
-            </g>
-          ))}
-        </svg>
+  <g key={i}>
+    <circle
+      cx={station.x}
+      cy={station.y}
+      r="12"
+      fill="#3B82F6"
+      className="opacity-30"
+    />
+    <circle
+      cx={station.x}
+      cy={station.y}
+      r="6"
+      fill="#3B82F6"
+      className="opacity-70"
+    />
+  </g>
+))}
+</svg>
 
-        {stations.map((station, i) => (
-          <div
-            key={station.id}
-            className={`absolute w-[360px] md:w-[840px] h-[340px] md:h-[480px] transition-transform duration-1000 ease-out will-change-transform
-                        ${i === currentIndex ? 'z-20' : 'z-10'}`}
-            style={{
-              left: station.x,
-              top: station.y,
-              transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
-              opacity: Math.abs(currentIndex - i) <= 1 ? 
-                      1 - Math.abs(currentIndex - i) * 0.3 : 0,
-            }}
-          >
-            {/* Added Wrapper Div with Bottom Padding */}
-            <div className="pb-4 md:pb-6">
+{stations.map((station, i) => (
+  <div
+    key={station.id}
+    className={`absolute w-[360px] md:w-[840px] h-[340px] md:h-[480px] transition-transform duration-1000 ease-out will-change-transform
+                ${i === currentIndex ? 'z-20' : 'z-10'}`}
+    style={{
+      left: station.x,
+      top: station.y,
+      transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
+      opacity: Math.abs(currentIndex - i) <= 1 ? 
+              1 - Math.abs(currentIndex - i) * 0.3 : 0,
+    }}
+  >
+    <div className="pb-4 md:pb-6">
       <div className={`w-full h-full bg-white rounded-xl transition-shadow...`}>
         {i === 0 ? (
           <DashboardContainer onNavigate={navigateToContainer} />
         ) : i === 1 ? (
-  <DashboardContainer2 onNavigateToMap={() => navigate(2)} />
+          <DashboardContainer2 onNavigateToMap={() => navigate(2)} />
         ) : i === 2 ? (
-          <DashboardContainer3 />
+          <DashboardContainer3 
+            onNavigateToHome={navigateToHome}
+            onNavigateToPractice={navigateToPractice}
+          />
         ) : (
           renderKPIBox(station.kpis)
         )}
@@ -418,50 +403,48 @@ const SmoothJourney: React.FC = () => {
     </div>
   </div>
 ))}
-      </div>
+</div>
 
-      {isVisible && (
-        <>
-          {/* Navigation Dots */}
-          <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
-                          transition-opacity ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-            {stations.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(i)}
-                disabled={isAnimating}
-                className={`
-                  ${isMobile ? 'w-10 h-10' : 'w-4 h-4'}
-                  rounded-full transform transition-all duration-300 will-change-transform
-                  ${i === currentIndex 
-                    ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-pulse-slow' 
-                    : 'bg-blue-600 hover:bg-blue-700'}
-                  ${isMobile ? 'touch-manipulation' : ''}
-                  disabled:opacity-50
-                `}
-                style={{
-                  WebkitTapHighlightColor: 'transparent'
-                }}
-                aria-label={`Navigate to station ${i + 1}`}
-                aria-current={i === currentIndex ? 'true' : 'false'}
-              />
-            ))}
-          </div>
-
-          {/* Progress Bar for Desktop */}
-          {!isMobile && (
-            <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 
-                             bg-blue-100 rounded-full overflow-hidden z-50">
-              <div 
-                className="h-full bg-blue-600 transition-all duration-1000 ease-out will-change-transform"
-                style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
-              />
-            </div>
-          )}
-        </>
-      )}
+{isVisible && (
+  <>
+    <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
+                    transition-opacity ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      {stations.map((_, i) => (
+        <button
+          key={i}
+          onClick={() => navigate(i)}
+          disabled={isAnimating}
+          className={`
+            ${isMobile ? 'w-10 h-10' : 'w-4 h-4'}
+            rounded-full transform transition-all duration-300 will-change-transform
+            ${i === currentIndex 
+              ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-pulse-slow' 
+              : 'bg-blue-600 hover:bg-blue-700'}
+            ${isMobile ? 'touch-manipulation' : ''}
+            disabled:opacity-50
+          `}
+          style={{
+            WebkitTapHighlightColor: 'transparent'
+          }}
+          aria-label={`Navigate to station ${i + 1}`}
+          aria-current={i === currentIndex ? 'true' : 'false'}
+        />
+      ))}
     </div>
-  );
+
+    {!isMobile && (
+      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-96 h-1 
+                       bg-blue-100 rounded-full overflow-hidden z-50">
+        <div 
+          className="h-full bg-blue-600 transition-all duration-1000 ease-out will-change-transform"
+          style={{ width: `${(currentIndex / (stations.length - 1)) * 100}%` }}
+        />
+      </div>
+    )}
+  </>
+)}
+</div>
+);
 };
 
 export default SmoothJourney;
