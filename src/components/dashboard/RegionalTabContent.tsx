@@ -6,7 +6,7 @@ import { GoogleMap, LoadScript } from '@react-google-maps/api';
 interface ZipCode {
   id: string;
   name: string;
-  center?: { lat: number; lng: number };
+  center: { lat: number; lng: number };
 }
 
 interface Icon {
@@ -29,8 +29,7 @@ const surroundingCities = [
   { name: "Skokie", position: { lat: 42.0324, lng: -87.7416 } },
   { name: "Lincolnwood", position: { lat: 42.0064, lng: -87.7329 } },
   { name: "Harwood Heights", position: { lat: 41.9639, lng: -87.8069 } },
-  { name: "Rosemont", position: { lat: 41.9865, lng: -87.8709 } },
-  { name: "Elk Grove Village", position: { lat: 42.0037, lng: -87.9705 } }
+  { name: "Rosemont", position: { lat: 41.9865, lng: -87.8709 } }
 ];
 
 const mapCenter = {
@@ -45,7 +44,7 @@ const RegionalTabContent: React.FC = () => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [labels, setLabels] = useState<google.maps.Marker[]>([]);
+  const markersRef = useRef<google.maps.Marker[]>([]);
 
   const mapOptions = useMemo(() => ({
     styles: [
@@ -86,15 +85,18 @@ const RegionalTabContent: React.FC = () => {
       }
     ],
     disableDefaultUI: true,
-    clickableIcons: false,
     zoomControl: true,
-    gestureHandling: 'greedy',
+    clickableIcons: false,
+    gestureHandling: 'cooperative',
+    scrollwheel: true,
     mapTypeControl: false,
     streetViewControl: false,
     fullscreenControl: false,
     scaleControl: false,
     rotateControl: false,
-  } as google.maps.MapOptions), []);
+    draggableCursor: 'default',
+    draggingCursor: 'grab'
+  }), []);
 
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
@@ -102,36 +104,28 @@ const RegionalTabContent: React.FC = () => {
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
 
-  const clearLabels = useCallback(() => {
-    labels.forEach(label => label.setMap(null));
-    setLabels([]);
-  }, [labels]);
-
-  const addLabels = useCallback(() => {
+  const createLabels = useCallback(() => {
     if (!map) return;
-
-    clearLabels();
-    const newLabels: google.maps.Marker[] = [];
+    
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
 
     zipCodes.forEach(zipCode => {
-      if (zipCode.center) {
-        const marker = new google.maps.Marker({
-          position: zipCode.center,
-          map,
-          label: {
-            text: zipCode.id,
-            fontSize: window.innerWidth < 768 ? "10px" : "16px",
-            color: selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
-            fontWeight: "500",
-            className: "zip-code-label"
-          },
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 0,
-          }
-        });
-        newLabels.push(marker);
-      }
+      const marker = new google.maps.Marker({
+        position: zipCode.center,
+        map,
+        label: {
+          text: zipCode.id,
+          fontSize: window.innerWidth < 768 ? "10px" : "16px",
+          color: selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
+          fontWeight: "500"
+        },
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 0
+        }
+      });
+      markersRef.current.push(marker);
     });
 
     surroundingCities.forEach(city => {
@@ -142,31 +136,29 @@ const RegionalTabContent: React.FC = () => {
           text: city.name,
           fontSize: window.innerWidth < 768 ? "9px" : "14px",
           color: "#999999",
-          fontWeight: "400",
-          className: "city-label"
+          fontWeight: "400"
         },
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 0,
+          scale: 0
         }
       });
-      newLabels.push(marker);
+      markersRef.current.push(marker);
     });
-
-    setLabels(newLabels);
-  }, [map, selectedZip, clearLabels]);
+  }, [map, selectedZip]);
 
   useEffect(() => {
-    if (map && zipDataLayer) {
-      addLabels();
+    if (map) {
+      createLabels();
     }
-  }, [map, zipDataLayer, selectedZip, addLabels]);
+  }, [map, selectedZip, createLabels]);
 
   useEffect(() => {
     return () => {
-      clearLabels();
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
     };
-  }, [clearLabels]);
+  }, []);
 
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
@@ -195,8 +187,9 @@ const RegionalTabContent: React.FC = () => {
           }
         }
       });
+      createLabels();
     }
-  }, [map, zipDataLayer]);
+  }, [map, zipDataLayer, createLabels]);
 
   const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
@@ -282,7 +275,7 @@ const RegionalTabContent: React.FC = () => {
         map.setZoom(12);
       }
 
-      addLabels();
+      createLabels();
 
     } catch (error) {
       console.error('Error loading map data:', error);
@@ -291,7 +284,7 @@ const RegionalTabContent: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [handleZipClick, selectedZip, addLabels]);
+  }, [handleZipClick, selectedZip, createLabels]);
 
   const mapContainerVariants = {
     full: { width: "100%" },
@@ -341,12 +334,12 @@ const RegionalTabContent: React.FC = () => {
                     <button
                       key={icon.id}
                       onClick={() => handleIconClick(icon.id)}
-                      className={`
-                        px-3 py-2 rounded-lg flex items-center transition-all duration-200
+                      className={
+                        `px-3 py-2 rounded-lg flex items-center transition-all duration-200 
                         ${selectedIcon === icon.id 
                           ? 'bg-[#052b52] text-white shadow-sm' 
-                          : 'bg-white/80 text-gray-600 hover:bg-white'}
-                      `}
+                          : 'bg-white/80 text-gray-600 hover:bg-white'}`
+                      }
                     >
                       <icon.icon className="w-4 h-4" />
                       <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
@@ -393,13 +386,13 @@ const RegionalTabContent: React.FC = () => {
                  <motion.button
                    key={option}
                    onClick={() => handleSubDataClick(option)}
-                   className={`
-                     w-full p-3 text-left rounded-lg transition-all duration-200
+                   className={
+                     `w-full p-3 text-left rounded-lg transition-all duration-200 
                      ${selectedSubData === option 
                        ? 'bg-[#052b52] text-white' 
-                       : 'bg-white text-gray-600 hover:bg-gray-100'}
-                     text-xs font-medium
-                   `}
+                       : 'bg-white text-gray-600 hover:bg-gray-100'} 
+                     text-xs font-medium`
+                   }
                    whileHover={{ scale: 1.02 }}
                    whileTap={{ scale: 0.98 }}
                  >
@@ -435,7 +428,7 @@ const RegionalTabContent: React.FC = () => {
 
      <style jsx global>{`
        .gm-style-cc,
-       .gmnoprint,
+       .gmnoprint.gm-style-cc,
        .gm-style-iw-a,
        .gm-style-iw-t,
        .gm-style > div:last-child {
@@ -444,6 +437,12 @@ const RegionalTabContent: React.FC = () => {
        .gm-style a[href^="https://maps.google.com/maps"],
        .gm-style-pbc {
          display: none !important;
+       }
+       .gmnoprint:not(.gm-bundled-control) {
+         display: none !important;
+       }
+       .gm-bundled-control .gmnoprint {
+         display: block !important;
        }
      `}</style>
    </div>
