@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo, useRef, forwardRef, u
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 interface ZipCode {
   id: string;
@@ -38,7 +38,79 @@ const mapCenter = {
   lng: -87.8450
 };
 
-const analysisData = {
+// Add TypeScript type definitions for analysisData
+interface AnalysisDataEntry {
+  financial: {
+    monthlyProduction: {
+      regional: {
+        total: number;
+        breakdown: {
+          [procedure: string]: {
+            amount: number;
+            percentage: number;
+          };
+        };
+      };
+      practice: {
+        total: number;
+        breakdown: {
+          [procedure: string]: {
+            amount: number;
+            percentage: number;
+          };
+        };
+      };
+    };
+    insurance: {
+      regional: { public: number; private: number };
+      practice: { public: number; private: number };
+    };
+    growth: {
+      regional: { percentage: number; yoyChange: number };
+      practice: { percentage: number; yoyChange: number };
+    };
+  };
+  patients: {
+    ageDistribution: {
+      regional: {
+        average: number;
+        distribution: { [ageRange: string]: number };
+      };
+      practice: {
+        average: number;
+        distribution: { [ageRange: string]: number };
+      };
+    };
+    activePatients: {
+      regional: { percentage: number; total: number };
+      practice: { percentage: number; total: number };
+    };
+    appointmentsByAge: {
+      regional: {
+        [ageRange: string]: { [procedure: string]: number };
+      };
+      practice: {
+        [ageRange: string]: { [procedure: string]: number };
+      };
+    };
+  };
+  procedures: {
+    highestVolume: {
+      regional: { name: string; data: number[] };
+      practice: { name: string; data: number[] };
+    };
+    largestProduction: {
+      regional: { name: string; procedureAvg: number; totalAvg: number };
+      practice: { name: string; procedureAvg: number; totalAvg: number };
+    };
+    lowestVolume: {
+      regional: { name: string; data: number[] };
+      practice: { name: string; data: number[] };
+    };
+  };
+}
+
+const analysisData: Record<string, AnalysisDataEntry> = {
   "60714": {
     financial: {
       monthlyProduction: {
@@ -599,8 +671,37 @@ const VolumeLineChart: React.FC<{
   );
 };
 
+// Define any necessary variables or functions used in the component
+const mapContainerVariants = {
+  initial: { width: '100%' },
+  animate: { width: '68%' }
+};
+
+const sideContainerVariants = {
+  hidden: { opacity: 0, x: '100%' },
+  visible: { opacity: 1, x: 0 }
+};
+
+const mapOptions: google.maps.MapOptions = {
+  disableDefaultUI: true,
+  zoomControl: true,
+};
+
+const getAnalysisOptions = (iconId: Icon['id']): string[] => {
+  switch (iconId) {
+    case 'financial':
+      return ['Avg Monthly Production', 'Insurance Public/Private', 'Avg Annual Growth %'];
+    case 'patients':
+      return ['Avg Active Patient %'];
+    case 'procedures':
+      return ['Highest Vol Procedure', 'Lowest Vol Procedure'];
+    default:
+      return [];
+  }
+};
+
 const RegionalTabContent = forwardRef((props, ref) => {
-  const [selectedZip, setSelectedZip] = useState<string | null>(null);
+  const [selectedZip, setSelectedZip] = useState<keyof typeof analysisData | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -616,366 +717,446 @@ const RegionalTabContent = forwardRef((props, ref) => {
   ];
 
   const AnalysisContentDisplay = useCallback(() => {
-    if (!selectedSubData || !selectedZip) return null;
-    const data = analysisData[selectedZip];
-    if (!data) return null;
+  if (!selectedSubData || !selectedZip) return null;
+  const data = analysisData[selectedZip];
+  if (!data) return null;
 
-    const isDesktop = window.innerWidth >= 768;
-    
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className={`${isDesktop ? 'px-4 pb-4' : 'px-2 pb-2'} space-y-4`}
-      >
-        {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
-          <div className="grid grid-rows-2 gap-4 h-full">
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <ProgressCircle
-                percentage={data.patients.activePatients.regional.percentage}
-                total={data.patients.activePatients.regional.total}
-                title="Regional Average"
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <ProgressCircle
-                percentage={data.patients.activePatients.practice.percentage}
-                total={data.patients.activePatients.practice.total}
-                title="Your Practice"
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
-          <div className="grid grid-rows-2 gap-4 h-full">
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <VolumeLineChart
-                data={data.procedures.highestVolume.regional.data}
-                title="Regional Average"
-                procedureName={data.procedures.highestVolume.regional.name}
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <VolumeLineChart
-                data={data.procedures.highestVolume.practice.data}
-                title="Your Practice"
-                procedureName={data.procedures.highestVolume.practice.name}
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
-          <div className="grid grid-rows-2 gap-4 h-full">
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <VolumeLineChart
-                data={data.procedures.lowestVolume.regional.data}
-                title="Regional Average"
-                procedureName={data.procedures.lowestVolume.regional.name}
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <VolumeLineChart
-                data={data.procedures.lowestVolume.practice.data}
-                title="Your Practice"
-                procedureName={data.procedures.lowestVolume.practice.name}
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
-          <div className="grid grid-rows-2 gap-4 h-full">
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <MonthlyProductionChart
-                data={data.financial.monthlyProduction.regional.breakdown}
-                title="Regional Average"
-                total={data.financial.monthlyProduction.regional.total}
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <MonthlyProductionChart
-                data={data.financial.monthlyProduction.practice.breakdown}
-                title="Your Practice"
-                total={data.financial.monthlyProduction.practice.total}
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
-          <div className="grid grid-rows-2 gap-4 h-full">
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <InsuranceDistributionChart
-                data={data.financial.insurance.regional}
-                title="Regional Average"
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <InsuranceDistributionChart
-                data={data.financial.insurance.practice}
-                title="Your Practice"
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
-          <div className="grid grid-rows-2 gap-4 h-full">
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <GrowthIndicator
-                data={data.financial.growth.regional}
-                title="Regional Average"
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <GrowthIndicator
-                data={data.financial.growth.practice}
-                title="Your Practice"
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-      </motion.div>
-    );
-  }, [selectedIcon, selectedSubData, selectedZip]);
-
-  useImperativeHandle(ref, () => ({
-    cleanup: () => {
-      if (map) {
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = [];
-        
-        if (zipDataLayer) {
-          zipDataLayer.setMap(null);
-        }
-        
-        setMap(null);
-      }
-    }
-  }));
-
-  const handleZipClick = useCallback((zipId: string) => {
-    setSelectedZip(zipId);
-    setSelectedIcon(null);
-    setSelectedSubData(null);
-    setIsAnalysisExpanded(true);
-
-    if (map && zipDataLayer) {
-      zipDataLayer.forEach((feature: google.maps.Data.Feature) => {
-        const featureZip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
-        if (featureZip === zipId) {
-          const bounds = new google.maps.LatLngBounds();
-          const geometry = feature.getGeometry();
-          
-          if (geometry) {
-            try {
-              geometry.forEachLatLng((latLng: google.maps.LatLng) => {
-                if (latLng) bounds.extend(latLng);
-              });
-              
-              if (!bounds.isEmpty()) {
-                map.fitBounds(bounds);
-              }
-            } catch (error) {
-              console.error('Error processing geometry:', error);
-            }
-          }
-        }
-      });
-      createLabels();
-    }
-  }, [map, zipDataLayer, createLabels]);
-
-  const handleIconClick = useCallback((iconId: Icon['id']) => {
-    setSelectedIcon(iconId);
-    setSelectedSubData(null);
-    setIsAnalysisExpanded(true);
-  }, []);
-
-  const handleSubDataClick = useCallback((subDataId: string) => {
-    if (selectedSubData === subDataId) {
-      setSelectedSubData(null);
-      setIsAnalysisExpanded(true);
-    } else {
-      setSelectedSubData(subDataId);
-      setIsAnalysisExpanded(false);
-    }
-  }, [selectedSubData]);
+  const isDesktop = window.innerWidth >= 768;
 
   return (
-    <div className="w-full h-full flex flex-col md:flex-row relative">
-      <motion.div 
-        className="relative bg-gray-50 rounded-xl shadow-sm overflow-hidden flex-1"
-        variants={mapContainerVariants}
-        animate={selectedIcon ? {
-          width: window.innerWidth >= 768 ? "68%" : "62%",
-          marginLeft: "0px",
-          marginRight: window.innerWidth >= 768 ? "0" : "35%"
-        } : {
-          width: "100%",
-          marginLeft: "0px",
-          marginRight: "0"
-        }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-      >
-        <AnimatePresence>
-          {selectedZip && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="absolute top-4 left-4 right-4 z-10"
-            >
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
-                <div className="flex justify-center gap-2">
-                  {icons.map((icon) => (
-                    <button
-                      key={icon.id}
-                      onClick={() => handleIconClick(icon.id)}
-                      className={
-                        `px-3 py-2 rounded-lg flex items-center transition-all duration-200 
-                        ${selectedIcon === icon.id 
-                          ? 'bg-[#052b52] text-white shadow-sm' 
-                          : 'bg-white/80 text-gray-600 hover:bg-white'}`
-                      }
-                    >
-                      <icon.icon className="w-4 h-4" />
-                      <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="h-full w-full">
-          <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
-            <GoogleMap
-              mapContainerClassName="w-full h-full"
-              center={mapCenter}
-              zoom={12}
-              options={mapOptions}
-              onLoad={onMapLoad}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className={`${isDesktop ? 'px-4 pb-4' : 'px-2 pb-2'} space-y-4`}
+    >
+      {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <ProgressCircle
+              percentage={data.patients.activePatients.regional.percentage}
+              total={data.patients.activePatients.regional.total}
+              title="Regional Average"
+              isDesktop={isDesktop}
             />
-          </LoadScript>
-        </div>
-
-        {isLoading && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-blue-600 rounded-full border-t-transparent animate-spin" />
           </div>
-        )}
-      </motion.div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <ProgressCircle
+              percentage={data.patients.activePatients.practice.percentage}
+              total={data.patients.activePatients.practice.total}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
 
+      {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.procedures.highestVolume.regional.data}
+              title="Regional Average"
+              procedureName={data.procedures.highestVolume.regional.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.procedures.highestVolume.practice.data}
+              title="Your Practice"
+              procedureName={data.procedures.highestVolume.practice.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.procedures.lowestVolume.regional.data}
+              title="Regional Average"
+              procedureName={data.procedures.lowestVolume.regional.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.procedures.lowestVolume.practice.data}
+              title="Your Practice"
+              procedureName={data.procedures.lowestVolume.practice.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <MonthlyProductionChart
+              data={data.financial.monthlyProduction.regional.breakdown}
+              title="Regional Average"
+              total={data.financial.monthlyProduction.regional.total}
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <MonthlyProductionChart
+              data={data.financial.monthlyProduction.practice.breakdown}
+              title="Your Practice"
+              total={data.financial.monthlyProduction.practice.total}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <InsuranceDistributionChart
+              data={data.financial.insurance.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <InsuranceDistributionChart
+              data={data.financial.insurance.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <GrowthIndicator
+              data={data.financial.growth.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <GrowthIndicator
+              data={data.financial.growth.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+}, [selectedIcon, selectedSubData, selectedZip]);
+
+useImperativeHandle(ref, () => ({
+  cleanup: () => {
+    if (map) {
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
+
+      if (zipDataLayer) {
+        zipDataLayer.setMap(null);
+      }
+
+      setMap(null);
+    }
+  }
+}));
+
+// Additional functions and event handlers
+const createLabels = useCallback(() => {
+  if (map) {
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+
+    // Add markers for surrounding cities
+    surroundingCities.forEach(city => {
+      const marker = new google.maps.Marker({
+        position: city.position,
+        map: map,
+        label: {
+          text: city.name,
+          className: 'text-xs font-semibold text-gray-700 bg-white px-1 rounded-sm',
+        },
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 0,
+        },
+      });
+      markersRef.current.push(marker);
+    });
+
+    // Add markers for zip codes
+    zipCodes.forEach(zip => {
+      const marker = new google.maps.Marker({
+        position: zip.center,
+        map: map,
+        label: {
+          text: zip.name,
+          className: 'text-sm font-bold text-blue-700 bg-white px-2 py-1 rounded-md shadow-md',
+        },
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 0,
+        },
+      });
+      markersRef.current.push(marker);
+    });
+  }
+}, [map]);
+
+const onMapLoad = useCallback((mapInstance: google.maps.Map) => {
+  setMap(mapInstance);
+  setIsLoading(false);
+
+  const dataLayer = new google.maps.Data({ map: mapInstance });
+  setZipDataLayer(dataLayer);
+
+  // Load GeoJSON data for zip codes
+  dataLayer.loadGeoJson('/path/to/your/geojson/file.json'); // Update the path to your GeoJSON file
+
+  dataLayer.setStyle((feature) => {
+    const zip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
+    return {
+      fillColor: zip === selectedZip ? '#1E40AF' : '#3B82F6',
+      strokeColor: '#FFFFFF',
+      strokeWeight: 1,
+      fillOpacity: zip === selectedZip ? 0.6 : 0.3,
+      clickable: true,
+    };
+  });
+
+  dataLayer.addListener('click', (event) => {
+    const zip = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
+    handleZipClick(zip);
+  });
+
+  createLabels();
+}, [createLabels, handleZipClick, selectedZip]);
+
+const handleZipClick = useCallback((zipId: string) => {
+  setSelectedZip(zipId);
+  setSelectedIcon(null);
+  setSelectedSubData(null);
+  setIsAnalysisExpanded(true);
+
+  if (map && zipDataLayer) {
+    zipDataLayer.forEach((feature: google.maps.Data.Feature) => {
+      const featureZip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
+      if (featureZip === zipId) {
+        const bounds = new google.maps.LatLngBounds();
+        const geometry = feature.getGeometry();
+
+        if (geometry) {
+          geometry.forEachLatLng((latLng: google.maps.LatLng) => {
+            if (latLng) bounds.extend(latLng);
+          });
+
+          if (!bounds.isEmpty()) {
+            map.fitBounds(bounds);
+          }
+        }
+      }
+    });
+
+    zipDataLayer.setStyle((feature) => {
+      const zip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
+      return {
+        fillColor: zip === zipId ? '#1E40AF' : '#3B82F6',
+        strokeColor: '#FFFFFF',
+        strokeWeight: 1,
+        fillOpacity: zip === zipId ? 0.6 : 0.3,
+        clickable: true,
+      };
+    });
+
+    createLabels();
+  }
+}, [map, zipDataLayer, createLabels]);
+
+const handleIconClick = useCallback((iconId: Icon['id']) => {
+  setSelectedIcon(iconId);
+  setSelectedSubData(null);
+  setIsAnalysisExpanded(true);
+}, []);
+
+const handleSubDataClick = useCallback((subDataId: string) => {
+  if (selectedSubData === subDataId) {
+    setSelectedSubData(null);
+    setIsAnalysisExpanded(true);
+  } else {
+    setSelectedSubData(subDataId);
+    setIsAnalysisExpanded(false);
+  }
+}, [selectedSubData]);
+
+// The main return statement rendering the component
+return (
+  <div className="w-full h-full flex flex-col md:flex-row relative">
+    <motion.div
+      className="relative bg-gray-50 rounded-xl shadow-sm overflow-hidden flex-1"
+      variants={mapContainerVariants}
+      animate={selectedIcon ? {
+        width: window.innerWidth >= 768 ? "68%" : "62%",
+        marginLeft: "0px",
+        marginRight: window.innerWidth >= 768 ? "0" : "35%"
+      } : {
+        width: "100%",
+        marginLeft: "0px",
+        marginRight: "0"
+      }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
       <AnimatePresence>
-        {selectedIcon && (
-          <motion.div 
-            className={`
-              bg-gray-50 rounded-xl shadow-sm 
-              ${window.innerWidth >= 768 
-                ? 'w-[30%] ml-4 relative' 
-                : 'w-[35%] absolute right-0 top-0 h-full'}
-            `}
-            variants={sideContainerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
+        {selectedZip && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-4 left-4 right-4 z-10"
           >
-            <motion.div 
-              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
-              animate={{ 
-                height: selectedSubData ? '100%' : 'auto'
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <motion.div 
-                className="relative"
-                layout
-                animate={{
-                  height: selectedSubData ? '42px' : 'auto'
-                }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-              >
-                <AnimatePresence mode="sync">
-                  {getAnalysisOptions(selectedIcon).map((option, index) => (
-                    <motion.button
-                      key={option}
-                      onClick={() => handleSubDataClick(option)}
-                      className={`
-                        w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
-                        text-left rounded-lg transition-colors duration-200 
-                        ${selectedSubData === option 
-                          ? 'bg-[#052b52] text-white' 
-                          : 'bg-white text-gray-600 hover:bg-gray-100'} 
-                        ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                        font-medium
-                      `}
-                      layout="position"
-                      initial={false}
-                      animate={{ 
-                        y: selectedSubData === option ? -(index * 42) : 0,
-                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
-                        scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
-                      }}
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      {option}
-                    </motion.button>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
-
-              <AnimatePresence mode="wait">
-                {selectedSubData && <AnalysisContentDisplay />}
-              </AnimatePresence>
-            </motion.div>
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
+              <div className="flex justify-center gap-2">
+                {icons.map((icon) => (
+                  <button
+                    key={icon.id}
+                    onClick={() => handleIconClick(icon.id)}
+                    className={
+                      `px-3 py-2 rounded-lg flex items-center transition-all duration-200 
+                      ${selectedIcon === icon.id 
+                        ? 'bg-[#052b52] text-white shadow-sm' 
+                        : 'bg-white/80 text-gray-600 hover:bg-white'}`
+                    }
+                  >
+                    <icon.icon className="w-4 h-4" />
+                    <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <style jsx global>{`
-        .gm-style-cc,
-        .gmnoprint.gm-style-cc,
-        .gm-style-iw-a,
-        .gm-style-iw-t,
-        .gm-style > div:last-child {
-          display: none !important;
-        }
-        .gm-style a[href^="https://maps.google.com/maps"],
-        .gm-style-pbc {
-          display: none !important;
-        }
-        .gmnoprint:not(.gm-bundled-control) {
-          display: none !important;
-        }
-        .gm-bundled-control .gmnoprint {
-          display: block !important;
-        }
-      `}</style>
-    </div>
-  );
-});
+      <div className="h-full w-full">
+        <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
+          <GoogleMap
+            mapContainerClassName="w-full h-full"
+            center={mapCenter}
+            zoom={12}
+            options={mapOptions}
+            onLoad={onMapLoad}
+          />
+        </LoadScript>
+      </div>
 
-RegionalTabContent.displayName = 'RegionalTabContent';
+      {isLoading && (
+        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
+          <div className="w-4 h-4 border-2 border-blue-600 rounded-full border-t-transparent animate-spin" />
+        </div>
+      )}
+    </motion.div>
 
-export default RegionalTabContent;
+    <AnimatePresence>
+      {selectedIcon && (
+        <motion.div
+          className={`
+            bg-gray-50 rounded-xl shadow-sm 
+            ${window.innerWidth >= 768 
+              ? 'w-[30%] ml-4 relative' 
+              : 'w-[35%] absolute right-0 top-0 h-full'}
+          `}
+          variants={sideContainerVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+        >
+          <motion.div
+            className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
+            animate={{
+              height: selectedSubData ? '100%' : 'auto'
+            }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <motion.div
+              className="relative"
+              layout
+              animate={{
+                height: selectedSubData ? '42px' : 'auto'
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <AnimatePresence mode="sync">
+                {getAnalysisOptions(selectedIcon).map((option, index) => (
+                  <motion.button
+                    key={option}
+                    onClick={() => handleSubDataClick(option)}
+                    className={`
+                      w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                      text-left rounded-lg transition-colors duration-200 
+                      ${selectedSubData === option 
+                        ? 'bg-[#052b52] text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-100'} 
+                      ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
+                      font-medium
+                    `}
+                    layout="position"
+                    initial={false}
+                    animate={{
+                      y: selectedSubData === option ? -(index * 42) : 0,
+                      opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
+                      scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
+                    }}
+                    transition={{
+                      duration: 0.3,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    {option}
+                  </motion.button>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+
+            <AnimatePresence mode="wait">
+              {selectedSubData && <AnalysisContentDisplay />}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
+    <style jsx global>{`
+          .gm-style-cc,
+          .gmnoprint.gm-style-cc,
+          .gm-style-iw-a,
+          .gm-style-iw-t,
+          .gm-style > div:last-child {
+            display: none !important;
+          }
+          .gm-style a[href^="https://maps.google.com/maps"],
+          .gm-style-pbc {
+            display: none !important;
+          }
+          .gmnoprint:not(.gm-bundled-control) {
+            display: none !important;
+          }
+          .gm-bundled-control .gmnoprint {
+            display: block !important;
+          }
+        `}</style>
+      </div>
+    );
+  });
+
+  RegionalTabContent.displayName = 'RegionalTabContent';
+
+  export default RegionalTabContent;
