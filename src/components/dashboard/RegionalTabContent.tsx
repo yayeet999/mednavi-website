@@ -56,7 +56,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
   const getAnalysisOptions = (iconId: Icon['id']) => {
     switch (iconId) {
       case 'financial':
-        return ['Avg Monthly Production', 'Insurance Split', 'Avg Annual Growth %'];
+        return ['Avg Monthly Production', 'Insurance Public/Private', 'Avg Annual Growth %'];
       case 'patients':
         return ['Avg Patient Age', 'Avg Active Patient %', 'Most Apts/Age Group'];
       case 'procedures':
