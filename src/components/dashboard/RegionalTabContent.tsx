@@ -137,9 +137,9 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
   const getZipOffset = (zipId: string) => {
   const offsets = {
-    '60656': { lat: -0.004, lng: -0.002 },    // moved down more
-    '60714': { lat: -0.0005, lng: -0.012 },   // moved much further left
-    '60631': { lat: -0.004, lng: -0.001 },    // moved down more
+    '60656': { lat: -0.008, lng: -0.002 },    // moved down more
+    '60714': { lat: -0.0005, lng: -0.014 },   // moved much further left
+    '60631': { lat: -0.006, lng: -0.001 },    // moved down more
     '60068': { lat: 0.002, lng: 0 }
   };
   return offsets[zipId as keyof typeof offsets] || { lat: 0.002, lng: 0 };
