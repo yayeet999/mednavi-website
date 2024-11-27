@@ -241,7 +241,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
         
         return {
           fillColor: isSelected ? '#2E7D32' : '#E2E8F0',
-          fillOpacity: isSelected ? 0.7 : 0.6,
+          fillOpacity: isSelected ? 0.85 : 0.6,
           strokeColor: isSelected ? '#1B5E20' : '#94A3B8',
           strokeWeight: isSelected ? 2 : 1
         };
@@ -430,21 +430,21 @@ const RegionalTabContent = forwardRef((props, ref) => {
             exit="hidden"
           >
             <div className="p-4">
-              <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>
-                Analysis Options
+              <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>`}>
+                {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-2 px-1 md:px-0">
                 {getAnalysisOptions(selectedIcon).map((option) => (
                   <motion.button
                     key={option}
                     onClick={() => handleSubDataClick(option)}
                     className={`
-                      w-full p-3 text-left rounded-lg transition-all duration-200 
+                      w-full p-2 md:p-3 text-left rounded-lg transition-all duration-200 
                       ${selectedSubData === option 
                         ? 'bg-[#052b52] text-white' 
                         : 'bg-white text-gray-600 hover:bg-gray-100'} 
-                      ${window.innerWidth >= 768 ? 'text-xs' : 'text-[10px]'} 
-                      font-medium
+                      ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'} 
+                      font-medium mx-1 md:mx-0
                     `}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
