@@ -444,7 +444,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
         )}
       </motion.div>
 
-      <AnimatePresence>
+<AnimatePresence>
   {selectedIcon && (
     <motion.div 
       className={`
@@ -458,7 +458,13 @@ const RegionalTabContent = forwardRef((props, ref) => {
       animate="visible"
       exit="hidden"
     >
-      <div className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'}`}>
+      <motion.div 
+        className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'}`}
+        animate={{ 
+          height: selectedSubData ? (window.innerWidth >= 768 ? '100px' : '80px') : 'auto'
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
         <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'hidden'}`}>
           {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
         </h3>
@@ -470,6 +476,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
             {getAnalysisOptions(selectedIcon).map((option, index) => {
               const isSelected = selectedSubData === option;
               const shouldShow = !selectedSubData || isSelected;
+              const moveDistance = window.innerWidth >= 768 ? 44 : 36;
               
               return (
                 <motion.button
@@ -487,7 +494,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
                   layout
                   initial={false}
                   animate={{ 
-                    y: isSelected ? -index * 40 : 0,
+                    y: isSelected ? -(index * moveDistance) : 0,
                     opacity: shouldShow ? 1 : 0,
                     scale: isSelected ? 1 : 1,
                     height: shouldShow ? 'auto' : 0,
@@ -506,11 +513,10 @@ const RegionalTabContent = forwardRef((props, ref) => {
             })}
           </AnimatePresence>
         </motion.div>
-      </div>
+      </motion.div>
     </motion.div>
   )}
 </AnimatePresence>
-
       <style jsx global>{`
         .gm-style-cc,
         .gmnoprint.gm-style-cc,
