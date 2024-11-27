@@ -497,7 +497,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
                         layout="position"
                         initial={false}
                         animate={{ 
-                          y: isSelected ? -(index * 100) + 0 : 0,
+                          y: isSelected ? -(index * 42) : 0,
                           opacity: shouldShow ? 1 : 0,
                           scaleY: shouldShow ? 1 : 0,
                         }}
