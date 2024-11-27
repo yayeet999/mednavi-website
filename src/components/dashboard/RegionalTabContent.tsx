@@ -44,7 +44,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAnalysisCollapsed, setIsAnalysisCollapsed] = useState(false);
+  const [isAnalysisExpanded, setIsAnalysisExpanded] = useState(true);
   const markersRef = useRef<google.maps.Marker[]>([]);
 
   const icons: Icon[] = [
@@ -217,7 +217,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
-    setIsAnalysisCollapsed(false);
+    setIsAnalysisExpanded(true);
 
     if (map && zipDataLayer) {
       zipDataLayer.forEach((feature: google.maps.Data.Feature) => {
@@ -248,16 +248,16 @@ const RegionalTabContent = forwardRef((props, ref) => {
   const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
     setSelectedSubData(null);
-    setIsAnalysisCollapsed(false);
+    setIsAnalysisExpanded(true);
   }, []);
 
   const handleSubDataClick = useCallback((subDataId: string) => {
     if (selectedSubData === subDataId) {
-      setIsAnalysisCollapsed(false);
       setSelectedSubData(null);
+      setIsAnalysisExpanded(true);
     } else {
       setSelectedSubData(subDataId);
-      setIsAnalysisCollapsed(true);
+      setIsAnalysisExpanded(false);
     }
   }, [selectedSubData]);
 
@@ -464,12 +464,9 @@ const RegionalTabContent = forwardRef((props, ref) => {
               </h3>
               <motion.div 
                 className="space-y-2"
-                animate={{ 
-                  height: isAnalysisCollapsed ? 'auto' : 'auto',
-                  transition: { duration: 0.3, ease: "easeInOut" }
-                }}
+                layout
               >
-                <AnimatePresence mode="wait">
+                <AnimatePresence mode="popLayout">
                   {getAnalysisOptions(selectedIcon).map((option) => (
                     <motion.button
                       key={option}
@@ -482,11 +479,12 @@ const RegionalTabContent = forwardRef((props, ref) => {
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'} 
                         font-medium
                       `}
+                      layout="position"
                       initial={{ opacity: 1, height: 'auto' }}
                       animate={{ 
-                        opacity: isAnalysisCollapsed && selectedSubData !== option ? 0 : 1,
-                        height: isAnalysisCollapsed && selectedSubData !== option ? 0 : 'auto',
-                        marginBottom: isAnalysisCollapsed && selectedSubData !== option ? 0 : 8
+                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
+                        height: !selectedSubData || selectedSubData === option ? 'auto' : 0,
+                        marginBottom: !selectedSubData || selectedSubData === option ? 8 : 0
                       }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -496,39 +494,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
                   ))}
                 </AnimatePresence>
               </motion.div>
-              
-              <AnimatePresence>
-                {selectedSubData && (
-                  <motion.div 
-                    className="mt-4 bg-white rounded-lg p-4 shadow-sm"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ 
-                      opacity: 1, 
-                      height: 'auto',
-                      transition: {
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 30
-                      }
-                    }}
-                    exit={{ opacity: 0, height: 0 }}
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <h4 className={`font-bold text-gray-800 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>
-                        {selectedSubData}
-                      </h4>
-                      <span className={`text-gray-500 ${window.innerWidth >= 768 ? 'text-xs' : 'text-[10px]'}`}>
-                        {zipCodes.find(zip => zip.id === selectedZip)?.name}
-                      </span>
-                    </div>
-                    <div className={`text-gray-600 space-y-1 ${window.innerWidth >= 768 ? 'text-xs' : 'text-[10px]'}`}>
-                      <p>Analysis data for {selectedSubData.toLowerCase()}</p>
-                      <p>Region: {zipCodes.find(zip => zip.id === selectedZip)?.name}</p>
-                      <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           </motion.div>
         )}
