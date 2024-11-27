@@ -52,6 +52,19 @@ const RegionalTabContent = forwardRef((props, ref) => {
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
 
+  const getAnalysisOptions = (iconId: Icon['id']) => {
+    switch (iconId) {
+      case 'financial':
+        return ['Avg Monthly Production', 'Insurance Split', 'Avg Annual Growth %'];
+      case 'patients':
+        return ['Avg Patient Age', 'Avg Active Patient %', 'Most Apts/Age Group'];
+      case 'procedures':
+        return ['Highest Vol Procedure', 'Largest Avg Production', 'Lowest Vol Procedure'];
+      default:
+        return [];
+    }
+  };
+
   useImperativeHandle(ref, () => ({
     cleanup: () => {
       if (map) {
@@ -130,7 +143,10 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
     zipCodes.forEach(zipCode => {
       const marker = new google.maps.Marker({
-        position: zipCode.center,
+        position: {
+          lat: zipCode.center.lat + 0.002,
+          lng: zipCode.center.lng
+        },
         map,
         label: {
           text: zipCode.id,
@@ -224,9 +240,9 @@ const RegionalTabContent = forwardRef((props, ref) => {
         const isSelected = zipCode === selectedZip;
         
         return {
-          fillColor: isSelected ? '#052b52' : '#E2E8F0',
-          fillOpacity: 0.6,
-          strokeColor: isSelected ? '#052b52' : '#94A3B8',
+          fillColor: isSelected ? '#2E7D32' : '#E2E8F0',
+          fillOpacity: isSelected ? 0.7 : 0.6,
+          strokeColor: isSelected ? '#1B5E20' : '#94A3B8',
           strokeWeight: isSelected ? 2 : 1
         };
       });
@@ -418,7 +434,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
                 Analysis Options
               </h3>
               <div className="space-y-2">
-                {['Monthly Trends', 'Demographics', 'Growth Rate'].map((option) => (
+                {getAnalysisOptions(selectedIcon).map((option) => (
                   <motion.button
                     key={option}
                     onClick={() => handleSubDataClick(option)}
