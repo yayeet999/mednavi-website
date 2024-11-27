@@ -430,7 +430,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
             exit="hidden"
           >
             <div className="p-4">
-              <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>`}>
+              <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>
                 {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
               </h3>
               <div className="space-y-2 px-1 md:px-0">
