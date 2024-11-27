@@ -444,86 +444,79 @@ const RegionalTabContent = forwardRef((props, ref) => {
         )}
       </motion.div>
 
-<AnimatePresence>
-  {selectedIcon && (
-    <motion.div 
-      className={`
-        bg-gray-50 rounded-xl shadow-sm 
-        ${window.innerWidth >= 768 
-          ? 'w-[30%] ml-4 relative' 
-          : 'w-[35%] absolute right-0 top-0 h-full'}
-      `}
-      variants={sideContainerVariants}
-      initial="hidden"
-      animate="visible"
-      exit="hidden"
-    >
-      <motion.div 
-        className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'}`}
-        animate={{ 
-          height: selectedSubData ? (window.innerWidth >= 768 ? '100px' : '80px') : 'auto'
-        }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-      >
-        <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'hidden'}`}>
-          {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
-        </h3>
-        <motion.div 
-          className="relative"
-          layout
-          animate={{
-    height: selectedSubData ? (window.innerWidth >= 768 ? '42px' : '36px') : 'auto',
-    marginBottom: selectedSubData ? '8px' : '0'
-  }}
-  transition={{ duration: 0.3, ease: "easeInOut" }}
-        >
-          <AnimatePresence mode="sync">
-            {getAnalysisOptions(selectedIcon).map((option, index) => {
-              const isSelected = selectedSubData === option;
-              const shouldShow = !selectedSubData || isSelected;
-              const moveDistance = window.innerWidth >= 768 ? 44 : 36;
-              
-              return (
-                <motion.button
-                  key={option}
-                  onClick={() => handleSubDataClick(option)}
-                  className={`
-                    w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
-                    text-left rounded-lg transition-colors duration-200 
-                    ${isSelected 
-                      ? 'bg-[#052b52] text-white' 
-                      : 'bg-white text-gray-600 hover:bg-gray-100'} 
-                    ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                    font-medium mb-2
-                  `}
-                  layout
-                  initial={false}
-                  animate={{ 
-                    y: isSelected ? -index * (window.innerWidth >= 768 ? 42 : 36) : 0,
-                    top: isSelected ? 0 : 'auto',
-                    opacity: shouldShow ? 1 : 0,
-                    height: shouldShow ? 'auto' : 0,
-                    marginBottom: shouldShow ? 8 : 0,
-                    position: isSelected ? 'absolute' : 'relative',
-                    width: '100%'
-                  }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 500,
-                    damping: 40,
-                    opacity: { duration: 0.2 }
-                  }}
-                >
-                  {option}
-                </motion.button>
-              );
-            })}
-          </AnimatePresence>
-        </motion.div>
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
+      <AnimatePresence>
+        {selectedIcon && (
+          <motion.div 
+            className={`
+              bg-gray-50 rounded-xl shadow-sm 
+              ${window.innerWidth >= 768 
+                ? 'w-[30%] ml-4 relative' 
+                : 'w-[35%] absolute right-0 top-0 h-full'}
+            `}
+            variants={sideContainerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            <motion.div 
+              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'}`}
+              animate={{ 
+                height: selectedSubData ? (window.innerWidth >= 768 ? '100px' : '80px') : 'auto'
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'hidden'}`}>
+                {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
+              </h3>
+              <motion.div 
+                className="relative"
+                layout
+                animate={{
+                  height: selectedSubData ? '42px' : 'auto'
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <AnimatePresence mode="sync">
+                  {getAnalysisOptions(selectedIcon).map((option, index) => {
+                    const isSelected = selectedSubData === option;
+                    const shouldShow = !selectedSubData || isSelected;
+                    
+                    return (
+                      <motion.button
+                        key={option}
+                        onClick={() => handleSubDataClick(option)}
+                        className={`
+                          w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                          text-left rounded-lg transition-colors duration-200 
+                          ${isSelected 
+                            ? 'bg-[#052b52] text-white' 
+                            : 'bg-white text-gray-600 hover:bg-gray-100'} 
+                          ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
+                          font-medium
+                        `}
+                        layout="position"
+                        initial={false}
+                        animate={{ 
+                          y: isSelected ? -(index * 100) + 0 : 0,
+                          opacity: shouldShow ? 1 : 0,
+                          scaleY: shouldShow ? 1 : 0,
+                        }}
+                        transition={{
+                          duration: 0.3,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        {option}
+                      </motion.button>
+                    );
+                  })}
+                </AnimatePresence>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <style jsx global>{`
         .gm-style-cc,
         .gmnoprint.gm-style-cc,
