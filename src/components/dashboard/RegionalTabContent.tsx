@@ -137,9 +137,9 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
   const getZipOffset = (zipId: string) => {
     const offsets = {
-      '60656': { lat: 0.0005, lng: -0.001 },
-      '60714': { lat: -0.0005, lng: 0.001 },
-      '60631': { lat: 0.001, lng: -0.0005 },
+      '60656': { lat: -0.0005, lng: -0.001 },
+      '60714': { lat: -0.0005, lng: -0.002 },
+      '60631': { lat: -0.0005, lng: -0.0005 },
       '60068': { lat: 0.002, lng: 0 }
     };
     return offsets[zipId as keyof typeof offsets] || { lat: 0.002, lng: 0 };
@@ -161,7 +161,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
         map,
         label: {
           text: zipCode.id,
-          fontSize: window.innerWidth < 768 ? "10px" : "16px",
+          fontSize: window.innerWidth < 768 ? "8px" : "16px",
           color: selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
           fontWeight: "500"
         },
@@ -453,7 +453,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
               <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>
                 {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
               </h3>
-              <div className="space-y-2 px-0.5 md:px-0">
+              <div className="space-y-2 px-0 md:px-0">
                 {getAnalysisOptions(selectedIcon).map((option) => (
                   <motion.button
                     key={option}
@@ -464,7 +464,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
                         ? 'bg-[#052b52] text-white' 
                         : 'bg-white text-gray-600 hover:bg-gray-100'} 
                       ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'} 
-                      font-medium mx-1 md:mx-0
+                      font-medium mx-0.5 md:mx-0
                     `}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
