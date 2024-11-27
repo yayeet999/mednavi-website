@@ -136,15 +136,14 @@ const RegionalTabContent = forwardRef((props, ref) => {
   }), []);
 
   const getZipOffset = (zipId: string) => {
-    const offsets = {
-      '60656': { lat: -0.001, lng: -0.001 },
-      '60714': { lat: -0.0005, lng: -0.004 },
-      '60631': { lat: -0.001, lng: -0.0005 },
-      '60068': { lat: 0.002, lng: 0 }
-    };
-    return offsets[zipId as keyof typeof offsets] || { lat: 0.002, lng: 0 };
+  const offsets = {
+    '60656': { lat: -0.004, lng: -0.002 },    // moved down more
+    '60714': { lat: -0.0005, lng: -0.012 },   // moved much further left
+    '60631': { lat: -0.004, lng: -0.001 },    // moved down more
+    '60068': { lat: 0.002, lng: 0 }
   };
-
+  return offsets[zipId as keyof typeof offsets] || { lat: 0.002, lng: 0 };
+};
   const createLabels = useCallback(() => {
     if (!map) return;
     
@@ -449,17 +448,17 @@ const RegionalTabContent = forwardRef((props, ref) => {
             animate="visible"
             exit="hidden"
           >
-            <div className="p-2 md:p-4">
-              <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>
-                {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
-              </h3>
+            <div className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'}`}>
+  <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'hidden'}`}>
+    {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
+  </h3>
               <div className="space-y-2">
                 {getAnalysisOptions(selectedIcon).map((option) => (
                   <motion.button
                     key={option}
                     onClick={() => handleSubDataClick(option)}
                     className={`
-                      w-[98%] md:w-full ml-[1%] mr-[1%] md:mx-0 p-2 md:p-3 text-left rounded-lg transition-all duration-200 
+                       w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 text-left rounded-lg transition-all duration-200 
                       ${selectedSubData === option 
                         ? 'bg-[#052b52] text-white' 
                         : 'bg-white text-gray-600 hover:bg-gray-100'} 
