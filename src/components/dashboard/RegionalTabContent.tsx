@@ -283,7 +283,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
       });
 
       dataLayer.addListener('mouseover', (event: google.maps.Data.MouseEvent) => {
-        const zipCode = event.feature.getProperty('ZCTA5CE20') || event.getProperty('zip');
+        const zipCode = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
         if (zipCodes.some(zip => zip.id === zipCode) && zipCode !== selectedZip) {
           dataLayer.overrideStyle(event.feature, {
             fillColor: '#CBD5E1'
