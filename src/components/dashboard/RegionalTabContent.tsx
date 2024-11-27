@@ -135,6 +135,16 @@ const RegionalTabContent = forwardRef((props, ref) => {
     minZoom: 8
   }), []);
 
+  const getZipOffset = (zipId: string) => {
+    const offsets = {
+      '60656': { lat: 0.0005, lng: -0.001 },
+      '60714': { lat: -0.0005, lng: 0.001 },
+      '60631': { lat: 0.001, lng: -0.0005 },
+      '60068': { lat: 0.002, lng: 0 }
+    };
+    return offsets[zipId as keyof typeof offsets] || { lat: 0.002, lng: 0 };
+  };
+
   const createLabels = useCallback(() => {
     if (!map) return;
     
@@ -142,10 +152,11 @@ const RegionalTabContent = forwardRef((props, ref) => {
     markersRef.current = [];
 
     zipCodes.forEach(zipCode => {
+      const offset = getZipOffset(zipCode.id);
       const marker = new google.maps.Marker({
         position: {
-          lat: zipCode.center.lat + 0.002,
-          lng: zipCode.center.lng
+          lat: zipCode.center.lat + offset.lat,
+          lng: zipCode.center.lng + offset.lng
         },
         map,
         label: {
@@ -180,6 +191,26 @@ const RegionalTabContent = forwardRef((props, ref) => {
       markersRef.current.push(marker);
     });
   }, [map, selectedZip]);
+
+  const setDataLayerStyle = useCallback(() => {
+    if (zipDataLayer) {
+      zipDataLayer.setStyle((feature: google.maps.Data.Feature) => {
+        const zipCode = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
+        const isSelected = zipCode === selectedZip;
+        
+        return {
+          fillColor: isSelected ? '#2E7D32' : '#E2E8F0',
+          fillOpacity: isSelected ? 0.85 : 0.6,
+          strokeColor: isSelected ? '#1B5E20' : '#94A3B8',
+          strokeWeight: isSelected ? 2 : 1
+        };
+      });
+    }
+  }, [zipDataLayer, selectedZip]);
+
+  useEffect(() => {
+    setDataLayerStyle();
+  }, [setDataLayerStyle, selectedZip]);
 
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
@@ -235,18 +266,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
       const geoJson = await response.json();
       dataLayer.addGeoJson(geoJson);
 
-      dataLayer.setStyle((feature: google.maps.Data.Feature) => {
-        const zipCode = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
-        const isSelected = zipCode === selectedZip;
-        
-        return {
-          fillColor: isSelected ? '#2E7D32' : '#E2E8F0',
-          fillOpacity: isSelected ? 0.85 : 0.6,
-          strokeColor: isSelected ? '#1B5E20' : '#94A3B8',
-          strokeWeight: isSelected ? 2 : 1
-        };
-      });
-
       dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
         const zipCode = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
         if (typeof zipCode === 'string' && zipCodes.some(zip => zip.id === zipCode)) {
@@ -297,6 +316,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
       }
 
       createLabels();
+      setDataLayerStyle();
 
     } catch (error) {
       console.error('Error loading map data:', error);
@@ -305,7 +325,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
     } finally {
       setIsLoading(false);
     }
-  }, [handleZipClick, selectedZip, createLabels]);
+  }, [handleZipClick, selectedZip, createLabels, setDataLayerStyle]);
 
   useEffect(() => {
     if (map) {
@@ -433,7 +453,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
               <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>
                 {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
               </h3>
-              <div className="space-y-2 px-1 md:px-0">
+              <div className="space-y-2 px-0.5 md:px-0">
                 {getAnalysisOptions(selectedIcon).map((option) => (
                   <motion.button
                     key={option}
