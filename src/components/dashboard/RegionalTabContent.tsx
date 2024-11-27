@@ -469,8 +469,13 @@ const RegionalTabContent = forwardRef((props, ref) => {
           {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
         </h3>
         <motion.div 
-          className="relative flex flex-col"
+          className="relative"
           layout
+          animate={{
+    height: selectedSubData ? (window.innerWidth >= 768 ? '42px' : '36px') : 'auto',
+    marginBottom: selectedSubData ? '8px' : '0'
+  }}
+  transition={{ duration: 0.3, ease: "easeInOut" }}
         >
           <AnimatePresence mode="sync">
             {getAnalysisOptions(selectedIcon).map((option, index) => {
@@ -494,11 +499,13 @@ const RegionalTabContent = forwardRef((props, ref) => {
                   layout
                   initial={false}
                   animate={{ 
-                    y: isSelected ? -(index * moveDistance) : 0,
+                    y: isSelected ? -index * (window.innerWidth >= 768 ? 42 : 36) : 0,
+                    top: isSelected ? 0 : 'auto',
                     opacity: shouldShow ? 1 : 0,
-                    scale: isSelected ? 1 : 1,
                     height: shouldShow ? 'auto' : 0,
                     marginBottom: shouldShow ? 8 : 0,
+                    position: isSelected ? 'absolute' : 'relative',
+                    width: '100%'
                   }}
                   transition={{
                     type: 'spring',
