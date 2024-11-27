@@ -44,6 +44,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAnalysisCollapsed, setIsAnalysisCollapsed] = useState(false);
   const markersRef = useRef<google.maps.Marker[]>([]);
 
   const icons: Icon[] = [
@@ -136,14 +137,15 @@ const RegionalTabContent = forwardRef((props, ref) => {
   }), []);
 
   const getZipOffset = (zipId: string) => {
-  const offsets = {
-    '60656': { lat: -0.008, lng: -0.002 },    // moved down more
-    '60714': { lat: -0.0005, lng: -0.014 },   // moved much further left
-    '60631': { lat: -0.006, lng: -0.001 },    // moved down more
-    '60068': { lat: 0.002, lng: 0 }
+    const offsets = {
+      '60656': { lat: -0.008, lng: -0.002 },
+      '60714': { lat: -0.0005, lng: -0.014 },
+      '60631': { lat: -0.006, lng: -0.001 },
+      '60068': { lat: 0.002, lng: 0 }
+    };
+    return offsets[zipId as keyof typeof offsets] || { lat: 0.002, lng: 0 };
   };
-  return offsets[zipId as keyof typeof offsets] || { lat: 0.002, lng: 0 };
-};
+
   const createLabels = useCallback(() => {
     if (!map) return;
     
@@ -215,6 +217,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
+    setIsAnalysisCollapsed(false);
 
     if (map && zipDataLayer) {
       zipDataLayer.forEach((feature: google.maps.Data.Feature) => {
@@ -245,11 +248,18 @@ const RegionalTabContent = forwardRef((props, ref) => {
   const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
     setSelectedSubData(null);
+    setIsAnalysisCollapsed(false);
   }, []);
 
   const handleSubDataClick = useCallback((subDataId: string) => {
-    setSelectedSubData(subDataId);
-  }, []);
+    if (selectedSubData === subDataId) {
+      setIsAnalysisCollapsed(false);
+      setSelectedSubData(null);
+    } else {
+      setSelectedSubData(subDataId);
+      setIsAnalysisCollapsed(true);
+    }
+  }, [selectedSubData]);
 
   const onMapLoad = useCallback(async (map: google.maps.Map) => {
     setMap(map);
@@ -273,7 +283,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
       });
 
       dataLayer.addListener('mouseover', (event: google.maps.Data.MouseEvent) => {
-        const zipCode = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
+        const zipCode = event.feature.getProperty('ZCTA5CE20') || event.getProperty('zip');
         if (zipCodes.some(zip => zip.id === zipCode) && zipCode !== selectedZip) {
           dataLayer.overrideStyle(event.feature, {
             fillColor: '#CBD5E1'
@@ -449,53 +459,77 @@ const RegionalTabContent = forwardRef((props, ref) => {
             exit="hidden"
           >
             <div className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'}`}>
-  <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'hidden'}`}>
-    {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
-  </h3>
-              <div className="space-y-2">
-                {getAnalysisOptions(selectedIcon).map((option) => (
-                  <motion.button
-                    key={option}
-                    onClick={() => handleSubDataClick(option)}
-                    className={`
-                       w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 text-left rounded-lg transition-all duration-200 
-                      ${selectedSubData === option 
-                        ? 'bg-[#052b52] text-white' 
-                        : 'bg-white text-gray-600 hover:bg-gray-100'} 
-                      ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'} 
-                      font-medium
-                    `}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {option}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-
-            {selectedSubData && (
+              <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'hidden'}`}>
+                {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
+              </h3>
               <motion.div 
-                className="p-4 mt-2 border-t border-gray-100"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+                className="space-y-2"
+                animate={{ 
+                  height: isAnalysisCollapsed ? 'auto' : 'auto',
+                  transition: { duration: 0.3, ease: "easeInOut" }
+                }}
               >
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className={`font-bold text-gray-800 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>
-                    {selectedSubData}
-                  </h4>
-                  <span className={`text-gray-500 ${window.innerWidth >= 768 ? 'text-xs' : 'text-[10px]'}`}>
-                    {zipCodes.find(zip => zip.id === selectedZip)?.name}
-                  </span>
-                </div>
-                <div className={`text-gray-600 space-y-1 ${window.innerWidth >= 768 ? 'text-xs' : 'text-[10px]'}`}>
-                  <p>Analysis data for {selectedSubData.toLowerCase()}</p>
-                  <p>Region: {zipCodes.find(zip => zip.id === selectedZip)?.name}</p>
-                  <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
-                </div>
+                <AnimatePresence mode="wait">
+                  {getAnalysisOptions(selectedIcon).map((option) => (
+                    <motion.button
+                      key={option}
+                      onClick={() => handleSubDataClick(option)}
+                      className={`
+                        w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 text-left rounded-lg transition-all duration-200 
+                        ${selectedSubData === option 
+                          ? 'bg-[#052b52] text-white' 
+                          : 'bg-white text-gray-600 hover:bg-gray-100'} 
+                        ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'} 
+                        font-medium
+                      `}
+                      initial={{ opacity: 1, height: 'auto' }}
+                      animate={{ 
+                        opacity: isAnalysisCollapsed && selectedSubData !== option ? 0 : 1,
+                        height: isAnalysisCollapsed && selectedSubData !== option ? 0 : 'auto',
+                        marginBottom: isAnalysisCollapsed && selectedSubData !== option ? 0 : 8
+                      }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                      {option}
+                    </motion.button>
+                  ))}
+                </AnimatePresence>
               </motion.div>
-            )}
+              
+              <AnimatePresence>
+                {selectedSubData && (
+                  <motion.div 
+                    className="mt-4 bg-white rounded-lg p-4 shadow-sm"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ 
+                      opacity: 1, 
+                      height: 'auto',
+                      transition: {
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 30
+                      }
+                    }}
+                    exit={{ opacity: 0, height: 0 }}
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className={`font-bold text-gray-800 ${window.innerWidth >= 768 ? 'text-sm' : 'text-[11px]'}`}>
+                        {selectedSubData}
+                      </h4>
+                      <span className={`text-gray-500 ${window.innerWidth >= 768 ? 'text-xs' : 'text-[10px]'}`}>
+                        {zipCodes.find(zip => zip.id === selectedZip)?.name}
+                      </span>
+                    </div>
+                    <div className={`text-gray-600 space-y-1 ${window.innerWidth >= 768 ? 'text-xs' : 'text-[10px]'}`}>
+                      <p>Analysis data for {selectedSubData.toLowerCase()}</p>
+                      <p>Region: {zipCodes.find(zip => zip.id === selectedZip)?.name}</p>
+                      <p>Category: {icons.find(icon => icon.id === selectedIcon)?.label}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
