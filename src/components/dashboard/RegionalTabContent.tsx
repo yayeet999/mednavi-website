@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo, useRef, forwardRef, u
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import AnalysisContent from './AnalysisContent';
 
 interface ZipCode {
   id: string;
@@ -58,9 +59,9 @@ const RegionalTabContent = forwardRef((props, ref) => {
       case 'financial':
         return ['Avg Monthly Production', 'Insurance Public/Private', 'Avg Annual Growth %'];
       case 'patients':
-        return ['Avg Patient Age', 'Avg Active Patient %', 'Most Apts/Age Group'];
+        return ['Avg Active Patient %'];
       case 'procedures':
-        return ['Highest Vol Procedure', 'Largest Avg Production', 'Lowest Vol Procedure'];
+        return ['Highest Vol Procedure', 'Lowest Vol Procedure'];
       default:
         return [];
     }
@@ -193,26 +194,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
     });
   }, [map, selectedZip]);
 
-  const setDataLayerStyle = useCallback(() => {
-    if (zipDataLayer) {
-      zipDataLayer.setStyle((feature: google.maps.Data.Feature) => {
-        const zipCode = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
-        const isSelected = zipCode === selectedZip;
-        
-        return {
-          fillColor: isSelected ? '#2E7D32' : '#E2E8F0',
-          fillOpacity: isSelected ? 0.85 : 0.6,
-          strokeColor: isSelected ? '#1B5E20' : '#94A3B8',
-          strokeWeight: isSelected ? 2 : 1
-        };
-      });
-    }
-  }, [zipDataLayer, selectedZip]);
-
-  useEffect(() => {
-    setDataLayerStyle();
-  }, [setDataLayerStyle, selectedZip]);
-
   const handleZipClick = useCallback((zipId: string) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
@@ -325,7 +306,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
       }
 
       createLabels();
-      setDataLayerStyle();
 
     } catch (error) {
       console.error('Error loading map data:', error);
@@ -334,7 +314,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
     } finally {
       setIsLoading(false);
     }
-  }, [handleZipClick, selectedZip, createLabels, setDataLayerStyle]);
+  }, [handleZipClick, selectedZip, createLabels]);
 
   useEffect(() => {
     if (map) {
@@ -349,34 +329,20 @@ const RegionalTabContent = forwardRef((props, ref) => {
     };
   }, []);
 
-  const mapContainerVariants = {
-    full: { width: "100%" },
-    reduced: { 
-      width: window.innerWidth >= 768 ? "68%" : "62%",
-      marginRight: window.innerWidth >= 768 ? "0" : "35%"
-    }
-  };
+  const AnalysisContentDisplay = useCallback(() => {
+    if (!selectedSubData || !selectedZip) return null;
+    const data = analysisData[selectedZip];
+    if (!data) return null;
 
-  const sideContainerVariants = {
-    hidden: { 
-      opacity: 0, 
-      x: window.innerWidth >= 768 ? 20 : "100%",
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 30
-      }
-    },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 30
-      }
-    }
-  };
+    return (
+      <AnalysisContent
+        selectedIcon={selectedIcon}
+        selectedSubData={selectedSubData}
+        selectedZip={selectedZip}
+        data={data}
+      />
+    );
+  }, [selectedIcon, selectedSubData, selectedZip]);
 
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
@@ -459,15 +425,12 @@ const RegionalTabContent = forwardRef((props, ref) => {
             exit="hidden"
           >
             <motion.div 
-              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'}`}
+              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
               animate={{ 
-                height: selectedSubData ? (window.innerWidth >= 768 ? '100px' : '80px') : 'auto'
+                height: selectedSubData ? '100%' : 'auto'
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <h3 className={`font-bold text-gray-800 mb-3 ${window.innerWidth >= 768 ? 'text-sm' : 'hidden'}`}>
-                {window.innerWidth >= 768 ? 'Analysis Options:' : 'Analysis:'}
-              </h3>
               <motion.div 
                 className="relative"
                 layout
@@ -477,41 +440,40 @@ const RegionalTabContent = forwardRef((props, ref) => {
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
                 <AnimatePresence mode="sync">
-                  {getAnalysisOptions(selectedIcon).map((option, index) => {
-                    const isSelected = selectedSubData === option;
-                    const shouldShow = !selectedSubData || isSelected;
-                    
-                    return (
-                      <motion.button
-                        key={option}
-                        onClick={() => handleSubDataClick(option)}
-                        className={`
-                          w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
-                          text-left rounded-lg transition-colors duration-200 
-                          ${isSelected 
-                            ? 'bg-[#052b52] text-white' 
-                            : 'bg-white text-gray-600 hover:bg-gray-100'} 
-                          ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                          font-medium
-                        `}
-                        layout="position"
-                        initial={false}
-                        animate={{ 
-                          y: isSelected ? -(index * 42) : 0,
-                          opacity: shouldShow ? 1 : 0,
-                          scaleY: shouldShow ? 1 : 0,
-                        }}
-                        transition={{
-                          duration: 0.3,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        {option}
-                      </motion.button>
-                    );
-                  })}
+                  {getAnalysisOptions(selectedIcon).map((option, index) => (
+                    <motion.button
+                      key={option}
+                      onClick={() => handleSubDataClick(option)}
+                      className={`
+                        w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                        text-left rounded-lg transition-colors duration-200 
+                        ${selectedSubData === option 
+                          ? 'bg-[#052b52] text-white' 
+                          : 'bg-white text-gray-600 hover:bg-gray-100'} 
+                        ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
+                        font-medium
+                      `}
+                      layout="position"
+                      initial={false}
+                      animate={{ 
+                        y: selectedSubData === option ? -(index * 42) : 0,
+                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
+                        scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
+                      }}
+                      transition={{
+                        duration: 0.3,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      {option}
+                    </motion.button>
+                  ))}
                 </AnimatePresence>
               </motion.div>
+
+              <AnimatePresence mode="wait">
+                {selectedSubData && <AnalysisContentDisplay />}
+              </AnimatePresence>
             </motion.div>
           </motion.div>
         )}
