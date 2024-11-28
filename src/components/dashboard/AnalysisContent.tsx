@@ -1,0 +1,419 @@
+import React from 'react';
+import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { motion } from "framer-motion";
+
+// Custom tooltip component for charts
+const CustomTooltip: React.FC<{
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+}> = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-2 shadow-sm rounded-lg border border-gray-200">
+        <p className="text-[10px] font-medium text-gray-600">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <p key={index} className="text-[10px]" style={{ color: entry.color }}>
+            {`${entry.name}: ${typeof entry.value === 'number' ? 
+              entry.payload?.amount ? 
+                `$${entry.payload.amount.toLocaleString()}` : 
+                `${entry.value.toLocaleString()}${entry.unit || '%'}`
+              : entry.value}`}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+// Monthly Production Chart Component
+const MonthlyProductionChart: React.FC<{
+  data: any;
+  title: string;
+  total: number;
+  isDesktop: boolean;
+}> = ({ data, title, total, isDesktop }) => {
+  const COLORS = ['#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE'];
+  const formattedData = Object.entries(data).map(([name, values]: [string, any]) => ({
+    name,
+    ...values,
+  }));
+
+  return (
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
+      <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[14px] font-semibold text-gray-800">
+          ${total.toLocaleString()}
+        </p>
+      </div>
+      <div className={`${isDesktop ? 'w-2/3' : 'w-full h-32'}`}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={formattedData}
+              innerRadius={isDesktop ? 30 : 25}
+              outerRadius={isDesktop ? 45 : 40}
+              paddingAngle={2}
+              dataKey="amount"
+            >
+              {formattedData.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={COLORS[index % COLORS.length]}
+                  className="transition-opacity duration-200 hover:opacity-80"
+                />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
+// Insurance Distribution Chart Component
+const InsuranceDistributionChart: React.FC<{
+  data: any;
+  title: string;
+  isDesktop: boolean;
+}> = ({ data, title, isDesktop }) => {
+  const formattedData = [
+    { name: 'Public', value: data.public, color: '#1E40AF' },
+    { name: 'Private', value: data.private, color: '#60A5FA' }
+  ];
+
+  return (
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
+      <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <div className="flex flex-col gap-1 mt-1">
+          {formattedData.map((item) => (
+            <div key={item.name} className="flex items-center justify-center gap-1">
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
+              <p className="text-[10px] text-gray-600">
+                {item.name}: {item.value}%
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className={`${isDesktop ? 'w-2/3' : 'w-full h-32'}`}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={formattedData}
+              innerRadius={isDesktop ? 40 : 35}
+              outerRadius={isDesktop ? 50 : 45}
+              startAngle={180}
+              endAngle={0}
+              paddingAngle={2}
+              dataKey="value"
+            >
+              {formattedData.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.color}
+                  className="transition-opacity duration-200 hover:opacity-80"
+                />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
+// Growth Indicator Component
+const GrowthIndicator: React.FC<{
+  data: any;
+  title: string;
+  isDesktop: boolean;
+}> = ({ data, title, isDesktop }) => {
+  return (
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
+      <div className={`${isDesktop ? 'w-1/2' : 'w-full'} text-center`}>
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[14px] font-semibold text-gray-800">
+          {data.percentage}%
+        </p>
+        <p className={`text-[10px] ${data.yoyChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          {data.yoyChange >= 0 ? '+' : ''}{data.yoyChange}% YoY
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// Progress Circle Component
+const ProgressCircle: React.FC<{
+  percentage: number;
+  total: number;
+  title: string;
+  isDesktop: boolean;
+}> = ({ percentage, total, title, isDesktop }) => {
+  const radius = isDesktop ? 40 : 35;
+  const strokeWidth = isDesktop ? 8 : 6;
+  const circumference = 2 * Math.PI * radius;
+  const progress = (percentage / 100) * circumference;
+
+  return (
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
+      <div className={`${isDesktop ? 'w-1/2' : 'w-full'} text-center`}>
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[10px] text-gray-500">Total: {total.toLocaleString()}</p>
+      </div>
+      <div className={`${isDesktop ? 'w-1/2' : 'w-full'} relative`}>
+        <svg
+          className="transform -rotate-90 w-24 h-24"
+          viewBox="0 0 100 100"
+        >
+          <circle
+            className="text-gray-200"
+            strokeWidth={strokeWidth}
+            stroke="currentColor"
+            fill="none"
+            r={radius}
+            cx="50"
+            cy="50"
+          />
+          <circle
+            className="text-blue-600 transition-all duration-1000 ease-out"
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            stroke="currentColor"
+            fill="none"
+            r={radius}
+            cx="50"
+            cy="50"
+            style={{
+              strokeDasharray: circumference,
+              strokeDashoffset: circumference - progress,
+            }}
+          />
+          <text
+            x="50"
+            y="50"
+            className="text-[12px] font-medium"
+            dominantBaseline="middle"
+            textAnchor="middle"
+            fill="#1E40AF"
+            transform="rotate(90 50 50)"
+          >
+            {percentage}%
+          </text>
+        </svg>
+      </div>
+    </div>
+  );
+};
+
+// Volume Line Chart Component
+const VolumeLineChart: React.FC<{
+  data: number[];
+  title: string;
+  procedureName: string;
+  isDesktop: boolean;
+}> = ({ data, title, procedureName, isDesktop }) => {
+  const chartData = data.map((value, index) => ({
+    month: `Month ${index + 1}`,
+    value
+  }));
+
+  return (
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
+      <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[12px] font-semibold text-gray-800">{procedureName}</p>
+      </div>
+      <div className={`${isDesktop ? 'w-2/3' : 'w-full h-32'}`}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+            <XAxis 
+              dataKey="month" 
+              tick={{ fontSize: 10 }}
+              stroke="#9CA3AF"
+            />
+            <YAxis 
+              tick={{ fontSize: 10 }}
+              stroke="#9CA3AF"
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke="#1E40AF"
+              strokeWidth={2}
+              dot={{ fill: '#1E40AF', r: 4 }}
+              activeDot={{ r: 6, fill: '#3B82F6' }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
+interface AnalysisContentProps {
+  selectedIcon: 'financial' | 'patients' | 'procedures' | null;
+  selectedSubData: string | null;
+  selectedZip: string;
+  data: any;
+}
+
+const AnalysisContent: React.FC<AnalysisContentProps> = ({ 
+  selectedIcon, 
+  selectedSubData, 
+  selectedZip,
+  data 
+}) => {
+  if (!selectedSubData || !selectedZip) return null;
+  if (!data) return null;
+
+  const isDesktop = window.innerWidth >= 768;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className={`${isDesktop ? 'px-4 pb-4' : 'px-2 pb-2'} space-y-4`}
+    >
+      {/* Patient Section */}
+      {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <ProgressCircle
+              percentage={data.patients.activePatients.regional.percentage}
+              total={data.patients.activePatients.regional.total}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <ProgressCircle
+              percentage={data.patients.activePatients.practice.percentage}
+              total={data.patients.activePatients.practice.total}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Procedures Section */}
+      {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.procedures.highestVolume.regional.data}
+              title="Regional Average"
+              procedureName={data.procedures.highestVolume.regional.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.procedures.highestVolume.practice.data}
+              title="Your Practice"
+              procedureName={data.procedures.highestVolume.practice.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.procedures.lowestVolume.regional.data}
+              title="Regional Average"
+              procedureName={data.procedures.lowestVolume.regional.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.procedures.lowestVolume.practice.data}
+              title="Your Practice"
+              procedureName={data.procedures.lowestVolume.practice.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Financial Section */}
+      {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <MonthlyProductionChart
+              data={data.financial.monthlyProduction.regional.breakdown}
+              title="Regional Average"
+              total={data.financial.monthlyProduction.regional.total}
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <MonthlyProductionChart
+              data={data.financial.monthlyProduction.practice.breakdown}
+              title="Your Practice"
+              total={data.financial.monthlyProduction.practice.total}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <InsuranceDistributionChart
+              data={data.financial.insurance.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <InsuranceDistributionChart
+              data={data.financial.insurance.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <GrowthIndicator
+              data={data.financial.growth.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <GrowthIndicator
+              data={data.financial.growth.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
+export default AnalysisContent;
