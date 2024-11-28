@@ -66,6 +66,10 @@ const analysisData = {
       lowestVolume: {
         regional: { name: "Root Canals", data: [12, 15, 14] },
         practice: { name: "Root Canals", data: [11, 13, 12] }
+      },
+      largestProduction: {
+        regional: { name: "Veneers", procedureAvg: 1250, totalAvg: 850 },
+        practice: { name: "Veneers", procedureAvg: 1350, totalAvg: 890 }
       }
     }
   },
@@ -116,6 +120,10 @@ const analysisData = {
       lowestVolume: {
         regional: { name: "Root Canals", data: [11, 14, 13] },
         practice: { name: "Root Canals", data: [10, 12, 11] }
+      },
+      largestProduction: {
+        regional: { name: "Veneers", procedureAvg: 1200, totalAvg: 820 },
+        practice: { name: "Veneers", procedureAvg: 1300, totalAvg: 860 }
       }
     }
   },
@@ -166,6 +174,10 @@ const analysisData = {
       lowestVolume: {
         regional: { name: "Root Canals", data: [12, 15, 14] },
         practice: { name: "Root Canals", data: [11, 13, 12] }
+      },
+      largestProduction: {
+        regional: { name: "Veneers", procedureAvg: 1225, totalAvg: 835 },
+        practice: { name: "Veneers", procedureAvg: 1325, totalAvg: 875 }
       }
     }
   },
@@ -216,6 +228,10 @@ const analysisData = {
       lowestVolume: {
         regional: { name: "Root Canals", data: [12, 15, 14] },
         practice: { name: "Root Canals", data: [11, 13, 12] }
+      },
+      largestProduction: {
+        regional: { name: "Veneers", procedureAvg: 1275, totalAvg: 865 },
+        practice: { name: "Veneers", procedureAvg: 1375, totalAvg: 905 }
       }
     }
   }
