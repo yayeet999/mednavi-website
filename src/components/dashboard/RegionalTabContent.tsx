@@ -5,7 +5,7 @@ import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import AnalysisContent from './AnalysisContent';
 
 interface ZipCode {
-  id: string;
+  id: ValidZipCode;
   name: string;
   center: { lat: number; lng: number };
 }
@@ -15,6 +15,8 @@ interface Icon {
   icon: React.ElementType;
   label: string;
 }
+
+type ValidZipCode = keyof typeof analysisData;
 
 const analysisData = {
   "60714": {
@@ -241,8 +243,24 @@ const mapCenter = {
   lng: -87.8450
 };
 
+const mapContainerVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 }
+};
+
+const sideContainerVariants = {
+  hidden: { opacity: 0, x: 20 },
+  visible: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 20 }
+};
+
+function isValidZipCode(zip: string): zip is ValidZipCode {
+  return zip in analysisData;
+}
+
 const RegionalTabContent = forwardRef((props, ref) => {
-  const [selectedZip, setSelectedZip] = useState<keyof typeof analysisData | null>(null);
+  const [selectedZip, setSelectedZip] = useState<ValidZipCode | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -256,19 +274,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
     { id: "patients", icon: Users, label: "Patients" },
     { id: "procedures", icon: Stethoscope, label: "Procedures" },
   ];
-
-  const getAnalysisOptions = (iconId: Icon['id']) => {
-    switch (iconId) {
-      case 'financial':
-        return ['Avg Monthly Production', 'Insurance Public/Private', 'Avg Annual Growth %'];
-      case 'patients':
-        return ['Avg Active Patient %'];
-      case 'procedures':
-        return ['Highest Vol Procedure', 'Lowest Vol Procedure'];
-      default:
-        return [];
-    }
-  };
 
   useImperativeHandle(ref, () => ({
     cleanup: () => {
@@ -340,14 +345,14 @@ const RegionalTabContent = forwardRef((props, ref) => {
     minZoom: 8
   }), []);
 
-  const getZipOffset = (zipId: string) => {
-    const offsets = {
+  const getZipOffset = (zipId: ValidZipCode) => {
+    const offsets: Record<ValidZipCode, { lat: number; lng: number }> = {
       '60656': { lat: -0.008, lng: -0.002 },
       '60714': { lat: -0.0005, lng: -0.014 },
       '60631': { lat: -0.006, lng: -0.001 },
       '60068': { lat: 0.002, lng: 0 }
     };
-    return offsets[zipId as keyof typeof offsets] || { lat: 0.002, lng: 0 };
+    return offsets[zipId];
   };
 
   const createLabels = useCallback(() => {
@@ -397,7 +402,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
     });
   }, [map, selectedZip]);
 
-  const handleZipClick = useCallback((zipId: string) => {
+  const handleZipClick = useCallback((zipId: ValidZipCode) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
@@ -445,6 +450,19 @@ const RegionalTabContent = forwardRef((props, ref) => {
     }
   }, [selectedSubData]);
 
+  const getAnalysisOptions = (iconId: Icon['id']) => {
+    switch (iconId) {
+      case 'financial':
+        return ['Avg Monthly Production', 'Insurance Public/Private', 'Avg Annual Growth %'];
+      case 'patients':
+        return ['Avg Active Patient %'];
+      case 'procedures':
+        return ['Highest Vol Procedure', 'Lowest Vol Procedure'];
+      default:
+        return [];
+    }
+  };
+
   const onMapLoad = useCallback(async (map: google.maps.Map) => {
     setMap(map);
     setIsLoading(true);
@@ -461,7 +479,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
       dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
         const zipCode = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
-        if (typeof zipCode === 'string' && zipCodes.some(zip => zip.id === zipCode)) {
+        if (typeof zipCode === 'string' && isValidZipCode(zipCode)) {
           handleZipClick(zipCode);
         }
       });
@@ -534,7 +552,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
   const AnalysisContentDisplay = useCallback(() => {
     if (!selectedSubData || !selectedZip) return null;
-    const data = analysisData[selectedZip as keyof typeof analysisData];
+    const data = analysisData[selectedZip];
     if (!data) return null;
 
     return (
