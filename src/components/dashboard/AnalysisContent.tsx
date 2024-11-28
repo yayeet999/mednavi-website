@@ -26,6 +26,7 @@ const CustomTooltip: React.FC<{
   return null;
 };
 
+// Chart components remain the same until AgeDistributionChart
 const MonthlyProductionChart: React.FC<{
   data: any;
   title: string;
@@ -256,24 +257,28 @@ const VolumeLineChart: React.FC<{
   );
 };
 
-const ProductionChart: React.FC<{
+const AgeDistributionChart: React.FC<{
   data: any;
   title: string;
   isDesktop: boolean;
 }> = ({ data, title, isDesktop }) => {
+  const chartData = Object.entries(data.distribution).map(([age, value]) => ({
+    age,
+    value
+  }));
+
   return (
     <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
       <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
         <p className="text-[10px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[12px] font-semibold text-gray-800">{data.name}</p>
-        <p className="text-[10px] text-gray-500">${data.amount.toLocaleString()}</p>
+        <p className="text-[14px] font-semibold text-gray-800">Avg: {data.average} yrs</p>
       </div>
       <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data.trend}>
+          <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
-              dataKey="month" 
+              dataKey="age" 
               tick={{ fontSize: 8 }}
               stroke="#9CA3AF"
             />
@@ -289,6 +294,68 @@ const ProductionChart: React.FC<{
             />
           </BarChart>
         </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
+const AppointmentsByAgeChart: React.FC<{
+  data: any;
+  title: string;
+  isDesktop: boolean;
+}> = ({ data, title, isDesktop }) => {
+  const chartData = Object.entries(data).map(([ageGroup, procedures]: [string, any]) => ({
+    ageGroup,
+    ...procedures
+  }));
+
+  return (
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
+      <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+      </div>
+      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+            <XAxis 
+              dataKey="ageGroup" 
+              tick={{ fontSize: 8 }}
+              stroke="#9CA3AF"
+            />
+            <YAxis 
+              tick={{ fontSize: 8 }}
+              stroke="#9CA3AF"
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar dataKey="Hygiene" stackId="a" fill="#1E40AF" />
+            <Bar dataKey="Aligners" stackId="a" fill="#3B82F6" />
+            <Bar dataKey="Veneers" stackId="a" fill="#60A5FA" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
+const LargestProductionChart: React.FC<{
+  data: any;
+  title: string;
+  isDesktop: boolean;
+}> = ({ data, title, isDesktop }) => {
+  return (
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}>
+      <div className="w-full text-center">
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[14px] font-semibold text-gray-800 mt-2">
+          {data.name}
+        </p>
+        <p className="text-[12px] mt-1 text-blue-600">
+          Procedure Avg: ${data.procedureAvg}
+        </p>
+        <p className="text-[12px] text-gray-500">
+          Total Avg: ${data.totalAvg}
+        </p>
       </div>
     </div>
   );
@@ -342,6 +409,44 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
         </div>
       )}
 
+      {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <AgeDistributionChart
+              data={data.patients.ageDistribution.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <AgeDistributionChart
+              data={data.patients.ageDistribution.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <AppointmentsByAgeChart
+              data={data.patients.appointmentsByAge.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <AppointmentsByAgeChart
+              data={data.patients.appointmentsByAge.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Procedures Section */}
       {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
         <div className="grid grid-rows-2 gap-4 h-full">
@@ -367,14 +472,14 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
         <div className="grid grid-rows-2 gap-4 h-full">
           <div className="bg-white rounded-lg p-3 shadow-sm">
-            <ProductionChart
+            <LargestProductionChart
               data={data.procedures.largestProduction.regional}
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
           <div className="bg-white rounded-lg p-3 shadow-sm">
-            <ProductionChart
+            <LargestProductionChart
               data={data.procedures.largestProduction.practice}
               title="Your Practice"
               isDesktop={isDesktop}
@@ -457,47 +562,6 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <GrowthIndicator
               data={data.financial.growth.practice}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Patient Additional Metrics */}
-      {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
-            <VolumeLineChart
-              data={data.patients.ageDistribution.regional.trend}
-              title="Regional Average"
-              procedureName="Age Distribution"
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
-            <VolumeLineChart
-              data={data.patients.ageDistribution.practice.trend}
-              title="Your Practice"
-              procedureName="Age Distribution"
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
-
-      {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
-            <ProductionChart
-              data={data.patients.appointmentsByAge.regional}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
-            <ProductionChart
-              data={data.patients.appointmentsByAge.practice}
               title="Your Practice"
               isDesktop={isDesktop}
             />
