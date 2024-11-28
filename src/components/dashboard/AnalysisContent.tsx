@@ -390,7 +390,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       {/* Patient Section */}
       {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
         <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <ProgressCircle
               percentage={data.patients.activePatients.regional.percentage}
               total={data.patients.activePatients.regional.total}
@@ -398,7 +398,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <ProgressCircle
               percentage={data.patients.activePatients.practice.percentage}
               total={data.patients.activePatients.practice.total}
@@ -411,13 +411,13 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
         <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <AgeDistributionChart
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <AgeDistributionChart
               title="Your Practice"
               isDesktop={isDesktop}
@@ -428,13 +428,13 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
         <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <AppointmentsByAgeChart
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <AppointmentsByAgeChart
               title="Your Practice"
               isDesktop={isDesktop}
@@ -446,7 +446,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       {/* Procedures Section */}
       {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
         <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.highestVolume.regional.data}
               title="Regional Average"
@@ -454,7 +454,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.highestVolume.practice.data}
               title="Your Practice"
@@ -467,14 +467,14 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
         <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <LargestProductionChart
               data={data.procedures.largestProduction.regional}
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <LargestProductionChart
               data={data.procedures.largestProduction.practice}
               title="Your Practice"
@@ -486,7 +486,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
         <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.lowestVolume.regional.data}
               title="Regional Average"
@@ -494,7 +494,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.lowestVolume.practice.data}
               title="Your Practice"
@@ -508,7 +508,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       {/* Financial Section */}
       {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
         <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <MonthlyProductionChart
               data={data.financial.monthlyProduction.regional.breakdown}
               title="Regional Average"
@@ -516,7 +516,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <MonthlyProductionChart
               data={data.financial.monthlyProduction.practice.breakdown}
               title="Your Practice"
@@ -529,14 +529,14 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
         <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <InsuranceDistributionChart
               data={data.financial.insurance.regional}
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <InsuranceDistributionChart
               data={data.financial.insurance.practice}
               title="Your Practice"
@@ -548,14 +548,14 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
         <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <GrowthIndicator
               data={data.financial.growth.regional}
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
             <GrowthIndicator
               data={data.financial.growth.practice}
               title="Your Practice"
