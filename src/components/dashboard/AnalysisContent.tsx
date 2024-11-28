@@ -1,8 +1,7 @@
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
 import { motion } from "framer-motion";
 
-// Custom tooltip component for charts
 const CustomTooltip: React.FC<{
   active?: boolean;
   payload?: any[];
@@ -27,7 +26,6 @@ const CustomTooltip: React.FC<{
   return null;
 };
 
-// Monthly Production Chart Component
 const MonthlyProductionChart: React.FC<{
   data: any;
   title: string;
@@ -48,13 +46,13 @@ const MonthlyProductionChart: React.FC<{
           ${total.toLocaleString()}
         </p>
       </div>
-      <div className={`${isDesktop ? 'w-2/3' : 'w-full h-32'}`}>
+      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={formattedData}
-              innerRadius={isDesktop ? 30 : 25}
-              outerRadius={isDesktop ? 45 : 40}
+              innerRadius={isDesktop ? 25 : 20}
+              outerRadius={isDesktop ? 40 : 35}
               paddingAngle={2}
               dataKey="amount"
             >
@@ -74,7 +72,6 @@ const MonthlyProductionChart: React.FC<{
   );
 };
 
-// Insurance Distribution Chart Component
 const InsuranceDistributionChart: React.FC<{
   data: any;
   title: string;
@@ -103,13 +100,13 @@ const InsuranceDistributionChart: React.FC<{
           ))}
         </div>
       </div>
-      <div className={`${isDesktop ? 'w-2/3' : 'w-full h-32'}`}>
+      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={formattedData}
-              innerRadius={isDesktop ? 40 : 35}
-              outerRadius={isDesktop ? 50 : 45}
+              innerRadius={isDesktop ? 35 : 30}
+              outerRadius={isDesktop ? 45 : 40}
               startAngle={180}
               endAngle={0}
               paddingAngle={2}
@@ -131,20 +128,19 @@ const InsuranceDistributionChart: React.FC<{
   );
 };
 
-// Growth Indicator Component
 const GrowthIndicator: React.FC<{
   data: any;
   title: string;
   isDesktop: boolean;
 }> = ({ data, title, isDesktop }) => {
   return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
-      <div className={`${isDesktop ? 'w-1/2' : 'w-full'} text-center`}>
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}>
+      <div className="w-full text-center">
         <p className="text-[10px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[14px] font-semibold text-gray-800">
+        <p className="text-[24px] font-semibold text-gray-800 mt-2">
           {data.percentage}%
         </p>
-        <p className={`text-[10px] ${data.yoyChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        <p className={`text-[12px] mt-1 ${data.yoyChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
           {data.yoyChange >= 0 ? '+' : ''}{data.yoyChange}% YoY
         </p>
       </div>
@@ -152,15 +148,14 @@ const GrowthIndicator: React.FC<{
   );
 };
 
-// Progress Circle Component
 const ProgressCircle: React.FC<{
   percentage: number;
   total: number;
   title: string;
   isDesktop: boolean;
 }> = ({ percentage, total, title, isDesktop }) => {
-  const radius = isDesktop ? 40 : 35;
-  const strokeWidth = isDesktop ? 8 : 6;
+  const radius = isDesktop ? 35 : 30;
+  const strokeWidth = isDesktop ? 6 : 5;
   const circumference = 2 * Math.PI * radius;
   const progress = (percentage / 100) * circumference;
 
@@ -170,9 +165,9 @@ const ProgressCircle: React.FC<{
         <p className="text-[10px] text-gray-600 font-medium">{title}</p>
         <p className="text-[10px] text-gray-500">Total: {total.toLocaleString()}</p>
       </div>
-      <div className={`${isDesktop ? 'w-1/2' : 'w-full'} relative`}>
+      <div className={`${isDesktop ? 'w-1/2' : 'w-full'} flex justify-center`}>
         <svg
-          className="transform -rotate-90 w-24 h-24"
+          className="transform -rotate-90 w-20 h-20"
           viewBox="0 0 100 100"
         >
           <circle
@@ -215,7 +210,6 @@ const ProgressCircle: React.FC<{
   );
 };
 
-// Volume Line Chart Component
 const VolumeLineChart: React.FC<{
   data: number[];
   title: string;
@@ -233,17 +227,17 @@ const VolumeLineChart: React.FC<{
         <p className="text-[10px] text-gray-600 font-medium">{title}</p>
         <p className="text-[12px] font-semibold text-gray-800">{procedureName}</p>
       </div>
-      <div className={`${isDesktop ? 'w-2/3' : 'w-full h-32'}`}>
+      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
               dataKey="month" 
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 8 }}
               stroke="#9CA3AF"
             />
             <YAxis 
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 8 }}
               stroke="#9CA3AF"
             />
             <Tooltip content={<CustomTooltip />} />
@@ -252,10 +246,48 @@ const VolumeLineChart: React.FC<{
               dataKey="value"
               stroke="#1E40AF"
               strokeWidth={2}
-              dot={{ fill: '#1E40AF', r: 4 }}
-              activeDot={{ r: 6, fill: '#3B82F6' }}
+              dot={{ fill: '#1E40AF', r: 3 }}
+              activeDot={{ r: 4, fill: '#3B82F6' }}
             />
           </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
+const ProductionChart: React.FC<{
+  data: any;
+  title: string;
+  isDesktop: boolean;
+}> = ({ data, title, isDesktop }) => {
+  return (
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
+      <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[12px] font-semibold text-gray-800">{data.name}</p>
+        <p className="text-[10px] text-gray-500">${data.amount.toLocaleString()}</p>
+      </div>
+      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data.trend}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+            <XAxis 
+              dataKey="month" 
+              tick={{ fontSize: 8 }}
+              stroke="#9CA3AF"
+            />
+            <YAxis 
+              tick={{ fontSize: 8 }}
+              stroke="#9CA3AF"
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar 
+              dataKey="value" 
+              fill="#1E40AF"
+              radius={[4, 4, 0, 0]}
+            />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>
@@ -326,6 +358,25 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               data={data.procedures.highestVolume.practice.data}
               title="Your Practice"
               procedureName={data.procedures.highestVolume.practice.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <ProductionChart
+              data={data.procedures.largestProduction.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <ProductionChart
+              data={data.procedures.largestProduction.practice}
+              title="Your Practice"
               isDesktop={isDesktop}
             />
           </div>
@@ -406,6 +457,47 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <GrowthIndicator
               data={data.financial.growth.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Patient Additional Metrics */}
+      {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.patients.ageDistribution.regional.trend}
+              title="Regional Average"
+              procedureName="Age Distribution"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <VolumeLineChart
+              data={data.patients.ageDistribution.practice.trend}
+              title="Your Practice"
+              procedureName="Age Distribution"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <ProductionChart
+              data={data.patients.appointmentsByAge.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg p-3 shadow-sm">
+            <ProductionChart
+              data={data.patients.appointmentsByAge.practice}
               title="Your Practice"
               isDesktop={isDesktop}
             />
