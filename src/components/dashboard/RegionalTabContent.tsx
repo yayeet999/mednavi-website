@@ -934,75 +934,79 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
   // Handler when the map is loaded
   const onMapLoad = useCallback((mapInstance: google.maps.Map) => {
-    setMap(mapInstance);
-    setIsLoading(false);
+  setMap(mapInstance);
+  setIsLoading(false);
 
-    const dataLayer = new google.maps.Data({ map: mapInstance });
-    setZipDataLayer(dataLayer);
+  const dataLayer = new google.maps.Data({ map: mapInstance });
+  setZipDataLayer(dataLayer);
 
-    // Load GeoJSON data for zip codes
-    dataLayer.loadGeoJson('/path/to/your/geojson/file.json'); // **Update the path to your actual GeoJSON file**
+  // Load GeoJSON data for zip codes
+  dataLayer.loadGeoJson('/path/to/your/geojson/file.json'); // Update this path to your actual GeoJSON file
 
-    dataLayer.setStyle((feature) => {
+  dataLayer.setStyle((feature) => {
+    const zip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
+    return {
+      fillColor: zip === selectedZip ? '#1E40AF' : '#3B82F6',
+      strokeColor: '#FFFFFF',
+      strokeWeight: 1,
+      fillOpacity: zip === selectedZip ? 0.6 : 0.3,
+      clickable: true,
+    };
+  });
+
+  // Add click listener to dataLayer with type safety
+  dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
+    const zip = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
+    if (typeof zip === 'string') {
+      handleZipClick(zip);
+    } else if (zip !== undefined && zip !== null) {
+      handleZipClick(String(zip));
+    }
+  });
+
+  createLabels();
+}, [createLabels, handleZipClick, selectedZip]);
+
+// Handler for zip code click
+const handleZipClick = useCallback((zipId: string) => {
+  setSelectedZip(zipId as keyof typeof analysisData);
+  setSelectedIcon(null);
+  setSelectedSubData(null);
+  setIsAnalysisExpanded(true);
+
+  if (map && zipDataLayer) {
+    zipDataLayer.forEach((feature: google.maps.Data.Feature) => {
+      const featureZip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
+      if (featureZip === zipId) {
+        const bounds = new google.maps.LatLngBounds();
+        const geometry = feature.getGeometry();
+
+        if (geometry) {
+          geometry.forEachLatLng((latLng: google.maps.LatLng) => {
+            if (latLng) bounds.extend(latLng);
+          });
+
+          if (!bounds.isEmpty()) {
+            map.fitBounds(bounds);
+          }
+        }
+      }
+    });
+
+    zipDataLayer.setStyle((feature) => {
       const zip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
       return {
-        fillColor: zip === selectedZip ? '#1E40AF' : '#3B82F6',
+        fillColor: zip === zipId ? '#1E40AF' : '#3B82F6',
         strokeColor: '#FFFFFF',
         strokeWeight: 1,
-        fillOpacity: zip === selectedZip ? 0.6 : 0.3,
+        fillOpacity: zip === zipId ? 0.6 : 0.3,
         clickable: true,
       };
     });
 
-    // Add click listener to dataLayer
-    dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
-      const zip = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
-      handleZipClick(zip);
-    });
-
     createLabels();
-  }, [createLabels, handleZipClick, selectedZip]);
-
-  // Handler for zip code click
-  const handleZipClick = useCallback((zipId: string) => {
-    setSelectedZip(zipId as keyof typeof analysisData);
-    setSelectedIcon(null);
-    setSelectedSubData(null);
-    setIsAnalysisExpanded(true);
-
-    if (map && zipDataLayer) {
-      zipDataLayer.forEach((feature: google.maps.Data.Feature) => {
-        const featureZip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
-        if (featureZip === zipId) {
-          const bounds = new google.maps.LatLngBounds();
-          const geometry = feature.getGeometry();
-
-          if (geometry) {
-            geometry.forEachLatLng((latLng: google.maps.LatLng) => {
-              if (latLng) bounds.extend(latLng);
-            });
-
-            if (!bounds.isEmpty()) {
-              map.fitBounds(bounds);
-            }
-          }
-        }
-      });
-
-      zipDataLayer.setStyle((feature) => {
-        const zip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
-        return {
-          fillColor: zip === zipId ? '#1E40AF' : '#3B82F6',
-          strokeColor: '#FFFFFF',
-          strokeWeight: 1,
-          fillOpacity: zip === zipId ? 0.6 : 0.3,
-          clickable: true,
-        };
-      });
-
-      createLabels();
-    }
-  }, [map, zipDataLayer, createLabels]);
+  }
+}, [map, zipDataLayer, createLabels]);
 
   // Handler for icon click
   const handleIconClick = useCallback((iconId: Icon['id']) => {
