@@ -26,7 +26,6 @@ const CustomTooltip: React.FC<{
   return null;
 };
 
-// Chart components remain the same until AgeDistributionChart
 const MonthlyProductionChart: React.FC<{
   data: any;
   title: string;
@@ -257,21 +256,43 @@ const VolumeLineChart: React.FC<{
   );
 };
 
-const AgeDistributionChart: React.FC<{
+const LargestProductionChart: React.FC<{
   data: any;
   title: string;
   isDesktop: boolean;
 }> = ({ data, title, isDesktop }) => {
-  const chartData = Object.entries(data.distribution).map(([age, value]) => ({
-    age,
-    value
-  }));
+  return (
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}>
+      <div className="w-full text-center">
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[14px] font-semibold text-gray-800 mt-2">
+          {data.name}
+        </p>
+        <p className="text-[12px] mt-1 text-blue-600">
+          Procedure Avg: ${data.procedureAvg}
+        </p>
+        <p className="text-[12px] text-gray-500">
+          Total Avg: ${data.totalAvg}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const AgeDistributionChart: React.FC<{
+  title: string;
+  isDesktop: boolean;
+}> = ({ title, isDesktop }) => {
+  const chartData = [
+    { age: '0-18', value: 25 },
+    { age: '19-35', value: 45 },
+    { age: '36-50', value: 30 }
+  ];
 
   return (
     <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
       <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
         <p className="text-[10px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[14px] font-semibold text-gray-800">Avg: {data.average} yrs</p>
       </div>
       <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
         <ResponsiveContainer width="100%" height="100%">
@@ -300,14 +321,14 @@ const AgeDistributionChart: React.FC<{
 };
 
 const AppointmentsByAgeChart: React.FC<{
-  data: any;
   title: string;
   isDesktop: boolean;
-}> = ({ data, title, isDesktop }) => {
-  const chartData = Object.entries(data).map(([ageGroup, procedures]: [string, any]) => ({
-    ageGroup,
-    ...procedures
-  }));
+}> = ({ title, isDesktop }) => {
+  const chartData = [
+    { ageGroup: '0-18', procedures: 35 },
+    { ageGroup: '19-35', procedures: 45 },
+    { ageGroup: '36-50', procedures: 20 }
+  ];
 
   return (
     <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
@@ -328,34 +349,13 @@ const AppointmentsByAgeChart: React.FC<{
               stroke="#9CA3AF"
             />
             <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="Hygiene" stackId="a" fill="#1E40AF" />
-            <Bar dataKey="Aligners" stackId="a" fill="#3B82F6" />
-            <Bar dataKey="Veneers" stackId="a" fill="#60A5FA" />
+            <Bar 
+              dataKey="procedures" 
+              fill="#1E40AF"
+              radius={[4, 4, 0, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
-      </div>
-    </div>
-  );
-};
-
-const LargestProductionChart: React.FC<{
-  data: any;
-  title: string;
-  isDesktop: boolean;
-}> = ({ data, title, isDesktop }) => {
-  return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}>
-      <div className="w-full text-center">
-        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[14px] font-semibold text-gray-800 mt-2">
-          {data.name}
-        </p>
-        <p className="text-[12px] mt-1 text-blue-600">
-          Procedure Avg: ${data.procedureAvg}
-        </p>
-        <p className="text-[12px] text-gray-500">
-          Total Avg: ${data.totalAvg}
-        </p>
       </div>
     </div>
   );
@@ -413,14 +413,12 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
         <div className="grid grid-rows-2 gap-4 h-full">
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <AgeDistributionChart
-              data={data.patients.ageDistribution.regional}
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <AgeDistributionChart
-              data={data.patients.ageDistribution.practice}
               title="Your Practice"
               isDesktop={isDesktop}
             />
@@ -432,14 +430,12 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
         <div className="grid grid-rows-2 gap-4 h-full">
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <AppointmentsByAgeChart
-              data={data.patients.appointmentsByAge.regional}
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
           <div className="bg-white rounded-lg p-3 shadow-sm">
             <AppointmentsByAgeChart
-              data={data.patients.appointmentsByAge.practice}
               title="Your Practice"
               isDesktop={isDesktop}
             />
