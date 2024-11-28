@@ -507,8 +507,8 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {/* Financial Section */}
       {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+        <div className="grid grid-rows-2 gap-3 h-full">
+          <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-full">
             <MonthlyProductionChart
               data={data.financial.monthlyProduction.regional.breakdown}
               title="Regional Average"
@@ -516,7 +516,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+          <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-full">
             <MonthlyProductionChart
               data={data.financial.monthlyProduction.practice.breakdown}
               title="Your Practice"
