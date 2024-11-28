@@ -653,7 +653,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
             className={`
               bg-gray-50 rounded-xl shadow-sm 
               ${window.innerWidth >= 768 
-                ? 'w-[30%] ml-4 relative' 
+                ? 'w-[30%] ml-3 relative' 
                 : 'w-[35%] absolute right-0 top-0 h-full'}
             `}
             variants={sideContainerVariants}
