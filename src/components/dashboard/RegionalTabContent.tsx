@@ -242,7 +242,7 @@ const mapCenter = {
 };
 
 const RegionalTabContent = forwardRef((props, ref) => {
-  const [selectedZip, setSelectedZip] = useState<string | null>(null);
+  const [selectedZip, setSelectedZip] = useState<keyof typeof analysisData | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -534,7 +534,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
   const AnalysisContentDisplay = useCallback(() => {
     if (!selectedSubData || !selectedZip) return null;
-    const data = analysisData[selectedZip];
+    const data = analysisData[selectedZip as keyof typeof analysisData];
     if (!data) return null;
 
     return (
