@@ -870,7 +870,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
           </div>
         )}
       </motion.div>
-    }, [selectedIcon, selectedSubData, selectedZip]);
+    );
+  }, [selectedIcon, selectedSubData, selectedZip]);
 
   // Expose cleanup method to parent components if needed
   useImperativeHandle(ref, () => ({
@@ -1020,6 +1021,9 @@ const RegionalTabContent = forwardRef((props, ref) => {
       setIsAnalysisExpanded(false);
     }
   }, [selectedSubData]);
+
+  // Analysis Content Display Component (Properly closed)
+  // Note: Ensure that there are no extra or missing braces
 
   // Main render
   return (
