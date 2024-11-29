@@ -257,7 +257,7 @@ const VolumeLineChart: React.FC<{
       </div>
       {/* Text Container - Now at bottom with horizontal layout */}
       <div className="text-center -mt-1.5"> {/* Adjusted margin to match other charts */}
-        <p className="text-[11px] text-gray-600 font-medium">
+        <p className="text-[10px] text-gray-600 font-medium">
           {title}: <span className="text-gray-800">{procedureName}</span>
         </p>
       </div>
