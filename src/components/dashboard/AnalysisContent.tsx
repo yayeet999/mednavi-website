@@ -516,7 +516,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[50px] md:w-[175px] h-[50px] md:h-[120px]">
+          <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[50px] md:w-[175px] h-[50px] md:h-[120px] mx-auto">
             <MonthlyProductionChart
               data={data.financial.monthlyProduction.practice.breakdown}
               title="Your Practice"
