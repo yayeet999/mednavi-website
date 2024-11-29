@@ -295,7 +295,7 @@ const AgeDistributionChart: React.FC<{
 
   return (
     <div className="flex flex-col items-center w-full h-full">
-      <div className="h-[90px] w-[100%] pt-2"> {/* Changed from w-[95%] to w-[98%] */}
+      <div className="h-[90px] w-[120%] pt-2"> 
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={chartData}
@@ -305,7 +305,7 @@ const AgeDistributionChart: React.FC<{
               dataKey="age" 
               tick={{ fontSize: 8 }}
               stroke="#9CA3AF"
-              padding={{ left: 10, right: 10 }} // Added padding to x-axis
+              padding={{ left: 5, right: 5 }} // Added padding to x-axis
             />
             <YAxis 
               tick={{ fontSize: 8 }}
