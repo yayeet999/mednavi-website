@@ -322,7 +322,7 @@ const AgeDistributionChart: React.FC<{
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-[12px] text-gray-600 font-medium -mt-0.5>{title}</p>
+      <p className="text-[12px] text-gray-600 font-medium -mt-0.5">{title}</p>
     </div>
   );
 };
