@@ -295,14 +295,18 @@ const AgeDistributionChart: React.FC<{
 
   return (
     <div className="flex flex-col items-center w-full h-full">
-      <div className="h-[90px] w-[95%] pt-2">
+      <div className="h-[90px] w-[98%] pt-2"> {/* Changed from w-[95%] to w-[98%] */}
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
+          <BarChart 
+            data={chartData}
+            margin={{ left: 10, right: 10 }} // Added margins to give more space
+          >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
               dataKey="age" 
               tick={{ fontSize: 8 }}
               stroke="#9CA3AF"
+              padding={{ left: 10, right: 10 }} // Added padding to x-axis
             />
             <YAxis 
               tick={{ fontSize: 8 }}
