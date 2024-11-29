@@ -294,11 +294,9 @@ const AgeDistributionChart: React.FC<{
   ];
 
   return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
-      <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
-        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
-      </div>
-      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
+    <div className="flex flex-col items-center w-full h-full">
+      {/* Chart takes full width at top */}
+      <div className="w-full h-[100px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -320,6 +318,9 @@ const AgeDistributionChart: React.FC<{
           </BarChart>
         </ResponsiveContainer>
       </div>
+
+      {/* Title centered below chart */}
+      <p className="text-[12px] text-gray-600 font-medium mt-1">{title}</p>
     </div>
   );
 };
