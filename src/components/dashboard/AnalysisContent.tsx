@@ -198,7 +198,7 @@ const ProgressCircle: React.FC<{
             }}
           />
           <text
-            x="50"
+            x="55"
             y="50"
             className="text-[15px] font-medium"
             dominantBaseline="middle"
