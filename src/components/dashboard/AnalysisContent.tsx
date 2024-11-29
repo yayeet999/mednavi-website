@@ -299,16 +299,17 @@ const AgeDistributionChart: React.FC<{
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={chartData}
+            margin={{ right: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
               dataKey="age" 
-              tick={{ fontSize: 8 }}
+              tick={{ fontSize: 10 }}
               stroke="#9CA3AF"
               padding={{ left: 5, right: 5 }} // Added padding to x-axis
             />
             <YAxis 
-              tick={{ fontSize: 8 }}
+              tick={{ fontSize: 10 }}
               stroke="#9CA3AF"
             />
             <Tooltip content={<CustomTooltip />} />
