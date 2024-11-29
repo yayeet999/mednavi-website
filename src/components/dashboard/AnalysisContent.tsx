@@ -51,8 +51,8 @@ const MonthlyProductionChart: React.FC<{
           <PieChart>
             <Pie
               data={formattedData}
-              innerRadius={isDesktop ? 25 : 20}
-              outerRadius={isDesktop ? 40 : 35}
+              innerRadius={isDesktop ? 20 : 15}
+              outerRadius={isDesktop ? 32 : 28}
               paddingAngle={2}
               dataKey="amount"
             >
