@@ -385,7 +385,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`${isDesktop ? 'px-2 pb-2' : 'px-2 pb-2'} space-y-4`}
+      className={`${isDesktop ? 'px-2 pb-2' : 'px-2 pb-2'} space-y-4 w-full`} {/* Added w-full and kept space-y-4 for vertical spacing */}
     >
       {/* Patient Section */}
       {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
@@ -507,7 +507,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {/* Financial Section */}
       {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
-        <div className="grid grid-rows-2 gap-2 h-full px-4 md:px-8"> {/* Added px-4 md:px-8 */}
+        <div className="grid grid-rows-2 gap-2 h-full w-full"> {/* Added w-full */}
           <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[50px] md:w-[175px] h-[50px] md:h-[120px] mx-auto">
             <MonthlyProductionChart
               data={data.financial.monthlyProduction.regional.breakdown}
