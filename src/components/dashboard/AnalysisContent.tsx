@@ -136,7 +136,7 @@ const GrowthIndicator: React.FC<{
   return (
     <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}>
       <div className="w-full text-center">
-        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[13px] text-gray-600 font-medium">{title}</p>
         <p className="text-[24px] font-semibold text-gray-800 mt-2">
           {data.percentage}%
         </p>
