@@ -83,24 +83,9 @@ const InsuranceDistributionChart: React.FC<{
   ];
 
   return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
-      <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
-        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
-        <div className="flex flex-col gap-1 mt-1">
-          {formattedData.map((item) => (
-            <div key={item.name} className="flex items-center justify-center gap-1">
-              <div
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: item.color }}
-              />
-              <p className="text-[10px] text-gray-600">
-                {item.name}: {item.value}%
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
+    <div className="flex flex-col items-center w-full h-full">
+      {/* Chart at top */}
+      <div className="h-[80px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -111,6 +96,7 @@ const InsuranceDistributionChart: React.FC<{
               endAngle={0}
               paddingAngle={2}
               dataKey="value"
+              cy={60}
             >
               {formattedData.map((entry, index) => (
                 <Cell 
@@ -123,6 +109,24 @@ const InsuranceDistributionChart: React.FC<{
             <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* Title text centered below */}
+      <p className="text-[10px] text-gray-600 font-medium mt-1">{title}</p>
+
+      {/* Legend in one line */}
+      <div className="flex justify-center gap-4 mt-1">
+        {formattedData.map((item) => (
+          <div key={item.name} className="flex items-center gap-1">
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: item.color }}
+            />
+            <p className="text-[10px] text-gray-600">
+              {item.name}: {item.value}%
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
