@@ -159,7 +159,7 @@ const ProgressCircle: React.FC<{
   isDesktop: boolean;
 }> = ({ percentage, total, title, isDesktop }) => {
   const radius = isDesktop ? 35 : 30;
-  const strokeWidth = isDesktop ? 6 : 5;
+  const strokeWidth = isDesktop ? 8 : 5;
   const circumference = 2 * Math.PI * radius;
   const progress = (percentage / 100) * circumference;
 
