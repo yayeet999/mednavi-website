@@ -166,8 +166,8 @@ const ProgressCircle: React.FC<{
   return (
     <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
       <div className={`${isDesktop ? 'w-1/2' : 'w-full'} text-center`}>
-        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[10px] text-gray-500">Total: {total.toLocaleString()}</p>
+        <p className="text-[11px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[11px] text-gray-500">Total: {total.toLocaleString()}</p>
       </div>
       <div className={`${isDesktop ? 'w-1/2' : 'w-full'} flex justify-center`}>
         <svg
@@ -200,7 +200,7 @@ const ProgressCircle: React.FC<{
           <text
             x="50"
             y="50"
-            className="text-[12px] font-medium"
+            className="text-[15px] font-medium"
             dominantBaseline="middle"
             textAnchor="middle"
             fill="#1E40AF"
