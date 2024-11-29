@@ -224,13 +224,15 @@ const VolumeLineChart: React.FC<{
     month: `Month ${index + 1}`,
     value
   }));
-
   return (
     <div className="flex flex-col justify-between w-full h-full">
       {/* Chart Container - Added pt-2 for top padding */}
-      <div className="w-[100%] h-[90px] mx-auto pt-2"> {/* Set width to match other charts and center it */}
+      <div className="w-[110%] h-[90px] mx-auto pt-2"> {/* Set width to match other charts and center it */}
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <LineChart 
+            data={chartData}
+            margin={{ right: 45 }}
+          >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
               dataKey="month" 
@@ -253,10 +255,9 @@ const VolumeLineChart: React.FC<{
           </LineChart>
         </ResponsiveContainer>
       </div>
-
       {/* Text Container - Now at bottom with horizontal layout */}
       <div className="text-center -mt-1.5"> {/* Adjusted margin to match other charts */}
-        <p className="text-[12px] text-gray-600 font-medium">
+        <p className="text-[11px] text-gray-600 font-medium">
           {title}: <span className="text-gray-800">{procedureName}</span>
         </p>
       </div>
