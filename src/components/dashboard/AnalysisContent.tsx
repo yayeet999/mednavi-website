@@ -226,23 +226,20 @@ const VolumeLineChart: React.FC<{
   }));
 
   return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
-      <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
-        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[12px] font-semibold text-gray-800">{procedureName}</p>
-      </div>
-      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
+    <div className="flex flex-col justify-between w-full h-full">
+      {/* Chart Container - Added pt-2 for top padding */}
+      <div className="w-[140%] h-[90px] mx-auto pt-2"> {/* Set width to match other charts and center it */}
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
               dataKey="month" 
-              tick={{ fontSize: 8 }}
-              stroke="#9CA3AF"
+              tick={{ fontSize: 10 }}
+              stroke="#64748b"
             />
             <YAxis 
-              tick={{ fontSize: 8 }}
-              stroke="#9CA3AF"
+              tick={{ fontSize: 10 }}
+              stroke="#64748b"
             />
             <Tooltip content={<CustomTooltip />} />
             <Line
@@ -255,6 +252,13 @@ const VolumeLineChart: React.FC<{
             />
           </LineChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* Text Container - Now at bottom with horizontal layout */}
+      <div className="text-center -mt-1.5"> {/* Adjusted margin to match other charts */}
+        <p className="text-[12px] text-gray-600 font-medium">
+          {title}: <span className="text-gray-800">{procedureName}</span>
+        </p>
       </div>
     </div>
   );
