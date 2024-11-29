@@ -385,7 +385,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`${isDesktop ? 'px-2 pb-2' : 'px-2 pb-2'} space-y-4 w-full`} {/* Added w-full and kept space-y-4 for vertical spacing */}
+      className={`${isDesktop ? 'px-2 pb-2' : 'px-2 pb-2'} space-y-4 w-full`} 
     >
       {/* Patient Section */}
       {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
