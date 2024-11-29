@@ -224,14 +224,14 @@ const VolumeLineChart: React.FC<{
     month: `Month ${index + 1}`,
     value
   }));
+
   return (
     <div className="flex flex-col justify-between w-full h-full">
-      {/* Chart Container */}
-      <div className="w-[140%] h-[90px] pt-2 -ml-[20%]"> {/* Increased width and added negative margin */}
-        <ResponsiveContainer width="100%" height="100%"> {/* Keep this at 100% */}
+      <div className="w-[140%] h-[90px] pt-2 -ml-[20%]">
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart 
             data={chartData}
-            margin={{ right: 45, left: 0 }} {/* Adjusted margins */}
+            margin={{ right: 45, left: 0 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
