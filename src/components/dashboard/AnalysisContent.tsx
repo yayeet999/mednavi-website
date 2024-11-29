@@ -393,8 +393,8 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
     >
       {/* Patient Section */}
       {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <ProgressCircle
               percentage={data.patients.activePatients.regional.percentage}
               total={data.patients.activePatients.regional.total}
@@ -402,7 +402,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <ProgressCircle
               percentage={data.patients.activePatients.practice.percentage}
               total={data.patients.activePatients.practice.total}
@@ -414,14 +414,14 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       )}
 
       {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <AgeDistributionChart
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <AgeDistributionChart
               title="Your Practice"
               isDesktop={isDesktop}
@@ -431,14 +431,14 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       )}
 
       {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <AppointmentsByAgeChart
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <AppointmentsByAgeChart
               title="Your Practice"
               isDesktop={isDesktop}
@@ -449,8 +449,8 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {/* Procedures Section */}
       {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.highestVolume.regional.data}
               title="Regional Average"
@@ -458,7 +458,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.highestVolume.practice.data}
               title="Your Practice"
@@ -470,15 +470,15 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       )}
 
       {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <LargestProductionChart
               data={data.procedures.largestProduction.regional}
               title="Regional Average"
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <LargestProductionChart
               data={data.procedures.largestProduction.practice}
               title="Your Practice"
@@ -489,8 +489,8 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       )}
 
       {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.lowestVolume.regional.data}
               title="Regional Average"
@@ -498,7 +498,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               isDesktop={isDesktop}
             />
           </div>
-          <div className="bg-white rounded-lg p-2 md:p-5 shadow-sm w-full">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.lowestVolume.practice.data}
               title="Your Practice"
