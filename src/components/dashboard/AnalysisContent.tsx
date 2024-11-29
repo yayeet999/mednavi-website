@@ -85,7 +85,7 @@ const InsuranceDistributionChart: React.FC<{
   return (
     <div className="flex flex-col items-center w-full h-full">
       {/* Chart at top */}
-      <div className="h-[80px] w-full">
+      <div className="h-[70px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -96,7 +96,7 @@ const InsuranceDistributionChart: React.FC<{
               endAngle={0}
               paddingAngle={2}
               dataKey="value"
-              cy={60}
+              cy={50}
             >
               {formattedData.map((entry, index) => (
                 <Cell 
