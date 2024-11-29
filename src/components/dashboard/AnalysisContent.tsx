@@ -46,7 +46,7 @@ const MonthlyProductionChart: React.FC<{
           ${total.toLocaleString()}
         </p>
       </div>
-      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[100px] md:h-[120px]`}>
+      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[60px] md:h-[100px]`}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -507,7 +507,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {/* Financial Section */}
       {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
-        <div className="grid grid-rows-2 gap-2 h-[70%] w-full"> {/* Added w-full */}
+        <div className="grid grid-rows-2 gap-2 h-full w-full"> {/* Added w-full */}
           <div className="bg-white rounded-lg p-2 md:p-2 shadow-sm w-full">
             <MonthlyProductionChart
               data={data.financial.monthlyProduction.regional.breakdown}
