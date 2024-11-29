@@ -226,12 +226,12 @@ const VolumeLineChart: React.FC<{
   }));
   return (
     <div className="flex flex-col justify-between w-full h-full">
-      {/* Chart Container - Added pt-2 for top padding */}
-      <div className="w-[110%] h-[90px] pt-2"> {/* Set width to match other charts and center it */}
-        <ResponsiveContainer width="110%" height="100%">
+      {/* Chart Container */}
+      <div className="w-[140%] h-[90px] pt-2 -ml-[20%]"> {/* Increased width and added negative margin */}
+        <ResponsiveContainer width="100%" height="100%"> {/* Keep this at 100% */}
           <LineChart 
             data={chartData}
-            margin={{ right: 50 }}
+            margin={{ right: 45, left: 0 }} {/* Adjusted margins */}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
@@ -255,8 +255,7 @@ const VolumeLineChart: React.FC<{
           </LineChart>
         </ResponsiveContainer>
       </div>
-      {/* Text Container - Now at bottom with horizontal layout */}
-      <div className="text-center -mt-1.5"> {/* Adjusted margin to match other charts */}
+      <div className="text-center -mt-1.5">
         <p className="text-[10px] text-gray-600 font-medium">
           {title}: <span className="text-gray-800">{procedureName}</span>
         </p>
