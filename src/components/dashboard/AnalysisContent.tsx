@@ -507,7 +507,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
       {/* Financial Section */}
       {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-1"> {/* Added w-full */}
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2"> {/* Added w-full */}
           <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <MonthlyProductionChart
               data={data.financial.monthlyProduction.regional.breakdown}
