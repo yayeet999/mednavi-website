@@ -111,20 +111,20 @@ const InsuranceDistributionChart: React.FC<{
         </ResponsiveContainer>
       </div>
 
-      {/* Title text centered below */}
-      <p className="text-[10px] text-gray-600 font-medium mt-1">{title}</p>
+      {/* Title text centered below with reduced gap */}
+      <p className="text-[10px] text-gray-600 font-medium -mt-1">{title}</p>
 
-      {/* Legend in one line */}
-      <div className="flex justify-center gap-4 mt-1">
+      {/* Legend in one straight line */}
+      <div className="flex justify-center items-center gap-6 mt-1">
         {formattedData.map((item) => (
           <div key={item.name} className="flex items-center gap-1">
             <div
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: item.color }}
             />
-            <p className="text-[10px] text-gray-600">
+            <span className="text-[10px] text-gray-600 whitespace-nowrap">
               {item.name}: {item.value}%
-            </p>
+            </span>
           </div>
         ))}
       </div>
