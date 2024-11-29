@@ -268,7 +268,7 @@ const LargestProductionChart: React.FC<{
   return (
     <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}>
       <div className="w-full text-center">
-        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[11px] text-gray-600 font-medium">{title}</p>
         <p className="text-[14px] font-semibold text-gray-800 mt-2">
           {data.name}
         </p>
