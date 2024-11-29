@@ -112,7 +112,7 @@ const InsuranceDistributionChart: React.FC<{
       </div>
 
       {/* Title text centered below with reduced gap */}
-      <p className="text-[10px] text-gray-600 font-medium -mt-1">{title}</p>
+      <p className="text-[12px] text-gray-600 font-medium -mt-2">{title}</p>
 
       {/* Legend in one straight line */}
       <div className="flex justify-center items-center gap-2 mt-1">
