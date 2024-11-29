@@ -115,7 +115,7 @@ const InsuranceDistributionChart: React.FC<{
       <p className="text-[10px] text-gray-600 font-medium -mt-1">{title}</p>
 
       {/* Legend in one straight line */}
-      <div className="flex justify-center items-center gap-6 mt-1">
+      <div className="flex justify-center items-center gap-2 mt-1">
         {formattedData.map((item) => (
           <div key={item.name} className="flex items-center gap-1">
             <div
