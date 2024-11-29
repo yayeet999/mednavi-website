@@ -199,7 +199,7 @@ const ProgressCircle: React.FC<{
           />
           <text
             x="55"
-            y="45"
+            y="50"
             className="text-[18px] font-medium"
             dominantBaseline="middle"
             textAnchor="middle"
