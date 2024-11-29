@@ -90,8 +90,8 @@ const InsuranceDistributionChart: React.FC<{
           <PieChart>
             <Pie
               data={formattedData}
-              innerRadius={isDesktop ? 35 : 30}
-              outerRadius={isDesktop ? 45 : 40}
+              innerRadius={isDesktop ? 30 : 15}
+              outerRadius={isDesktop ? 45 : 25}
               startAngle={180}
               endAngle={0}
               paddingAngle={2}
