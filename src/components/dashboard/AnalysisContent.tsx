@@ -299,7 +299,7 @@ const AgeDistributionChart: React.FC<{
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={chartData}
-            margin={{ right: 10 }}
+            margin={{ right: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
