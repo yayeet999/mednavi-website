@@ -227,7 +227,7 @@ const VolumeLineChart: React.FC<{
   return (
     <div className="flex flex-col justify-between w-full h-full">
       {/* Chart Container - Added pt-2 for top padding */}
-      <div className="w-[110%] h-[90px] mx-auto pt-2"> {/* Set width to match other charts and center it */}
+      <div className="w-[125%] h-[90px] mx-auto pt-2"> {/* Set width to match other charts and center it */}
         <ResponsiveContainer width="100%" height="100%">
           <LineChart 
             data={chartData}
