@@ -584,10 +584,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
       <motion.div 
-        className={`relative bg-gray-50 rounded-xl shadow-sm overflow-hidden
-        ${window.innerWidth >= 768 
-          ? 'w-[30%] ml-3 relative' 
-          : 'w-[35%] absolute right-0 top-0 h-full'}`}
+        className={`relative bg-gray-50 rounded-xl shadow-sm overflow-hidden`}
         variants={mapContainerVariants}
         animate={selectedIcon ? {
           width: window.innerWidth >= 768 ? "68%" : "62%",
@@ -599,6 +596,10 @@ const RegionalTabContent = forwardRef((props, ref) => {
           marginRight: "0"
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
+        style={{ 
+          flex: selectedIcon ? '0 0 68%' : '1 1 100%',
+          transitionProperty: 'flex, width, margin',
+        }}
       >
         <AnimatePresence>
           {selectedZip && (
@@ -607,25 +608,26 @@ const RegionalTabContent = forwardRef((props, ref) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className="absolute top-4 left-4 right-4 z-10"
+              style={{ pointerEvents: 'none' }} // Prevent interference with map interactions
             >
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
-                <div className="flex justify-center gap-2">
-                  {icons.map((icon) => (
-                    <button
-                      key={icon.id}
-                      onClick={() => handleIconClick(icon.id)}
-                      className={
-                        `px-3 py-2 rounded-lg flex items-center transition-all duration-200 
-                        ${selectedIcon === icon.id 
-                          ? 'bg-[#052b52] text-white shadow-sm' 
-                          : 'bg-white/80 text-gray-600 hover:bg-white'}`
-                      }
-                    >
-                      <icon.icon className="w-4 h-4" />
-                      <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
-                    </button>
-                  ))}
-                </div>
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm flex justify-center gap-2">
+                {icons.map((icon) => (
+                  <button
+                    key={icon.id}
+                    onClick={() => handleIconClick(icon.id)}
+                    className={
+                      `px-3 py-2 rounded-lg flex items-center transition-all duration-200 
+                      ${selectedIcon === icon.id 
+                        ? 'bg-[#052b52] text-white shadow-sm' 
+                        : 'bg-white/80 text-gray-600 hover:bg-white'}
+                      cursor-pointer`
+                    }
+                    style={{ pointerEvents: 'auto' }} // Enable interaction
+                  >
+                    <icon.icon className="w-4 h-4" />
+                    <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
+                  </button>
+                ))}
               </div>
             </motion.div>
           )}
@@ -653,39 +655,28 @@ const RegionalTabContent = forwardRef((props, ref) => {
       <AnimatePresence>
         {selectedIcon && (
           <motion.div 
-            className={
-              `bg-gray-50 rounded-xl shadow-sm 
-              ${window.innerWidth >= 768 
-                ? 'w-[30%] ml-3 relative' 
-                : 'w-[35%] absolute right-0 top-0 h-full'}`
-            }
+            className={`bg-gray-50 rounded-xl shadow-sm 
+            ${window.innerWidth >= 768 
+              ? 'w-[30%] ml-3 relative' 
+              : 'w-[35%] absolute right-0 top-0 h-full'}`}
             variants={sideContainerVariants}
             initial="hidden"
             animate="visible"
             exit="hidden"
+            style={{ overflow: 'hidden' }} // Prevent internal overflow
           >
             <motion.div 
-              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
-              animate={{ 
-                height: 'auto'
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full flex flex-col`}
+              // Removed height animations
             >
-              <motion.div 
-                className="relative"
-                layout="position"
-                animate={{
-                  height: selectedSubData ? '42px' : 'auto'
-                }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-              >
-                <AnimatePresence mode="sync">
+              <div className="relative flex-1">
+                <AnimatePresence>
                   {getAnalysisOptions(selectedIcon).map((option, index) => (
                     <motion.button
                       key={option}
                       onClick={() => handleSubDataClick(option)}
                       className={
-                        `w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                        `w-full mb-2 p-2 md:p-3 
                         text-left rounded-lg transition-colors duration-200 
                         ${selectedSubData === option 
                           ? 'bg-[#052b52] text-white' 
@@ -693,31 +684,26 @@ const RegionalTabContent = forwardRef((props, ref) => {
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
                         font-medium`
                       }
-                      layout="position"
-                      initial={false}
-                      animate={{ 
-                        y: selectedSubData === option ? -(index * 42) : 0,
-                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
-                        scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
-                      }}
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut"
-                      }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
                     >
                       {option}
                     </motion.button>
                   ))}
                 </AnimatePresence>
-              </motion.div>
+              </div>
 
-              <AnimatePresence mode="wait">
+              <AnimatePresence>
                 {selectedSubData && (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    key="analysis-content"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="flex-1 overflow-auto"
                   >
                     <AnalysisContentDisplay />
                   </motion.div>
