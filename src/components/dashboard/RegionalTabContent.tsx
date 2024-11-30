@@ -664,7 +664,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
             <motion.div 
               className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
               animate={{ 
-                height: selectedSubData ? '100%' : 'auto'
+                height: 'auto'
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
