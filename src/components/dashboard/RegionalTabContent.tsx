@@ -662,15 +662,20 @@ const RegionalTabContent = forwardRef((props, ref) => {
             exit="hidden"
           >
             <motion.div 
-  className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full overflow-hidden`}
->
-  <motion.div 
-    className="relative overflow-hidden"
-    animate={{
-      height: selectedSubData ? '42px' : 'auto'
-    }}
-    transition={{ duration: 0.3, ease: "easeInOut" }}
-  >
+              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
+              animate={{ 
+                height: 'auto'
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <motion.div 
+                className="relative"
+                layout="position"
+                animate={{
+                  height: selectedSubData ? '42px' : 'auto'
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
                 <AnimatePresence mode="sync">
                   {getAnalysisOptions(selectedIcon).map((option, index) => (
                     <motion.button
