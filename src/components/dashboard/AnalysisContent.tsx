@@ -1,6 +1,48 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  initial: { opacity: 0 },
+  animate: { 
+    opacity: 1,
+    transition: {
+      delay: 0.2,
+      duration: 0.3,
+      ease: "easeInOut"
+    }
+  },
+  exit: { 
+    opacity: 0,
+    transition: {
+      duration: 0.2
+    }
+  }
+};
+
+const textVariants = {
+  initial: { opacity: 0 },
+  animate: (custom: number) => ({
+    opacity: 1,
+    transition: {
+      delay: 0.5 + (custom * 0.1),
+      duration: 0.2,
+      ease: "easeInOut"
+    }
+  })
+};
+
+const chartVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: {
+      delay: 0.7,
+      duration: 0.3,
+      ease: "easeInOut"
+    }
+  }
+};
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -39,14 +81,33 @@ const MonthlyProductionChart: React.FC<{
   }));
 
   return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
-      <div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
-        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[14px] font-semibold text-gray-800">
+    <motion.div 
+      className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
+      <motion.div className={`${isDesktop ? 'w-1/3' : 'w-full'} text-center`}>
+        <motion.p 
+          variants={textVariants}
+          custom={0}
+          className="text-[10px] text-gray-600 font-medium"
+        >
+          {title}
+        </motion.p>
+        <motion.p 
+          variants={textVariants}
+          custom={1}
+          className="text-[14px] font-semibold text-gray-800"
+        >
           ${total.toLocaleString()}
-        </p>
-      </div>
-      <div className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[60px] md:h-[100px]`}>
+        </motion.p>
+      </motion.div>
+      <motion.div 
+        variants={chartVariants}
+        className={`${isDesktop ? 'w-2/3' : 'w-full'} h-[60px] md:h-[100px]`}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -67,11 +128,10 @@ const MonthlyProductionChart: React.FC<{
             <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
-
 const InsuranceDistributionChart: React.FC<{
   data: any;
   title: string;
@@ -83,9 +143,17 @@ const InsuranceDistributionChart: React.FC<{
   ];
 
   return (
-    <div className="flex flex-col items-center w-full h-full">
-      {/* Chart at top */}
-      <div className="h-[70px] w-full">
+    <motion.div 
+      className="flex flex-col items-center w-full h-full"
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
+      <motion.div 
+        variants={chartVariants}
+        className="h-[70px] w-full"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -109,13 +177,21 @@ const InsuranceDistributionChart: React.FC<{
             <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
-      </div>
+      </motion.div>
 
-      {/* Title text centered below with reduced gap */}
-      <p className="text-[12px] text-gray-600 font-medium -mt-2">{title}</p>
+      <motion.p 
+        variants={textVariants}
+        custom={0}
+        className="text-[12px] text-gray-600 font-medium -mt-2"
+      >
+        {title}
+      </motion.p>
 
-      {/* Legend in one straight line */}
-      <div className="flex justify-center items-center gap-2 mt-1">
+      <motion.div 
+        variants={textVariants}
+        custom={1}
+        className="flex justify-center items-center gap-2 mt-1"
+      >
         {formattedData.map((item) => (
           <div key={item.name} className="flex items-center gap-1">
             <div
@@ -127,8 +203,8 @@ const InsuranceDistributionChart: React.FC<{
             </span>
           </div>
         ))}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -138,17 +214,37 @@ const GrowthIndicator: React.FC<{
   isDesktop: boolean;
 }> = ({ data, title, isDesktop }) => {
   return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}>
+    <motion.div 
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}
+    >
       <div className="w-full text-center">
-        <p className="text-[13px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[24px] font-semibold text-gray-800 mt-2">
+        <motion.p 
+          variants={textVariants}
+          custom={0}
+          className="text-[13px] text-gray-600 font-medium"
+        >
+          {title}
+        </motion.p>
+        <motion.p 
+          variants={textVariants}
+          custom={1}
+          className="text-[24px] font-semibold text-gray-800 mt-2"
+        >
           {data.percentage}%
-        </p>
-        <p className={`text-[12px] mt-1 ${data.yoyChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        </motion.p>
+        <motion.p 
+          variants={textVariants}
+          custom={2}
+          className={`text-[12px] mt-1 ${data.yoyChange >= 0 ? 'text-green-600' : 'text-red-600'}`}
+        >
           {data.yoyChange >= 0 ? '+' : ''}{data.yoyChange}% YoY
-        </p>
+        </motion.p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -161,15 +257,27 @@ const ProgressCircle: React.FC<{
   const radius = isDesktop ? 35 : 30;
   const strokeWidth = isDesktop ? 8 : 5;
   const circumference = 2 * Math.PI * radius;
-  const progress = (percentage / 100) * circumference;
 
   return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}>
-      <div className={`${isDesktop ? 'w-1/2' : 'w-full'} text-center`}>
+    <motion.div 
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full`}
+    >
+      <motion.div 
+        variants={textVariants}
+        custom={0}
+        className={`${isDesktop ? 'w-1/2' : 'w-full'} text-center`}
+      >
         <p className="text-[11px] text-gray-600 font-medium">{title}</p>
         <p className="text-[11px] text-gray-500">Total: {total.toLocaleString()}</p>
-      </div>
-      <div className={`${isDesktop ? 'w-1/2' : 'w-full'} flex justify-center`}>
+      </motion.div>
+      <motion.div 
+        variants={chartVariants}
+        className={`${isDesktop ? 'w-1/2' : 'w-full'} flex justify-center`}
+      >
         <svg
           className="transform -rotate-90 w-20 h-20"
           viewBox="0 0 100 100"
@@ -183,8 +291,8 @@ const ProgressCircle: React.FC<{
             cx="50"
             cy="50"
           />
-          <circle
-            className="text-blue-600 transition-all duration-1000 ease-out"
+          <motion.circle
+            className="text-blue-600"
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             stroke="currentColor"
@@ -192,12 +300,15 @@ const ProgressCircle: React.FC<{
             r={radius}
             cx="50"
             cy="50"
-            style={{
-              strokeDasharray: circumference,
-              strokeDashoffset: circumference - progress,
+            initial={{ strokeDasharray: circumference, strokeDashoffset: circumference }}
+            animate={{ 
+              strokeDashoffset: circumference - ((percentage / 100) * circumference),
+              transition: { duration: 1, delay: 0.7 }
             }}
           />
-          <text
+          <motion.text
+            variants={textVariants}
+            custom={1}
             x="55"
             y="50"
             className="text-[18px] font-medium"
@@ -207,10 +318,10 @@ const ProgressCircle: React.FC<{
             transform="rotate(90 50 50)"
           >
             {percentage}%
-          </text>
+          </motion.text>
         </svg>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -226,8 +337,17 @@ const VolumeLineChart: React.FC<{
   }));
 
   return (
-    <div className="flex flex-col justify-between w-full h-full">
-      <div className="w-[140%] h-[90px] pt-2 -ml-[20%]">
+    <motion.div 
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="flex flex-col justify-between w-full h-full"
+    >
+      <motion.div 
+        variants={chartVariants}
+        className="w-[140%] h-[90px] pt-2 -ml-[20%]"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart 
             data={chartData}
@@ -254,13 +374,17 @@ const VolumeLineChart: React.FC<{
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
-      <div className="text-center -mt-1.5">
+      </motion.div>
+      <motion.div 
+        variants={textVariants}
+        custom={0}
+        className="text-center -mt-1.5"
+      >
         <p className="text-[10px] text-gray-600 font-medium">
           {title}: <span className="text-gray-800">{procedureName}</span>
         </p>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -270,20 +394,44 @@ const LargestProductionChart: React.FC<{
   isDesktop: boolean;
 }> = ({ data, title, isDesktop }) => {
   return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}>
+    <motion.div 
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}
+    >
       <div className="w-full text-center">
-        <p className="text-[11px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[14px] font-semibold text-gray-800 mt-2">
+        <motion.p 
+          variants={textVariants}
+          custom={0}
+          className="text-[11px] text-gray-600 font-medium"
+        >
+          {title}
+        </motion.p>
+        <motion.p 
+          variants={textVariants}
+          custom={1}
+          className="text-[14px] font-semibold text-gray-800 mt-2"
+        >
           {data.name}
-        </p>
-        <p className="text-[12px] mt-1 text-blue-600">
+        </motion.p>
+        <motion.p 
+          variants={textVariants}
+          custom={2}
+          className="text-[12px] mt-1 text-blue-600"
+        >
           Procedure Avg: ${data.procedureAvg}
-        </p>
-        <p className="text-[12px] text-gray-500">
+        </motion.p>
+        <motion.p 
+          variants={textVariants}
+          custom={3}
+          className="text-[12px] text-gray-500"
+        >
           Total Avg: ${data.totalAvg}
-        </p>
+        </motion.p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -298,13 +446,22 @@ const AgeDistributionChart: React.FC<{
   ];
 
   return (
-    <div className="flex flex-col items-center w-full h-full">
-      <div className="h-[90px] w-[140%] pt-2"> 
+    <motion.div 
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="flex flex-col items-center w-full h-full"
+    >
+      <motion.div 
+        variants={chartVariants}
+        className="h-[90px] w-[140%] pt-2"
+      > 
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={chartData}
             margin={{ right: 45 }}
-            barGap={15}  // Added gap between bars
+            barGap={15}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
@@ -325,9 +482,15 @@ const AgeDistributionChart: React.FC<{
             />
           </BarChart>
         </ResponsiveContainer>
-      </div>
-      <p className="text-[12px] text-gray-600 font-medium -mt-1.5">{title}</p>
-    </div>
+      </motion.div>
+      <motion.p 
+        variants={textVariants}
+        custom={0}
+        className="text-[12px] text-gray-600 font-medium -mt-1.5"
+      >
+        {title}
+      </motion.p>
+    </motion.div>
   );
 };
 
@@ -342,8 +505,17 @@ const AppointmentsByAgeChart: React.FC<{
   ];
 
   return (
-    <div className="flex flex-col items-center w-full h-full">
-      <div className="h-[90px] w-[140%] pt-2">
+    <motion.div 
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="flex flex-col items-center w-full h-full"
+    >
+      <motion.div 
+        variants={chartVariants}
+        className="h-[90px] w-[140%] pt-2"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={chartData}
@@ -369,9 +541,15 @@ const AppointmentsByAgeChart: React.FC<{
             />
           </BarChart>
         </ResponsiveContainer>
-      </div>
-      <p className="text-[12px] text-gray-600 font-medium -mt-1.5">{title}</p>
-    </div>
+      </motion.div>
+      <motion.p 
+        variants={textVariants}
+        custom={0}
+        className="text-[12px] text-gray-600 font-medium -mt-1.5"
+      >
+        {title}
+      </motion.p>
+    </motion.div>
   );
 };
 
@@ -388,196 +566,248 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
   selectedZip,
   data 
 }) => {
-  if (!selectedSubData || !selectedZip) return null;
-  if (!data) return null;
-
+  if (!selectedSubData || !selectedZip || !data) return null;
+  
   const isDesktop = window.innerWidth >= 768;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`space-y-4 w-full`} 
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={containerVariants}
+      className={`space-y-4 w-full`}
     >
-      {/* Patient Section */}
-      {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <ProgressCircle
-              percentage={data.patients.activePatients.regional.percentage}
-              total={data.patients.activePatients.regional.total}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <ProgressCircle
-              percentage={data.patients.activePatients.practice.percentage}
-              total={data.patients.activePatients.practice.total}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
+          <motion.div 
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-rows-2 gap-2 h-full w-full pt-2"
+          >
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <ProgressCircle
+                percentage={data.patients.activePatients.regional.percentage}
+                total={data.patients.activePatients.regional.total}
+                title="Regional Average"
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <ProgressCircle
+                percentage={data.patients.activePatients.practice.percentage}
+                total={data.patients.activePatients.practice.total}
+                title="Your Practice"
+                isDesktop={isDesktop}
+              />
+            </div>
+          </motion.div>
+        )}
 
-      {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <AgeDistributionChart
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <AgeDistributionChart
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
+        {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
+          <motion.div 
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-rows-2 gap-2 h-full w-full pt-2"
+          >
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <AgeDistributionChart
+                title="Regional Average"
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <AgeDistributionChart
+                title="Your Practice"
+                isDesktop={isDesktop}
+              />
+            </div>
+          </motion.div>
+        )}
 
-      {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <AppointmentsByAgeChart
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <AppointmentsByAgeChart
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
+        {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
+          <motion.div 
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-rows-2 gap-2 h-full w-full pt-2"
+          >
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <AppointmentsByAgeChart
+                title="Regional Average"
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <AppointmentsByAgeChart
+                title="Your Practice"
+                isDesktop={isDesktop}
+              />
+            </div>
+          </motion.div>
+        )}
 
-      {/* Procedures Section */}
-      {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <VolumeLineChart
-              data={data.procedures.highestVolume.regional.data}
-              title="Regional Average"
-              procedureName={data.procedures.highestVolume.regional.name}
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <VolumeLineChart
-              data={data.procedures.highestVolume.practice.data}
-              title="Your Practice"
-              procedureName={data.procedures.highestVolume.practice.name}
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
+        {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
+          <motion.div 
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-rows-2 gap-2 h-full w-full pt-2"
+          >
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <VolumeLineChart
+                data={data.procedures.highestVolume.regional.data}
+                title="Regional Average"
+                procedureName={data.procedures.highestVolume.regional.name}
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <VolumeLineChart
+                data={data.procedures.highestVolume.practice.data}
+                title="Your Practice"
+                procedureName={data.procedures.highestVolume.practice.name}
+                isDesktop={isDesktop}
+              />
+            </div>
+          </motion.div>
+        )}
 
-      {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <LargestProductionChart
-              data={data.procedures.largestProduction.regional}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <LargestProductionChart
-              data={data.procedures.largestProduction.practice}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
+        {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
+          <motion.div 
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-rows-2 gap-2 h-full w-full pt-2"
+          >
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <LargestProductionChart
+                data={data.procedures.largestProduction.regional}
+                title="Regional Average"
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <LargestProductionChart
+                data={data.procedures.largestProduction.practice}
+                title="Your Practice"
+                isDesktop={isDesktop}
+              />
+            </div>
+          </motion.div>
+        )}
 
-      {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <VolumeLineChart
-              data={data.procedures.lowestVolume.regional.data}
-              title="Regional Average"
-              procedureName={data.procedures.lowestVolume.regional.name}
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <VolumeLineChart
-              data={data.procedures.lowestVolume.practice.data}
-              title="Your Practice"
-              procedureName={data.procedures.lowestVolume.practice.name}
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
+        {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
+          <motion.div 
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-rows-2 gap-2 h-full w-full pt-2"
+          >
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <VolumeLineChart
+                data={data.procedures.lowestVolume.regional.data}
+                title="Regional Average"
+                procedureName={data.procedures.lowestVolume.regional.name}
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <VolumeLineChart
+                data={data.procedures.lowestVolume.practice.data}
+                title="Your Practice"
+                procedureName={data.procedures.lowestVolume.practice.name}
+                isDesktop={isDesktop}
+              />
+            </div>
+          </motion.div>
+        )}
 
-      {/* Financial Section */}
-      {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2"> 
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <MonthlyProductionChart
-              data={data.financial.monthlyProduction.regional.breakdown}
-              title="Regional Average"
-              total={data.financial.monthlyProduction.regional.total}
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <MonthlyProductionChart
-              data={data.financial.monthlyProduction.practice.breakdown}
-              title="Your Practice"
-              total={data.financial.monthlyProduction.practice.total}
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
+        {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
+          <motion.div 
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-rows-2 gap-2 h-full w-full pt-2"
+          >
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <MonthlyProductionChart
+                data={data.financial.monthlyProduction.regional.breakdown}
+                title="Regional Average"
+                total={data.financial.monthlyProduction.regional.total}
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <MonthlyProductionChart
+                data={data.financial.monthlyProduction.practice.breakdown}
+                title="Your Practice"
+                total={data.financial.monthlyProduction.practice.total}
+                isDesktop={isDesktop}
+              />
+            </div>
+          </motion.div>
+        )}
 
-      {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2"> 
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <InsuranceDistributionChart
-              data={data.financial.insurance.regional}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <InsuranceDistributionChart
-              data={data.financial.insurance.practice}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
+        {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
+          <motion.div 
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-rows-2 gap-2 h-full w-full pt-2"
+          >
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <InsuranceDistributionChart
+                data={data.financial.insurance.regional}
+                title="Regional Average"
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <InsuranceDistributionChart
+                data={data.financial.insurance.practice}
+                title="Your Practice"
+                isDesktop={isDesktop}
+              />
+            </div>
+          </motion.div>
+        )}
 
-      {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2"> 
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <GrowthIndicator
-              data={data.financial.growth.regional}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-            <GrowthIndicator
-              data={data.financial.growth.practice}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </div>
-        </div>
-      )}
+        {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
+          <motion.div 
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-rows-2 gap-2 h-full w-full pt-2"
+          >
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <GrowthIndicator
+                data={data.financial.growth.regional}
+                title="Regional Average"
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <GrowthIndicator
+                data={data.financial.growth.practice}
+                title="Your Practice"
+                isDesktop={isDesktop}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
