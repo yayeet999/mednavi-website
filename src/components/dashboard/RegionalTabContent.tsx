@@ -670,7 +670,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
             >
               <motion.div 
                 className="relative"
-                layout
+                layout="position"
                 animate={{
                   height: selectedSubData ? '42px' : 'auto'
                 }}
