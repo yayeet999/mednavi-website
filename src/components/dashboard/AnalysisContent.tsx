@@ -395,12 +395,12 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0 }
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`space-y-4 w-full`} 
-    >
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  transition={{ duration: 0.3, ease: "easeOut" }}
+  className={`space-y-4 w-full`} 
+>
       {/* Patient Section */}
       {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
         <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
