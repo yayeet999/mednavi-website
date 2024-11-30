@@ -584,7 +584,10 @@ const RegionalTabContent = forwardRef((props, ref) => {
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
       <motion.div 
-        className="relative bg-gray-50 rounded-xl shadow-sm overflow-hidden flex-1"
+        className={`relative bg-gray-50 rounded-xl shadow-sm overflow-hidden
+        ${window.innerWidth >= 768 
+          ? 'w-[30%] ml-3 relative' 
+          : 'w-[35%] absolute right-0 top-0 h-full'}`}
         variants={mapContainerVariants}
         animate={selectedIcon ? {
           width: window.innerWidth >= 768 ? "68%" : "62%",
@@ -650,12 +653,12 @@ const RegionalTabContent = forwardRef((props, ref) => {
       <AnimatePresence>
         {selectedIcon && (
           <motion.div 
-            className={`
-              bg-gray-50 rounded-xl shadow-sm 
+            className={
+              `bg-gray-50 rounded-xl shadow-sm 
               ${window.innerWidth >= 768 
                 ? 'w-[30%] ml-3 relative' 
-                : 'w-[35%] absolute right-0 top-0 h-full'}
-            `}
+                : 'w-[35%] absolute right-0 top-0 h-full'}`
+            }
             variants={sideContainerVariants}
             initial="hidden"
             animate="visible"
@@ -681,15 +684,15 @@ const RegionalTabContent = forwardRef((props, ref) => {
                     <motion.button
                       key={option}
                       onClick={() => handleSubDataClick(option)}
-                      className={`
-                        w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                      className={
+                        `w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
                         text-left rounded-lg transition-colors duration-200 
                         ${selectedSubData === option 
                           ? 'bg-[#052b52] text-white' 
                           : 'bg-white text-gray-600 hover:bg-gray-100'} 
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                        font-medium
-                      `}
+                        font-medium`
+                      }
                       layout="position"
                       initial={false}
                       animate={{ 
@@ -725,8 +728,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
         )}
       </AnimatePresence>
 
-      <style jsx global>{`
-        .gm-style-cc,
+      <style jsx global>{
+        `.gm-style-cc,
         .gmnoprint.gm-style-cc,
         .gm-style-iw-a,
         .gm-style-iw-t,
@@ -742,8 +745,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
         }
         .gm-bundled-control .gmnoprint {
           display: block !important;
-        }
-      `}</style>
+        }`
+      }</style>
     </div>
   );
 });
