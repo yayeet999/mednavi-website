@@ -584,7 +584,10 @@ const RegionalTabContent = forwardRef((props, ref) => {
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
       <motion.div 
-        className="relative bg-gray-50 rounded-xl shadow-sm overflow-hidden flex-1"
+        className={`relative bg-gray-50 rounded-xl shadow-sm overflow-hidden
+        ${window.innerWidth >= 768 
+          ? 'w-[30%] ml-3 relative' 
+          : 'w-[35%] absolute right-0 top-0 h-full'}`}
         variants={mapContainerVariants}
         animate={selectedIcon ? {
           width: window.innerWidth >= 768 ? "68%" : "62%",
@@ -662,13 +665,19 @@ const RegionalTabContent = forwardRef((props, ref) => {
             exit="hidden"
           >
             <motion.div 
-              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full overflow-hidden`}
-              layout="size"
+              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
+              animate={{ 
+                height: 'auto'
+              }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               <motion.div 
                 className="relative"
                 layout="position"
+                animate={{
+                  height: selectedSubData ? '42px' : 'auto'
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
               >
                 <AnimatePresence mode="sync">
                   {getAnalysisOptions(selectedIcon).map((option, index) => (
@@ -685,9 +694,12 @@ const RegionalTabContent = forwardRef((props, ref) => {
                         font-medium`
                       }
                       layout="position"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
+                      initial={false}
+                      animate={{ 
+                        y: selectedSubData === option ? -(index * 42) : 0,
+                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
+                        scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
+                      }}
                       transition={{
                         duration: 0.3,
                         ease: "easeInOut"
