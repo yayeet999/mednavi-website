@@ -266,9 +266,45 @@ const mapContainerVariants = {
 };
 
 const sideContainerVariants = {
-  hidden: { opacity: 0, x: 20 },
-  visible: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: 20 }
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: {
+      delay: 0.2,
+      duration: 0.3,
+      ease: "easeInOut"
+    }
+  },
+  exit: { 
+    opacity: 0,
+    transition: {
+      duration: 0.2
+    }
+  }
+};
+
+const analysisOptionVariants = {
+  hidden: { opacity: 0 },
+  visible: (i: number) => ({
+    opacity: 1,
+    transition: {
+      delay: 0.3 + (i * 0.1),
+      duration: 0.2,
+      ease: "easeInOut"
+    }
+  }),
+  selected: {
+    backgroundColor: "#052b52",
+    color: "#ffffff",
+    scale: 1.05,
+    transition: { duration: 0.2, ease: "easeInOut" }
+  },
+  unselected: {
+    backgroundColor: "#ffffff",
+    color: "#666666",
+    scale: 1,
+    transition: { duration: 0.2, ease: "easeInOut" }
+  }
 };
 
 function isValidZipCode(zip: string): zip is ValidZipCode {
@@ -457,14 +493,9 @@ const RegionalTabContent = forwardRef((props, ref) => {
   }, []);
 
   const handleSubDataClick = useCallback((subDataId: string) => {
-    if (selectedSubData === subDataId) {
-      setSelectedSubData(null);
-      setIsAnalysisExpanded(true);
-    } else {
-      setSelectedSubData(subDataId);
-      setIsAnalysisExpanded(false);
-    }
-  }, [selectedSubData]);
+    setSelectedSubData(subDataId);
+    setIsAnalysisExpanded(false);
+  }, []);
 
   const getAnalysisOptions = (iconId: Icon['id']) => {
     switch (iconId) {
@@ -647,7 +678,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
         )}
       </motion.div>
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {selectedIcon && (
           <motion.div 
             className={`
@@ -659,27 +690,18 @@ const RegionalTabContent = forwardRef((props, ref) => {
             variants={sideContainerVariants}
             initial="hidden"
             animate="visible"
-            exit="hidden"
+            exit="exit"
           >
-            <motion.div 
-              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
-              animate={{ 
-                height: selectedSubData ? '100%' : 'auto'
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <motion.div 
-                className="relative"
-                layout
-                animate={{
-                  height: selectedSubData ? '42px' : 'auto'
-                }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-              >
-                <AnimatePresence mode="sync">
+            <motion.div className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}>
+              <div className="relative">
+                <AnimatePresence mode="wait">
                   {getAnalysisOptions(selectedIcon).map((option, index) => (
                     <motion.button
                       key={option}
+                      custom={index}
+                      variants={analysisOptionVariants}
+                      initial="hidden"
+                      animate={selectedSubData === option ? "selected" : "unselected"}
                       onClick={() => handleSubDataClick(option)}
                       className={`
                         w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
@@ -688,25 +710,14 @@ const RegionalTabContent = forwardRef((props, ref) => {
                           ? 'bg-[#052b52] text-white' 
                           : 'bg-white text-gray-600 hover:bg-gray-100'} 
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                        font-medium
+                        font-medium mb-2
                       `}
-                      layout="position"
-                      initial={false}
-                      animate={{ 
-                        y: selectedSubData === option ? -(index * 42) : 0,
-                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
-                        scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
-                      }}
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut"
-                      }}
                     >
                       {option}
                     </motion.button>
                   ))}
                 </AnimatePresence>
-              </motion.div>
+              </div>
 
               <AnimatePresence mode="wait">
                 {selectedSubData && <AnalysisContentDisplay />}
