@@ -709,7 +709,16 @@ const RegionalTabContent = forwardRef((props, ref) => {
               </motion.div>
 
               <AnimatePresence mode="wait">
-                {selectedSubData && <AnalysisContentDisplay />}
+                {selectedSubData && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                  >
+                    <AnalysisContentDisplay />
+                  </motion.div>
+                )}
               </AnimatePresence>
             </motion.div>
           </motion.div>
