@@ -426,8 +426,8 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             className="grid grid-rows-2 gap-2 w-full"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut", exit: { duration: 0 } }}
           >
             {/* Patient Section */}
             {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
