@@ -389,6 +389,21 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
   if (!data) return null;
 
   const isDesktop = window.innerWidth >= 768;
+  const [showContainers, setShowContainers] = React.useState(false);
+
+  React.useEffect(() => {
+    if (selectedSubData) {
+      const timer = setTimeout(() => {
+        setShowContainers(true);
+      }, 500);
+      return () => {
+        clearTimeout(timer);
+        setShowContainers(false);
+      };
+    } else {
+      setShowContainers(false);
+    }
+  }, [selectedSubData]);
 
   return (
     <motion.div
@@ -396,287 +411,187 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="space-y-4 w-full" 
+      className="w-full"
     >
-      {/* Patient Section */}
-      {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
-        <motion.div 
-          className="grid grid-rows-2 gap-2 w-full"
-          style={{ height: selectedSubData ? '260px' : 'auto' }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0, delay: 0.5 }}
-        >
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full h-[120px]">
-            <ProgressCircle
-              percentage={data.patients.activePatients.regional.percentage}
-              total={data.patients.activePatients.regional.total}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </div>
-          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full h-[120px]">
-            <ProgressCircle
-              percentage={data.patients.activePatients.practice.percentage}
-              total={data.patients.activePatients.practice.total}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </div>
-        </motion.div>
-      )}
+      {showContainers && (
+        <div className="grid grid-rows-2 gap-2 w-full">
+          {/* Patient Section - First Container */}
+          {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
+            <>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <ProgressCircle
+                  percentage={data.patients.activePatients.regional.percentage}
+                  total={data.patients.activePatients.regional.total}
+                  title="Regional Average"
+                  isDesktop={isDesktop}
+                />
+              </div>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <ProgressCircle
+                  percentage={data.patients.activePatients.practice.percentage}
+                  total={data.patients.activePatients.practice.total}
+                  title="Your Practice"
+                  isDesktop={isDesktop}
+                />
+              </div>
+            </>
+          )}
 
-      {/* Rest of the sections stay exactly the same, just wrap their grid in the same motion.div pattern */}
+          {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
+            <>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <AgeDistributionChart
+                  title="Regional Average"
+                  isDesktop={isDesktop}
+                />
+              </div>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <AgeDistributionChart
+                  title="Your Practice"
+                  isDesktop={isDesktop}
+                />
+              </div>
+            </>
+          )}
 
-      {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.5 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <AgeDistributionChart
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.6 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <AgeDistributionChart
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-        </div>
-      )}
+          {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
+            <>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <AppointmentsByAgeChart
+                  title="Regional Average"
+                  isDesktop={isDesktop}
+                />
+              </div>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <AppointmentsByAgeChart
+                  title="Your Practice"
+                  isDesktop={isDesktop}
+                />
+              </div>
+            </>
+          )}
 
-      {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.5 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <AppointmentsByAgeChart
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.6 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <AppointmentsByAgeChart
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-        </div>
-      )}
+          {/* Procedures Section */}
+          {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
+            <>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <VolumeLineChart
+                  data={data.procedures.highestVolume.regional.data}
+                  title="Regional Average"
+                  procedureName={data.procedures.highestVolume.regional.name}
+                  isDesktop={isDesktop}
+                />
+              </div>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <VolumeLineChart
+                  data={data.procedures.highestVolume.practice.data}
+                  title="Your Practice"
+                  procedureName={data.procedures.highestVolume.practice.name}
+                  isDesktop={isDesktop}
+                />
+              </div>
+            </>
+          )}
 
-      {/* Procedures Section */}
-      {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.5 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <VolumeLineChart
-              data={data.procedures.highestVolume.regional.data}
-              title="Regional Average"
-              procedureName={data.procedures.highestVolume.regional.name}
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.6 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <VolumeLineChart
-              data={data.procedures.highestVolume.practice.data}
-              title="Your Practice"
-              procedureName={data.procedures.highestVolume.practice.name}
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-        </div>
-      )}
+          {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
+            <>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <LargestProductionChart
+                  data={data.procedures.largestProduction.regional}
+                  title="Regional Average"
+                  isDesktop={isDesktop}
+                />
+              </div>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <LargestProductionChart
+                  data={data.procedures.largestProduction.practice}
+                  title="Your Practice"
+                  isDesktop={isDesktop}
+                />
+              </div>
+            </>
+          )}
 
-      {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.5 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <LargestProductionChart
-              data={data.procedures.largestProduction.regional}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.6 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <LargestProductionChart
-              data={data.procedures.largestProduction.practice}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-        </div>
-      )}
+          {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
+            <>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <VolumeLineChart
+                  data={data.procedures.lowestVolume.regional.data}
+                  title="Regional Average"
+                  procedureName={data.procedures.lowestVolume.regional.name}
+                  isDesktop={isDesktop}
+                />
+              </div>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <VolumeLineChart
+                  data={data.procedures.lowestVolume.practice.data}
+                  title="Your Practice"
+                  procedureName={data.procedures.lowestVolume.practice.name}
+                  isDesktop={isDesktop}
+                />
+              </div>
+            </>
+          )}
 
-      {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.5 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <VolumeLineChart
-              data={data.procedures.lowestVolume.regional.data}
-              title="Regional Average"
-              procedureName={data.procedures.lowestVolume.regional.name}
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.6 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <VolumeLineChart
-              data={data.procedures.lowestVolume.practice.data}
-              title="Your Practice"
-              procedureName={data.procedures.lowestVolume.practice.name}
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-        </div>
-      )}
+          {/* Financial Section */}
+          {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
+            <>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <MonthlyProductionChart
+                  data={data.financial.monthlyProduction.regional.breakdown}
+                  title="Regional Average"
+                  total={data.financial.monthlyProduction.regional.total}
+                  isDesktop={isDesktop}
+                />
+              </div>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <MonthlyProductionChart
+                  data={data.financial.monthlyProduction.practice.breakdown}
+                  title="Your Practice"
+                  total={data.financial.monthlyProduction.practice.total}
+                  isDesktop={isDesktop}
+                />
+              </div>
+            </>
+          )}
 
-      {/* Financial Section */}
-      {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.5 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <MonthlyProductionChart
-              data={data.financial.monthlyProduction.regional.breakdown}
-              title="Regional Average"
-              total={data.financial.monthlyProduction.regional.total}
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.6 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <MonthlyProductionChart
-              data={data.financial.monthlyProduction.practice.breakdown}
-              title="Your Practice"
-              total={data.financial.monthlyProduction.practice.total}
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-        </div>
-      )}
+          {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
+            <>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <InsuranceDistributionChart
+                  data={data.financial.insurance.regional}
+                  title="Regional Average"
+                  isDesktop={isDesktop}
+                />
+              </div>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <InsuranceDistributionChart
+                  data={data.financial.insurance.practice}
+                  title="Your Practice"
+                  isDesktop={isDesktop}
+                />
+              </div>
+            </>
+          )}
 
-      {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.5 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <InsuranceDistributionChart
-              data={data.financial.insurance.regional}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.6 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <InsuranceDistributionChart
-              data={data.financial.insurance.practice}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-        </div>
-      )}
-
-      {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.5 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <GrowthIndicator
-              data={data.financial.growth.regional}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.6 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <GrowthIndicator
-              data={data.financial.growth.practice}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
+          {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
+            <>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <GrowthIndicator
+                  data={data.financial.growth.regional}
+                  title="Regional Average"
+                  isDesktop={isDesktop}
+                />
+              </div>
+              <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <GrowthIndicator
+                  data={data.financial.growth.practice}
+                  title="Your Practice"
+                  isDesktop={isDesktop}
+                />
+              </div>
+            </>
+          )}
         </div>
       )}
     </motion.div>
