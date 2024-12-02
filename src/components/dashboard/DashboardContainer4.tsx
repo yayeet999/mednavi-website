@@ -13,6 +13,7 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
   onNavigateToMap
 }) => {
   const [activePage, setActivePage] = useState('location');
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handlePageChange = (pageId: string) => {
     if (pageId === 'home') {
@@ -28,7 +29,11 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
       return;
     }
 
+    setIsTransitioning(true);
     setActivePage(pageId);
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 100);
   };
 
   return (
@@ -44,10 +49,12 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
             <div key={item.id} className="relative">
               <button
                 onClick={() => item.onClick ? item.onClick() : handlePageChange(item.id)}
+                disabled={isTransitioning}
                 className={`w-10 h-8 md:w-14 md:h-12 mb-1 md:mb-2 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 ease-in-out
                          ${activePage === item.id && !item.onClick
                            ? 'bg-[#052b52] text-white shadow-sm scale-105' 
-                           : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}`}
+                           : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}
+                         ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
                 aria-label={`${item.onClick ? `Navigate to ${item.id}` : `Switch to ${item.id} view`}`}
               >
                 {React.cloneElement(item.icon, {
@@ -67,11 +74,26 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
 
           <div className="flex-1 p-2 md:p-4">
             <div className="bg-gray-100 rounded-lg h-full">
-              {/* Content will be added later */}
+              <div className="flex items-center justify-center h-full text-gray-500">
+                Content coming soon
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };
