@@ -75,7 +75,7 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
           </div>
 
           <div className="flex-1 p-2 md:p-4">
-            <div className="flex h-full gap-4">
+            <div className="flex h-full gap-2">
               <div className="flex-1 bg-gray-100 rounded-lg overflow-hidden">
                 <LocationMap />
               </div>
