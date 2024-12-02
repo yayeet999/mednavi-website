@@ -567,19 +567,19 @@ const RegionalTabContent = forwardRef((props, ref) => {
   }, []);
 
   const AnalysisContentDisplay = useCallback(() => {
-  if (!selectedSubData || !selectedZip) return null;
-  const data = analysisData[selectedZip];
-  if (!data) return null;
+    if (!selectedSubData || !selectedZip) return null;
+    const data = analysisData[selectedZip];
+    if (!data) return null;
 
-  return (
-    <AnalysisContent
-      selectedIcon={selectedIcon}
-      selectedSubData={selectedSubData}
-      selectedZip={selectedZip}
-      data={data}
-    />
-  );
-}, [selectedIcon, selectedSubData, selectedZip]);
+    return (
+      <AnalysisContent
+        selectedIcon={selectedIcon}
+        selectedSubData={selectedSubData}
+        selectedZip={selectedZip}
+        data={data}
+      />
+    );
+  }, [selectedIcon, selectedSubData, selectedZip]);
 
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
@@ -601,74 +601,135 @@ const RegionalTabContent = forwardRef((props, ref) => {
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <AnimatePresence>
-          {selectedIcon && (
-            <motion.div 
-              className={`w-full h-full flex flex-col`}
-              variants={sideContainerVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
+          {selectedZip && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute top-4 left-4 right-4 z-10"
             >
-              <motion.div 
-                className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
-              >
-                <div className={`relative ${selectedSubData ? 'h-[42px]' : 'h-[126px]'} transition-height duration-300`}>
-                  <AnimatePresence mode="sync">
-                    {getAnalysisOptions(selectedIcon).map((option, index) => (
-                      <motion.button
-                        key={option}
-                        onClick={() => handleSubDataClick(option)}
-                        className={
-                          `w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
-                          text-left rounded-lg transition-colors duration-200 absolute
-                          ${selectedSubData === option 
-                            ? 'bg-[#052b52] text-white' 
-                            : 'bg-white text-gray-600 hover:bg-gray-100'} 
-                          ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                          font-medium`
-                        }
-                        initial={false}
-                        animate={{ 
-                          y: selectedSubData 
-                            ? (selectedSubData === option ? 0 : 100)
-                            : index * 42,
-                          opacity: !selectedSubData || selectedSubData === option ? 1 : 0
-                        }}
-                        transition={{
-                          duration: 0.3,
-                          ease: "easeInOut"
-                        }}
-                        style={{
-                          top: 0,
-                          height: '42px'
-                        }}
-                      >
-                        {option}
-                      </motion.button>
-                    ))}
-                  </AnimatePresence>
-                </div>
-
-                <AnimatePresence mode="wait">
-                  {selectedSubData && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
+                <div className="flex justify-center gap-2">
+                  {icons.map((icon) => (
+                    <button
+                      key={icon.id}
+                      onClick={() => handleIconClick(icon.id)}
+                      className={
+                        `px-3 py-2 rounded-lg flex items-center transition-all duration-200 
+                        ${selectedIcon === icon.id 
+                          ? 'bg-[#052b52] text-white shadow-sm' 
+                          : 'bg-white/80 text-gray-600 hover:bg-white'}`
+                      }
                     >
-                      <AnalysisContentDisplay />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                      <icon.icon className="w-4 h-4" />
+                      <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        <div className="h-full w-full">
+          <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
+            <GoogleMap
+              mapContainerClassName="w-full h-full"
+              center={mapCenter}
+              zoom={12}
+              options={mapOptions}
+              onLoad={onMapLoad}
+            />
+          </LoadScript>
+        </div>
+
+        {isLoading && (
+          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
+            <div className="w-4 h-4 border-2 border-blue-600 rounded-full border-t-transparent animate-spin" />
+          </div>
+        )}
       </motion.div>
 
-      <style jsx global>{`
-        .gm-style-cc,
+      <AnimatePresence>
+        {selectedIcon && (
+          <motion.div 
+            className={
+              `bg-gray-50 rounded-xl shadow-sm 
+              ${window.innerWidth >= 768 
+                ? 'w-[30%] ml-3 relative' 
+                : 'w-[35%] absolute right-0 top-0 h-full'}`
+            }
+            variants={sideContainerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            <motion.div 
+              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
+              animate={{ 
+                height: 'auto'
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <motion.div 
+                className="relative"
+                layout="position"
+                animate={{
+                  height: selectedSubData ? '42px' : 'auto'
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <AnimatePresence mode="sync">
+                  {getAnalysisOptions(selectedIcon).map((option, index) => (
+                    <motion.button
+                      key={option}
+                      onClick={() => handleSubDataClick(option)}
+                      className={
+                        `w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                        text-left rounded-lg transition-colors duration-200 
+                        ${selectedSubData === option 
+                          ? 'bg-[#052b52] text-white' 
+                          : 'bg-white text-gray-600 hover:bg-gray-100'} 
+                        ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
+                        font-medium`
+                      }
+                      layout="position"
+                      initial={false}
+                      animate={{ 
+                        y: selectedSubData === option ? -(index * 42) : 0,
+                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
+                        scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
+                      }}
+                      transition={{
+                        duration: 0.3,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      {option}
+                    </motion.button>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+
+              <AnimatePresence mode="wait">
+                {selectedSubData && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                  >
+                    <AnalysisContentDisplay />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <style jsx global>{
+        `.gm-style-cc,
         .gmnoprint.gm-style-cc,
         .gm-style-iw-a,
         .gm-style-iw-t,
@@ -684,11 +745,12 @@ const RegionalTabContent = forwardRef((props, ref) => {
         }
         .gm-bundled-control .gmnoprint {
           display: block !important;
-        }
-      `}</style>
+        }`
+      }</style>
     </div>
   );
 });
 
 RegionalTabContent.displayName = 'RegionalTabContent';
+
 export default RegionalTabContent;
