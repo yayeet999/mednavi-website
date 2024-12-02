@@ -6,12 +6,14 @@ interface DashboardContainer3Props {
   onNavigateToBot?: () => void;
   onNavigateToHome?: () => void;
   onNavigateToPractice?: () => void;
+  onNavigateToLocation?: () => void;
 }
 
 export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ 
   onNavigateToBot,
   onNavigateToHome,
-  onNavigateToPractice
+  onNavigateToPractice,
+  onNavigateToLocation
 }) => {
   const [activePage, setActivePage] = useState('map');
   const [shouldRenderMap, setShouldRenderMap] = useState(true);
@@ -28,6 +30,10 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
     }
     if (pageId === 'practice') {
       onNavigateToPractice?.();
+      return;
+    }
+    if (pageId === 'location') {
+      onNavigateToLocation?.();
       return;
     }
 
