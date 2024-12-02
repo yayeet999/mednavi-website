@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { GoogleMap, LoadScript, MarkerClusterer } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, MarkerClusterer, Marker } from '@react-google-maps/api';
 import PatientMapFilters from './PatientMapFilters';
 import { SAMPLE_PATIENT_DATA, PRACTICE_LOCATION, Patient } from '../../types/patientData';
 
@@ -76,10 +76,8 @@ const LocationMap: React.FC<LocationMapProps> = () => {
     // Implement filter logic here
     const filtered = SAMPLE_PATIENT_DATA.filter(patient => {
       // Add your filter conditions here
-      // This is a simplified example
       if (filters.status.length && !filters.status.includes(patient.status)) return false;
       if (filters.insuranceType.length && !filters.insuranceType.includes(patient.insuranceType)) return false;
-      // Add more filter conditions as needed
       return true;
     });
 
@@ -124,23 +122,6 @@ const LocationMap: React.FC<LocationMapProps> = () => {
     });
   }, []);
 
-  const createPatientMarkers = useCallback((map: google.maps.Map) => {
-    return filteredPatients.map(patient => {
-      return new google.maps.Marker({
-        position: patient.location,
-        map,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 6,
-          fillColor: patient.status === 'Active' ? '#3B82F6' : '#94A3B8',
-          fillOpacity: 0.7,
-          strokeColor: '#FFFFFF',
-          strokeWeight: 1,
-        }
-      });
-    });
-  }, [filteredPatients]);
-
   const onMapLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
     createPracticeMarker(map);
@@ -150,42 +131,7 @@ const LocationMap: React.FC<LocationMapProps> = () => {
     bounds.extend(PRACTICE_LOCATION);
     filteredPatients.forEach(patient => bounds.extend(patient.location));
     map.fitBounds(bounds);
-
-    // Create patient markers with clustering
-    const markers = createPatientMarkers(map);
-    markersRef.current = markers;
-
-    new MarkerClusterer({
-      map,
-      markers,
-      algorithm: new google.maps.MarkerClustererAlgorithm({
-        maxZoom: 15,
-        gridSize: 50
-      }),
-      renderer: {
-        render: ({ count, position }) => {
-          return new google.maps.Marker({
-            position,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 20,
-              fillColor: '#2563EB',
-              fillOpacity: 0.9,
-              strokeColor: '#FFFFFF',
-              strokeWeight: 2,
-            },
-            label: {
-              text: String(count),
-              color: '#FFFFFF',
-              fontSize: '12px',
-              fontWeight: 'bold'
-            },
-            zIndex: 999
-          });
-        }
-      }
-    });
-  }, [createPracticeMarker, createPatientMarkers, filteredPatients]);
+  }, [createPracticeMarker, filteredPatients]);
 
   useEffect(() => {
     return () => {
@@ -195,6 +141,13 @@ const LocationMap: React.FC<LocationMapProps> = () => {
       }
     };
   }, [clearMarkers]);
+
+  const handleClusterClick = (cluster: any) => {
+    if (map) {
+      map.panTo(cluster.getCenter());
+      map.setZoom(map.getZoom()! + 1);
+    }
+  };
 
   return (
     <div className="relative w-full h-full flex">
@@ -206,7 +159,45 @@ const LocationMap: React.FC<LocationMapProps> = () => {
             zoom={12}
             options={mapOptions}
             onLoad={onMapLoad}
-          />
+          >
+            <MarkerClusterer
+              options={{
+                imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+                gridSize: 50,
+                maxZoom: 15,
+                minimumClusterSize: 2,
+                styles: [
+                  {
+                    textColor: '#FFFFFF',
+                    textSize: 12,
+                    height: 40,
+                    width: 40,
+                    backgroundPosition: 'center',
+                    backgroundColor: '#2563EB'
+                  }
+                ]
+              }}
+              onClick={handleClusterClick}
+            >
+              {(clusterer) => 
+                filteredPatients.map((patient, index) => (
+                  <Marker
+                    key={patient.id}
+                    position={patient.location}
+                    clusterer={clusterer}
+                    icon={{
+                      path: google.maps.SymbolPath.CIRCLE,
+                      scale: 6,
+                      fillColor: patient.status === 'Active' ? '#3B82F6' : '#94A3B8',
+                      fillOpacity: 0.7,
+                      strokeColor: '#FFFFFF',
+                      strokeWeight: 1,
+                    }}
+                  />
+                ))
+              }
+            </MarkerClusterer>
+          </GoogleMap>
         </LoadScript>
       </div>
       
