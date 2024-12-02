@@ -1,9 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, BarChart2, Map, Bot, MapPin, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RegionalTabContent from './RegionalTabContent';
 import GeoPlotTabContent from './GeoPlotTabContent';
-import { AnimatePresence, motion } from 'framer-motion';
 
 interface DashboardContainer3Props {
   onNavigateToBot?: () => void;
@@ -20,25 +19,10 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
   const [shouldRenderMap, setShouldRenderMap] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [activeTab, setActiveTab] = useState('regional');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
 
   const handleTabChange = (value: string) => {
-    if (isTransitioning || value === activeTab) return;
-    
-    setIsTransitioning(true);
-    
-    // Delay the tab change to allow for proper cleanup
-    setTimeout(() => {
-      setActiveTab(value);
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 100);
-    }, 100);
+    if (value === activeTab) return;
+    setActiveTab(value);
   };
 
   const handlePageChange = (pageId: string) => {
@@ -77,28 +61,6 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
       setIsTransitioning(false);
     };
   }, []);
-
-  const TabContent = () => {
-    if (!mounted) return null;
-
-    if (activeTab === 'regional') {
-      return (
-        <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
-          <RegionalTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
-        </TabsContent>
-      );
-    }
-
-    if (activeTab === 'geoplot') {
-      return (
-        <TabsContent value="geoplot" className="h-full m-0 p-4">
-          <GeoPlotTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
-        </TabsContent>
-      );
-    }
-
-    return null;
-  };
 
   return (
     <div className="h-full w-full">
@@ -144,14 +106,9 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                 </div>
               ) : (
                 <>
-                  {activePage === 'map' && shouldRenderMap && mounted && (
+                  {activePage === 'map' && shouldRenderMap && (
                     <div className="w-full h-full bg-white rounded-lg overflow-hidden">
-                      <Tabs 
-                        value={activeTab} 
-                        onValueChange={handleTabChange} 
-                        className="h-full flex flex-col [&>div]:bg-transparent"
-                        key={`tabs-${activeTab}`}
-                      >
+                      <Tabs defaultValue={activeTab} value={activeTab} onValueChange={handleTabChange} className="h-full flex flex-col [&>div]:bg-transparent">
                         <div className="flex justify-center bg-white px-4 pt-3">
                           <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2">
                             <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
@@ -174,7 +131,12 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                         </div>
 
                         <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
-                          <TabContent />
+                          <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
+                            {activeTab === 'regional' && <RegionalTabContent />}
+                          </TabsContent>
+                          <TabsContent value="geoplot" className="h-full m-0 p-4">
+                            {activeTab === 'geoplot' && <GeoPlotTabContent />}
+                          </TabsContent>
                         </div>
                       </Tabs>
                     </div>
