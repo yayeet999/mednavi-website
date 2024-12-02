@@ -23,7 +23,21 @@ export interface Patient {
   primaryLanguage: 'English' | 'Spanish' | 'Polish' | 'Arabic';
 }
 
-// Practice location
+export interface FilterState {
+  age: string[];
+  gender: string[];
+  distance: string[];
+  insuranceType: string[];
+  privateInsurance: string[];
+  status: string[];
+  lastVisit: string[];
+  hygieneDue: string[];
+  isNewPatient: string[];
+  appointmentStatus: string[];
+  familyMembers: string[];
+  primaryLanguage: string[];
+}
+
 export const PRACTICE_LOCATION = {
   lat: 42.0111,
   lng: -87.8406,
@@ -31,7 +45,6 @@ export const PRACTICE_LOCATION = {
   address: "123 Main Street, Park Ridge, IL 60068"
 };
 
-// Helper function to generate random patient data
 function generatePatients(count: number = 300): Patient[] {
   const patients: Patient[] = [];
   const familyIds = new Set<string>();
@@ -91,5 +104,19 @@ function generatePatients(count: number = 300): Patient[] {
   return patients;
 }
 
-// Generate and export the sample dataset
 export const SAMPLE_PATIENT_DATA = generatePatients();
+
+export const FILTER_OPTIONS = {
+  age: ['0-17', '18-35', '36-50', '51-65', '65+'],
+  gender: ['Male', 'Female', 'Other'],
+  distance: ['0-2 miles', '2-5 miles', '5-10 miles', '10+ miles'],
+  insuranceType: ['Public', 'Private', 'Cash'],
+  privateInsurance: ['Humana', 'Delta', 'UHC', 'MetLife', 'Cigna'],
+  status: ['Active', 'Inactive'],
+  lastVisit: ['Last 30 days', 'Last 6 months', 'Last 12 months'],
+  hygieneDue: ['Yes', 'No'],
+  isNewPatient: ['Yes', 'No'],
+  appointmentStatus: ['Scheduled', 'Not Scheduled'],
+  familyMembers: ['Single', '2-3 members', '4+ members'],
+  primaryLanguage: ['English', 'Spanish', 'Polish', 'Arabic']
+};
