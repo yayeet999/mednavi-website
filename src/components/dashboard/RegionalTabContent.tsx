@@ -666,19 +666,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
           >
             <motion.div 
               className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
-              animate={{ 
-                height: 'auto'
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <motion.div 
-                className="relative"
-                layout="position"
-                animate={{
-                  height: selectedSubData ? '42px' : 'auto'
-                }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-              >
+              <div className="relative h-[126px]">
                 <AnimatePresence mode="sync">
                   {getAnalysisOptions(selectedIcon).map((option, index) => (
                     <motion.button
@@ -686,30 +675,34 @@ const RegionalTabContent = forwardRef((props, ref) => {
                       onClick={() => handleSubDataClick(option)}
                       className={
                         `w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
-                        text-left rounded-lg transition-colors duration-200 
+                        text-left rounded-lg transition-colors duration-200 absolute
                         ${selectedSubData === option 
                           ? 'bg-[#052b52] text-white' 
                           : 'bg-white text-gray-600 hover:bg-gray-100'} 
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
                         font-medium`
                       }
-                      layout="position"
                       initial={false}
                       animate={{ 
-                        y: selectedSubData === option ? -(index * 42) : 0,
-                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
-                        scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
+                        y: selectedSubData 
+                          ? (selectedSubData === option ? 0 : 100)
+                          : index * 42,
+                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0
                       }}
                       transition={{
                         duration: 0.3,
                         ease: "easeInOut"
+                      }}
+                      style={{
+                        top: 0,
+                        height: '42px'
                       }}
                     >
                       {option}
                     </motion.button>
                   ))}
                 </AnimatePresence>
-              </motion.div>
+              </div>
 
               <AnimatePresence mode="wait">
                 {selectedSubData && (
@@ -727,7 +720,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
           </motion.div>
         )}
       </AnimatePresence>
-
       <style jsx global>{
         `.gm-style-cc,
         .gmnoprint.gm-style-cc,
@@ -752,5 +744,4 @@ const RegionalTabContent = forwardRef((props, ref) => {
 });
 
 RegionalTabContent.displayName = 'RegionalTabContent';
-
 export default RegionalTabContent;
