@@ -33,20 +33,14 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
       if (!popoverRef.current || !anchorEl) return;
 
       const anchorRect = anchorEl.getBoundingClientRect();
-      const popoverRect = popoverRef.current.getBoundingClientRect();
-      const containerRect = anchorEl.closest('.filter-container')?.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
 
-      if (!containerRect) return;
+      let top = anchorRect.top;
+      let left = anchorRect.right + 15;
 
-      let top = anchorRect.bottom - containerRect.top;
-      let left = anchorRect.left - containerRect.left;
-
-      if (left + popoverRect.width > containerRect.width - 10) {
-        left = containerRect.width - popoverRect.width - 10;
-      }
-
-      if (top + popoverRect.height > containerRect.height - 10) {
-        top = anchorRect.top - containerRect.top - popoverRect.height;
+      // Adjust vertical position if popover would go outside viewport
+      if (top + 300 > viewportHeight) {
+        top = Math.max(viewportHeight - 300, 0);
       }
 
       popoverRef.current.style.top = `${top}px`;
@@ -63,9 +57,19 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
   return (
     <div 
       ref={popoverRef}
-      className="absolute z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px]"
-      style={{ maxHeight: '300px', overflowY: 'auto' }}
+      className="fixed z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px] max-h-[300px] overflow-y-auto"
     >
+      <div 
+        className="absolute left-[-8px] top-[15px]"
+        style={{
+          width: 0,
+          height: 0,
+          borderTop: '8px solid transparent',
+          borderBottom: '8px solid transparent',
+          borderRight: '8px solid white',
+          filter: 'drop-shadow(-2px 0px 2px rgba(0,0,0,0.1))'
+        }}
+      />
       {children}
     </div>
   );
@@ -167,8 +171,8 @@ const StatsHeader: React.FC<{
   return (
     <div className="bg-white rounded-lg shadow-sm p-2 mb-3">
       <div className="flex items-center justify-between mb-1">
-        <div className="text-[10px] font-medium text-gray-700 flex items-center justify-between w-full">
-          <span>Filter Patients</span>
+        <div className="text-[10px] font-medium text-gray-700">Filter Patients</div>
+        <div>
           {activeFiltersCount > 0 && (
             <button
               onClick={onResetFilters}
@@ -257,7 +261,7 @@ const PatientMapFilters: React.FC<{
   const activeFiltersCount = Object.values(filters).flat().length;
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 p-3 rounded-lg filter-container relative">
+    <div className="h-full flex flex-col bg-gray-50 p-3 rounded-lg">
       <StatsHeader
         totalPatients={totalPatients}
         filteredCount={filteredCount}
