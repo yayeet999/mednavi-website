@@ -396,41 +396,38 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="space-y-4 w-full"
+      className="space-y-4 w-full h-[420px] overflow-hidden" // Fixed height container
     >
       {/* Patient Section */}
       {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
-        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+        <div className="h-full">
           <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.5 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
+            className="grid grid-rows-2 gap-2 h-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0, delay: 0.5 }} // Instant render with delay
           >
-            <ProgressCircle
-              percentage={data.patients.activePatients.regional.percentage}
-              total={data.patients.activePatients.regional.total}
-              title="Regional Average"
-              isDesktop={isDesktop}
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.6 }}
-            className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full"
-          >
-            <ProgressCircle
-              percentage={data.patients.activePatients.practice.percentage}
-              total={data.patients.activePatients.practice.total}
-              title="Your Practice"
-              isDesktop={isDesktop}
-            />
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <ProgressCircle
+                percentage={data.patients.activePatients.regional.percentage}
+                total={data.patients.activePatients.regional.total}
+                title="Regional Average"
+                isDesktop={isDesktop}
+              />
+            </div>
+            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+              <ProgressCircle
+                percentage={data.patients.activePatients.practice.percentage}
+                total={data.patients.activePatients.practice.total}
+                title="Your Practice"
+                isDesktop={isDesktop}
+              />
+            </div>
           </motion.div>
         </div>
       )}
+
+      {/* Rest of the sections stay exactly the same, just wrap their grid in the same motion.div pattern */}
 
       {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
         <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
