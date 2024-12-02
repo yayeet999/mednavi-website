@@ -393,14 +393,17 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
   const isDesktop = window.innerWidth >= 768;
 
-  const renderContent = () => {
-    const contentProps = {
-      className: "grid grid-rows-2 gap-2 h-full w-full analysis-grid-content",
-    };
-
-    if (selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %') {
-      return (
-        <div {...contentProps}>
+  return (
+    <motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  transition={{ duration: 0.3, ease: "easeOut" }}
+  className={`space-y-4 w-full`} 
+>
+      {/* Patient Section */}
+      {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
           <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <ProgressCircle
               percentage={data.patients.activePatients.regional.percentage}
@@ -418,12 +421,45 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             />
           </div>
         </div>
-      );
-    }
+      )}
 
-    if (selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure') {
-      return (
-        <div {...contentProps}>
+      {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <AgeDistributionChart
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <AgeDistributionChart
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <AppointmentsByAgeChart
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <AppointmentsByAgeChart
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Procedures Section */}
+      {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
           <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.highestVolume.regional.data}
@@ -441,12 +477,10 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             />
           </div>
         </div>
-      );
-    }
+      )}
 
-    if (selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production') {
-      return (
-        <div {...contentProps}>
+      {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
           <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <LargestProductionChart
               data={data.procedures.largestProduction.regional}
@@ -462,12 +496,10 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             />
           </div>
         </div>
-      );
-    }
+      )}
 
-    if (selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure') {
-      return (
-        <div {...contentProps}>
+      {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
           <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <VolumeLineChart
               data={data.procedures.lowestVolume.regional.data}
@@ -485,12 +517,11 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             />
           </div>
         </div>
-      );
-    }
+      )}
 
-    if (selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production') {
-      return (
-        <div {...contentProps}>
+      {/* Financial Section */}
+      {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2"> 
           <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <MonthlyProductionChart
               data={data.financial.monthlyProduction.regional.breakdown}
@@ -508,12 +539,10 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             />
           </div>
         </div>
-      );
-    }
+      )}
 
-    if (selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private') {
-      return (
-        <div {...contentProps}>
+      {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2"> 
           <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <InsuranceDistributionChart
               data={data.financial.insurance.regional}
@@ -529,12 +558,10 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             />
           </div>
         </div>
-      );
-    }
+      )}
 
-    if (selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %') {
-      return (
-        <div {...contentProps}>
+      {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2"> 
           <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
             <GrowthIndicator
               data={data.financial.growth.regional}
@@ -550,39 +577,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             />
           </div>
         </div>
-      );
-    }
-
-    return null;
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className="analysis-wrapper"
-    >
-      {renderContent()}
-
-      <style jsx>{`
-        .analysis-wrapper {
-          width: 100%;
-          min-height: 280px;
-          position: relative;
-        }
-        .analysis-grid-content {
-          position: relative;
-          padding-top: 0.5rem;
-          min-height: 280px;
-          height: 100%;
-        }
-        :global(.analysis-grid-content > div) {
-          min-height: 0;
-          height: auto;
-        }
-      `}</style>
+      )}
     </motion.div>
   );
 };
