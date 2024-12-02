@@ -6,31 +6,26 @@ interface LocationMapProps {
   filteredPatients: Patient[];
 }
 
-// Define the zipcode regions with their properties
 const ZIPCODE_REGIONS = [
   { 
     id: "60714", 
     name: "Niles", 
-    color: "#1E40AF", // darkest blue
-    center: { lat: 42.0294, lng: -87.7925 }
+    color: "#2563EB",
   },
   { 
     id: "60631", 
     name: "Edison Park", 
-    color: "#2563EB", // slightly lighter blue
-    center: { lat: 42.0072, lng: -87.8139 }
+    color: "#3B82F6",
   },
   { 
     id: "60656", 
     name: "Norwood Park", 
-    color: "#3B82F6", // medium blue
-    center: { lat: 41.9856, lng: -87.8087 }
+    color: "#60A5FA",
   },
   { 
     id: "60068", 
     name: "Park Ridge", 
-    color: "#60A5FA", // lightest blue
-    center: { lat: 42.0111, lng: -87.8406 }
+    color: "#93C5FD",
   }
 ];
 
@@ -143,7 +138,7 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 6,
-          fillColor: patient.status === 'Active' ? '#3B82F6' : '#94A3B8',
+          fillColor: patient.status === 'Active' ? '#FB923C' : '#FDBA74',
           fillOpacity: 0.7,
           strokeColor: '#FFFFFF',
           strokeWeight: 1,
@@ -176,11 +171,18 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
         const zipCode = feature.getProperty('ZCTA5CE20');
         const region = ZIPCODE_REGIONS.find(r => r.id === zipCode);
         
+        if (region) {
+          return {
+            fillColor: region.color,
+            fillOpacity: 0.15,
+            strokeWeight: 0,
+            strokeColor: 'transparent',
+            visible: true
+          };
+        }
+        
         return {
-          fillColor: region ? region.color : 'transparent',
-          fillOpacity: 0.2,
-          strokeWeight: 0,
-          strokeColor: 'transparent'
+          visible: false
         };
       });
 
@@ -191,20 +193,35 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
 
   const createLegend = useCallback((map: google.maps.Map) => {
     const legend = document.createElement('div');
-    legend.className = 'bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm';
-    legend.style.margin = '10px';
-    legend.style.fontSize = '12px';
+    legend.className = 'bg-white/90 backdrop-blur-sm rounded-lg shadow-sm';
+    
+    if (window.innerWidth < 768) {
+      legend.style.padding = '4px';
+      legend.style.margin = '4px';
+    } else {
+      legend.style.padding = '8px';
+      legend.style.margin = '10px';
+    }
 
     ZIPCODE_REGIONS.forEach(region => {
       const item = document.createElement('div');
-      item.className = 'flex items-center mb-2 last:mb-0';
+      item.className = 'flex items-center mb-1 last:mb-0';
 
       const color = document.createElement('div');
-      color.className = 'w-4 h-4 rounded mr-2';
+      if (window.innerWidth < 768) {
+        color.className = 'w-2 h-2 rounded-sm mr-1';
+      } else {
+        color.className = 'w-3 h-3 rounded mr-2';
+      }
       color.style.backgroundColor = region.color;
 
       const text = document.createElement('span');
       text.className = 'text-gray-700';
+      if (window.innerWidth < 768) {
+        text.style.fontSize = '8px';
+      } else {
+        text.style.fontSize = '11px';
+      }
       text.textContent = `${region.id} - ${region.name}`;
 
       item.appendChild(color);
