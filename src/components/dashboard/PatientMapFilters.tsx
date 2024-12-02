@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import { Filter, X, Users, Activity, MapPin, Calendar, FileText, Heart, Languages } from 'lucide-react';
+import React, { useState, useCallback, useRef } from 'react';
+import { Filter, Activity, Users, MapPin, Calendar, FileText, Heart, Languages } from 'lucide-react';
+import { Popover } from '@/components/ui/popover';
 import { FilterState, FILTER_OPTIONS } from '../../types/patientData';
 
 interface FilterCardProps {
@@ -20,10 +21,12 @@ const FilterCard: React.FC<FilterCardProps> = ({
   onFilterChange 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-2">
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between"
       >
@@ -44,12 +47,21 @@ const FilterCard: React.FC<FilterCardProps> = ({
         />
       </button>
 
-      {isOpen && (
-        <div className="mt-2 grid grid-cols-2 gap-1">
+      <Popover
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        anchor={buttonRef.current}
+        align="start"
+        className="z-50 bg-white rounded-lg shadow-lg p-2 min-w-[200px]"
+      >
+        <div className="grid grid-cols-2 gap-1">
           {options.map(option => (
             <button
               key={option}
-              onClick={() => onFilterChange(category, option)}
+              onClick={() => {
+                onFilterChange(category, option);
+                setIsOpen(false);
+              }}
               className={`px-2 py-1 text-[11px] rounded-md transition-colors ${
                 selectedFilters.includes(option)
                   ? 'bg-blue-500 text-white'
@@ -60,34 +72,41 @@ const FilterCard: React.FC<FilterCardProps> = ({
             </button>
           ))}
         </div>
-      )}
+      </Popover>
     </div>
   );
 };
 
-const StatPanel: React.FC<{ 
+const StatsHeader: React.FC<{
   totalPatients: number;
   filteredCount: number;
-  filters: FilterState;
-}> = ({ totalPatients, filteredCount, filters }) => {
+  onResetFilters: () => void;
+  activeFiltersCount: number;
+}> = ({ 
+  totalPatients, 
+  filteredCount, 
+  onResetFilters,
+  activeFiltersCount 
+}) => {
   const percentage = Math.round((filteredCount / totalPatients) * 100);
-  
+
   return (
-    <div className="bg-white rounded-lg shadow-sm p-3 mb-3">
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm font-medium text-gray-900">Patient Overview</div>
-        <div className="text-xs text-blue-600 font-medium">{percentage}% of total</div>
+    <div className="bg-white rounded-lg shadow-sm p-2 mb-3">
+      <div className="flex items-center justify-between mb-1">
+        <div className="text-xs font-medium text-gray-700">Filter Patients</div>
+        {activeFiltersCount > 0 && (
+          <button
+            onClick={onResetFilters}
+            className="text-[11px] text-blue-500 hover:text-blue-600"
+          >
+            Reset All
+          </button>
+        )}
       </div>
-      
-      <div className="grid grid-cols-2 gap-2 text-[11px]">
-        <div className="bg-gray-50 rounded-md p-2">
-          <div className="text-gray-500">Total Shown</div>
-          <div className="font-medium text-gray-900">{filteredCount.toLocaleString()}</div>
-        </div>
-        <div className="bg-gray-50 rounded-md p-2">
-          <div className="text-gray-500">Database Total</div>
-          <div className="font-medium text-gray-900">{totalPatients.toLocaleString()}</div>
-        </div>
+      <div className="flex items-center justify-between text-[11px]">
+        <span className="text-gray-600">Total Patients: <span className="font-medium text-gray-900">{totalPatients.toLocaleString()}</span></span>
+        <span className="text-gray-600">Filtered: <span className="font-medium text-gray-900">{filteredCount.toLocaleString()}</span></span>
+        <span className="text-gray-600">Showing: <span className="font-medium text-blue-600">{percentage}%</span></span>
       </div>
     </div>
   );
@@ -137,45 +156,15 @@ const PatientMapFilters: React.FC<{
     });
   }, [onFiltersChange]);
 
-  const resetFilters = useCallback(() => {
-    setFilters({
-      age: [],
-      gender: [],
-      distance: [],
-      insuranceType: [],
-      privateInsurance: [],
-      status: [],
-      lastVisit: [],
-      hygieneDue: [],
-      isNewPatient: [],
-      appointmentStatus: [],
-      familyMembers: [],
-      primaryLanguage: []
-    });
-    onResetFilters();
-  }, [onResetFilters]);
-
   const activeFiltersCount = Object.values(filters).flat().length;
 
   return (
     <div className="h-full flex flex-col bg-gray-50 p-3 rounded-lg">
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm font-medium text-gray-900">Filter Patients</div>
-        {activeFiltersCount > 0 && (
-          <button
-            onClick={resetFilters}
-            className="flex items-center text-xs text-blue-500 hover:text-blue-600"
-          >
-            <X size={14} className="mr-1" />
-            Reset All
-          </button>
-        )}
-      </div>
-
-      <StatPanel 
+      <StatsHeader
         totalPatients={totalPatients}
         filteredCount={filteredCount}
-        filters={filters}
+        onResetFilters={onResetFilters}
+        activeFiltersCount={activeFiltersCount}
       />
 
       <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
