@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Home, BarChart2, Map, Bot, MapPin, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RegionalTabContent from './RegionalTabContent';
+import GeoPlotTabContent from './GeoPlotTabContent';
 
 interface DashboardContainer3Props {
   onNavigateToBot?: () => void;
@@ -127,11 +128,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                           </TabsContent>
 
                           <TabsContent value="geoplot" className="h-full m-0 p-4">
-                            <div className="w-full h-full bg-white rounded-lg p-4">
-                              <div className="w-full h-full flex items-center justify-center text-gray-500">
-                                GeoPlot visualization coming soon
-                              </div>
-                            </div>
+                            <GeoPlotTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
                           </TabsContent>
                         </div>
                       </Tabs>
