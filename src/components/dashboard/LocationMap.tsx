@@ -10,17 +10,17 @@ const ZIPCODE_REGIONS = [
   { 
     id: "60714", 
     name: "Niles", 
-    color: "#2563EB",
+    color: "#1E40AF", // Darker blue
   },
   { 
     id: "60631", 
     name: "Edison Park", 
-    color: "#3B82F6",
+    color: "#2563EB", // Darker blue
   },
   { 
     id: "60656", 
     name: "Norwood Park", 
-    color: "#60A5FA",
+    color: "#60A5FA", // Slightly darker blue
   },
   { 
     id: "60068", 
@@ -117,7 +117,7 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
     const infoWindow = new google.maps.InfoWindow({
       content: `
         <div class="p-2">
-          <div class="font-semibold text-gray-900">${PRACTICE_LOCATION.name}</div>
+          <div class="font-semibold text-gray-900">Your Dental Practice Location</div>
           <div class="text-sm text-gray-600">${PRACTICE_LOCATION.address}</div>
         </div>
       `
@@ -174,7 +174,7 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
         if (region) {
           return {
             fillColor: region.color,
-            fillOpacity: 0.15,
+            fillOpacity: 0.3,
             strokeWeight: 0,
             strokeColor: 'transparent',
             visible: true
