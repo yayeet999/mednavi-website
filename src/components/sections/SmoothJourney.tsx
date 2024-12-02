@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import DashboardContainer from '@/components/dashboard/DashboardContainer';
 import DashboardContainer2 from '@/components/dashboard/DashboardContainer2';
 import DashboardContainer3 from '@/components/dashboard/DashboardContainer3';
+import DashboardContainer4 from '@/components/dashboard/DashboardContainer4';
 
 const stations = [
   { 
@@ -252,6 +253,10 @@ const SmoothJourney: React.FC = () => {
     navigate(1);
   }, [navigate]);
 
+  const navigateToLocation = useCallback(() => {
+    navigate(3);
+  }, [navigate]);
+
   useEffect(() => {
     return () => {
       if (scrollLockTimeoutRef.current) {
@@ -268,7 +273,7 @@ const SmoothJourney: React.FC = () => {
       if (currentIndex >= 1 && currentIndex <= 3) {
         document.body.style.overflow = 'hidden';
         console.log('Full page scroll locked');
-      } else if (currentIndex === 0 || currentIndex === 4) {
+      } else if (currentIndex === 0 || currentIndex === 3) {
         document.body.style.overflow = 'hidden';
         console.log('Full page scroll temporarily locked for 1 second');
 
@@ -342,26 +347,26 @@ const SmoothJourney: React.FC = () => {
           })}
 
           {stations.map((station, i) => (
-  <g key={i}>
-    <circle
-      cx={station.x}
-      cy={station.y}
-      r="12"
-      fill="#3B82F6"
-      className="opacity-30"
-    />
-    <circle
-      cx={station.x}
-      cy={station.y}
-      r="6"
-      fill="#3B82F6"
-      className="opacity-70"
-    />
-  </g>
-))}
-</svg>
+            <g key={i}>
+              <circle
+                cx={station.x}
+                cy={station.y}
+                r="12"
+                fill="#3B82F6"
+                className="opacity-30"
+              />
+              <circle
+                cx={station.x}
+                cy={station.y}
+                r="6"
+                fill="#3B82F6"
+                className="opacity-70"
+              />
+            </g>
+          ))}
+        </svg>
 
-{stations.map((station, i) => (
+        {stations.map((station, i) => (
   <div
     key={station.id}
     className={`absolute w-[360px] md:w-[840px] h-[340px] md:h-[480px] transition-transform duration-1000 ease-out will-change-transform
@@ -384,9 +389,15 @@ const SmoothJourney: React.FC = () => {
           <DashboardContainer3 
             onNavigateToHome={navigateToHome}
             onNavigateToPractice={navigateToPractice}
+            onNavigateToLocation={navigateToLocation}
+            onNavigateToBot={() => navigate(3)}
           />
         ) : (
-          renderKPIBox(station.kpis)
+          <DashboardContainer4 
+            onNavigateToHome={navigateToHome}
+            onNavigateToPractice={navigateToPractice}
+            onNavigateToMap={() => navigate(2)}
+          />
         )}
       </div>
     </div>
