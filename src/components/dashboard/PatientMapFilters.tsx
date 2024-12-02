@@ -34,21 +34,20 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
 
       const anchorRect = anchorEl.getBoundingClientRect();
       const popoverRect = popoverRef.current.getBoundingClientRect();
-      const parentRect = anchorEl.closest('.custom-scrollbar')?.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
 
-      if (!parentRect) return;
-
-      let top = anchorRect.bottom - parentRect.top;
-      let left = anchorRect.left - parentRect.left;
+      let top = anchorRect.bottom + window.scrollY + 5;
+      let left = anchorRect.left + window.scrollX;
 
       // Check if popover would go below viewport
-      if (top + popoverRect.height > parentRect.height) {
-        top = anchorRect.top - parentRect.top - popoverRect.height;
+      if (top + popoverRect.height > viewportHeight) {
+        top = anchorRect.top - popoverRect.height - 5;
       }
 
       // Check if popover would go outside right edge
-      if (left + popoverRect.width > parentRect.width) {
-        left = parentRect.width - popoverRect.width;
+      if (left + popoverRect.width > viewportWidth) {
+        left = viewportWidth - popoverRect.width - 10;
       }
 
       popoverRef.current.style.top = `${top}px`;
@@ -65,8 +64,7 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
   return (
     <div 
       ref={popoverRef}
-      className="absolute z-50 bg-white rounded-lg shadow-lg p-2 min-w-[200px]"
-      style={{ position: 'absolute' }}
+      className="fixed z-[9999] bg-white rounded-lg shadow-lg p-2 min-w-[240px]"
     >
       {children}
     </div>
@@ -80,6 +78,7 @@ interface FilterCardProps {
   options: string[];
   selectedFilters: string[];
   onFilterChange: (category: keyof FilterState, value: string) => void;
+  isReset: boolean;
 }
 
 const FilterCard: React.FC<FilterCardProps> = ({ 
@@ -88,10 +87,17 @@ const FilterCard: React.FC<FilterCardProps> = ({
   category, 
   options, 
   selectedFilters, 
-  onFilterChange 
+  onFilterChange,
+  isReset
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isReset) {
+      setIsOpen(false);
+    }
+  }, [isReset]);
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-2 relative">
@@ -106,7 +112,7 @@ const FilterCard: React.FC<FilterCardProps> = ({
           </div>
           <div className="text-left">
             <div className="text-xs font-medium text-gray-900">{title}</div>
-            {selectedFilters.length > 0 && (
+            {selectedFilters.length > 0 && !isReset && (
               <div className="text-[10px] text-blue-600">{selectedFilters.length} selected</div>
             )}
           </div>
@@ -122,7 +128,7 @@ const FilterCard: React.FC<FilterCardProps> = ({
         onClose={() => setIsOpen(false)}
         anchorEl={buttonRef.current}
       >
-        <div className="grid grid-cols-2 gap-1">
+        <div className="grid grid-cols-2 gap-1 max-h-[300px] overflow-y-auto">
           {options.map(option => (
             <button
               key={option}
@@ -161,20 +167,20 @@ const StatsHeader: React.FC<{
   return (
     <div className="bg-white rounded-lg shadow-sm p-2 mb-3">
       <div className="flex items-center justify-between mb-1">
-        <div className="text-xs font-medium text-gray-700">Filter Patients</div>
+        <div className="text-[10px] font-medium text-gray-700">Filter Patients</div>
         {activeFiltersCount > 0 && (
           <button
             onClick={onResetFilters}
-            className="text-[11px] text-blue-500 hover:text-blue-600"
+            className="text-[9px] text-blue-500 hover:text-blue-600"
           >
             Reset All
           </button>
         )}
       </div>
       <div className="flex items-center justify-between text-[11px]">
-        <span className="text-gray-600">Total Patients: <span className="font-medium text-gray-900">{totalPatients.toLocaleString()}</span></span>
-        <span className="text-gray-600">Filtered: <span className="font-medium text-gray-900">{filteredCount.toLocaleString()}</span></span>
-        <span className="text-gray-600">Showing: <span className="font-medium text-blue-600">{percentage}%</span></span>
+        <span className="text-gray-600">Total: <span className="font-medium text-gray-900 text-[13px]">{totalPatients.toLocaleString()}</span></span>
+        <span className="text-gray-600">Filtered: <span className="font-medium text-gray-900 text-[13px]">{filteredCount.toLocaleString()}</span></span>
+        <span className="text-gray-600">Showing: <span className="font-medium text-blue-600 text-[13px]">{percentage}%</span></span>
       </div>
     </div>
   );
@@ -206,7 +212,10 @@ const PatientMapFilters: React.FC<{
     primaryLanguage: []
   });
 
+  const [isReset, setIsReset] = useState(false);
+
   const handleFilterChange = useCallback((category: keyof FilterState, value: string) => {
+    setIsReset(false);
     setFilters(prev => {
       const newFilters = { 
         ...prev,
@@ -224,6 +233,25 @@ const PatientMapFilters: React.FC<{
     });
   }, [onFiltersChange]);
 
+  const handleResetFilters = useCallback(() => {
+    setIsReset(true);
+    setFilters({
+      age: [],
+      gender: [],
+      distance: [],
+      insuranceType: [],
+      privateInsurance: [],
+      status: [],
+      lastVisit: [],
+      hygieneDue: [],
+      isNewPatient: [],
+      appointmentStatus: [],
+      familyMembers: [],
+      primaryLanguage: []
+    });
+    onResetFilters();
+  }, [onResetFilters]);
+
   const activeFiltersCount = Object.values(filters).flat().length;
 
   return (
@@ -231,68 +259,60 @@ const PatientMapFilters: React.FC<{
       <StatsHeader
         totalPatients={totalPatients}
         filteredCount={filteredCount}
-        onResetFilters={onResetFilters}
+        onResetFilters={handleResetFilters}
         activeFiltersCount={activeFiltersCount}
       />
 
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar relative">
-        <div className="grid grid-cols-2 gap-2">
-          <FilterCard
-            title="Patient Status"
-            icon={<Activity size={16} className="text-blue-600" />}
-            category="status"
-            options={FILTER_OPTIONS.status}
-            selectedFilters={filters.status}
-            onFilterChange={handleFilterChange}
-          />
-          <FilterCard
-            title="Insurance"
-            icon={<FileText size={16} className="text-blue-600" />}
-            category="insuranceType"
-            options={FILTER_OPTIONS.insuranceType}
-            selectedFilters={filters.insuranceType}
-            onFilterChange={handleFilterChange}
-          />
-          <FilterCard
-            title="Distance"
-            icon={<MapPin size={16} className="text-blue-600" />}
-            category="distance"
-            options={FILTER_OPTIONS.distance}
-            selectedFilters={filters.distance}
-            onFilterChange={handleFilterChange}
-          />
-          <FilterCard
-            title="Demographics"
-            icon={<Users size={16} className="text-blue-600" />}
-            category="age"
-            options={FILTER_OPTIONS.age}
-            selectedFilters={filters.age}
-            onFilterChange={handleFilterChange}
-          />
-          <FilterCard
-            title="Last Visit"
-            icon={<Calendar size={16} className="text-blue-600" />}
-            category="lastVisit"
-            options={FILTER_OPTIONS.lastVisit}
-            selectedFilters={filters.lastVisit}
-            onFilterChange={handleFilterChange}
-          />
-          <FilterCard
-            title="Hygiene"
-            icon={<Heart size={16} className="text-blue-600" />}
-            category="hygieneDue"
-            options={FILTER_OPTIONS.hygieneDue}
-            selectedFilters={filters.hygieneDue}
-            onFilterChange={handleFilterChange}
-          />
-          <FilterCard
-            title="Language"
-            icon={<Languages size={16} className="text-blue-600" />}
-            category="primaryLanguage"
-            options={FILTER_OPTIONS.primaryLanguage}
-            selectedFilters={filters.primaryLanguage}
-            onFilterChange={handleFilterChange}
-          />
+      <div className="flex-1">
+        <div className="flex flex-col space-y-2">
+          {[
+            {
+              title: "Patient Status",
+              icon: <Activity size={16} className="text-blue-600" />,
+              category: "status" as keyof FilterState
+            },
+            {
+              title: "Insurance",
+              icon: <FileText size={16} className="text-blue-600" />,
+              category: "insuranceType" as keyof FilterState
+            },
+            {
+              title: "Distance",
+              icon: <MapPin size={16} className="text-blue-600" />,
+              category: "distance" as keyof FilterState
+            },
+            {
+              title: "Demographics",
+              icon: <Users size={16} className="text-blue-600" />,
+              category: "age" as keyof FilterState
+            },
+            {
+              title: "Last Visit",
+              icon: <Calendar size={16} className="text-blue-600" />,
+              category: "lastVisit" as keyof FilterState
+            },
+            {
+              title: "Hygiene",
+              icon: <Heart size={16} className="text-blue-600" />,
+              category: "hygieneDue" as keyof FilterState
+            },
+            {
+              title: "Language",
+              icon: <Languages size={16} className="text-blue-600" />,
+              category: "primaryLanguage" as keyof FilterState
+            }
+          ].map((filter) => (
+            <FilterCard
+              key={filter.category}
+              title={filter.title}
+              icon={filter.icon}
+              category={filter.category}
+              options={FILTER_OPTIONS[filter.category]}
+              selectedFilters={filters[filter.category]}
+              onFilterChange={handleFilterChange}
+              isReset={isReset}
+            />
+          ))}
           {filters.insuranceType.includes('Private') && (
             <FilterCard
               title="Insurance Plan"
@@ -301,27 +321,11 @@ const PatientMapFilters: React.FC<{
               options={FILTER_OPTIONS.privateInsurance}
               selectedFilters={filters.privateInsurance}
               onFilterChange={handleFilterChange}
+              isReset={isReset}
             />
           )}
         </div>
       </div>
-
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f5f9;
-          border-radius: 2px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 2px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-      `}</style>
     </div>
   );
 };
