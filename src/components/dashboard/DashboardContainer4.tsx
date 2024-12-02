@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Home, BarChart2, Map, MapPin, Bot } from 'lucide-react';
+import LocationMap from './LocationMap';
 
 interface DashboardContainer4Props {
   onNavigateToHome?: () => void;
@@ -74,27 +75,17 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
           </div>
 
           <div className="flex-1 p-2 md:p-4">
-            <div className="bg-gray-100 rounded-lg h-full">
-              <div className="flex items-center justify-center h-full text-gray-500">
-                Content coming soon
+            <div className="flex h-full gap-4">
+              <div className="flex-1 bg-gray-100 rounded-lg overflow-hidden">
+                <LocationMap />
+              </div>
+              <div className="w-[30%] bg-gray-100 rounded-lg overflow-hidden">
+                {/* Empty container for future filter system */}
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-            transform: translateY(8px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 };
