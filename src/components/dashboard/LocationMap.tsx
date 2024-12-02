@@ -73,6 +73,13 @@ const LocationMap: React.FC<LocationMapProps> = () => {
     "60068": "#64B5F6"  // Darkest blue
   };
 
+  const zipCodeNames = {
+    "60714": "Niles",
+    "60631": "Edison Park",
+    "60656": "Norwood Park",
+    "60068": "Park Ridge"
+  };
+
   const onMapLoad = async (map: google.maps.Map) => {
     try {
       const dataLayer = new google.maps.Data({ map });
@@ -142,7 +149,7 @@ const LocationMap: React.FC<LocationMapProps> = () => {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="relative w-full h-full">
       <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
         <GoogleMap
           mapContainerClassName="w-full h-full"
@@ -152,6 +159,22 @@ const LocationMap: React.FC<LocationMapProps> = () => {
           onLoad={onMapLoad}
         />
       </LoadScript>
+      
+      {/* Legend */}
+      <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm p-2 md:p-3">
+        <div className="text-[10px] md:text-xs font-medium text-gray-700 mb-1 md:mb-2">Zip Codes</div>
+        {Object.entries(zipCodeColors).map(([zipCode, color]) => (
+          <div key={zipCode} className="flex items-center space-x-2 mb-1">
+            <div 
+              className="w-3 h-3 md:w-4 md:h-4 rounded"
+              style={{ backgroundColor: color }}
+            />
+            <span className="text-[8px] md:text-xs text-gray-600">
+              {zipCodeNames[zipCode as keyof typeof zipCodeNames]}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
