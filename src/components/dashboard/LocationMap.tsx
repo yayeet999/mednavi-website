@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { GoogleMap, LoadScript, MarkerClusterer, Marker } from '@react-google-maps/api';
-import { PRACTICE_LOCATION, Patient } from '../../types/patientData';
+import { GoogleMap, LoadScript, MarkerClusterer } from '@react-google-maps/api';
+import { SAMPLE_PATIENT_DATA, PRACTICE_LOCATION, Patient } from '../../types/patientData';
 
 interface LocationMapProps {
   filteredPatients: Patient[];
@@ -9,9 +9,9 @@ interface LocationMapProps {
 const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
-  const practiceMarkerRef = useRef<google.maps.Marker | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedZip, setSelectedZip] = useState<string | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const practiceMarkerRef = useRef<google.maps.Marker | null>(null);
 
   const mapOptions = {
     styles: [
@@ -67,6 +67,11 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
     minZoom: 8
   };
 
+  const clearMarkers = useCallback(() => {
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+  }, []);
+
   const createPracticeMarker = useCallback((map: google.maps.Map) => {
     if (practiceMarkerRef.current) {
       practiceMarkerRef.current.setMap(null);
@@ -101,6 +106,23 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
     });
   }, []);
 
+  const createPatientMarkers = useCallback((map: google.maps.Map) => {
+    return filteredPatients.map(patient => {
+      return new google.maps.Marker({
+        position: patient.location,
+        map,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 6,
+          fillColor: patient.status === 'Active' ? '#3B82F6' : '#94A3B8',
+          fillOpacity: 0.7,
+          strokeColor: '#FFFFFF',
+          strokeWeight: 1,
+        }
+      });
+    });
+  }, [filteredPatients]);
+
   const onMapLoad = useCallback(async (map: google.maps.Map) => {
     setMap(map);
     setIsLoading(true);
@@ -115,45 +137,24 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
       const geoJson = await response.json();
       dataLayer.addGeoJson(geoJson);
 
-      // Set default styling for all zip codes
-      dataLayer.setStyle({
+      dataLayer.setStyle(feature => ({
         fillColor: '#2563EB',
         fillOpacity: 0.1,
         strokeColor: '#1E40AF',
-        strokeWeight: 1.5
-      });
+        strokeWeight: 1.5,
+        visible: true,
+        zIndex: 1
+      }));
 
       dataLayer.addListener('mouseover', (event: google.maps.Data.MouseEvent) => {
-        const zipCode = event.feature.getProperty('ZCTA5CE20');
-        if (zipCode !== selectedZip) {
-          dataLayer.overrideStyle(event.feature, {
-            fillColor: '#3B82F6',
-            fillOpacity: 0.3,
-            strokeColor: '#1E40AF',
-            strokeWeight: 2
-          });
-        }
+        dataLayer.overrideStyle(event.feature, {
+          fillOpacity: 0.3,
+          strokeWeight: 2
+        });
       });
 
       dataLayer.addListener('mouseout', (event: google.maps.Data.MouseEvent) => {
-        const zipCode = event.feature.getProperty('ZCTA5CE20');
-        if (zipCode !== selectedZip) {
-          dataLayer.revertStyle(event.feature);
-        }
-      });
-
-      dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
-        const zipCode = event.feature.getProperty('ZCTA5CE20');
-        setSelectedZip(zipCode);
-        
-        // Style the selected zip code
-        dataLayer.revertStyle();
-        dataLayer.overrideStyle(event.feature, {
-          fillColor: '#1E40AF',
-          fillOpacity: 0.3,
-          strokeColor: '#1E40AF',
-          strokeWeight: 2.5
-        });
+        dataLayer.revertStyle(event.feature);
       });
 
       createPracticeMarker(map);
@@ -164,24 +165,51 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
       filteredPatients.forEach(patient => bounds.extend(patient.location));
       map.fitBounds(bounds);
 
+      // Create patient markers with clustering
+      const markers = createPatientMarkers(map);
+      markersRef.current = markers;
+
+      new MarkerClusterer({
+        map,
+        markers,
+        algorithm: new google.maps.MarkerClustererAlgorithm({
+          maxZoom: 15,
+          gridSize: 50
+        }),
+        renderer: {
+          render: ({ count, position }) => {
+            return new google.maps.Marker({
+              position,
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 20,
+                fillColor: '#2563EB',
+                fillOpacity: 0.9,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 2,
+              },
+              label: {
+                text: String(count),
+                color: '#FFFFFF',
+                fontSize: '12px',
+                fontWeight: 'bold'
+              },
+              zIndex: 999
+            });
+          }
+        }
+      });
+
     } catch (error) {
       console.error('Error loading map data:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [createPracticeMarker, filteredPatients, selectedZip]);
-
-  useEffect(() => {
-    if (map) {
-      const bounds = new google.maps.LatLngBounds();
-      bounds.extend(PRACTICE_LOCATION);
-      filteredPatients.forEach(patient => bounds.extend(patient.location));
-      map.fitBounds(bounds);
-    }
-  }, [map, filteredPatients]);
+  }, [createPracticeMarker, createPatientMarkers, filteredPatients]);
 
   useEffect(() => {
     return () => {
+      clearMarkers();
       if (practiceMarkerRef.current) {
         practiceMarkerRef.current.setMap(null);
       }
@@ -189,10 +217,10 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
         zipDataLayer.setMap(null);
       }
     };
-  }, [zipDataLayer]);
+  }, [clearMarkers, zipDataLayer]);
 
   return (
-    <div className="w-full h-full relative">
+    <div className="relative w-full h-full">
       <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
         <GoogleMap
           mapContainerClassName="w-full h-full"
@@ -200,52 +228,28 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
           zoom={12}
           options={mapOptions}
           onLoad={onMapLoad}
-        >
-          <MarkerClusterer
-            averageCenter
-            enableRetinaIcons
-            gridSize={50}
-            maxZoom={15}
-            minimumClusterSize={2}
-          >
-            {(clusterer) => (
-              <>
-                {filteredPatients.map((patient) => (
-                  <Marker
-                    key={patient.id}
-                    position={patient.location}
-                    clusterer={clusterer}
-                    icon={{
-                      path: google.maps.SymbolPath.CIRCLE,
-                      scale: 6,
-                      fillColor: patient.status === 'Active' ? '#3B82F6' : '#94A3B8',
-                      fillOpacity: 0.7,
-                      strokeColor: '#FFFFFF',
-                      strokeWeight: 1,
-                    }}
-                  />
-                ))}
-              </>
-            )}
-          </MarkerClusterer>
-        </GoogleMap>
+        />
       </LoadScript>
 
       {/* Legend */}
-      <div className="absolute bottom-4 right-4 bg-white p-3 rounded-lg shadow-md text-sm">
+      <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-md text-xs md:text-sm">
         <h4 className="font-semibold mb-2">Map Legend</h4>
         <div className="space-y-2">
-          <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-[#3B82F6] mr-2"></div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-[#3B82F6]"></div>
             <span>Active Patients</span>
           </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-[#94A3B8] mr-2"></div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-[#94A3B8]"></div>
             <span>Inactive Patients</span>
           </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-[#1E40AF] mr-2"></div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-[#1E40AF]"></div>
             <span>Practice Location</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 md:w-4 md:h-4 rounded border border-[#1E40AF] bg-[#2563EB]/10"></div>
+            <span>Service Area</span>
           </div>
         </div>
       </div>
