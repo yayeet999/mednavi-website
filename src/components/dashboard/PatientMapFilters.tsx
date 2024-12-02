@@ -9,17 +9,12 @@ interface PopoverProps {
   anchorEl: HTMLElement | null;
 }
 
-const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }) => {
+const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children }) => {
   const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(event.target as Node) &&
-        anchorEl &&
-        !anchorEl.contains(event.target as Node)
-      ) {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
@@ -28,51 +23,14 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isOpen, onClose, anchorEl]);
-
-  useEffect(() => {
-    if (!isOpen || !popoverRef.current || !anchorEl) return;
-
-    const updatePosition = () => {
-      if (!popoverRef.current || !anchorEl) return;
-
-      // Get the anchor element's position
-      const anchorRect = anchorEl.getBoundingClientRect();
-      
-      // Find the filter container (parent with rounded corners)
-      const filterContainer = anchorEl.closest('.rounded-lg');
-      const containerRect = filterContainer?.getBoundingClientRect();
-
-      if (!containerRect) return;
-
-      // Calculate positions
-      const left = containerRect.right + 8; // 8px gap from container
-      const top = anchorRect.top + window.scrollY;
-
-      // Center the popover vertically with the filter button
-      const verticalCenter = top + (anchorRect.height / 2);
-      const popoverHeight = popoverRef.current.offsetHeight;
-      const finalTop = verticalCenter - (popoverHeight / 2);
-
-      // Apply positions
-      popoverRef.current.style.left = `${left}px`;
-      popoverRef.current.style.top = `${finalTop}px`;
-    };
-
-    // Initial position
-    updatePosition();
-
-    // Update position on resize
-    window.addEventListener('resize', updatePosition);
-    return () => window.removeEventListener('resize', updatePosition);
-  }, [isOpen, anchorEl]);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
     <div
       ref={popoverRef}
-      className="fixed z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px] max-h-[300px] overflow-y-auto"
+      className="absolute right-0 top-0 translate-x-[calc(100%+8px)] z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px] max-h-[300px] overflow-y-auto"
     >
       <div
         className="absolute left-[-6px] top-[50%] transform -translate-y-1/2"
