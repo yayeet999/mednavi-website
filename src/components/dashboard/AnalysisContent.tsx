@@ -84,6 +84,7 @@ const InsuranceDistributionChart: React.FC<{
 
   return (
     <div className="flex flex-col items-center w-full h-full">
+      {/* Chart at top */}
       <div className="h-[70px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -110,8 +111,10 @@ const InsuranceDistributionChart: React.FC<{
         </ResponsiveContainer>
       </div>
 
+      {/* Title text centered below with reduced gap */}
       <p className="text-[12px] text-gray-600 font-medium -mt-2">{title}</p>
 
+      {/* Legend in one straight line */}
       <div className="flex justify-center items-center gap-2 mt-1">
         {formattedData.map((item) => (
           <div key={item.name} className="flex items-center gap-1">
@@ -284,6 +287,94 @@ const LargestProductionChart: React.FC<{
   );
 };
 
+const AgeDistributionChart: React.FC<{
+  title: string;
+  isDesktop: boolean;
+}> = ({ title, isDesktop }) => {
+  const chartData = [
+    { age: '0-18', value: 25 },
+    { age: '19-35', value: 45 },
+    { age: '36-50', value: 30 }
+  ];
+
+  return (
+    <div className="flex flex-col items-center w-full h-full">
+      <div className="h-[90px] w-[140%] pt-2"> 
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart 
+            data={chartData}
+            margin={{ right: 45 }}
+            barGap={15}  // Added gap between bars
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+            <XAxis 
+              dataKey="age" 
+              tick={{ fontSize: 10 }}
+              stroke="#64748b"
+            />
+            <YAxis 
+              tick={{ fontSize: 10 }}
+              stroke="#64748b"
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar 
+              dataKey="value" 
+              fill="#1E40AF"
+              radius={[4, 4, 0, 0]}
+              barSize={30}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <p className="text-[12px] text-gray-600 font-medium -mt-1.5">{title}</p>
+    </div>
+  );
+};
+
+const AppointmentsByAgeChart: React.FC<{
+  title: string;
+  isDesktop: boolean;
+}> = ({ title, isDesktop }) => {
+  const chartData = [
+    { ageGroup: '0-18', procedures: 35 },
+    { ageGroup: '19-35', procedures: 45 },
+    { ageGroup: '36-50', procedures: 20 }
+  ];
+
+  return (
+    <div className="flex flex-col items-center w-full h-full">
+      <div className="h-[90px] w-[140%] pt-2">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart 
+            data={chartData}
+            margin={{ right: 45 }}
+            barGap={15}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+            <XAxis 
+              dataKey="ageGroup" 
+              tick={{ fontSize: 10 }}
+              stroke="#64748b"
+            />
+            <YAxis 
+              tick={{ fontSize: 10 }}
+              stroke="#64748b"
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar 
+              dataKey="procedures" 
+              fill="#1E40AF"
+              radius={[4, 4, 0, 0]}
+              barSize={30}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <p className="text-[12px] text-gray-600 font-medium -mt-1.5">{title}</p>
+    </div>
+  );
+};
+
 interface AnalysisContentProps {
   selectedIcon: 'financial' | 'patients' | 'procedures' | null;
   selectedSubData: string | null;
@@ -304,11 +395,12 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 1.5, duration: 0.3 }}
-      className={`space-y-4 w-full`} 
-    >
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  transition={{ duration: 0.3, ease: "easeOut" }}
+  className={`space-y-4 w-full`} 
+>
       {/* Patient Section */}
       {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
         <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
@@ -324,6 +416,40 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             <ProgressCircle
               percentage={data.patients.activePatients.practice.percentage}
               total={data.patients.activePatients.practice.total}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'patients' && selectedSubData === 'Avg Patient Age' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <AgeDistributionChart
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <AgeDistributionChart
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedIcon === 'patients' && selectedSubData === 'Most Apts/Age Group' && (
+        <div className="grid grid-rows-2 gap-2 h-full w-full pt-2">
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <AppointmentsByAgeChart
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <AppointmentsByAgeChart
               title="Your Practice"
               isDesktop={isDesktop}
             />
