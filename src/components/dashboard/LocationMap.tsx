@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { PRACTICE_LOCATION, Patient } from '../../types/patientData';
 
 interface LocationMapProps {
@@ -11,7 +10,6 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const practiceMarkerRef = useRef<google.maps.Marker | null>(null);
-  const clusterRef = useRef<MarkerClusterer | null>(null);
 
   const mapOptions = {
     styles: [
@@ -68,10 +66,6 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
   };
 
   const clearMarkers = useCallback(() => {
-    if (clusterRef.current) {
-      clusterRef.current.clearMarkers();
-      clusterRef.current = null;
-    }
     markersRef.current.forEach(marker => marker.setMap(null));
     markersRef.current = [];
   }, []);
@@ -116,6 +110,7 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
     const markers = filteredPatients.map(patient => {
       const marker = new google.maps.Marker({
         position: patient.location,
+        map,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 6,
@@ -130,51 +125,6 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
     });
 
     markersRef.current = markers;
-
-    if (markers.length > 0) {
-      clusterRef.current = new MarkerClusterer({
-        map,
-        markers,
-        algorithm: {
-          maxZoom: 15,
-          calculate: ({ markers, map }) => {
-            if (!markers.length) return [];
-            
-            const bounds = new google.maps.LatLngBounds();
-            markers.forEach(marker => bounds.extend(marker.getPosition()!));
-            
-            return [{
-              position: bounds.getCenter(),
-              count: markers.length,
-              markers: markers
-            }];
-          }
-        },
-        renderer: {
-          render: ({ count, position }) => 
-            new google.maps.Marker({
-              position,
-              icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 20,
-                fillColor: '#2563EB',
-                fillOpacity: 0.9,
-                strokeColor: '#FFFFFF',
-                strokeWeight: 2,
-              },
-              label: {
-                text: String(count),
-                color: '#FFFFFF',
-                fontSize: '12px',
-                fontWeight: 'bold'
-              },
-              zIndex: 999
-            })
-        }
-      });
-    }
-
-    return markers;
   }, [filteredPatients, clearMarkers]);
 
   useEffect(() => {
