@@ -1,24 +1,29 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 
 const GeoPlotTabContent: React.FC = () => {
-  const isDesktop = window.innerWidth >= 768;
-  
-  // Use key to force new instance and prevent style cleanup issues
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // Short delay to ensure RegionalTabContent cleanup has initiated
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 50);
+
+    return () => {
+      setIsVisible(false);
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
     <div className="w-full h-full bg-white rounded-lg overflow-hidden">
-      <motion.div
-        key="geoplot-content"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-        className="w-full h-full flex flex-col"
+      <div
+        className={`w-full h-full flex items-center justify-center text-gray-500
+          transition-opacity duration-300 ease-in-out
+          ${isVisible ? 'opacity-100' : 'opacity-0'}`}
       >
-        <div className="w-full h-full flex items-center justify-center text-gray-500">
-          GeoPlot visualization coming soon
-        </div>
-      </motion.div>
+        GeoPlot visualization coming soon
+      </div>
     </div>
   );
 };
