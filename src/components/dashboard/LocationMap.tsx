@@ -1,16 +1,13 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { GoogleMap, LoadScript, MarkerClusterer, Marker } from '@react-google-maps/api';
-import PatientMapFilters from './PatientMapFilters';
-import { SAMPLE_PATIENT_DATA, PRACTICE_LOCATION, Patient } from '../../types/patientData';
+import { PRACTICE_LOCATION, Patient } from '../../types/patientData';
 
 interface LocationMapProps {
-  // Add any props if needed later
+  filteredPatients: Patient[];
 }
 
-const LocationMap: React.FC<LocationMapProps> = () => {
+const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>(SAMPLE_PATIENT_DATA);
-  const markersRef = useRef<google.maps.Marker[]>([]);
   const practiceMarkerRef = useRef<google.maps.Marker | null>(null);
 
   const mapOptions = {
@@ -67,25 +64,6 @@ const LocationMap: React.FC<LocationMapProps> = () => {
     minZoom: 8
   };
 
-  const clearMarkers = useCallback(() => {
-    markersRef.current.forEach(marker => marker.setMap(null));
-    markersRef.current = [];
-  }, []);
-
-  const handleFiltersChange = useCallback((filters: any) => {
-    const filtered = SAMPLE_PATIENT_DATA.filter(patient => {
-      if (filters.status.length && !filters.status.includes(patient.status)) return false;
-      if (filters.insuranceType.length && !filters.insuranceType.includes(patient.insuranceType)) return false;
-      return true;
-    });
-
-    setFilteredPatients(filtered);
-  }, []);
-
-  const resetFilters = useCallback(() => {
-    setFilteredPatients(SAMPLE_PATIENT_DATA);
-  }, []);
-
   const createPracticeMarker = useCallback((map: google.maps.Map) => {
     if (practiceMarkerRef.current) {
       practiceMarkerRef.current.setMap(null);
@@ -124,6 +102,15 @@ const LocationMap: React.FC<LocationMapProps> = () => {
     setMap(map);
     createPracticeMarker(map);
 
+    // Style the zip code polygons
+    map.data.setStyle({
+      fillColor: '#2563EB',
+      fillOpacity: 0.1,
+      strokeColor: '#1E40AF',
+      strokeWeight: 1.5
+    });
+
+    // Set initial bounds
     const bounds = new google.maps.LatLngBounds();
     bounds.extend(PRACTICE_LOCATION);
     filteredPatients.forEach(patient => bounds.extend(patient.location));
@@ -131,64 +118,61 @@ const LocationMap: React.FC<LocationMapProps> = () => {
   }, [createPracticeMarker, filteredPatients]);
 
   useEffect(() => {
+    if (map && practiceMarkerRef.current) {
+      const bounds = new google.maps.LatLngBounds();
+      bounds.extend(PRACTICE_LOCATION);
+      filteredPatients.forEach(patient => bounds.extend(patient.location));
+      map.fitBounds(bounds);
+    }
+  }, [map, filteredPatients]);
+
+  useEffect(() => {
     return () => {
-      clearMarkers();
       if (practiceMarkerRef.current) {
         practiceMarkerRef.current.setMap(null);
       }
     };
-  }, [clearMarkers]);
+  }, []);
 
   return (
-    <div className="relative w-full h-full flex">
-      <div className="flex-1">
-        <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
-          <GoogleMap
-            mapContainerClassName="w-full h-full"
-            center={PRACTICE_LOCATION}
-            zoom={12}
-            options={mapOptions}
-            onLoad={onMapLoad}
+    <div className="w-full h-full">
+      <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
+        <GoogleMap
+          mapContainerClassName="w-full h-full"
+          center={PRACTICE_LOCATION}
+          zoom={12}
+          options={mapOptions}
+          onLoad={onMapLoad}
+        >
+          <MarkerClusterer
+            averageCenter
+            enableRetinaIcons
+            gridSize={50}
+            maxZoom={15}
+            minimumClusterSize={2}
           >
-            <MarkerClusterer
-              averageCenter
-              enableRetinaIcons
-              gridSize={50}
-              maxZoom={15}
-              minimumClusterSize={2}
-            >
-              {(clusterer) => (
-                <>
-                  {filteredPatients.map((patient) => (
-                    <Marker
-                      key={patient.id}
-                      position={patient.location}
-                      clusterer={clusterer}
-                      icon={{
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 6,
-                        fillColor: patient.status === 'Active' ? '#3B82F6' : '#94A3B8',
-                        fillOpacity: 0.7,
-                        strokeColor: '#FFFFFF',
-                        strokeWeight: 1,
-                      }}
-                    />
-                  ))}
-                </>
-              )}
-            </MarkerClusterer>
-          </GoogleMap>
-        </LoadScript>
-      </div>
-      
-      <div className="w-[30%] ml-2 md:ml-4">
-        <PatientMapFilters
-          totalPatients={SAMPLE_PATIENT_DATA.length}
-          filteredCount={filteredPatients.length}
-          onFiltersChange={handleFiltersChange}
-          onResetFilters={resetFilters}
-        />
-      </div>
+            {(clusterer) => (
+              <>
+                {filteredPatients.map((patient) => (
+                  <Marker
+                    key={patient.id}
+                    position={patient.location}
+                    clusterer={clusterer}
+                    icon={{
+                      path: google.maps.SymbolPath.CIRCLE,
+                      scale: 6,
+                      fillColor: patient.status === 'Active' ? '#3B82F6' : '#94A3B8',
+                      fillOpacity: 0.7,
+                      strokeColor: '#FFFFFF',
+                      strokeWeight: 1,
+                    }}
+                  />
+                ))}
+              </>
+            )}
+          </MarkerClusterer>
+        </GoogleMap>
+      </LoadScript>
     </div>
   );
 };
