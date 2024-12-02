@@ -133,17 +133,21 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                           <TabsContent 
                             value="regional" 
                             className="h-full m-0 md:p-4 p-1"
-                            forceMount={activeTab === 'regional'}
+                            forceMount={true}
                           >
-                            <RegionalTabContent key={`regional-${shouldRenderMap}`} />
+                            {activeTab === 'regional' && (
+                              <RegionalTabContent key={`regional-${shouldRenderMap}`} />
+                            )}
                           </TabsContent>
 
                           <TabsContent 
                             value="geoplot" 
                             className="h-full m-0 p-4"
-                            forceMount={activeTab === 'geoplot'}
+                            forceMount={true}
                           >
-                            <GeoPlotTabContent key={`geoplot-${shouldRenderMap}`} />
+                            {activeTab === 'geoplot' && (
+                              <GeoPlotTabContent key={`geoplot-${shouldRenderMap}`} />
+                            )}
                           </TabsContent>
                         </div>
                       </Tabs>
