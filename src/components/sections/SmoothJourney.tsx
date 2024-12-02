@@ -390,7 +390,6 @@ const SmoothJourney: React.FC = () => {
             onNavigateToHome={navigateToHome}
             onNavigateToPractice={navigateToPractice}
             onNavigateToLocation={navigateToLocation}
-            onNavigateToBot={() => navigate(3)}
           />
         ) : (
           <DashboardContainer4 
