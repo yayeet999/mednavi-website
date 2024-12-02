@@ -601,56 +601,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <AnimatePresence>
-          {selectedZip && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="absolute top-4 left-4 right-4 z-10"
-            >
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
-                <div className="flex justify-center gap-2">
-                  {icons.map((icon) => (
-                    <button
-                      key={icon.id}
-                      onClick={() => handleIconClick(icon.id)}
-                      className={
-                        `px-3 py-2 rounded-lg flex items-center transition-all duration-200 
-                        ${selectedIcon === icon.id 
-                          ? 'bg-[#052b52] text-white shadow-sm' 
-                          : 'bg-white/80 text-gray-600 hover:bg-white'}`
-                      }
-                    >
-                      <icon.icon className="w-4 h-4" />
-                      <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="h-full w-full">
-          <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
-            <GoogleMap
-              mapContainerClassName="w-full h-full"
-              center={mapCenter}
-              zoom={12}
-              options={mapOptions}
-              onLoad={onMapLoad}
-            />
-          </LoadScript>
-        </div>
-
-        {isLoading && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-blue-600 rounded-full border-t-transparent animate-spin" />
-          </div>
-        )}
-      </motion.div>
-
-      <AnimatePresence>
         {selectedIcon && (
           <motion.div 
             className={
@@ -667,7 +617,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
             <motion.div 
               className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
             >
-              <div className="relative h-[126px]">
+              <div className={`relative ${selectedSubData ? 'h-[42px]' : 'h-[126px]'} transition-height duration-300`}>
                 <AnimatePresence mode="sync">
                   {getAnalysisOptions(selectedIcon).map((option, index) => (
                     <motion.button
