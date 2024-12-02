@@ -131,53 +131,48 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
 
     markersRef.current = markers;
 
-    clusterRef.current = new MarkerClusterer({
-      map,
-      markers,
-      algorithm: {
-        maxZoom: 15,
-        calculate: (markers, numStyles) => {
-          const clusters = [];
-          let position = null;
-          
-          if (markers.length > 0) {
+    if (markers.length > 0) {
+      clusterRef.current = new MarkerClusterer({
+        map,
+        markers,
+        algorithm: {
+          maxZoom: 15,
+          calculate: ({ markers, map }) => {
+            if (!markers.length) return [];
+            
             const bounds = new google.maps.LatLngBounds();
             markers.forEach(marker => bounds.extend(marker.getPosition()!));
-            position = bounds.getCenter();
             
-            clusters.push({
-              position,
+            return [{
+              position: bounds.getCenter(),
               count: markers.length,
               markers: markers
-            });
+            }];
           }
-          
-          return clusters;
         },
-      },
-      renderer: {
-        render: ({ count, position }) => {
-          return new google.maps.Marker({
-            position,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 20,
-              fillColor: '#2563EB',
-              fillOpacity: 0.9,
-              strokeColor: '#FFFFFF',
-              strokeWeight: 2,
-            },
-            label: {
-              text: String(count),
-              color: '#FFFFFF',
-              fontSize: '12px',
-              fontWeight: 'bold'
-            },
-            zIndex: 999
-          });
+        renderer: {
+          render: ({ count, position }) => 
+            new google.maps.Marker({
+              position,
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 20,
+                fillColor: '#2563EB',
+                fillOpacity: 0.9,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 2,
+              },
+              label: {
+                text: String(count),
+                color: '#FFFFFF',
+                fontSize: '12px',
+                fontWeight: 'bold'
+              },
+              zIndex: 999
+            })
         }
-      }
-    });
+      });
+    }
 
     return markers;
   }, [filteredPatients, clearMarkers]);
@@ -197,8 +192,7 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
     filteredPatients.forEach(patient => bounds.extend(patient.location));
     map.fitBounds(bounds);
 
-    const markers = createPatientMarkers(map);
-    markersRef.current = markers;
+    createPatientMarkers(map);
   }, [createPracticeMarker, createPatientMarkers, filteredPatients]);
 
   useEffect(() => {
