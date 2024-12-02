@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { GoogleMap, LoadScript, MarkerClusterer } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, MarkerClusterer, Marker } from '@react-google-maps/api';
 import { SAMPLE_PATIENT_DATA, PRACTICE_LOCATION, Patient } from '../../types/patientData';
 
 interface LocationMapProps {
@@ -10,7 +10,6 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const markersRef = useRef<google.maps.Marker[]>([]);
   const practiceMarkerRef = useRef<google.maps.Marker | null>(null);
 
   const mapOptions = {
@@ -67,11 +66,6 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
     minZoom: 8
   };
 
-  const clearMarkers = useCallback(() => {
-    markersRef.current.forEach(marker => marker.setMap(null));
-    markersRef.current = [];
-  }, []);
-
   const createPracticeMarker = useCallback((map: google.maps.Map) => {
     if (practiceMarkerRef.current) {
       practiceMarkerRef.current.setMap(null);
@@ -105,23 +99,6 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
       infoWindow.open(map, practiceMarkerRef.current);
     });
   }, []);
-
-  const createPatientMarkers = useCallback((map: google.maps.Map) => {
-    return filteredPatients.map(patient => {
-      return new google.maps.Marker({
-        position: patient.location,
-        map,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 6,
-          fillColor: patient.status === 'Active' ? '#3B82F6' : '#94A3B8',
-          fillOpacity: 0.7,
-          strokeColor: '#FFFFFF',
-          strokeWeight: 1,
-        }
-      });
-    });
-  }, [filteredPatients]);
 
   const onMapLoad = useCallback(async (map: google.maps.Map) => {
     setMap(map);
@@ -165,51 +142,15 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
       filteredPatients.forEach(patient => bounds.extend(patient.location));
       map.fitBounds(bounds);
 
-      // Create patient markers with clustering
-      const markers = createPatientMarkers(map);
-      markersRef.current = markers;
-
-      new MarkerClusterer({
-        map,
-        markers,
-        algorithm: new google.maps.MarkerClustererAlgorithm({
-          maxZoom: 15,
-          gridSize: 50
-        }),
-        renderer: {
-          render: ({ count, position }) => {
-            return new google.maps.Marker({
-              position,
-              icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 20,
-                fillColor: '#2563EB',
-                fillOpacity: 0.9,
-                strokeColor: '#FFFFFF',
-                strokeWeight: 2,
-              },
-              label: {
-                text: String(count),
-                color: '#FFFFFF',
-                fontSize: '12px',
-                fontWeight: 'bold'
-              },
-              zIndex: 999
-            });
-          }
-        }
-      });
-
     } catch (error) {
       console.error('Error loading map data:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [createPracticeMarker, createPatientMarkers, filteredPatients]);
+  }, [createPracticeMarker, filteredPatients]);
 
   useEffect(() => {
     return () => {
-      clearMarkers();
       if (practiceMarkerRef.current) {
         practiceMarkerRef.current.setMap(null);
       }
@@ -217,7 +158,7 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
         zipDataLayer.setMap(null);
       }
     };
-  }, [clearMarkers, zipDataLayer]);
+  }, [zipDataLayer]);
 
   return (
     <div className="relative w-full h-full">
@@ -228,7 +169,76 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
           zoom={12}
           options={mapOptions}
           onLoad={onMapLoad}
-        />
+        >
+          <MarkerClusterer
+            averageCenter
+            enableRetinaIcons
+            gridSize={50}
+            maxZoom={15}
+            minimumClusterSize={2}
+            styles={[
+              {
+                textColor: '#FFFFFF',
+                textSize: 12,
+                width: 40,
+                height: 40,
+                url: '',
+                backgroundPosition: 'center',
+              }
+            ]}
+            calculator={(markers, numStyles) => {
+              return {
+                text: markers.length.toString(),
+                index: 1,
+                title: '',
+              };
+            }}
+            options={{
+              renderer: {
+                render: ({ position, count }) => {
+                  return new google.maps.Marker({
+                    position,
+                    icon: {
+                      path: google.maps.SymbolPath.CIRCLE,
+                      scale: 20,
+                      fillColor: '#2563EB',
+                      fillOpacity: 0.9,
+                      strokeColor: '#FFFFFF',
+                      strokeWeight: 2,
+                    },
+                    label: {
+                      text: String(count),
+                      color: '#FFFFFF',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    },
+                    zIndex: 999
+                  });
+                }
+              }
+            }}
+          >
+            {(clusterer) => (
+              <>
+                {filteredPatients.map((patient) => (
+                  <Marker
+                    key={patient.id}
+                    position={patient.location}
+                    clusterer={clusterer}
+                    icon={{
+                      path: google.maps.SymbolPath.CIRCLE,
+                      scale: 6,
+                      fillColor: patient.status === 'Active' ? '#3B82F6' : '#94A3B8',
+                      fillOpacity: 0.7,
+                      strokeColor: '#FFFFFF',
+                      strokeWeight: 1,
+                    }}
+                  />
+                ))}
+              </>
+            )}
+          </MarkerClusterer>
+        </GoogleMap>
       </LoadScript>
 
       {/* Legend */}
