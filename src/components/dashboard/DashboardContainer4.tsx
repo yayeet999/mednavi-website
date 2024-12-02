@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Home, BarChart2, Map, MapPin, Bot } from 'lucide-react';
 import LocationMap from './LocationMap';
+import PatientMapFilters from './PatientMapFilters';
+import { SAMPLE_PATIENT_DATA, Patient } from '../../types/patientData';
 
 interface DashboardContainer4Props {
   onNavigateToHome?: () => void;
@@ -15,6 +17,7 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
 }) => {
   const [activePage, setActivePage] = useState('location');
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>(SAMPLE_PATIENT_DATA);
 
   const handlePageChange = (pageId: string) => {
     if (pageId === 'home') {
@@ -35,6 +38,19 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
     setTimeout(() => {
       setIsTransitioning(false);
     }, 100);
+  };
+
+  const handleFiltersChange = (filters: any) => {
+    const filtered = SAMPLE_PATIENT_DATA.filter(patient => {
+      if (filters.status.length && !filters.status.includes(patient.status)) return false;
+      if (filters.insuranceType.length && !filters.insuranceType.includes(patient.insuranceType)) return false;
+      return true;
+    });
+    setFilteredPatients(filtered);
+  };
+
+  const handleResetFilters = () => {
+    setFilteredPatients(SAMPLE_PATIENT_DATA);
   };
 
   return (
@@ -77,10 +93,15 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
           <div className="flex-1 p-2 md:p-4">
             <div className="flex h-full gap-2">
               <div className="flex-1 bg-gray-100 rounded-lg overflow-hidden">
-                <LocationMap />
+                <LocationMap filteredPatients={filteredPatients} />
               </div>
               <div className="w-[30%] bg-gray-100 rounded-lg overflow-hidden">
-                {/* Empty container for future filter system */}
+                <PatientMapFilters
+                  totalPatients={SAMPLE_PATIENT_DATA.length}
+                  filteredCount={filteredPatients.length}
+                  onFiltersChange={handleFiltersChange}
+                  onResetFilters={handleResetFilters}
+                />
               </div>
             </div>
           </div>
