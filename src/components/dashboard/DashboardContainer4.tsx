@@ -46,22 +46,22 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
             { id: 'practice', icon: <BarChart2 size={24} />, onClick: onNavigateToPractice },
             { id: 'map', icon: <Map size={24} />, onClick: onNavigateToMap },
             { id: 'location', icon: <MapPin size={24} /> },
-            { id: 'bot', icon: <Bot size={24} /> }
+            { id: 'bot', icon: <Bot size={24} />, disabled: true }
           ].map((item) => (
             <div key={item.id} className="relative">
               <button
-                onClick={() => item.onClick ? item.onClick() : handlePageChange(item.id)}
-                disabled={isTransitioning}
+                onClick={() => item.onClick ? item.onClick() : !item.disabled && handlePageChange(item.id)}
+                disabled={isTransitioning || item.disabled}
                 className={`w-10 h-8 md:w-14 md:h-12 mb-1 md:mb-2 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 ease-in-out
                          ${activePage === item.id && !item.onClick
                            ? 'bg-[#052b52] text-white shadow-sm scale-105' 
                            : 'bg-transparent text-[#052b52] hover:bg-[#103d68] hover:bg-opacity-10'}
-                         ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
+                         ${isTransitioning || item.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                 aria-label={`${item.onClick ? `Navigate to ${item.id}` : `Switch to ${item.id} view`}`}
               >
                 {React.cloneElement(item.icon, {
                   size: typeof window !== 'undefined' && window.innerWidth < 768 ? 20 : 24,
-                  className: 'transition-transform duration-200'
+                  className: `transition-transform duration-200 ${item.disabled ? 'text-gray-400' : ''}`
                 })}
               </button>
             </div>
