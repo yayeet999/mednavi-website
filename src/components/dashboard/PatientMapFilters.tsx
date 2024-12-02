@@ -14,8 +14,12 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(event.target as Node) && 
-          anchorEl && !anchorEl.contains(event.target as Node)) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target as Node) &&
+        anchorEl &&
+        !anchorEl.contains(event.target as Node)
+      ) {
         onClose();
       }
     };
@@ -35,8 +39,11 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
       const anchorRect = anchorEl.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
 
-      let top = anchorRect.top;
-      let left = anchorRect.right + 15;
+      let top = anchorRect.top + window.scrollY;
+      let left = anchorRect.right + 8; // Reduced from 15 to 8
+
+      // Center vertically with the filter card
+      top = top - 5; // Small offset for visual alignment
 
       // Adjust vertical position if popover would go outside viewport
       if (top + 300 > viewportHeight) {
@@ -55,19 +62,19 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       ref={popoverRef}
       className="fixed z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px] max-h-[300px] overflow-y-auto"
     >
-      <div 
-        className="absolute left-[-8px] top-[15px]"
+      <div
+        className="absolute left-[-6px] top-[12px]"
         style={{
           width: 0,
           height: 0,
-          borderTop: '8px solid transparent',
-          borderBottom: '8px solid transparent',
-          borderRight: '8px solid white',
-          filter: 'drop-shadow(-2px 0px 2px rgba(0,0,0,0.1))'
+          borderTop: '6px solid transparent',
+          borderBottom: '6px solid transparent',
+          borderRight: '6px solid white',
+          filter: 'drop-shadow(-1px 0px 2px rgba(0,0,0,0.1))',
         }}
       />
       {children}
@@ -85,14 +92,14 @@ interface FilterCardProps {
   isReset: boolean;
 }
 
-const FilterCard: React.FC<FilterCardProps> = ({ 
-  title, 
-  icon, 
-  category, 
-  options, 
-  selectedFilters, 
+const FilterCard: React.FC<FilterCardProps> = ({
+  title,
+  icon,
+  category,
+  options,
+  selectedFilters,
   onFilterChange,
-  isReset
+  isReset,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -121,19 +128,15 @@ const FilterCard: React.FC<FilterCardProps> = ({
             )}
           </div>
         </div>
-        <Filter 
+        <Filter
           size={12}
           className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 
-      <Popover
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        anchorEl={buttonRef.current}
-      >
+      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} anchorEl={buttonRef.current}>
         <div className="grid grid-cols-2 gap-1">
-          {options.map(option => (
+          {options.map((option) => (
             <button
               key={option}
               onClick={() => {
@@ -160,33 +163,39 @@ const StatsHeader: React.FC<{
   filteredCount: number;
   onResetFilters: () => void;
   activeFiltersCount: number;
-}> = ({ 
-  totalPatients, 
-  filteredCount, 
-  onResetFilters,
-  activeFiltersCount 
-}) => {
+}> = ({ totalPatients, filteredCount, onResetFilters, activeFiltersCount }) => {
   const percentage = Math.round((filteredCount / totalPatients) * 100);
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-2 mb-3">
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-center justify-between mb-1 w-full">
         <div className="text-[10px] font-medium text-gray-700">Filter Patients</div>
-        <div>
-          {activeFiltersCount > 0 && (
-            <button
-              onClick={onResetFilters}
-              className="text-[9px] text-blue-500 hover:text-blue-600"
-            >
-              Reset All
-            </button>
-          )}
-        </div>
+        {activeFiltersCount > 0 && (
+          <button
+            onClick={onResetFilters}
+            className="text-[9px] text-blue-500 hover:text-blue-600 ml-2"
+          >
+            Reset All
+          </button>
+        )}
       </div>
       <div className="flex items-center justify-between text-[11px]">
-        <span className="text-gray-600">Total: <span className="font-medium text-gray-900 text-[13px]">{totalPatients.toLocaleString()}</span></span>
-        <span className="text-gray-600">Filtered: <span className="font-medium text-gray-900 text-[13px]">{filteredCount.toLocaleString()}</span></span>
-        <span className="text-gray-600">Showing: <span className="font-medium text-blue-600 text-[13px]">{percentage}%</span></span>
+        <span className="text-gray-600">
+          Total:{' '}
+          <span className="font-medium text-gray-900 text-[13px]">
+            {totalPatients.toLocaleString()}
+          </span>
+        </span>
+        <span className="text-gray-600">
+          Filtered:{' '}
+          <span className="font-medium text-gray-900 text-[13px]">
+            {filteredCount.toLocaleString()}
+          </span>
+        </span>
+        <span className="text-gray-600">
+          Showing:{' '}
+          <span className="font-medium text-blue-600 text-[13px]">{percentage}%</span>
+        </span>
       </div>
     </div>
   );
@@ -197,12 +206,7 @@ const PatientMapFilters: React.FC<{
   filteredCount: number;
   onFiltersChange: (filters: FilterState) => void;
   onResetFilters: () => void;
-}> = ({
-  totalPatients,
-  filteredCount,
-  onFiltersChange,
-  onResetFilters
-}) => {
+}> = ({ totalPatients, filteredCount, onFiltersChange, onResetFilters }) => {
   const [filters, setFilters] = useState<FilterState>({
     age: [],
     gender: [],
@@ -215,29 +219,32 @@ const PatientMapFilters: React.FC<{
     isNewPatient: [],
     appointmentStatus: [],
     familyMembers: [],
-    primaryLanguage: []
+    primaryLanguage: [],
   });
 
   const [isReset, setIsReset] = useState(false);
 
-  const handleFilterChange = useCallback((category: keyof FilterState, value: string) => {
-    setIsReset(false);
-    setFilters(prev => {
-      const newFilters = { 
-        ...prev,
-        [category]: prev[category].includes(value)
-          ? prev[category].filter(item => item !== value)
-          : [...prev[category], value]
-      };
-      
-      if (category === 'insuranceType' && !newFilters.insuranceType.includes('Private')) {
-        newFilters.privateInsurance = [];
-      }
+  const handleFilterChange = useCallback(
+    (category: keyof FilterState, value: string) => {
+      setIsReset(false);
+      setFilters((prev) => {
+        const newFilters = {
+          ...prev,
+          [category]: prev[category].includes(value)
+            ? prev[category].filter((item) => item !== value)
+            : [...prev[category], value],
+        };
 
-      onFiltersChange(newFilters);
-      return newFilters;
-    });
-  }, [onFiltersChange]);
+        if (category === 'insuranceType' && !newFilters.insuranceType.includes('Private')) {
+          newFilters.privateInsurance = [];
+        }
+
+        onFiltersChange(newFilters);
+        return newFilters;
+      });
+    },
+    [onFiltersChange]
+  );
 
   const handleResetFilters = useCallback(() => {
     setIsReset(true);
@@ -253,7 +260,7 @@ const PatientMapFilters: React.FC<{
       isNewPatient: [],
       appointmentStatus: [],
       familyMembers: [],
-      primaryLanguage: []
+      primaryLanguage: [],
     });
     onResetFilters();
   }, [onResetFilters]);
@@ -273,40 +280,40 @@ const PatientMapFilters: React.FC<{
         <div className="flex flex-col space-y-1.5">
           {[
             {
-              title: "Patient Status",
+              title: 'Patient Status',
               icon: <Activity className="text-blue-600" />,
-              category: "status" as keyof FilterState
+              category: 'status' as keyof FilterState,
             },
             {
-              title: "Insurance",
+              title: 'Insurance',
               icon: <FileText className="text-blue-600" />,
-              category: "insuranceType" as keyof FilterState
+              category: 'insuranceType' as keyof FilterState,
             },
             {
-              title: "Distance",
+              title: 'Distance',
               icon: <MapPin className="text-blue-600" />,
-              category: "distance" as keyof FilterState
+              category: 'distance' as keyof FilterState,
             },
             {
-              title: "Demographics",
+              title: 'Demographics',
               icon: <Users className="text-blue-600" />,
-              category: "age" as keyof FilterState
+              category: 'age' as keyof FilterState,
             },
             {
-              title: "Last Visit",
+              title: 'Last Visit',
               icon: <Calendar className="text-blue-600" />,
-              category: "lastVisit" as keyof FilterState
+              category: 'lastVisit' as keyof FilterState,
             },
             {
-              title: "Hygiene",
+              title: 'Hygiene',
               icon: <Heart className="text-blue-600" />,
-              category: "hygieneDue" as keyof FilterState
+              category: 'hygieneDue' as keyof FilterState,
             },
             {
-              title: "Language",
+              title: 'Language',
               icon: <Languages className="text-blue-600" />,
-              category: "primaryLanguage" as keyof FilterState
-            }
+              category: 'primaryLanguage' as keyof FilterState,
+            },
           ].map((filter) => (
             <FilterCard
               key={filter.category}
