@@ -22,7 +22,16 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
 
   const handleTabChange = (value: string) => {
     if (value === activeTab) return;
-    setActiveTab(value);
+    
+    setIsTransitioning(true);
+    
+    requestAnimationFrame(() => {
+      setActiveTab(value);
+      
+      requestAnimationFrame(() => {
+        setIsTransitioning(false);
+      });
+    });
   };
 
   const handlePageChange = (pageId: string) => {
@@ -108,7 +117,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                 <>
                   {activePage === 'map' && shouldRenderMap && (
                     <div className="w-full h-full bg-white rounded-lg overflow-hidden">
-                      <Tabs defaultValue={activeTab} value={activeTab} onValueChange={handleTabChange} className="h-full flex flex-col [&>div]:bg-transparent">
+                      <Tabs value={activeTab} onValueChange={handleTabChange} className="h-full flex flex-col [&>div]:bg-transparent">
                         <div className="flex justify-center bg-white px-4 pt-3">
                           <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2">
                             <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
@@ -131,11 +140,21 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                         </div>
 
                         <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
-                          <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
-                            {activeTab === 'regional' && <RegionalTabContent />}
+                          <TabsContent 
+                            value="regional" 
+                            className="h-full m-0 md:p-4 p-1"
+                          >
+                            {!isTransitioning && activeTab === 'regional' && (
+                              <RegionalTabContent key={`regional-${shouldRenderMap}`} />
+                            )}
                           </TabsContent>
-                          <TabsContent value="geoplot" className="h-full m-0 p-4">
-                            {activeTab === 'geoplot' && <GeoPlotTabContent />}
+                          <TabsContent 
+                            value="geoplot" 
+                            className="h-full m-0 p-4"
+                          >
+                            {!isTransitioning && activeTab === 'geoplot' && (
+                              <GeoPlotTabContent key={`geoplot-${shouldRenderMap}`} />
+                            )}
                           </TabsContent>
                         </div>
                       </Tabs>
