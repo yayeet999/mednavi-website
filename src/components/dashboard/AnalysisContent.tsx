@@ -393,180 +393,194 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
   const isDesktop = window.innerWidth >= 768;
 
+  const renderContent = () => {
+    const contentProps = {
+      className: "grid grid-rows-2 gap-2 h-full w-full analysis-grid-content",
+    };
+
+    if (selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %') {
+      return (
+        <div {...contentProps}>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <ProgressCircle
+              percentage={data.patients.activePatients.regional.percentage}
+              total={data.patients.activePatients.regional.total}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <ProgressCircle
+              percentage={data.patients.activePatients.practice.percentage}
+              total={data.patients.activePatients.practice.total}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure') {
+      return (
+        <div {...contentProps}>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <VolumeLineChart
+              data={data.procedures.highestVolume.regional.data}
+              title="Regional Average"
+              procedureName={data.procedures.highestVolume.regional.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <VolumeLineChart
+              data={data.procedures.highestVolume.practice.data}
+              title="Your Practice"
+              procedureName={data.procedures.highestVolume.practice.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production') {
+      return (
+        <div {...contentProps}>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <LargestProductionChart
+              data={data.procedures.largestProduction.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <LargestProductionChart
+              data={data.procedures.largestProduction.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure') {
+      return (
+        <div {...contentProps}>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <VolumeLineChart
+              data={data.procedures.lowestVolume.regional.data}
+              title="Regional Average"
+              procedureName={data.procedures.lowestVolume.regional.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <VolumeLineChart
+              data={data.procedures.lowestVolume.practice.data}
+              title="Your Practice"
+              procedureName={data.procedures.lowestVolume.practice.name}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production') {
+      return (
+        <div {...contentProps}>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <MonthlyProductionChart
+              data={data.financial.monthlyProduction.regional.breakdown}
+              title="Regional Average"
+              total={data.financial.monthlyProduction.regional.total}
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <MonthlyProductionChart
+              data={data.financial.monthlyProduction.practice.breakdown}
+              title="Your Practice"
+              total={data.financial.monthlyProduction.practice.total}
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private') {
+      return (
+        <div {...contentProps}>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <InsuranceDistributionChart
+              data={data.financial.insurance.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <InsuranceDistributionChart
+              data={data.financial.insurance.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %') {
+      return (
+        <div {...contentProps}>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <GrowthIndicator
+              data={data.financial.growth.regional}
+              title="Regional Average"
+              isDesktop={isDesktop}
+            />
+          </div>
+          <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+            <GrowthIndicator
+              data={data.financial.growth.practice}
+              title="Your Practice"
+              isDesktop={isDesktop}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="w-full analysis-container" // New container class
+      className="analysis-wrapper"
     >
-      <div className="analysis-content"> {/* New wrapper div */}
-        {/* Patient Section */}
-        {selectedIcon === 'patients' && selectedSubData === 'Avg Active Patient %' && (
-          <div className="grid-container">
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <ProgressCircle
-                percentage={data.patients.activePatients.regional.percentage}
-                total={data.patients.activePatients.regional.total}
-                title="Regional Average"
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <ProgressCircle
-                percentage={data.patients.activePatients.practice.percentage}
-                total={data.patients.activePatients.practice.total}
-                title="Your Practice"
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Procedures Section */}
-        {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
-          <div className="grid-container">
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <VolumeLineChart
-                data={data.procedures.highestVolume.regional.data}
-                title="Regional Average"
-                procedureName={data.procedures.highestVolume.regional.name}
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <VolumeLineChart
-                data={data.procedures.highestVolume.practice.data}
-                title="Your Practice"
-                procedureName={data.procedures.highestVolume.practice.name}
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
-          <div className="grid-container">
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <LargestProductionChart
-                data={data.procedures.largestProduction.regional}
-                title="Regional Average"
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <LargestProductionChart
-                data={data.procedures.largestProduction.practice}
-                title="Your Practice"
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
-          <div className="grid-container">
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <VolumeLineChart
-                data={data.procedures.lowestVolume.regional.data}
-                title="Regional Average"
-                procedureName={data.procedures.lowestVolume.regional.name}
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <VolumeLineChart
-                data={data.procedures.lowestVolume.practice.data}
-                title="Your Practice"
-                procedureName={data.procedures.lowestVolume.practice.name}
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Financial Section */}
-        {selectedIcon === 'financial' && selectedSubData === 'Avg Monthly Production' && (
-          <div className="grid-container">
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <MonthlyProductionChart
-                data={data.financial.monthlyProduction.regional.breakdown}
-                title="Regional Average"
-                total={data.financial.monthlyProduction.regional.total}
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <MonthlyProductionChart
-                data={data.financial.monthlyProduction.practice.breakdown}
-                title="Your Practice"
-                total={data.financial.monthlyProduction.practice.total}
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {selectedIcon === 'financial' && selectedSubData === 'Insurance Public/Private' && (
-          <div className="grid-container">
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <InsuranceDistributionChart
-                data={data.financial.insurance.regional}
-                title="Regional Average"
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <InsuranceDistributionChart
-                data={data.financial.insurance.practice}
-                title="Your Practice"
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-
-        {selectedIcon === 'financial' && selectedSubData === 'Avg Annual Growth %' && (
-          <div className="grid-container">
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <GrowthIndicator
-                data={data.financial.growth.regional}
-                title="Regional Average"
-                isDesktop={isDesktop}
-              />
-            </div>
-            <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
-              <GrowthIndicator
-                data={data.financial.growth.practice}
-                title="Your Practice"
-                isDesktop={isDesktop}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+      {renderContent()}
 
       <style jsx>{`
-        .analysis-container {
-          height: 400px;
-          position: relative;
-          overflow: hidden;
-        }
-        .analysis-content {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          padding-top: 0.5rem;
-        }
-        .grid-container {
-          display: grid;
-          grid-template-rows: 1fr 1fr;
-          gap: 0.5rem;
-          height: 100%;
+        .analysis-wrapper {
           width: 100%;
+          min-height: 280px;
+          position: relative;
+        }
+        .analysis-grid-content {
+          position: relative;
+          padding-top: 0.5rem;
+          min-height: 280px;
+          height: 100%;
+        }
+        :global(.analysis-grid-content > div) {
+          min-height: 0;
+          height: auto;
         }
       `}</style>
     </motion.div>
