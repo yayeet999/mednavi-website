@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, BarChart2, Map, MapPin } from 'lucide-react';
+import { Home, BarChart2, Map, MapPin, Bot } from 'lucide-react';
 
 interface DashboardContainer4Props {
   onNavigateToHome?: () => void;
@@ -44,7 +44,8 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
             { id: 'home', icon: <Home size={24} />, onClick: onNavigateToHome },
             { id: 'practice', icon: <BarChart2 size={24} />, onClick: onNavigateToPractice },
             { id: 'map', icon: <Map size={24} />, onClick: onNavigateToMap },
-            { id: 'location', icon: <MapPin size={24} /> }
+            { id: 'location', icon: <MapPin size={24} /> },
+            { id: 'bot', icon: <Bot size={24} /> }
           ].map((item) => (
             <div key={item.id} className="relative">
               <button
@@ -68,7 +69,7 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
 
         <div className="flex-1 bg-[#103d68] rounded-r-xl flex flex-col overflow-hidden">
           <div className="flex-shrink-0 flex justify-between items-start px-3 pt-2 pb-0 md:px-5 md:pt-3 md:pb-0">
-            <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2 mt-auto mb-1 md:mb-1">Your Location</h1>
+            <h1 className="text-xs md:text-lg text-white font-bold pl-1 md:pl-2 mt-auto mb-1 md:mb-1">Your Dental Practice</h1>
             <h2 className="text-sm md:text-[28px] text-white font-medium pr-3 md:pr-8 mt-1 md:mt-2">mednavi</h2>
           </div>
 
