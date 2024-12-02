@@ -567,7 +567,18 @@ const RegionalTabContent = forwardRef((props, ref) => {
   }, []);
 
   const AnalysisContentDisplay = useCallback(() => {
-  return null; // Temporary modification to disable white containers
+  if (!selectedSubData || !selectedZip) return null;
+  const data = analysisData[selectedZip];
+  if (!data) return null;
+
+  return (
+    <AnalysisContent
+      selectedIcon={selectedIcon}
+      selectedSubData={selectedSubData}
+      selectedZip={selectedZip}
+      data={data}
+    />
+  );
 }, [selectedIcon, selectedSubData, selectedZip]);
 
   return (
