@@ -1,7 +1,77 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Filter, Activity, Users, MapPin, Calendar, FileText, Heart, Languages } from 'lucide-react';
-import { Popover } from '@/components/ui/popover';
 import { FilterState, FILTER_OPTIONS } from '../../types/patientData';
+
+interface PopoverProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  anchorEl: HTMLElement | null;
+}
+
+const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }) => {
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node) && 
+          anchorEl && !anchorEl.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen, onClose, anchorEl]);
+
+  useEffect(() => {
+    if (!isOpen || !popoverRef.current || !anchorEl) return;
+
+    const updatePosition = () => {
+      if (!popoverRef.current || !anchorEl) return;
+
+      const anchorRect = anchorEl.getBoundingClientRect();
+      const popoverRect = popoverRef.current.getBoundingClientRect();
+      const parentRect = anchorEl.closest('.custom-scrollbar')?.getBoundingClientRect();
+
+      if (!parentRect) return;
+
+      let top = anchorRect.bottom - parentRect.top;
+      let left = anchorRect.left - parentRect.left;
+
+      // Check if popover would go below viewport
+      if (top + popoverRect.height > parentRect.height) {
+        top = anchorRect.top - parentRect.top - popoverRect.height;
+      }
+
+      // Check if popover would go outside right edge
+      if (left + popoverRect.width > parentRect.width) {
+        left = parentRect.width - popoverRect.width;
+      }
+
+      popoverRef.current.style.top = `${top}px`;
+      popoverRef.current.style.left = `${left}px`;
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    return () => window.removeEventListener('resize', updatePosition);
+  }, [isOpen, anchorEl]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      ref={popoverRef}
+      className="absolute z-50 bg-white rounded-lg shadow-lg p-2 min-w-[200px]"
+      style={{ position: 'absolute' }}
+    >
+      {children}
+    </div>
+  );
+};
 
 interface FilterCardProps {
   title: string;
@@ -24,7 +94,7 @@ const FilterCard: React.FC<FilterCardProps> = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-2">
+    <div className="bg-white rounded-lg shadow-sm p-2 relative">
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
@@ -48,11 +118,9 @@ const FilterCard: React.FC<FilterCardProps> = ({
       </button>
 
       <Popover
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        anchor={buttonRef.current}
-        align="start"
-        className="z-50 bg-white rounded-lg shadow-lg p-2 min-w-[200px]"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        anchorEl={buttonRef.current}
       >
         <div className="grid grid-cols-2 gap-1">
           {options.map(option => (
@@ -167,7 +235,7 @@ const PatientMapFilters: React.FC<{
         activeFiltersCount={activeFiltersCount}
       />
 
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar relative">
         <div className="grid grid-cols-2 gap-2">
           <FilterCard
             title="Patient Status"
