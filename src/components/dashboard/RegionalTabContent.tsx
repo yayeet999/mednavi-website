@@ -601,77 +601,74 @@ const RegionalTabContent = forwardRef((props, ref) => {
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <AnimatePresence>
-        {selectedIcon && (
-          <motion.div 
-            className={
-              `bg-gray-50 rounded-xl shadow-sm 
-              ${window.innerWidth >= 768 
-                ? 'w-[30%] ml-3 relative' 
-                : 'w-[35%] absolute right-0 top-0 h-full'}`
-            }
-            variants={sideContainerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-          >
+          {selectedIcon && (
             <motion.div 
-              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
+              className={`w-full h-full flex flex-col`}
+              variants={sideContainerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
             >
-              <div className={`relative ${selectedSubData ? 'h-[42px]' : 'h-[126px]'} transition-height duration-300`}>
-                <AnimatePresence mode="sync">
-                  {getAnalysisOptions(selectedIcon).map((option, index) => (
-                    <motion.button
-                      key={option}
-                      onClick={() => handleSubDataClick(option)}
-                      className={
-                        `w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
-                        text-left rounded-lg transition-colors duration-200 absolute
-                        ${selectedSubData === option 
-                          ? 'bg-[#052b52] text-white' 
-                          : 'bg-white text-gray-600 hover:bg-gray-100'} 
-                        ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                        font-medium`
-                      }
-                      initial={false}
-                      animate={{ 
-                        y: selectedSubData 
-                          ? (selectedSubData === option ? 0 : 100)
-                          : index * 42,
-                        opacity: !selectedSubData || selectedSubData === option ? 1 : 0
-                      }}
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut"
-                      }}
-                      style={{
-                        top: 0,
-                        height: '42px'
-                      }}
-                    >
-                      {option}
-                    </motion.button>
-                  ))}
-                </AnimatePresence>
-              </div>
+              <motion.div 
+                className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
+              >
+                <div className={`relative ${selectedSubData ? 'h-[42px]' : 'h-[126px]'} transition-height duration-300`}>
+                  <AnimatePresence mode="sync">
+                    {getAnalysisOptions(selectedIcon).map((option, index) => (
+                      <motion.button
+                        key={option}
+                        onClick={() => handleSubDataClick(option)}
+                        className={
+                          `w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                          text-left rounded-lg transition-colors duration-200 absolute
+                          ${selectedSubData === option 
+                            ? 'bg-[#052b52] text-white' 
+                            : 'bg-white text-gray-600 hover:bg-gray-100'} 
+                          ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
+                          font-medium`
+                        }
+                        initial={false}
+                        animate={{ 
+                          y: selectedSubData 
+                            ? (selectedSubData === option ? 0 : 100)
+                            : index * 42,
+                          opacity: !selectedSubData || selectedSubData === option ? 1 : 0
+                        }}
+                        transition={{
+                          duration: 0.3,
+                          ease: "easeInOut"
+                        }}
+                        style={{
+                          top: 0,
+                          height: '42px'
+                        }}
+                      >
+                        {option}
+                      </motion.button>
+                    ))}
+                  </AnimatePresence>
+                </div>
 
-              <AnimatePresence mode="wait">
-                {selectedSubData && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                  >
-                    <AnalysisContentDisplay />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                <AnimatePresence mode="wait">
+                  {selectedSubData && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
+                    >
+                      <AnalysisContentDisplay />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <style jsx global>{
-        `.gm-style-cc,
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      <style jsx global>{`
+        .gm-style-cc,
         .gmnoprint.gm-style-cc,
         .gm-style-iw-a,
         .gm-style-iw-t,
@@ -687,8 +684,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
         }
         .gm-bundled-control .gmnoprint {
           display: block !important;
-        }`
-      }</style>
+        }
+      `}</style>
     </div>
   );
 });
