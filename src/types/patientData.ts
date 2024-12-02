@@ -1,12 +1,13 @@
-// Types for patient data
-interface PatientLocation {
+// src/types/patientData.ts
+
+export interface PatientLocation {
   lat: number;
   lng: number;
   address: string;
   zipCode: string;
 }
 
-interface Patient {
+export interface Patient {
   id: string;
   location: PatientLocation;
   age: number;
