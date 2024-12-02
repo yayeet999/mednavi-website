@@ -394,23 +394,36 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
   React.useEffect(() => {
     if (selectedSubData) {
+      setIsAnimatingOut(false);
       const timer = setTimeout(() => {
-        setIsAnimatingOut(false);
         setShowContainers(true);
       }, 500);
       return () => clearTimeout(timer);
-    } else {
+    } else if (showContainers) {
       setIsAnimatingOut(true);
+      const timer = setTimeout(() => {
+        setShowContainers(false);
+        setIsAnimatingOut(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    } else {
       setShowContainers(false);
+      setIsAnimatingOut(false);
     }
-  }, [selectedSubData]);
+  }, [selectedSubData, showContainers]);
 
   return (
-    <div className="w-full relative" style={{ height: '260px' }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="w-full"
+    >
       <AnimatePresence mode="wait">
-        {showContainers && !isAnimatingOut && (
+        {showContainers && (
           <motion.div 
-            className="absolute inset-0 grid grid-rows-2 gap-2 w-full"
+            className="grid grid-rows-2 gap-2 w-full"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
@@ -596,7 +609,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
 
