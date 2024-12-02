@@ -20,22 +20,25 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
   const [shouldRenderMap, setShouldRenderMap] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [activeTab, setActiveTab] = useState('regional');
-  const [isMounted, setIsMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false);
+    setMounted(true);
+    return () => setMounted(false);
   }, []);
 
   const handleTabChange = (value: string) => {
     if (isTransitioning || value === activeTab) return;
     
     setIsTransitioning(true);
-    setActiveTab(value);
     
+    // Delay the tab change to allow for proper cleanup
     setTimeout(() => {
-      setIsTransitioning(false);
-    }, 300);
+      setActiveTab(value);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 100);
+    }, 100);
   };
 
   const handlePageChange = (pageId: string) => {
@@ -54,7 +57,9 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
 
     setIsTransitioning(true);
     setActivePage(pageId);
-    setIsTransitioning(false);
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 100);
   };
 
   useEffect(() => {
@@ -73,32 +78,26 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
     };
   }, []);
 
-  const renderContent = () => {
-    if (!isMounted) return null;
+  const TabContent = () => {
+    if (!mounted) return null;
 
-    return (
-      <motion.div 
-        initial={false} 
-        className="h-full"
-      >
-        {activeTab === 'regional' && (
-          <TabsContent 
-            value="regional" 
-            className="h-full m-0 md:p-4 p-1"
-          >
-            <RegionalTabContent key={`regional-${shouldRenderMap}`} />
-          </TabsContent>
-        )}
-        {activeTab === 'geoplot' && (
-          <TabsContent 
-            value="geoplot" 
-            className="h-full m-0 p-4"
-          >
-            <GeoPlotTabContent key={`geoplot-${shouldRenderMap}`} />
-          </TabsContent>
-        )}
-      </motion.div>
-    );
+    if (activeTab === 'regional') {
+      return (
+        <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
+          <RegionalTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
+        </TabsContent>
+      );
+    }
+
+    if (activeTab === 'geoplot') {
+      return (
+        <TabsContent value="geoplot" className="h-full m-0 p-4">
+          <GeoPlotTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
+        </TabsContent>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -145,9 +144,14 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                 </div>
               ) : (
                 <>
-                  {activePage === 'map' && shouldRenderMap && (
+                  {activePage === 'map' && shouldRenderMap && mounted && (
                     <div className="w-full h-full bg-white rounded-lg overflow-hidden">
-                      <Tabs value={activeTab} onValueChange={handleTabChange} className="h-full flex flex-col [&>div]:bg-transparent">
+                      <Tabs 
+                        value={activeTab} 
+                        onValueChange={handleTabChange} 
+                        className="h-full flex flex-col [&>div]:bg-transparent"
+                        key={`tabs-${activeTab}`}
+                      >
                         <div className="flex justify-center bg-white px-4 pt-3">
                           <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2">
                             <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
@@ -170,7 +174,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                         </div>
 
                         <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
-                          {renderContent()}
+                          <TabContent />
                         </div>
                       </Tabs>
                     </div>
