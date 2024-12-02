@@ -48,17 +48,6 @@ const stations = [
       conversion: { value: "68.9", change: "+2.9" },
       growth: { value: "57.8", change: "+10.2" }
     }
-  },
-  { 
-    id: 5, 
-    x: 1000, 
-    y: 1800,
-    kpis: {
-      revenue: { value: "123,784", change: "+19.2" },
-      users: { value: "2,234", change: "+12.8" },
-      conversion: { value: "74.3", change: "+4.2" },
-      growth: { value: "65.6", change: "+14.7" }
-    }
   }
 ];
 
