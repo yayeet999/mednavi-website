@@ -3,6 +3,7 @@ import { Home, BarChart2, Map, Bot, MapPin, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RegionalTabContent from './RegionalTabContent';
 import GeoPlotTabContent from './GeoPlotTabContent';
+import { AnimatePresence } from 'framer-motion';
 
 interface DashboardContainer3Props {
   onNavigateToBot?: () => void;
@@ -18,6 +19,15 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
   const [activePage, setActivePage] = useState('map');
   const [shouldRenderMap, setShouldRenderMap] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [activeTab, setActiveTab] = useState('regional');
+
+  const handleTabChange = (value: string) => {
+    setIsTransitioning(true);
+    setActiveTab(value);
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 300);
+  };
 
   const handlePageChange = (pageId: string) => {
     if (pageId === 'bot') {
@@ -100,7 +110,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                 <>
                   {activePage === 'map' && shouldRenderMap && (
                     <div className="w-full h-full bg-white rounded-lg overflow-hidden">
-                      <Tabs defaultValue="regional" className="h-full flex flex-col [&>div]:bg-transparent">
+                      <Tabs value={activeTab} onValueChange={handleTabChange} className="h-full flex flex-col [&>div]:bg-transparent">
                         <div className="flex justify-center bg-white px-4 pt-3">
                           <div className="bg-[#1E2433] rounded-[14px] w-full max-w-[320px] md:max-w-none md:min-w-[632px] h-[28px] md:h-[40px] flex items-center px-1.5 md:px-2">
                             <TabsList className="flex bg-transparent h-[24px] md:h-[36px] gap-1 md:gap-1.5 w-full">
@@ -123,13 +133,18 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                         </div>
 
                         <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
-                          <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
-                            <RegionalTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
-                          </TabsContent>
-
-                          <TabsContent value="geoplot" className="h-full m-0 p-4">
-                            <GeoPlotTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
-                          </TabsContent>
+                          <AnimatePresence mode="wait">
+                            {activeTab === 'regional' && (
+                              <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
+                                <RegionalTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
+                              </TabsContent>
+                            )}
+                            {activeTab === 'geoplot' && (
+                              <TabsContent value="geoplot" className="h-full m-0 p-4">
+                                <GeoPlotTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
+                              </TabsContent>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </Tabs>
                     </div>
