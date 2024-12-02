@@ -567,19 +567,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
   }, []);
 
   const AnalysisContentDisplay = useCallback(() => {
-    if (!selectedSubData || !selectedZip) return null;
-    const data = analysisData[selectedZip];
-    if (!data) return null;
-
-    return (
-      <AnalysisContent
-        selectedIcon={selectedIcon}
-        selectedSubData={selectedSubData}
-        selectedZip={selectedZip}
-        data={data}
-      />
-    );
-  }, [selectedIcon, selectedSubData, selectedZip]);
+  return null; // Temporary modification to disable white containers
+}, [selectedIcon, selectedSubData, selectedZip]);
 
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
