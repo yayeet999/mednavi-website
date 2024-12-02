@@ -36,28 +36,33 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
     const updatePosition = () => {
       if (!popoverRef.current || !anchorEl) return;
 
+      // Get the anchor element's position
       const anchorRect = anchorEl.getBoundingClientRect();
-      const popoverRect = popoverRef.current.getBoundingClientRect();
-      const parentRect = anchorEl.closest('.bg-gray-50')?.getBoundingClientRect() || anchorRect;
       
-      // Position to the right of the parent container
-      let left = parentRect.right + 8;
-      
-      // Vertical alignment with the filter card
-      let top = anchorRect.top + window.scrollY - (popoverRect.height / 2) + (anchorRect.height / 2);
+      // Find the filter container (parent with rounded corners)
+      const filterContainer = anchorEl.closest('.rounded-lg');
+      const containerRect = filterContainer?.getBoundingClientRect();
 
-      // Ensure the popover stays within the viewport
-      const viewportHeight = window.innerHeight;
-      if (top + popoverRect.height > viewportHeight) {
-        top = Math.max(viewportHeight - popoverRect.height - 10, 10);
-      }
-      if (top < 10) top = 10;
+      if (!containerRect) return;
 
-      popoverRef.current.style.top = `${top}px`;
+      // Calculate positions
+      const left = containerRect.right + 8; // 8px gap from container
+      const top = anchorRect.top + window.scrollY;
+
+      // Center the popover vertically with the filter button
+      const verticalCenter = top + (anchorRect.height / 2);
+      const popoverHeight = popoverRef.current.offsetHeight;
+      const finalTop = verticalCenter - (popoverHeight / 2);
+
+      // Apply positions
       popoverRef.current.style.left = `${left}px`;
+      popoverRef.current.style.top = `${finalTop}px`;
     };
 
+    // Initial position
     updatePosition();
+
+    // Update position on resize
     window.addEventListener('resize', updatePosition);
     return () => window.removeEventListener('resize', updatePosition);
   }, [isOpen, anchorEl]);
