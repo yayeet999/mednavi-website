@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Home, BarChart2, Map, MapPin, Bot } from 'lucide-react';
+import { Home, BarChart2, Map, MapPin } from 'lucide-react';
 import RegionalTabContent from './RegionalTabContent';
 
 interface DashboardContainer3Props {
-  onNavigateToBot?: () => void;
   onNavigateToHome?: () => void;
   onNavigateToPractice?: () => void;
   onNavigateToLocation?: () => void;
 }
 
 export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({ 
-  onNavigateToBot,
   onNavigateToHome,
   onNavigateToPractice,
   onNavigateToLocation
@@ -20,10 +18,6 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handlePageChange = (pageId: string) => {
-    if (pageId === 'bot') {
-      onNavigateToBot?.();
-      return;
-    }
     if (pageId === 'home') {
       onNavigateToHome?.();
       return;
@@ -68,8 +62,7 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
             { id: 'home', icon: <Home size={24} />, onClick: onNavigateToHome },
             { id: 'practice', icon: <BarChart2 size={24} />, onClick: onNavigateToPractice },
             { id: 'map', icon: <Map size={24} /> },
-            { id: 'location', icon: <MapPin size={24} />, onClick: onNavigateToLocation },
-            { id: 'bot', icon: <Bot size={24} />, onClick: onNavigateToBot }
+            { id: 'location', icon: <MapPin size={24} />, onClick: onNavigateToLocation }
           ].map((item) => (
             <div key={item.id} className="relative">
               <button
