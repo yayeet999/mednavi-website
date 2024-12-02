@@ -59,20 +59,33 @@ function generatePatients(count: number = 300): Patient[] {
 
   // Generate center points for realistic clustering
   const clusters = [
-    { lat: 42.0111, lng: -87.8406, weight: 0.4 }, // Park Ridge
-    { lat: 42.0294, lng: -87.7925, weight: 0.2 }, // Niles
-    { lat: 42.0072, lng: -87.8139, weight: 0.2 }, // Edison Park
-    { lat: 41.9856, lng: -87.8087, weight: 0.2 }  // Norwood Park
+    { lat: 42.0111, lng: -87.8406, weight: 0.25 }, // Park Ridge Main
+    { lat: 42.0150, lng: -87.8350, weight: 0.15 }, // Park Ridge North
+    { lat: 42.0294, lng: -87.7925, weight: 0.15 }, // Niles Main
+    { lat: 42.0250, lng: -87.7980, weight: 0.10 }, // Niles South
+    { lat: 42.0072, lng: -87.8139, weight: 0.15 }, // Edison Park Main
+    { lat: 42.0030, lng: -87.8180, weight: 0.10 }, // Edison Park South
+    { lat: 41.9856, lng: -87.8087, weight: 0.10 }  // Norwood Park
   ];
 
   for (let i = 0; i < count; i++) {
-    // Select a cluster based on weights
-    const cluster = clusters[Math.floor(Math.random() * clusters.length)];
+    // Select cluster based on cumulative weights
+    let random = Math.random();
+    let selectedCluster = clusters[0];
+    let cumulativeWeight = 0;
     
-    // Generate location with random offset from cluster center
+    for (const cluster of clusters) {
+      cumulativeWeight += cluster.weight;
+      if (random <= cumulativeWeight) {
+        selectedCluster = cluster;
+        break;
+      }
+    }
+    
+    // Generate location with adjusted random offset for better spread
     const location = {
-      lat: cluster.lat + (Math.random() - 0.5) * 0.02,
-      lng: cluster.lng + (Math.random() - 0.5) * 0.02,
+      lat: selectedCluster.lat + (Math.random() - 0.5) * 0.03, // Increased spread
+      lng: selectedCluster.lng + (Math.random() - 0.5) * 0.03, // Increased spread
       address: `${Math.floor(Math.random() * 9999)} Street`,
       zipCode: ["60068", "60714", "60631", "60656"][Math.floor(Math.random() * 4)]
     };
