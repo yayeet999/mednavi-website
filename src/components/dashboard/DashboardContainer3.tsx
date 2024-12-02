@@ -3,7 +3,6 @@ import { Home, BarChart2, Map, Bot, MapPin, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RegionalTabContent from './RegionalTabContent';
 import GeoPlotTabContent from './GeoPlotTabContent';
-import { AnimatePresence } from 'framer-motion';
 
 interface DashboardContainer3Props {
   onNavigateToBot?: () => void;
@@ -20,14 +19,6 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
   const [shouldRenderMap, setShouldRenderMap] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [activeTab, setActiveTab] = useState('regional');
-
-  const handleTabChange = (value: string) => {
-    setIsTransitioning(true);
-    setActiveTab(value);
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 300);
-  };
 
   const handlePageChange = (pageId: string) => {
     if (pageId === 'bot') {
@@ -63,6 +54,12 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
       setIsTransitioning(false);
     };
   }, []);
+
+  const handleTabChange = (value: string) => {
+    if (value !== activeTab) {
+      setActiveTab(value);
+    }
+  };
 
   return (
     <div className="h-full w-full">
@@ -133,18 +130,21 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
                         </div>
 
                         <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2 mx-4 rounded-lg">
-                          <AnimatePresence mode="wait">
-                            {activeTab === 'regional' && (
-                              <TabsContent value="regional" className="h-full m-0 md:p-4 p-1">
-                                <RegionalTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
-                              </TabsContent>
-                            )}
-                            {activeTab === 'geoplot' && (
-                              <TabsContent value="geoplot" className="h-full m-0 p-4">
-                                <GeoPlotTabContent key={shouldRenderMap ? 'mounted' : 'unmounted'} />
-                              </TabsContent>
-                            )}
-                          </AnimatePresence>
+                          <TabsContent 
+                            value="regional" 
+                            className="h-full m-0 md:p-4 p-1"
+                            forceMount={activeTab === 'regional'}
+                          >
+                            <RegionalTabContent key={`regional-${shouldRenderMap}`} />
+                          </TabsContent>
+
+                          <TabsContent 
+                            value="geoplot" 
+                            className="h-full m-0 p-4"
+                            forceMount={activeTab === 'geoplot'}
+                          >
+                            <GeoPlotTabContent key={`geoplot-${shouldRenderMap}`} />
+                          </TabsContent>
                         </div>
                       </Tabs>
                     </div>
