@@ -1,5 +1,3 @@
-// src/types/patientData.ts
-
 export interface PatientLocation {
   lat: number;
   lng: number;
@@ -66,42 +64,67 @@ function getLastVisitDate(category: string): Date {
   }
 }
 
-// Create clusters based on the original distribution but with static data
+const generateLocation = (cluster: {
+  center: { lat: number; lng: number };
+  radius: number;
+  count: number;
+  spread: number;
+}) => {
+  const angle = Math.random() * Math.PI * 2;
+  const radiusScale = Math.pow(Math.random(), cluster.spread);
+  const distance = cluster.radius * radiusScale;
+  
+  const jitter = (Math.random() - 0.5) * 0.005;
+  
+  const lat = cluster.center.lat + distance * Math.cos(angle) + jitter;
+  const lng = cluster.center.lng + distance * Math.sin(angle) + jitter;
+  
+  return { lat, lng };
+};
+
+// Create clusters based on geographic distribution
 const clusters = [
   { 
     center: { lat: 42.0111, lng: -87.8406 }, // Park Ridge Main
-    radius: 0.01,
-    count: 75
+    radius: 0.025,
+    count: 75,
+    spread: 0.8
   },
   { 
     center: { lat: 42.0150, lng: -87.8350 }, // Park Ridge North
-    radius: 0.01,
-    count: 45
+    radius: 0.028,
+    count: 45,
+    spread: 0.9
   },
   { 
     center: { lat: 42.0294, lng: -87.7925 }, // Niles Main
-    radius: 0.01,
-    count: 45
+    radius: 0.023,
+    count: 45,
+    spread: 0.85
   },
   { 
     center: { lat: 42.0250, lng: -87.7980 }, // Niles South
-    radius: 0.01,
-    count: 30
+    radius: 0.022,
+    count: 30,
+    spread: 0.75
   },
   { 
     center: { lat: 42.0072, lng: -87.8139 }, // Edison Park Main
-    radius: 0.01,
-    count: 45
+    radius: 0.024,
+    count: 45,
+    spread: 0.85
   },
   { 
     center: { lat: 42.0030, lng: -87.8180 }, // Edison Park South
-    radius: 0.01,
-    count: 30
+    radius: 0.026,
+    count: 30,
+    spread: 0.9
   },
   { 
     center: { lat: 41.9856, lng: -87.8087 }, // Norwood Park
-    radius: 0.01,
-    count: 30
+    radius: 0.027,
+    count: 30,
+    spread: 0.8
   }
 ];
 
@@ -113,15 +136,10 @@ export const STATIC_PATIENT_DATA: Patient[] = (() => {
   
   clusters.forEach(cluster => {
     for (let i = 0; i < cluster.count; i++) {
-      // Calculate location with slight random offset
-      const angle = Math.random() * Math.PI * 2;
-      const r = Math.random() * cluster.radius;
-      const lat = cluster.center.lat + r * Math.cos(angle);
-      const lng = cluster.center.lng + r * Math.sin(angle);
+      const location = generateLocation(cluster);
 
       // Determine last visit category based on distribution
       let lastVisitCategory;
-      const visitRand = Math.random() * 100;
       if (visitDistributionCount.last30 < 15) { // 5%
         lastVisitCategory = 'Last 30 days';
         visitDistributionCount.last30++;
@@ -139,8 +157,8 @@ export const STATIC_PATIENT_DATA: Patient[] = (() => {
       const patient: Patient = {
         id: `P${patientId.toString().padStart(4, '0')}`,
         location: {
-          lat,
-          lng,
+          lat: location.lat,
+          lng: location.lng,
           address: `${Math.floor(Math.random() * 9999)} Street`,
           zipCode: ["60068", "60714", "60631", "60656"][Math.floor(Math.random() * 4)]
         },
