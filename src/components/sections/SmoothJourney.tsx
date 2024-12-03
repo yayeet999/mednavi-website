@@ -20,7 +20,7 @@ const navigationIcons = [
   { id: 'location', Icon: MapPin }
 ];
 
-const SCROLL_COOLDOWN = 500; // ms between scroll actions
+const SCROLL_THRESHOLD = 50; // Amount of scroll needed to trigger station change
 const ANIMATION_DURATION = 1000; // ms for transitions
 
 const SmoothJourney: React.FC = () => {
@@ -30,9 +30,13 @@ const SmoothJourney: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isFixed, setIsFixed] = useState(false);
+  
   const sectionRef = useRef<HTMLDivElement>(null);
-  const lastScrollTime = useRef<number>(0);
-
+  const scrollAccumulator = useRef(0);
+  const lastScrollY = useRef(0);
+  
+  // Initialize
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({
@@ -48,74 +52,83 @@ const SmoothJourney: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Mobile scroll handling - unchanged
   useEffect(() => {
     if (!isMobile || !mounted) return;
 
-    const handleScroll = () => {
+    const handleMobileScroll = () => {
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
       setIsVisible(rect.top < window.innerHeight && rect.bottom >= 0);
     };
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    handleMobileScroll();
+    window.addEventListener('scroll', handleMobileScroll);
+    return () => window.removeEventListener('scroll', handleMobileScroll);
   }, [isMobile, mounted]);
 
+  // Desktop scroll handling
   useEffect(() => {
     if (isMobile || !mounted) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        setIsVisible(entry.isIntersecting);
+    const handleDesktopScroll = () => {
+      if (!sectionRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight && rect.bottom >= 0;
+      
+      if (isInView) {
+        // Calculate scroll direction and amount
+        const scrollDelta = window.scrollY - lastScrollY.current;
+        scrollAccumulator.current += scrollDelta;
 
-        if (entry.isIntersecting && sectionRef.current) {
-          sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Check if we should change stations
+        if (Math.abs(scrollAccumulator.current) >= SCROLL_THRESHOLD && !isAnimating) {
+          const direction = scrollAccumulator.current > 0 ? 1 : -1;
+          const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
+          
+          if (nextIndex !== currentIndex) {
+            setIsAnimating(true);
+            setCurrentIndex(nextIndex);
+            setTimeout(() => setIsAnimating(false), ANIMATION_DURATION);
+          }
+          
+          scrollAccumulator.current = 0;
         }
-      },
-      { threshold: 0.2 }
-    );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+        // Fix the component in place while transitioning through stations
+        if (!isFixed && (currentIndex > 0 || scrollDelta > 0)) {
+          setIsFixed(true);
+          sectionRef.current.style.position = 'fixed';
+          sectionRef.current.style.top = '0';
+          sectionRef.current.style.width = '100%';
+          document.body.style.paddingTop = `${rect.height}px`;
+        }
 
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+        // Release the fix when reaching the end of stations
+        if (isFixed && ((currentIndex === 0 && scrollDelta < 0) || (currentIndex === stations.length - 1 && scrollDelta > 0))) {
+          setIsFixed(false);
+          sectionRef.current.style.position = 'relative';
+          sectionRef.current.style.top = '';
+          document.body.style.paddingTop = '0';
+        }
       }
+
+      lastScrollY.current = window.scrollY;
+      setIsVisible(isInView);
     };
-  }, [isMobile, mounted]);
 
-  const handleScroll = useCallback((e: WheelEvent) => {
-    if (!isVisible || isAnimating || isMobile) return;
+    window.addEventListener('scroll', handleDesktopScroll);
+    return () => {
+      window.removeEventListener('scroll', handleDesktopScroll);
+      if (sectionRef.current) {
+        sectionRef.current.style.position = 'relative';
+        sectionRef.current.style.top = '';
+      }
+      document.body.style.paddingTop = '0';
+    };
+  }, [isMobile, mounted, currentIndex, isAnimating, isFixed]);
 
-    const now = Date.now();
-    if (now - lastScrollTime.current < SCROLL_COOLDOWN) return;
-    lastScrollTime.current = now;
-
-    const direction = e.deltaY > 0 ? 'down' : 'up';
-    e.preventDefault();
-
-    const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + (direction === 'down' ? 1 : -1)));
-    if (nextIndex !== currentIndex) {
-      setIsAnimating(true);
-      setCurrentIndex(nextIndex);
-      setTimeout(() => setIsAnimating(false), ANIMATION_DURATION);
-    }
-  }, [currentIndex, isAnimating, isVisible, isMobile]);
-
-  useEffect(() => {
-    if (isMobile || !mounted) return;
-
-    const section = sectionRef.current;
-    if (!section) return;
-
-    section.addEventListener('wheel', handleScroll, { passive: false });
-    return () => section.removeEventListener('wheel', handleScroll);
-  }, [handleScroll, isMobile, mounted]);
-
+  // Navigation functions
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
     setIsAnimating(true);
@@ -136,7 +149,8 @@ const SmoothJourney: React.FC = () => {
   return (
     <div 
       ref={sectionRef}
-      className="relative w-full h-[70vh] md:h-screen bg-[#EBF4FF] overflow-hidden"
+      className={`relative w-full h-[70vh] md:h-screen bg-[#EBF4FF] overflow-hidden
+                  ${isFixed ? 'z-50' : ''}`}
     >
       <div 
         className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
@@ -144,6 +158,7 @@ const SmoothJourney: React.FC = () => {
           transform: `translate(${windowSize.width / 2 - currentPosition.x}px, ${windowSize.height / 2 - currentPosition.y + mobileOffset}px)`
         }}
       >
+        {/* SVG Path and circles */}
         <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
           <defs>
             <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
@@ -193,6 +208,7 @@ const SmoothJourney: React.FC = () => {
           ))}
         </svg>
 
+        {/* Dashboard Containers */}
         {stations.map((station, i) => (
           <div
             key={station.id}
@@ -231,6 +247,7 @@ const SmoothJourney: React.FC = () => {
         ))}
       </div>
 
+      {/* Navigation Icons */}
       {isVisible && (
         <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
                       transition-opacity ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
