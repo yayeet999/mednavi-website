@@ -29,12 +29,8 @@ const SmoothJourney: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  
   const sectionRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
-  // Initialize
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({
@@ -50,48 +46,47 @@ const SmoothJourney: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Mobile scroll handling - unchanged
+  // Mobile-only scroll handling
   useEffect(() => {
     if (!isMobile || !mounted) return;
 
-    const handleScroll = () => {
+    const handleMobileScroll = () => {
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
       setIsVisible(rect.top < window.innerHeight && rect.bottom >= 0);
     };
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    handleMobileScroll();
+    window.addEventListener('scroll', handleMobileScroll);
+    return () => window.removeEventListener('scroll', handleMobileScroll);
   }, [isMobile, mounted]);
 
-  // Desktop scroll handling
+  // Mobile-only intersection observer
   useEffect(() => {
-    if (isMobile || !mounted) return;
+    if (!isMobile || !mounted) return;
 
-    const handleDesktopScroll = () => {
-      if (!sectionRef.current || !contentRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      const totalHeight = sectionRef.current.offsetHeight - window.innerHeight;
-      const progress = Math.max(0, Math.min(1, -rect.top / totalHeight));
-      
-      setScrollProgress(progress);
-      setIsVisible(rect.top < window.innerHeight && rect.bottom >= 0);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsVisible(entry.isIntersecting);
 
-      // Calculate current station based on scroll progress
-      const newIndex = Math.min(
-        stations.length - 1,
-        Math.floor(progress * stations.length)
-      );
-      
-      if (newIndex !== currentIndex && !isAnimating) {
-        setCurrentIndex(newIndex);
+        if (entry.isIntersecting && sectionRef.current) {
+          sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
       }
     };
-
-    window.addEventListener('scroll', handleDesktopScroll);
-    return () => window.removeEventListener('scroll', handleDesktopScroll);
-  }, [isMobile, mounted, currentIndex, isAnimating]);
+  }, [isMobile, mounted]);
 
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
@@ -110,20 +105,20 @@ const SmoothJourney: React.FC = () => {
   const currentPosition = stations[currentIndex];
   const mobileOffset = isMobile ? -150 : 0;
 
-  // Mobile version - unchanged
   if (isMobile) {
+    // Mobile version - unchanged
     return (
       <div 
         ref={sectionRef}
         className="relative w-full h-[70vh] bg-[#EBF4FF] overflow-hidden"
       >
-        {/* Mobile JSX - exactly as before */}
         <div 
           className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
           style={{
             transform: `translate(${windowSize.width / 2 - currentPosition.x}px, ${windowSize.height / 2 - currentPosition.y + mobileOffset}px)`
           }}
         >
+          {/* SVG Path and circles */}
           <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
             <defs>
               <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
@@ -147,8 +142,7 @@ const SmoothJourney: React.FC = () => {
                   stroke="url(#lineGradient)"
                   strokeWidth="5"
                   fill="none"
-                  className={`transition-opacity duration-500
-                             ${Math.abs(currentIndex - i) <= 1 ? 'opacity-100' : 'opacity-30'}`}
+                  className="transition-opacity duration-500"
                 />
               );
             })}
@@ -173,48 +167,41 @@ const SmoothJourney: React.FC = () => {
             ))}
           </svg>
 
-          {stations.map((station, i) => (
-            <div
-              key={station.id}
-              className={`absolute w-[360px] h-[340px] transition-transform duration-1000 ease-out will-change-transform
-                        ${i === currentIndex ? 'z-20' : 'z-10'}`}
-              style={{
-                left: station.x,
-                top: station.y,
-                transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
-                opacity: Math.abs(currentIndex - i) <= 1 ? 
-                        1 - Math.abs(currentIndex - i) * 0.3 : 0,
-              }}
-            >
-              <div className="pb-4">
-                <div className="w-full h-full bg-white rounded-xl">
-                  {i === 0 ? (
-                    <DashboardContainer onNavigate={navigateToContainer} />
-                  ) : i === 1 ? (
-                    <DashboardContainer2 onNavigateToMap={() => navigate(2)} />
-                  ) : i === 2 ? (
-                    <DashboardContainer3 
-                      onNavigateToHome={navigateToHome}
-                      onNavigateToPractice={navigateToPractice}
-                      onNavigateToLocation={navigateToLocation}
-                    />
-                  ) : (
-                    <DashboardContainer4 
-                      onNavigateToHome={navigateToHome}
-                      onNavigateToPractice={navigateToPractice}
-                      onNavigateToMap={() => navigate(2)}
-                    />
-                  )}
-                </div>
+          <div
+            className={`absolute w-[360px] h-[340px] transition-all duration-1000 ease-out will-change-transform`}
+            style={{
+              left: currentPosition.x,
+              top: currentPosition.y,
+              transform: `translate(-50%, -50%)`,
+            }}
+          >
+            <div className="pb-4">
+              <div className="w-full h-full bg-white rounded-xl">
+                {currentIndex === 0 ? (
+                  <DashboardContainer onNavigate={navigateToContainer} />
+                ) : currentIndex === 1 ? (
+                  <DashboardContainer2 onNavigateToMap={() => navigate(2)} />
+                ) : currentIndex === 2 ? (
+                  <DashboardContainer3 
+                    onNavigateToHome={navigateToHome}
+                    onNavigateToPractice={navigateToPractice}
+                    onNavigateToLocation={navigateToLocation}
+                  />
+                ) : (
+                  <DashboardContainer4 
+                    onNavigateToHome={navigateToHome}
+                    onNavigateToPractice={navigateToPractice}
+                    onNavigateToMap={() => navigate(2)}
+                  />
+                )}
               </div>
             </div>
-          ))}
+          </div>
         </div>
 
-        {/* Mobile navigation icons */}
         {isVisible && (
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
-                         transition-opacity ease-in-out duration-300">
+          <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
+                        transition-opacity ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
             {navigationIcons.map((nav, i) => {
               const { Icon } = nav;
               return (
@@ -223,15 +210,25 @@ const SmoothJourney: React.FC = () => {
                   onClick={() => navigate(i)}
                   disabled={isAnimating}
                   className={`
-                    flex items-center justify-center w-10 h-10
+                    flex items-center justify-center
+                    w-10 h-10
                     rounded-full transform transition-all duration-300 will-change-transform
                     ${i === currentIndex 
                       ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-[pulse_3s_ease-in-out_infinite]' 
                       : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'}
                     disabled:opacity-50
                   `}
+                  style={{
+                    WebkitTapHighlightColor: 'transparent'
+                  }}
+                  aria-label={`Navigate to ${nav.id}`}
+                  aria-current={i === currentIndex ? 'true' : 'false'}
                 >
-                  <Icon size={20} className={i === currentIndex ? 'text-white' : 'text-white/90'} />
+                  <Icon 
+                    size={20}
+                    className={`transform transition-colors duration-300
+                               ${i === currentIndex ? 'text-white' : 'text-white/90'}`}
+                  />
                 </button>
               );
             })}
@@ -240,118 +237,70 @@ const SmoothJourney: React.FC = () => {
 
         <style jsx>{`
           @keyframes pulse {
-            0%, 100% { transform: scale(1.1); opacity: 1; }
-            50% { transform: scale(1.15); opacity: 0.8; }
+            0%, 100% {
+              transform: scale(1.1);
+              opacity: 1;
+            }
+            50% {
+              transform: scale(1.15);
+              opacity: 0.8;
+            }
           }
         `}</style>
       </div>
     );
   }
 
-  // Desktop version - scrollable with animations
+  // Desktop version - vertical layout
   return (
     <div 
       ref={sectionRef}
-      className="relative w-full bg-[#EBF4FF] overflow-hidden"
-      style={{ height: '400vh' }}
+      className="relative w-full min-h-[400vh] bg-[#EBF4FF] overflow-hidden"
     >
-      <div 
-        ref={contentRef}
-        className="sticky top-0 w-full h-screen overflow-hidden"
-      >
-        <div 
-          className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
-          style={{
-            transform: `translate(${windowSize.width / 2 - currentPosition.x}px, ${windowSize.height / 2 - currentPosition.y}px)`
-          }}
-        >
-          <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
-            <defs>
-              <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#60A5FA" stopOpacity="0.4" />
-              </linearGradient>
-            </defs>
-
-            {stations.map((station, i) => {
-              if (i === stations.length - 1) return null;
-              const next = stations[i + 1];
-              const midX = (station.x + next.x) / 2;
-              
-              return (
-                <path
-                  key={i}
-                  d={`M ${station.x} ${station.y} 
-                      Q ${midX} ${station.y},
-                        ${midX} ${(station.y + next.y) / 2}
-                      T ${next.x} ${next.y}`}
-                  stroke="url(#lineGradient)"
-                  strokeWidth="5"
-                  fill="none"
-                  className={`transition-opacity duration-500
-                             ${Math.abs(currentIndex - i) <= 1 ? 'opacity-100' : 'opacity-30'}`}
-                />
-              );
-            })}
-
-            {stations.map((station, i) => (
-              <g key={i}>
-                <circle
-                  cx={station.x}
-                  cy={station.y}
-                  r="12"
-                  fill="#3B82F6"
-                  className="opacity-30"
-                />
-                <circle
-                  cx={station.x}
-                  cy={station.y}
-                  r="6"
-                  fill="#3B82F6"
-                  className="opacity-70"
-                />
-              </g>
-            ))}
-          </svg>
-
-          {stations.map((station, i) => (
-            <div
-              key={station.id}
-              className={`absolute w-[840px] h-[480px] transition-transform duration-1000 ease-out will-change-transform
-                        ${i === currentIndex ? 'z-20' : 'z-10'}`}
-              style={{
-                left: station.x,
-                top: station.y,
-                transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
-                opacity: Math.abs(currentIndex - i) <= 1 ? 
-                        1 - Math.abs(currentIndex - i) * 0.3 : 0,
-              }}
-            >
-              <div className="pb-6">
-                <div className="w-full h-full bg-white rounded-xl">
-                  {i === 0 ? (
-                    <DashboardContainer onNavigate={navigateToContainer} />
-                  ) : i === 1 ? (
-                    <DashboardContainer2 onNavigateToMap={() => navigate(2)} />
-                  ) : i === 2 ? (
-                    <DashboardContainer3 
-                      onNavigateToHome={navigateToHome}
-                      onNavigateToPractice={navigateToPractice}
-                      onNavigateToLocation={navigateToLocation}
-                    />
-                  ) : (
-                    <DashboardContainer4 
-                      onNavigateToHome={navigateToHome}
-                      onNavigateToPractice={navigateToPractice}
-                      onNavigateToMap={() => navigate(2)}
-                    />
-                  )}
-                </div>
+      <div className="sticky top-0 w-full h-screen flex items-center justify-center">
+        {stations.map((station, i) => (
+          <div
+            key={station.id}
+            className={`absolute w-[840px] h-[480px] transition-all duration-700 ease-out
+                       ${Math.abs(i - currentIndex) <= 1 ? 'opacity-100' : 'opacity-0'}`}
+          >
+            <div className="pb-6">
+              <div className="w-full h-full bg-white rounded-xl">
+                {i === 0 ? (
+                  <DashboardContainer onNavigate={navigateToContainer} />
+                ) : i === 1 ? (
+                  <DashboardContainer2 onNavigateToMap={() => navigate(2)} />
+                ) : i === 2 ? (
+                  <DashboardContainer3 
+                    onNavigateToHome={navigateToHome}
+                    onNavigateToPractice={navigateToPractice}
+                    onNavigateToLocation={navigateToLocation}
+                  />
+                ) : (
+                  <DashboardContainer4 
+                    onNavigateToHome={navigateToHome}
+                    onNavigateToPractice={navigateToPractice}
+                    onNavigateToMap={() => navigate(2)}
+                  />
+                )}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
+
+      {/* Scroll sections to trigger index changes */}
+      {stations.map((_, i) => (
+        <div
+          key={i}
+          className="h-screen w-full"
+          onMouseEnter={() => {
+            if (currentIndex !== i) {
+              setCurrentIndex(i);
+            }
+          }}
+        />
+      ))}
     </div>
   );
 };
