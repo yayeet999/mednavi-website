@@ -9,7 +9,7 @@ interface PopoverProps {
   anchorEl: HTMLElement | null;
 }
 
-const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }) => {
+const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children }) => {
   const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,49 +25,12 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
     }
   }, [isOpen, onClose]);
 
-  useEffect(() => {
-    if (!isOpen || !popoverRef.current || !anchorEl) return;
-
-    const updatePosition = () => {
-      if (!popoverRef.current || !anchorEl) return;
-
-      const anchorRect = anchorEl.getBoundingClientRect();
-      const popoverRect = popoverRef.current.getBoundingClientRect();
-      const parentContainer = anchorEl.closest('.bg-gray-50');
-      
-      if (!parentContainer) return;
-
-      const parentRect = parentContainer.getBoundingClientRect();
-      
-      // Position the popover to overlay in the center of the parent container
-      const left = (parentRect.width - popoverRect.width) / 2;
-      
-      // Calculate vertical position relative to the clicked filter
-      let top = anchorRect.top - parentRect.top + anchorRect.height / 2;
-      
-      // Adjust if popover would go outside container
-      const maxTop = parentRect.height - popoverRect.height - 10;
-      const minTop = 10;
-      top = Math.min(Math.max(top - popoverRect.height / 2, minTop), maxTop);
-
-      popoverRef.current.style.left = `${left}px`;
-      popoverRef.current.style.top = `${top}px`;
-    };
-
-    requestAnimationFrame(updatePosition);
-    window.addEventListener('resize', updatePosition);
-    return () => window.removeEventListener('resize', updatePosition);
-  }, [isOpen, anchorEl]);
-
   if (!isOpen) return null;
 
   return (
     <div
       ref={popoverRef}
-      className="absolute z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px] max-h-[300px] overflow-y-auto"
-      style={{
-        width: '90%', // Take up most of the container width
-      }}
+      className="absolute right-0 top-0 translate-x-[calc(100%+8px)] z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px] max-h-[300px] overflow-y-auto"
     >
       <div
         className="absolute left-[-6px] top-[50%] transform -translate-y-1/2"
@@ -84,6 +47,7 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
     </div>
   );
 };
+
 interface FilterCardProps {
   title: string;
   icon: React.ReactNode;
