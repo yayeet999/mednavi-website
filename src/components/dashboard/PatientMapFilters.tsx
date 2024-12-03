@@ -44,6 +44,9 @@ const FilterCard: React.FC<FilterCardProps> = ({
   }, [isOpen]);
 
   const iconColor = selectedFilters.length > 0 ? 'text-blue-700' : 'text-gray-400';
+  const iconContainerStyle = selectedFilters.length > 0 
+    ? 'w-6 h-6 rounded-md bg-blue-50 border border-blue-700 flex items-center justify-center mr-2'
+    : 'w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center mr-2';
   const shouldOpenUpward = category === 'lastVisit' || category === 'primaryLanguage';
 
   return (
@@ -53,7 +56,7 @@ const FilterCard: React.FC<FilterCardProps> = ({
         className="w-full flex items-center justify-between"
       >
         <div className="flex items-center">
-          <div className={`w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center mr-2`}>
+          <div className={iconContainerStyle}>
             {React.cloneElement(icon as React.ReactElement, {
               size: 14,
               className: iconColor,
@@ -109,13 +112,15 @@ const StatsHeader: React.FC<{
   return (
     <div className="bg-white rounded-lg shadow-sm p-2 mb-3">
       <div className="flex items-center justify-between mb-1 w-full">
-        <div className="text-[10px] font-medium text-gray-700">Filter Patients</div>
-        <button
-          onClick={onResetFilters}
-          className="text-[9px] text-blue-500 hover:text-blue-600 ml-2 -mr-1"
-        >
-          Reset All
-        </button>
+        <div className="flex items-center">
+          <div className="text-[10px] font-medium text-gray-700">Filter Patients</div>
+          <button
+            onClick={onResetFilters}
+            className="text-[9px] text-blue-500 hover:text-blue-600 ml-3"
+          >
+            Reset All
+          </button>
+        </div>
       </div>
       <div className="flex items-center justify-between text-[11px]">
         <span className="text-gray-600">
