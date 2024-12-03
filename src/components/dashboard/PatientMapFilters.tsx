@@ -61,9 +61,6 @@ const FilterCard: React.FC<FilterCardProps> = ({
           </div>
           <div className="text-left">
             <div className="text-xs font-medium text-gray-900">{title}</div>
-            {selectedFilters.length > 0 && !isReset && (
-              <div className="text-[10px] text-blue-600">{selectedFilters.length} selected</div>
-            )}
           </div>
         </div>
         <Filter
