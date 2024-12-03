@@ -103,22 +103,19 @@ const StatsHeader: React.FC<{
   totalPatients: number;
   filteredCount: number;
   onResetFilters: () => void;
-  activeFiltersCount?: number; // Made optional to match current code
-}> = ({ totalPatients, filteredCount, onResetFilters, activeFiltersCount = 0 }) => {
+}> = ({ totalPatients, filteredCount, onResetFilters }) => {
   const percentage = Math.round((filteredCount / totalPatients) * 100);
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-2 mb-3">
       <div className="flex items-center justify-between mb-1 w-full">
         <div className="text-[10px] font-medium text-gray-700">Filter Patients</div>
-        {activeFiltersCount > 0 && (
-          <button
-            onClick={onResetFilters}
-            className="text-[9px] text-blue-500 hover:text-blue-600 ml-2"
-          >
-            Reset All
-          </button>
-        )}
+        <button
+          onClick={onResetFilters}
+          className="text-[9px] text-blue-500 hover:text-blue-600 ml-2 -mr-1"
+        >
+          Reset All
+        </button>
       </div>
       <div className="flex items-center justify-between text-[11px]">
         <span className="text-gray-600">
@@ -153,13 +150,10 @@ const PatientMapFilters: React.FC<{
     gender: [],
     distance: [],
     insuranceType: [],
-    privateInsurance: [],
     status: [],
     lastVisit: [],
     hygieneDue: [],
     isNewPatient: [],
-    appointmentStatus: [],
-    familyMembers: [],
     primaryLanguage: [],
   });
 
@@ -175,11 +169,6 @@ const PatientMapFilters: React.FC<{
             ? prev[category].filter((item) => item !== value)
             : [...prev[category], value],
         };
-
-        if (category === 'insuranceType' && !newFilters.insuranceType.includes('Private')) {
-          newFilters.privateInsurance = [];
-        }
-
         onFiltersChange(newFilters);
         return newFilters;
       });
@@ -194,19 +183,14 @@ const PatientMapFilters: React.FC<{
       gender: [],
       distance: [],
       insuranceType: [],
-      privateInsurance: [],
       status: [],
       lastVisit: [],
       hygieneDue: [],
       isNewPatient: [],
-      appointmentStatus: [],
-      familyMembers: [],
       primaryLanguage: [],
     });
     onResetFilters();
   }, [onResetFilters]);
-
-  const activeFiltersCount = Object.values(filters).flat().length;
 
   return (
     <div className="h-full flex flex-col bg-gray-50 p-3 rounded-lg">
@@ -214,7 +198,6 @@ const PatientMapFilters: React.FC<{
         totalPatients={totalPatients}
         filteredCount={filteredCount}
         onResetFilters={handleResetFilters}
-        activeFiltersCount={activeFiltersCount}
       />
 
       <div className="flex-1 overflow-y-auto">
@@ -236,7 +219,7 @@ const PatientMapFilters: React.FC<{
               category: 'distance' as keyof FilterState,
             },
             {
-              title: 'Demographics',
+              title: 'Age Groups',
               icon: <Users />,
               category: 'age' as keyof FilterState,
             },
@@ -246,7 +229,7 @@ const PatientMapFilters: React.FC<{
               category: 'lastVisit' as keyof FilterState,
             },
             {
-              title: 'Hygiene',
+              title: 'Hygiene Scheduled',
               icon: <Heart />,
               category: 'hygieneDue' as keyof FilterState,
             },
@@ -267,7 +250,6 @@ const PatientMapFilters: React.FC<{
               isReset={isReset}
             />
           ))}
-          {/* Removed the Insurance Plan FilterCard */}
         </div>
       </div>
     </div>
