@@ -20,8 +20,9 @@ const navigationIcons = [
   { id: 'location', Icon: MapPin }
 ];
 
-const SCROLL_THRESHOLD = 50; // Amount of scroll needed to trigger station change
-const ANIMATION_DURATION = 1000; // ms for transitions
+const SCROLL_THRESHOLD = 50;
+const ANIMATION_DURATION = 1000;
+const SNAP_THRESHOLD = 0.3; // Percentage of component height to trigger snap
 
 const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -31,19 +32,24 @@ const SmoothJourney: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
+  const [isSnapping, setIsSnapping] = useState(false);
   
   const sectionRef = useRef<HTMLDivElement>(null);
   const scrollAccumulator = useRef(0);
   const lastScrollY = useRef(0);
-  
+  const initialPositionRef = useRef<number | null>(null);
+  const componentHeight = useRef<number>(0);
+
   // Initialize
   useEffect(() => {
     const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-      setIsMobile(window.innerWidth < 768);
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      setWindowSize({ width, height });
+      setIsMobile(width < 768);
+      if (sectionRef.current) {
+        componentHeight.current = sectionRef.current.offsetHeight;
+      }
     };
 
     setMounted(true);
@@ -71,62 +77,90 @@ const SmoothJourney: React.FC = () => {
   useEffect(() => {
     if (isMobile || !mounted) return;
 
-    const handleDesktopScroll = () => {
-      if (!sectionRef.current) return;
+    const handleScroll = () => {
+      if (!sectionRef.current || isSnapping) return;
+
       const rect = sectionRef.current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight && rect.bottom >= 0;
-      
-      if (isInView) {
-        // Calculate scroll direction and amount
+      const viewportHeight = window.innerHeight;
+      const scrollDirection = window.scrollY > lastScrollY.current ? 'down' : 'up';
+
+      // Store initial position when component is first mounted
+      if (initialPositionRef.current === null) {
+        initialPositionRef.current = sectionRef.current.offsetTop;
+      }
+
+      // Calculate visibility percentage
+      const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
+      const visibilityRatio = visibleHeight / componentHeight.current;
+
+      // Handle snapping
+      if (!isFixed && visibilityRatio > SNAP_THRESHOLD) {
+        setIsSnapping(true);
+        setIsFixed(true);
+        
+        const targetScroll = initialPositionRef.current;
+        window.scrollTo({
+          top: targetScroll,
+          behavior: 'smooth'
+        });
+
+        setTimeout(() => {
+          if (sectionRef.current) {
+            sectionRef.current.style.position = 'fixed';
+            sectionRef.current.style.top = '0';
+            sectionRef.current.style.width = '100%';
+            document.body.style.paddingTop = `${componentHeight.current}px`;
+          }
+          setIsSnapping(false);
+        }, 500);
+      }
+
+      // Handle station transitions when fixed
+      if (isFixed && !isSnapping) {
         const scrollDelta = window.scrollY - lastScrollY.current;
         scrollAccumulator.current += scrollDelta;
 
-        // Check if we should change stations
         if (Math.abs(scrollAccumulator.current) >= SCROLL_THRESHOLD && !isAnimating) {
           const direction = scrollAccumulator.current > 0 ? 1 : -1;
           const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
-          
+
           if (nextIndex !== currentIndex) {
             setIsAnimating(true);
             setCurrentIndex(nextIndex);
             setTimeout(() => setIsAnimating(false), ANIMATION_DURATION);
           }
-          
+
           scrollAccumulator.current = 0;
         }
 
-        // Fix the component in place while transitioning through stations
-        if (!isFixed && (currentIndex > 0 || scrollDelta > 0)) {
-          setIsFixed(true);
-          sectionRef.current.style.position = 'fixed';
-          sectionRef.current.style.top = '0';
-          sectionRef.current.style.width = '100%';
-          document.body.style.paddingTop = `${rect.height}px`;
-        }
+        // Unfix component when scrolling past boundaries
+        const shouldUnfix = (currentIndex === 0 && scrollDirection === 'up') || 
+                          (currentIndex === stations.length - 1 && scrollDirection === 'down');
 
-        // Release the fix when reaching the end of stations
-        if (isFixed && ((currentIndex === 0 && scrollDelta < 0) || (currentIndex === stations.length - 1 && scrollDelta > 0))) {
+        if (shouldUnfix) {
           setIsFixed(false);
-          sectionRef.current.style.position = 'relative';
-          sectionRef.current.style.top = '';
-          document.body.style.paddingTop = '0';
+          if (sectionRef.current) {
+            sectionRef.current.style.position = 'relative';
+            sectionRef.current.style.top = '';
+            document.body.style.paddingTop = '0';
+          }
         }
       }
 
       lastScrollY.current = window.scrollY;
-      setIsVisible(isInView);
+      setIsVisible(rect.top < viewportHeight && rect.bottom >= 0);
     };
 
-    window.addEventListener('scroll', handleDesktopScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', handleDesktopScroll);
+      window.removeEventListener('scroll', handleScroll);
       if (sectionRef.current) {
         sectionRef.current.style.position = 'relative';
         sectionRef.current.style.top = '';
       }
       document.body.style.paddingTop = '0';
     };
-  }, [isMobile, mounted, currentIndex, isAnimating, isFixed]);
+  }, [isMobile, mounted, currentIndex, isAnimating, isFixed, isSnapping]);
 
   // Navigation functions
   const navigate = useCallback((index: number) => {
@@ -151,7 +185,11 @@ const SmoothJourney: React.FC = () => {
       ref={sectionRef}
       className={`relative w-full h-[70vh] md:h-screen bg-[#EBF4FF] overflow-hidden
                   ${isFixed ? 'z-50' : ''}`}
+      style={{
+        transition: isSnapping ? 'transform 0.5s ease-out' : undefined
+      }}
     >
+      {/* Rest of the component JSX remains the same */}
       <div 
         className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
         style={{
