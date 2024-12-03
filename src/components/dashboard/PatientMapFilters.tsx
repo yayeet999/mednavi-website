@@ -43,7 +43,11 @@ const FilterCard: React.FC<FilterCardProps> = ({
     }
   }, [isOpen]);
 
-  const iconColor = selectedFilters.length > 0 ? "text-blue-600" : "text-gray-400";
+  // More pronounced blue for selected state
+  const iconColor = selectedFilters.length > 0 ? 'text-blue-700' : 'text-gray-400';
+
+  // Determine if this filter should open upward
+  const shouldOpenUpward = category === 'lastVisit' || category === 'primaryLanguage';
 
   return (
     <div ref={containerRef} className="bg-white rounded-lg shadow-sm p-1.5 relative">
@@ -53,13 +57,16 @@ const FilterCard: React.FC<FilterCardProps> = ({
       >
         <div className="flex items-center">
           <div className={`w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center mr-2`}>
-            {React.cloneElement(icon as React.ReactElement, { 
+            {React.cloneElement(icon as React.ReactElement, {
               size: 14,
-              className: iconColor
+              className: iconColor,
             })}
           </div>
           <div className="text-left">
             <div className="text-xs font-medium text-gray-900">{title}</div>
+            {selectedFilters.length > 0 && !isReset && (
+              <div className="text-[10px] text-blue-600">{selectedFilters.length} selected</div>
+            )}
           </div>
         </div>
         <Filter
@@ -69,7 +76,11 @@ const FilterCard: React.FC<FilterCardProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 mt-1 z-50 bg-white rounded-lg shadow-lg p-2 border border-gray-100">
+        <div
+          className={`absolute left-0 right-0 z-50 bg-white rounded-lg shadow-lg p-2 border border-gray-100 ${
+            shouldOpenUpward ? 'bottom-full mb-1' : 'top-full mt-1'
+          }`}
+        >
           <div className="grid grid-cols-2 gap-1">
             {options.map((option) => (
               <button
@@ -80,7 +91,7 @@ const FilterCard: React.FC<FilterCardProps> = ({
                 }}
                 className={`px-2 py-1 text-[11px] rounded-md transition-colors ${
                   selectedFilters.includes(option)
-                    ? 'bg-blue-500 text-white'
+                    ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -98,19 +109,22 @@ const StatsHeader: React.FC<{
   totalPatients: number;
   filteredCount: number;
   onResetFilters: () => void;
-}> = ({ totalPatients, filteredCount, onResetFilters }) => {
+  activeFiltersCount?: number; // Made optional to match current code
+}> = ({ totalPatients, filteredCount, onResetFilters, activeFiltersCount = 0 }) => {
   const percentage = Math.round((filteredCount / totalPatients) * 100);
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-2 mb-3">
       <div className="flex items-center justify-between mb-1 w-full">
         <div className="text-[10px] font-medium text-gray-700">Filter Patients</div>
-        <button
-          onClick={onResetFilters}
-          className="text-[9px] text-blue-500 hover:text-blue-600 mr-auto ml-4"
-        >
-          Reset All
-        </button>
+        {activeFiltersCount > 0 && (
+          <button
+            onClick={onResetFilters}
+            className="text-[9px] text-blue-500 hover:text-blue-600 ml-2"
+          >
+            Reset All
+          </button>
+        )}
       </div>
       <div className="flex items-center justify-between text-[11px]">
         <span className="text-gray-600">
@@ -198,12 +212,15 @@ const PatientMapFilters: React.FC<{
     onResetFilters();
   }, [onResetFilters]);
 
+  const activeFiltersCount = Object.values(filters).flat().length;
+
   return (
     <div className="h-full flex flex-col bg-gray-50 p-3 rounded-lg">
       <StatsHeader
         totalPatients={totalPatients}
         filteredCount={filteredCount}
         onResetFilters={handleResetFilters}
+        activeFiltersCount={activeFiltersCount}
       />
 
       <div className="flex-1 overflow-y-auto">
