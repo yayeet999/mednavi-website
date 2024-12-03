@@ -43,10 +43,7 @@ const FilterCard: React.FC<FilterCardProps> = ({
     }
   }, [isOpen]);
 
-  // More pronounced blue for selected state
   const iconColor = selectedFilters.length > 0 ? 'text-blue-700' : 'text-gray-400';
-
-  // Determine if this filter should open upward
   const shouldOpenUpward = category === 'lastVisit' || category === 'primaryLanguage';
 
   return (
@@ -64,9 +61,6 @@ const FilterCard: React.FC<FilterCardProps> = ({
           </div>
           <div className="text-left">
             <div className="text-xs font-medium text-gray-900">{title}</div>
-            {selectedFilters.length > 0 && !isReset && (
-              <div className="text-[10px] text-blue-600">{selectedFilters.length} selected</div>
-            )}
           </div>
         </div>
         <Filter
