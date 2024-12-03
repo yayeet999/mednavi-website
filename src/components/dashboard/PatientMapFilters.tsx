@@ -14,7 +14,12 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target as Node) &&
+        anchorEl &&
+        !anchorEl.contains(event.target as Node)
+      ) {
         onClose();
       }
     };
@@ -23,33 +28,30 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, anchorEl]);
 
   useEffect(() => {
     if (!isOpen || !popoverRef.current || !anchorEl) return;
 
     const updatePosition = () => {
       if (!popoverRef.current || !anchorEl) return;
-
+      
       const anchorRect = anchorEl.getBoundingClientRect();
-      const filterSection = anchorEl.closest('.bg-gray-50');
+      const dashboardContainer = document.querySelector('.bg-gray-50');
       
-      if (!filterSection) return;
+      if (!dashboardContainer) return;
       
-      const filterRect = filterSection.getBoundingClientRect();
+      const dashboardRect = dashboardContainer.getBoundingClientRect();
       
-      // Position to the right of the filter section
-      const left = filterRect.right + 8;
-      
-      // Align vertically with the clicked button
-      const top = anchorRect.top;
-
       popoverRef.current.style.position = 'fixed';
-      popoverRef.current.style.left = `${left}px`;
-      popoverRef.current.style.top = `${top}px`;
+      popoverRef.current.style.top = `${anchorRect.top}px`;
+      popoverRef.current.style.left = `${dashboardRect.right + 8}px`;
     };
 
+    // Initial position
     updatePosition();
+    
+    // Handle resize
     window.addEventListener('resize', updatePosition);
     return () => window.removeEventListener('resize', updatePosition);
   }, [isOpen, anchorEl]);
