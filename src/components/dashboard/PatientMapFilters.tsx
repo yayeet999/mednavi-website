@@ -2,84 +2,6 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Filter, Activity, Users, MapPin, Calendar, FileText, Heart, Languages } from 'lucide-react';
 import { FilterState, FILTER_OPTIONS } from '../../types/patientData';
 
-interface PopoverProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-  anchorEl: HTMLElement | null;
-}
-
-const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }) => {
-  const popoverRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(event.target as Node) &&
-        anchorEl &&
-        !anchorEl.contains(event.target as Node)
-      ) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [isOpen, onClose, anchorEl]);
-
-  useEffect(() => {
-    if (!isOpen || !popoverRef.current || !anchorEl) return;
-
-    const updatePosition = () => {
-  if (!popoverRef.current || !anchorEl) return;
-  
-  const anchorRect = anchorEl.getBoundingClientRect();
-  const dashboardContainer = anchorEl.closest('.bg-gray-50');
-  
-  if (!dashboardContainer) return;
-  
-  const dashboardRect = dashboardContainer.getBoundingClientRect();
-  const windowWidth = window.innerWidth;
-  
-  // Calculate position from right edge of dashboard
-  popoverRef.current.style.left = `${dashboardRect.right + 8}px`;
-  // Align vertically with the clicked filter
-  popoverRef.current.style.top = `${anchorRect.top}px`;
-};
-    // Initial position
-    updatePosition();
-    
-    // Handle resize
-    window.addEventListener('resize', updatePosition);
-    return () => window.removeEventListener('resize', updatePosition);
-  }, [isOpen, anchorEl]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div
-      ref={popoverRef}
-      className="fixed z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px] max-h-[300px] overflow-y-auto"
-    >
-      <div
-        className="absolute left-[-6px] top-[50%] transform -translate-y-1/2"
-        style={{
-          width: 0,
-          height: 0,
-          borderTop: '6px solid transparent',
-          borderBottom: '6px solid transparent',
-          borderRight: '6px solid white',
-          filter: 'drop-shadow(-1px 0px 2px rgba(0,0,0,0.1))',
-        }}
-      />
-      {children}
-    </div>
-  );
-};
-
 interface FilterCardProps {
   title: string;
   icon: React.ReactNode;
@@ -100,7 +22,7 @@ const FilterCard: React.FC<FilterCardProps> = ({
   isReset,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isReset) {
@@ -108,12 +30,24 @@ const FilterCard: React.FC<FilterCardProps> = ({
     }
   }, [isReset]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
+
   const iconColor = selectedFilters.length > 0 ? "text-blue-600" : "text-gray-400";
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-1.5 relative">
+    <div ref={containerRef} className="bg-white rounded-lg shadow-sm p-1.5 relative">
       <button
-        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between"
       >
@@ -134,26 +68,28 @@ const FilterCard: React.FC<FilterCardProps> = ({
         />
       </button>
 
-      <Popover isOpen={isOpen} onClose={() => setIsOpen(false)} anchorEl={buttonRef.current}>
-        <div className="grid grid-cols-2 gap-1">
-          {options.map((option) => (
-            <button
-              key={option}
-              onClick={() => {
-                onFilterChange(category, option);
-                setIsOpen(false);
-              }}
-              className={`px-2 py-1 text-[11px] rounded-md transition-colors ${
-                selectedFilters.includes(option)
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {option}
-            </button>
-          ))}
+      {isOpen && (
+        <div className="absolute left-0 right-0 mt-1 z-50 bg-white rounded-lg shadow-lg p-2 border border-gray-100">
+          <div className="grid grid-cols-2 gap-1">
+            {options.map((option) => (
+              <button
+                key={option}
+                onClick={() => {
+                  onFilterChange(category, option);
+                  setIsOpen(false);
+                }}
+                className={`px-2 py-1 text-[11px] rounded-md transition-colors ${
+                  selectedFilters.includes(option)
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         </div>
-      </Popover>
+      )}
     </div>
   );
 };
