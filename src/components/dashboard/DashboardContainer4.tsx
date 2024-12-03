@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Home, BarChart2, Map, MapPin, Bot } from 'lucide-react';
 import LocationMap from './LocationMap';
 import PatientMapFilters from './PatientMapFilters';
-import { SAMPLE_PATIENT_DATA, Patient } from '../../types/patientData';
+import { STATIC_PATIENT_DATA, Patient } from '../../types/patientData';
 
 interface DashboardContainer4Props {
   onNavigateToHome?: () => void;
@@ -17,7 +17,7 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
 }) => {
   const [activePage, setActivePage] = useState('location');
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>(SAMPLE_PATIENT_DATA);
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>(STATIC_PATIENT_DATA);
 
   const handlePageChange = (pageId: string) => {
     if (pageId === 'home') {
@@ -41,16 +41,46 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
   };
 
   const handleFiltersChange = (filters: any) => {
-    const filtered = SAMPLE_PATIENT_DATA.filter(patient => {
+    const filtered = STATIC_PATIENT_DATA.filter(patient => {
       if (filters.status.length && !filters.status.includes(patient.status)) return false;
       if (filters.insuranceType.length && !filters.insuranceType.includes(patient.insuranceType)) return false;
+      if (filters.primaryLanguage.length && !filters.primaryLanguage.includes(patient.primaryLanguage)) return false;
+      if (filters.age.length) {
+        const age = patient.age;
+        let matchesAge = false;
+        filters.age.forEach((range: string) => {
+          if (range === '0-17' && age >= 0 && age <= 17) matchesAge = true;
+          if (range === '18-35' && age >= 18 && age <= 35) matchesAge = true;
+          if (range === '36-50' && age >= 36 && age <= 50) matchesAge = true;
+          if (range === '51-65' && age >= 51 && age <= 65) matchesAge = true;
+          if (range === '65+' && age >= 65) matchesAge = true;
+        });
+        if (!matchesAge) return false;
+      }
+      if (filters.lastVisit.length) {
+        const visitDate = new Date(patient.lastVisit);
+        const now = new Date();
+        let matchesVisit = false;
+        filters.lastVisit.forEach((range: string) => {
+          const days = (now.getTime() - visitDate.getTime()) / (1000 * 3600 * 24);
+          if (range === 'Last 30 days' && days <= 30) matchesVisit = true;
+          if (range === 'Last 6 months' && days <= 180) matchesVisit = true;
+          if (range === 'Last 12 months' && days <= 365) matchesVisit = true;
+          if (range === 'Over 12 months' && days > 365) matchesVisit = true;
+        });
+        if (!matchesVisit) return false;
+      }
+      if (filters.hygieneDue.length) {
+        const isDue = filters.hygieneDue.includes('Yes');
+        if (patient.hygieneDue !== isDue) return false;
+      }
       return true;
     });
     setFilteredPatients(filtered);
   };
 
   const handleResetFilters = () => {
-    setFilteredPatients(SAMPLE_PATIENT_DATA);
+    setFilteredPatients(STATIC_PATIENT_DATA);
   };
 
   return (
@@ -97,7 +127,7 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
               </div>
               <div className="w-[30%] bg-gray-100 rounded-lg overflow-hidden">
                 <PatientMapFilters
-                  totalPatients={SAMPLE_PATIENT_DATA.length}
+                  totalPatients={STATIC_PATIENT_DATA.length}
                   filteredCount={filteredPatients.length}
                   onFiltersChange={handleFiltersChange}
                   onResetFilters={handleResetFilters}
