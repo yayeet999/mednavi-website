@@ -141,7 +141,7 @@ const SmoothJourney: React.FC = () => {
         <div 
           className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
           style={{
-            transform: translate(${windowSize.width / 2 - currentPosition.x}px, ${windowSize.height / 2 - currentPosition.y + mobileOffset}px)
+            transform: `translate(${windowSize.width / 2 - currentPosition.x}px, ${windowSize.height / 2 - currentPosition.y + mobileOffset}px)`
           }}
         >
           <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
@@ -160,15 +160,15 @@ const SmoothJourney: React.FC = () => {
               return (
                 <path
                   key={i}
-                  d={M ${station.x} ${station.y} 
+                  d={`M ${station.x} ${station.y} 
                       Q ${midX} ${station.y},
                         ${midX} ${(station.y + next.y) / 2}
-                      T ${next.x} ${next.y}}
+                      T ${next.x} ${next.y}`}
                   stroke="url(#lineGradient)"
                   strokeWidth="5"
                   fill="none"
-                  className={transition-opacity duration-500
-                             ${Math.abs(currentIndex - i) <= 1 ? 'opacity-100' : 'opacity-30'}}
+                  className={`transition-opacity duration-500
+                             ${Math.abs(currentIndex - i) <= 1 ? 'opacity-100' : 'opacity-30'}`}
                 />
               );
             })}
@@ -196,12 +196,12 @@ const SmoothJourney: React.FC = () => {
           {stations.map((station, i) => (
             <div
               key={station.id}
-              className={absolute w-[360px] h-[340px] transition-transform duration-1000 ease-out will-change-transform
-                        ${i === currentIndex ? 'z-20' : 'z-10'}}
+              className={`absolute w-[360px] h-[340px] transition-transform duration-1000 ease-out will-change-transform
+                        ${i === currentIndex ? 'z-20' : 'z-10'}`}
               style={{
                 left: station.x,
                 top: station.y,
-                transform: translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9}),
+                transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
                 opacity: Math.abs(currentIndex - i) <= 1 ? 
                         1 - Math.abs(currentIndex - i) * 0.3 : 0,
               }}
@@ -241,14 +241,14 @@ const SmoothJourney: React.FC = () => {
                   key={i}
                   onClick={() => navigate(i)}
                   disabled={isAnimating}
-                  className={
+                  className={`
                     flex items-center justify-center w-10 h-10
                     rounded-full transform transition-all duration-300 will-change-transform
                     ${i === currentIndex 
                       ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-[pulse_3s_ease-in-out_infinite]' 
                       : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'}
                     disabled:opacity-50
-                  }
+                  `}
                 >
                   <Icon size={20} className={i === currentIndex ? 'text-white' : 'text-white/90'} />
                 </button>
@@ -257,12 +257,12 @@ const SmoothJourney: React.FC = () => {
           </div>
         )}
 
-        <style jsx>{
+        <style jsx>{`
           @keyframes pulse {
             0%, 100% { transform: scale(1.1); opacity: 1; }
             50% { transform: scale(1.15); opacity: 0.8; }
           }
-        }</style>
+        `}</style>
       </div>
     );
   }
@@ -273,7 +273,7 @@ const SmoothJourney: React.FC = () => {
         <div 
           className="relative w-full h-full will-change-transform"
           style={{
-            transform: translate(${transformValue.x}px, ${transformValue.y}px)
+            transform: `translate(${transformValue.x}px, ${transformValue.y}px)`
           }}
         >
           <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
@@ -292,15 +292,15 @@ const SmoothJourney: React.FC = () => {
               return (
                 <path
                   key={i}
-                  d={M ${station.x} ${station.y} 
+                  d={`M ${station.x} ${station.y} 
                       Q ${midX} ${station.y},
                         ${midX} ${(station.y + next.y) / 2}
-                      T ${next.x} ${next.y}}
+                      T ${next.x} ${next.y}`}
                   stroke="url(#lineGradient)"
                   strokeWidth="5"
                   fill="none"
-                  className={transition-opacity duration-500
-                             ${Math.abs(currentIndex - i) <= 1 ? 'opacity-100' : 'opacity-30'}}
+                  className={`transition-opacity duration-500
+                             ${Math.abs(currentIndex - i) <= 1 ? 'opacity-100' : 'opacity-30'}`}
                 />
               );
             })}
@@ -328,12 +328,12 @@ const SmoothJourney: React.FC = () => {
           {stations.map((station, i) => (
             <div
               key={station.id}
-              className={absolute w-[840px] h-[480px] transition-all duration-700 ease-out will-change-transform
-                        ${i === currentIndex ? 'z-20' : 'z-10'}}
+              className={`absolute w-[840px] h-[480px] transition-all duration-700 ease-out will-change-transform
+                        ${i === currentIndex ? 'z-20' : 'z-10'}`}
               style={{
                 left: station.x,
                 top: station.y,
-                transform: translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9}),
+                transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
                 opacity: Math.abs(currentIndex - i) <= 1 ? 
                         1 - Math.abs(currentIndex - i) * 0.3 : 0,
               }}
