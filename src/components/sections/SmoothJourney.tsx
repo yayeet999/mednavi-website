@@ -20,9 +20,8 @@ const navigationIcons = [
   { id: 'location', Icon: MapPin }
 ];
 
-const SCROLL_THRESHOLD = 50; // Amount of scroll needed to trigger station change
-const ANIMATION_DURATION = 1000; // ms for transitions
-const SNAP_THRESHOLD = 0.3; // Percentage of component height to trigger snap
+const SCROLL_THRESHOLD = 50;
+const ANIMATION_DURATION = 1000;
 
 const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -31,29 +30,31 @@ const SmoothJourney: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isFixed, setIsFixed] = useState(false);
-  const [isSnapping, setIsSnapping] = useState(false);
   
   const sectionRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const scrollAccumulator = useRef(0);
   const lastScrollY = useRef(0);
-  const initialPositionRef = useRef<number | null>(null);
-  const componentHeight = useRef<number>(0);
+  const originalTop = useRef<number>(0);
+  const isLocked = useRef(false);
 
   // Initialize
   useEffect(() => {
     const handleResize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      setWindowSize({ width, height });
-      setIsMobile(width < 768);
-      if (sectionRef.current) {
-        componentHeight.current = sectionRef.current.offsetHeight;
-      }
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+      setIsMobile(window.innerWidth < 768);
     };
 
     setMounted(true);
     handleResize();
+
+    if (sectionRef.current) {
+      originalTop.current = sectionRef.current.offsetTop;
+    }
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -77,55 +78,54 @@ const SmoothJourney: React.FC = () => {
   useEffect(() => {
     if (isMobile || !mounted) return;
 
+    let rafId: number;
+    let lastScrollPosition = window.scrollY;
+
     const handleScroll = () => {
-      if (!sectionRef.current || isSnapping) return;
+      if (!sectionRef.current || !wrapperRef.current) return;
 
       const rect = sectionRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const scrollDirection = window.scrollY > lastScrollY.current ? 'down' : 'up';
+      const scrollDelta = window.scrollY - lastScrollPosition;
+      const componentHeight = rect.height;
+      const viewportMiddle = window.innerHeight / 2;
+      const componentMiddle = rect.top + componentHeight / 2;
 
-      // Store initial position when component is first in view
-      if (initialPositionRef.current === null && rect.top < viewportHeight * SNAP_THRESHOLD) {
-        initialPositionRef.current = window.scrollY;
+      // Check if component should be locked
+      if (!isLocked.current && Math.abs(componentMiddle - viewportMiddle) < 200) {
+        isLocked.current = true;
+        document.body.style.overflow = 'hidden';
+        wrapperRef.current.style.position = 'fixed';
+        wrapperRef.current.style.top = '0';
+        wrapperRef.current.style.left = '0';
+        wrapperRef.current.style.width = '100%';
+        wrapperRef.current.style.height = '100vh';
+        window.scrollTo({ top: originalTop.current });
       }
 
-      // Calculate visibility percentage
-      const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
-      const visibilityRatio = visibleHeight / componentHeight.current;
-
-      // Handle snapping when component becomes sufficiently visible
-      if (!isFixed && visibilityRatio > SNAP_THRESHOLD) {
-        setIsSnapping(true);
-        setIsFixed(true);
-        
-        // Smoothly scroll to the component's top
-        window.scrollTo({
-          top: initialPositionRef.current || window.scrollY,
-          behavior: 'smooth'
-        });
-
-        // After smooth scroll completes, fix the component
-        setTimeout(() => {
-          if (sectionRef.current) {
-            sectionRef.current.style.position = 'fixed';
-            sectionRef.current.style.top = '0';
-            sectionRef.current.style.width = '100%';
-            document.body.style.paddingTop = `${componentHeight.current}px`;
-          }
-          setIsSnapping(false);
-        }, ANIMATION_DURATION);
-      }
-
-      // Handle station transitions when fixed
-      if (isFixed && !isSnapping) {
-        const scrollDelta = window.scrollY - lastScrollY.current;
+      // Handle station transitions when locked
+      if (isLocked.current) {
         scrollAccumulator.current += scrollDelta;
 
         if (Math.abs(scrollAccumulator.current) >= SCROLL_THRESHOLD && !isAnimating) {
           const direction = scrollAccumulator.current > 0 ? 1 : -1;
-          const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + direction));
+          const nextIndex = currentIndex + direction;
 
-          if (nextIndex !== currentIndex) {
+          // Check if we should unlock
+          if (nextIndex < 0 || nextIndex >= stations.length) {
+            isLocked.current = false;
+            document.body.style.overflow = '';
+            wrapperRef.current.style.position = 'relative';
+            wrapperRef.current.style.top = '';
+            wrapperRef.current.style.left = '';
+            wrapperRef.current.style.width = '';
+            wrapperRef.current.style.height = '';
+            
+            // Adjust scroll position
+            const targetScroll = nextIndex < 0 ? 
+              originalTop.current - window.innerHeight : 
+              originalTop.current + window.innerHeight;
+            window.scrollTo({ top: targetScroll });
+          } else {
             setIsAnimating(true);
             setCurrentIndex(nextIndex);
             setTimeout(() => setIsAnimating(false), ANIMATION_DURATION);
@@ -133,50 +133,29 @@ const SmoothJourney: React.FC = () => {
 
           scrollAccumulator.current = 0;
         }
-
-        // Determine if we should unfix the component
-        const shouldUnfix = 
-          (currentIndex === 0 && scrollDirection === 'up') ||
-          (currentIndex === stations.length - 1 && scrollDirection === 'down');
-
-        if (shouldUnfix) {
-          setIsFixed(false);
-          setIsSnapping(true);
-
-          // Smoothly scroll away from the component
-          const targetScroll = initialPositionRef.current || window.scrollY;
-          window.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth'
-          });
-
-          setTimeout(() => {
-            if (sectionRef.current) {
-              sectionRef.current.style.position = 'relative';
-              sectionRef.current.style.top = '';
-              document.body.style.paddingTop = '0';
-            }
-            setIsSnapping(false);
-          }, ANIMATION_DURATION);
-        }
       }
 
-      lastScrollY.current = window.scrollY;
-      setIsVisible(rect.top < viewportHeight && rect.bottom >= 0);
+      lastScrollPosition = window.scrollY;
+      setIsVisible(rect.top < window.innerHeight && rect.bottom >= 0);
+      rafId = requestAnimationFrame(handleScroll);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    rafId = requestAnimationFrame(handleScroll);
+
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (sectionRef.current) {
-        sectionRef.current.style.position = 'relative';
-        sectionRef.current.style.top = '';
+      cancelAnimationFrame(rafId);
+      document.body.style.overflow = '';
+      if (wrapperRef.current) {
+        wrapperRef.current.style.position = 'relative';
+        wrapperRef.current.style.top = '';
+        wrapperRef.current.style.left = '';
+        wrapperRef.current.style.width = '';
+        wrapperRef.current.style.height = '';
       }
-      document.body.style.paddingTop = '0';
+      isLocked.current = false;
     };
-  }, [isMobile, mounted, currentIndex, isAnimating, isFixed, isSnapping]);
+  }, [isMobile, mounted, currentIndex, isAnimating]);
 
-  // Navigation functions
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
     setIsAnimating(true);
@@ -195,159 +174,156 @@ const SmoothJourney: React.FC = () => {
   const mobileOffset = isMobile ? -150 : 0;
 
   return (
-    <div 
-      ref={sectionRef}
-      className={`relative w-full h-[70vh] md:h-screen bg-[#EBF4FF] overflow-hidden
-                  ${isFixed ? 'z-50' : ''}`}
-      style={{
-        transition: isSnapping ? 'transform 0.5s ease-out' : undefined
-      }}
-    >
-      {/* Main Content */}
+    <div ref={wrapperRef} className="relative">
       <div 
-        className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
-        style={{
-          transform: `translate(${windowSize.width / 2 - currentPosition.x}px, ${windowSize.height / 2 - currentPosition.y + mobileOffset}px)`
-        }}
+        ref={sectionRef}
+        className="relative w-full h-[70vh] md:h-screen bg-[#EBF4FF] overflow-hidden"
       >
-        {/* SVG Path and circles */}
-        <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
-          <defs>
-            <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#60A5FA" stopOpacity="0.4" />
-            </linearGradient>
-          </defs>
+        <div 
+          className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
+          style={{
+            transform: `translate(${windowSize.width / 2 - currentPosition.x}px, ${windowSize.height / 2 - currentPosition.y + mobileOffset}px)`
+          }}
+        >
+          {/* SVG Path and circles */}
+          <svg className="absolute inset-0" style={{ width: '3000px', height: '2400px' }}>
+            <defs>
+              <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#60A5FA" stopOpacity="0.4" />
+              </linearGradient>
+            </defs>
 
-          {stations.map((station, i) => {
-            if (i === stations.length - 1) return null;
-            const next = stations[i + 1];
-            const midX = (station.x + next.x) / 2;
-            
-            return (
-              <path
-                key={i}
-                d={`M ${station.x} ${station.y} 
-                    Q ${midX} ${station.y},
-                      ${midX} ${(station.y + next.y) / 2}
-                    T ${next.x} ${next.y}`}
-                stroke="url(#lineGradient)"
-                strokeWidth="5"
-                fill="none"
-                className={`transition-opacity duration-500
-                           ${Math.abs(currentIndex - i) <= 1 ? 'opacity-100' : 'opacity-30'}`}
-              />
-            );
-          })}
+            {stations.map((station, i) => {
+              if (i === stations.length - 1) return null;
+              const next = stations[i + 1];
+              const midX = (station.x + next.x) / 2;
+              
+              return (
+                <path
+                  key={i}
+                  d={`M ${station.x} ${station.y} 
+                      Q ${midX} ${station.y},
+                        ${midX} ${(station.y + next.y) / 2}
+                      T ${next.x} ${next.y}`}
+                  stroke="url(#lineGradient)"
+                  strokeWidth="5"
+                  fill="none"
+                  className={`transition-opacity duration-500
+                             ${Math.abs(currentIndex - i) <= 1 ? 'opacity-100' : 'opacity-30'}`}
+                />
+              );
+            })}
 
+            {stations.map((station, i) => (
+              <g key={i}>
+                <circle
+                  cx={station.x}
+                  cy={station.y}
+                  r="12"
+                  fill="#3B82F6"
+                  className="opacity-30"
+                />
+                <circle
+                  cx={station.x}
+                  cy={station.y}
+                  r="6"
+                  fill="#3B82F6"
+                  className="opacity-70"
+                />
+              </g>
+            ))}
+          </svg>
+
+          {/* Dashboard Containers */}
           {stations.map((station, i) => (
-            <g key={i}>
-              <circle
-                cx={station.x}
-                cy={station.y}
-                r="12"
-                fill="#3B82F6"
-                className="opacity-30"
-              />
-              <circle
-                cx={station.x}
-                cy={station.y}
-                r="6"
-                fill="#3B82F6"
-                className="opacity-70"
-              />
-            </g>
-          ))}
-        </svg>
-
-        {/* Dashboard Containers */}
-        {stations.map((station, i) => (
-          <div
-            key={station.id}
-            className={`absolute w-[360px] md:w-[840px] h-[340px] md:h-[480px] transition-transform duration-1000 ease-out will-change-transform
-                      ${i === currentIndex ? 'z-20' : 'z-10'}`}
-            style={{
-              left: station.x,
-              top: station.y,
-              transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
-              opacity: Math.abs(currentIndex - i) <= 1 ? 
-                      1 - Math.abs(currentIndex - i) * 0.3 : 0,
-            }}
-          >
-            <div className="pb-4 md:pb-6">
-              <div className="w-full h-full bg-white rounded-xl">
-                {i === 0 ? (
-                  <DashboardContainer onNavigate={navigateToContainer} />
-                ) : i === 1 ? (
-                  <DashboardContainer2 onNavigateToMap={() => navigate(2)} />
-                ) : i === 2 ? (
-                  <DashboardContainer3 
-                    onNavigateToHome={navigateToHome}
-                    onNavigateToPractice={navigateToPractice}
-                    onNavigateToLocation={navigateToLocation}
-                  />
-                ) : (
-                  <DashboardContainer4 
-                    onNavigateToHome={navigateToHome}
-                    onNavigateToPractice={navigateToPractice}
-                    onNavigateToMap={() => navigate(2)}
-                  />
-                )}
+            <div
+              key={station.id}
+              className={`absolute w-[360px] md:w-[840px] h-[340px] md:h-[480px] transition-transform duration-1000 ease-out will-change-transform
+                        ${i === currentIndex ? 'z-20' : 'z-10'}`}
+              style={{
+                left: station.x,
+                top: station.y,
+                transform: `translate(-50%, -50%) scale(${i === currentIndex ? 1 : 0.9})`,
+                opacity: Math.abs(currentIndex - i) <= 1 ? 
+                        1 - Math.abs(currentIndex - i) * 0.3 : 0,
+              }}
+            >
+              <div className="pb-4 md:pb-6">
+                <div className="w-full h-full bg-white rounded-xl">
+                  {i === 0 ? (
+                    <DashboardContainer onNavigate={navigateToContainer} />
+                  ) : i === 1 ? (
+                    <DashboardContainer2 onNavigateToMap={() => navigate(2)} />
+                  ) : i === 2 ? (
+                    <DashboardContainer3 
+                      onNavigateToHome={navigateToHome}
+                      onNavigateToPractice={navigateToPractice}
+                      onNavigateToLocation={navigateToLocation}
+                    />
+                  ) : (
+                    <DashboardContainer4 
+                      onNavigateToHome={navigateToHome}
+                      onNavigateToPractice={navigateToPractice}
+                      onNavigateToMap={() => navigate(2)}
+                    />
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Navigation Icons */}
-      {isVisible && (
-        <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
-                      transition-opacity ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-          {navigationIcons.map((nav, i) => {
-            const { Icon } = nav;
-            return (
-              <button
-                key={i}
-                onClick={() => navigate(i)}
-                disabled={isAnimating}
-                className={`
-                  flex items-center justify-center
-                  ${isMobile ? 'w-10 h-10' : 'w-6 h-6'}
-                  rounded-full transform transition-all duration-300 will-change-transform
-                  ${i === currentIndex 
-                    ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-[pulse_3s_ease-in-out_infinite]' 
-                    : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'}
-                  disabled:opacity-50
-                `}
-                style={{
-                  WebkitTapHighlightColor: 'transparent'
-                }}
-                aria-label={`Navigate to ${nav.id}`}
-                aria-current={i === currentIndex ? 'true' : 'false'}
-              >
-                <Icon 
-                  size={isMobile ? 20 : 14} 
-                  className={`transform transition-colors duration-300
-                             ${i === currentIndex ? 'text-white' : 'text-white/90'}`}
-                />
-              </button>
-            )
-          })}
+          ))}
         </div>
-      )}
 
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% {
-            transform: scale(1.1);
-            opacity: 1;
+        {/* Navigation Icons */}
+        {isVisible && (
+          <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-6 z-50
+                        transition-opacity ease-in-out duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+            {navigationIcons.map((nav, i) => {
+              const { Icon } = nav;
+              return (
+                <button
+                  key={i}
+                  onClick={() => navigate(i)}
+                  disabled={isAnimating}
+                  className={`
+                    flex items-center justify-center
+                    ${isMobile ? 'w-10 h-10' : 'w-6 h-6'}
+                    rounded-full transform transition-all duration-300 will-change-transform
+                    ${i === currentIndex 
+                      ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-[pulse_3s_ease-in-out_infinite]' 
+                      : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'}
+                    disabled:opacity-50
+                  `}
+                  style={{
+                    WebkitTapHighlightColor: 'transparent'
+                  }}
+                  aria-label={`Navigate to ${nav.id}`}
+                  aria-current={i === currentIndex ? 'true' : 'false'}
+                >
+                  <Icon 
+                    size={isMobile ? 20 : 14} 
+                    className={`transform transition-colors duration-300
+                               ${i === currentIndex ? 'text-white' : 'text-white/90'}`}
+                  />
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        <style jsx>{`
+          @keyframes pulse {
+            0%, 100% {
+              transform: scale(1.1);
+              opacity: 1;
+            }
+            50% {
+              transform: scale(1.15);
+              opacity: 0.8;
+            }
           }
-          50% {
-            transform: scale(1.15);
-            opacity: 0.8;
-          }
-        }
-      `}</style>
+        `}</style>
+      </div>
     </div>
   );
 };
