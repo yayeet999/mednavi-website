@@ -9,7 +9,7 @@ interface PopoverProps {
   anchorEl: HTMLElement | null;
 }
 
-const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children }) => {
+const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }) => {
   const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,12 +25,41 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children }) => {
     }
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!isOpen || !popoverRef.current || !anchorEl) return;
+
+    const updatePosition = () => {
+      if (!popoverRef.current || !anchorEl) return;
+
+      const anchorRect = anchorEl.getBoundingClientRect();
+      const filterSection = anchorEl.closest('.bg-gray-50');
+      
+      if (!filterSection) return;
+      
+      const filterRect = filterSection.getBoundingClientRect();
+      
+      // Position to the right of the filter section
+      const left = filterRect.right + 8;
+      
+      // Align vertically with the clicked button
+      const top = anchorRect.top;
+
+      popoverRef.current.style.position = 'fixed';
+      popoverRef.current.style.left = `${left}px`;
+      popoverRef.current.style.top = `${top}px`;
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    return () => window.removeEventListener('resize', updatePosition);
+  }, [isOpen, anchorEl]);
+
   if (!isOpen) return null;
 
   return (
     <div
       ref={popoverRef}
-      className="absolute right-0 top-0 translate-x-[calc(100%+8px)] z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px] max-h-[300px] overflow-y-auto"
+      className="fixed z-[999] bg-white rounded-lg shadow-lg p-2 min-w-[240px] max-h-[300px] overflow-y-auto"
     >
       <div
         className="absolute left-[-6px] top-[50%] transform -translate-y-1/2"
