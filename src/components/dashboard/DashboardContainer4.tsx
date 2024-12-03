@@ -2,7 +2,36 @@ import React, { useState } from 'react';
 import { Home, BarChart2, Map, MapPin, Bot } from 'lucide-react';
 import LocationMap from './LocationMap';
 import PatientMapFilters from './PatientMapFilters';
-import { STATIC_PATIENT_DATA, Patient } from '../../types/patientData';
+import { STATIC_PATIENT_DATA, Patient, PRACTICE_LOCATION } from '../../types/patientData';
+
+// Haversine formula to calculate distance between two points in miles
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+// Helper function to check if a distance falls within a filter range
+function isInDistanceRange(distance: number, range: string): boolean {
+  switch (range) {
+    case '0-2 miles':
+      return distance <= 2;
+    case '2-5 miles':
+      return distance > 2 && distance <= 5;
+    case '5-10 miles':
+      return distance > 5 && distance <= 10;
+    case '10+ miles':
+      return distance > 10;
+    default:
+      return false;
+  }
+}
 
 interface DashboardContainer4Props {
   onNavigateToHome?: () => void;
@@ -42,9 +71,29 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
 
   const handleFiltersChange = (filters: any) => {
     const filtered = STATIC_PATIENT_DATA.filter(patient => {
+      // Distance filter
+      if (filters.distance.length > 0) {
+        const distance = calculateDistance(
+          PRACTICE_LOCATION.lat,
+          PRACTICE_LOCATION.lng,
+          patient.location.lat,
+          patient.location.lng
+        );
+        if (!filters.distance.some((range: string) => isInDistanceRange(distance, range))) {
+          return false;
+        }
+      }
+
+      // Status filter
       if (filters.status.length && !filters.status.includes(patient.status)) return false;
+      
+      // Insurance type filter
       if (filters.insuranceType.length && !filters.insuranceType.includes(patient.insuranceType)) return false;
+      
+      // Primary language filter
       if (filters.primaryLanguage.length && !filters.primaryLanguage.includes(patient.primaryLanguage)) return false;
+      
+      // Age filter
       if (filters.age.length) {
         const age = patient.age;
         let matchesAge = false;
@@ -57,6 +106,8 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
         });
         if (!matchesAge) return false;
       }
+
+      // Last visit filter
       if (filters.lastVisit.length) {
         const visitDate = new Date(patient.lastVisit);
         const now = new Date();
@@ -70,10 +121,13 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
         });
         if (!matchesVisit) return false;
       }
+
+      // Hygiene filter
       if (filters.hygieneDue.length) {
         const isDue = filters.hygieneDue.includes('Yes');
         if (patient.hygieneDue !== isDue) return false;
       }
+
       return true;
     });
     setFilteredPatients(filtered);
