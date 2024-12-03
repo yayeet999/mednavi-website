@@ -34,20 +34,21 @@ const Popover: React.FC<PopoverProps> = ({ isOpen, onClose, children, anchorEl }
     if (!isOpen || !popoverRef.current || !anchorEl) return;
 
     const updatePosition = () => {
-      if (!popoverRef.current || !anchorEl) return;
-      
-      const anchorRect = anchorEl.getBoundingClientRect();
-      const dashboardContainer = document.querySelector('.bg-gray-50');
-      
-      if (!dashboardContainer) return;
-      
-      const dashboardRect = dashboardContainer.getBoundingClientRect();
-      
-      popoverRef.current.style.position = 'fixed';
-      popoverRef.current.style.top = `${anchorRect.top}px`;
-      popoverRef.current.style.left = `${dashboardRect.right + 8}px`;
-    };
-
+  if (!popoverRef.current || !anchorEl) return;
+  
+  const anchorRect = anchorEl.getBoundingClientRect();
+  const dashboardContainer = anchorEl.closest('.bg-gray-50');
+  
+  if (!dashboardContainer) return;
+  
+  const dashboardRect = dashboardContainer.getBoundingClientRect();
+  const windowWidth = window.innerWidth;
+  
+  // Calculate position from right edge of dashboard
+  popoverRef.current.style.left = `${dashboardRect.right + 8}px`;
+  // Align vertically with the clicked filter
+  popoverRef.current.style.top = `${anchorRect.top}px`;
+};
     // Initial position
     updatePosition();
     
