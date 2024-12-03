@@ -61,6 +61,9 @@ const FilterCard: React.FC<FilterCardProps> = ({
           </div>
           <div className="text-left">
             <div className="text-xs font-medium text-gray-900">{title}</div>
+            {selectedFilters.length > 0 && !isReset && (
+              <div className="text-[10px] text-blue-600">{selectedFilters.length} selected</div>
+            )}
           </div>
         </div>
         <Filter
@@ -267,17 +270,7 @@ const PatientMapFilters: React.FC<{
               isReset={isReset}
             />
           ))}
-          {filters.insuranceType.includes('Private') && (
-            <FilterCard
-              title="Insurance Plan"
-              icon={<FileText />}
-              category="privateInsurance"
-              options={FILTER_OPTIONS.privateInsurance}
-              selectedFilters={filters.privateInsurance}
-              onFilterChange={handleFilterChange}
-              isReset={isReset}
-            />
-          )}
+          {/* Removed the Insurance Plan FilterCard */}
         </div>
       </div>
     </div>
