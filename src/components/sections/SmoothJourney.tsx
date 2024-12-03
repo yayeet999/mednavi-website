@@ -20,8 +20,8 @@ const navigationIcons = [
   { id: 'location', Icon: MapPin }
 ];
 
-const SCROLL_THRESHOLD = 50;
-const ANIMATION_DURATION = 1000;
+const SCROLL_THRESHOLD = 50; // Amount of scroll needed to trigger station change
+const ANIMATION_DURATION = 1000; // ms for transitions
 const SNAP_THRESHOLD = 0.3; // Percentage of component height to trigger snap
 
 const SmoothJourney: React.FC = () => {
@@ -84,26 +84,27 @@ const SmoothJourney: React.FC = () => {
       const viewportHeight = window.innerHeight;
       const scrollDirection = window.scrollY > lastScrollY.current ? 'down' : 'up';
 
-      // Store initial position when component is first mounted
-      if (initialPositionRef.current === null) {
-        initialPositionRef.current = sectionRef.current.offsetTop;
+      // Store initial position when component is first in view
+      if (initialPositionRef.current === null && rect.top < viewportHeight * SNAP_THRESHOLD) {
+        initialPositionRef.current = window.scrollY;
       }
 
       // Calculate visibility percentage
       const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
       const visibilityRatio = visibleHeight / componentHeight.current;
 
-      // Handle snapping
+      // Handle snapping when component becomes sufficiently visible
       if (!isFixed && visibilityRatio > SNAP_THRESHOLD) {
         setIsSnapping(true);
         setIsFixed(true);
         
-        const targetScroll = initialPositionRef.current;
+        // Smoothly scroll to the component's top
         window.scrollTo({
-          top: targetScroll,
+          top: initialPositionRef.current || window.scrollY,
           behavior: 'smooth'
         });
 
+        // After smooth scroll completes, fix the component
         setTimeout(() => {
           if (sectionRef.current) {
             sectionRef.current.style.position = 'fixed';
@@ -112,7 +113,7 @@ const SmoothJourney: React.FC = () => {
             document.body.style.paddingTop = `${componentHeight.current}px`;
           }
           setIsSnapping(false);
-        }, 500);
+        }, ANIMATION_DURATION);
       }
 
       // Handle station transitions when fixed
@@ -133,17 +134,30 @@ const SmoothJourney: React.FC = () => {
           scrollAccumulator.current = 0;
         }
 
-        // Unfix component when scrolling past boundaries
-        const shouldUnfix = (currentIndex === 0 && scrollDirection === 'up') || 
-                          (currentIndex === stations.length - 1 && scrollDirection === 'down');
+        // Determine if we should unfix the component
+        const shouldUnfix = 
+          (currentIndex === 0 && scrollDirection === 'up') ||
+          (currentIndex === stations.length - 1 && scrollDirection === 'down');
 
         if (shouldUnfix) {
           setIsFixed(false);
-          if (sectionRef.current) {
-            sectionRef.current.style.position = 'relative';
-            sectionRef.current.style.top = '';
-            document.body.style.paddingTop = '0';
-          }
+          setIsSnapping(true);
+
+          // Smoothly scroll away from the component
+          const targetScroll = initialPositionRef.current || window.scrollY;
+          window.scrollTo({
+            top: targetScroll,
+            behavior: 'smooth'
+          });
+
+          setTimeout(() => {
+            if (sectionRef.current) {
+              sectionRef.current.style.position = 'relative';
+              sectionRef.current.style.top = '';
+              document.body.style.paddingTop = '0';
+            }
+            setIsSnapping(false);
+          }, ANIMATION_DURATION);
         }
       }
 
@@ -189,7 +203,7 @@ const SmoothJourney: React.FC = () => {
         transition: isSnapping ? 'transform 0.5s ease-out' : undefined
       }}
     >
-      {/* Rest of the component JSX remains the same */}
+      {/* Main Content */}
       <div 
         className="relative w-full h-full transition-transform duration-1000 ease-out will-change-transform"
         style={{
