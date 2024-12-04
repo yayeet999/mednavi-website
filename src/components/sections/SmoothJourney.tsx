@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Home, BarChart2, Map, MapPin } from 'lucide-react';
+import { Home, BarChart2, Map, MapPin, Bot } from 'lucide-react';
 import DashboardContainer from '@/components/dashboard/DashboardContainer';
 import DashboardContainer2 from '@/components/dashboard/DashboardContainer2';
 import DashboardContainer3 from '@/components/dashboard/DashboardContainer3';
@@ -33,24 +33,6 @@ const SmoothJourney: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const lastScrollTime = useRef<number>(0);
 
-  const handleScroll = useCallback((e: WheelEvent) => {
-    if (!isVisible || isAnimating || isMobile) return;
-
-    const now = Date.now();
-    if (now - lastScrollTime.current < SCROLL_COOLDOWN) return;
-    lastScrollTime.current = now;
-
-    const direction = e.deltaY > 0 ? 'down' : 'up';
-    e.preventDefault();
-
-    const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + (direction === 'down' ? 1 : -1)));
-    if (nextIndex !== currentIndex) {
-      setIsAnimating(true);
-      setCurrentIndex(nextIndex);
-      setTimeout(() => setIsAnimating(false), ANIMATION_DURATION);
-    }
-  }, [currentIndex, isAnimating, isVisible, isMobile]);
-
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({
@@ -63,24 +45,21 @@ const SmoothJourney: React.FC = () => {
     setMounted(true);
     handleResize();
     window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      setMounted(false); // Ensure mounted state is reset
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
     if (!isMobile || !mounted) return;
 
-    const handleScrollEvent = () => {
+    const handleScroll = () => {
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
       setIsVisible(rect.top < window.innerHeight && rect.bottom >= 0);
     };
 
-    handleScrollEvent();
-    window.addEventListener('scroll', handleScrollEvent);
-    return () => window.removeEventListener('scroll', handleScrollEvent);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile, mounted]);
 
   useEffect(() => {
@@ -109,18 +88,33 @@ const SmoothJourney: React.FC = () => {
     };
   }, [isMobile, mounted]);
 
+  const handleScroll = useCallback((e: WheelEvent) => {
+    if (!isVisible || isAnimating || isMobile) return;
+
+    const now = Date.now();
+    if (now - lastScrollTime.current < SCROLL_COOLDOWN) return;
+    lastScrollTime.current = now;
+
+    const direction = e.deltaY > 0 ? 'down' : 'up';
+    e.preventDefault();
+
+    const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + (direction === 'down' ? 1 : -1)));
+    if (nextIndex !== currentIndex) {
+      setIsAnimating(true);
+      setCurrentIndex(nextIndex);
+      setTimeout(() => setIsAnimating(false), ANIMATION_DURATION);
+    }
+  }, [currentIndex, isAnimating, isVisible, isMobile]);
+
   useEffect(() => {
-  if (isMobile || !mounted) return;
+    if (isMobile || !mounted) return;
 
-  const section = sectionRef.current;
-  if (!section) return;
+    const section = sectionRef.current;
+    if (!section) return;
 
-  section.addEventListener('wheel', handleScroll, { passive: false });
-  return () => {
-    section.removeEventListener('wheel', handleScroll);
-    setMounted(false); // Ensure mounted state is reset
-  };
-}, [handleScroll, isMobile, mounted]);
+    section.addEventListener('wheel', handleScroll, { passive: false });
+    return () => section.removeEventListener('wheel', handleScroll);
+  }, [handleScroll, isMobile, mounted]);
 
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
