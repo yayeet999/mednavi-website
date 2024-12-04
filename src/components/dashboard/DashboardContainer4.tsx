@@ -49,29 +49,25 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>(STATIC_PATIENT_DATA);
 
   const handlePageChange = (pageId: string) => {
-  if (pageId === 'home') {
-    onNavigateToHome?.();
-    return;
-  }
-  if (pageId === 'practice') {
-    onNavigateToPractice?.();
-    return;
-  }
-  if (pageId === 'map') {
-    onNavigateToMap?.();
-    return;
-  }
+    if (pageId === 'home') {
+      onNavigateToHome?.();
+      return;
+    }
+    if (pageId === 'practice') {
+      onNavigateToPractice?.();
+      return;
+    }
+    if (pageId === 'map') {
+      onNavigateToMap?.();
+      return;
+    }
 
-  setIsTransitioning(true);
-  setActivePage(pageId);
-  const timer = setTimeout(() => {
-    setIsTransitioning(false);
-  }, 100);
-  return () => {
-    clearTimeout(timer);
-    setIsTransitioning(false); // Ensure state is reset
+    setIsTransitioning(true);
+    setActivePage(pageId);
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 100);
   };
-};
 
   const handleFiltersChange = (filters: any) => {
     const filtered = STATIC_PATIENT_DATA.filter(patient => {
