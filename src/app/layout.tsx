@@ -1,10 +1,8 @@
-'use client'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import { useEffect } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,27 +16,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  useEffect(() => {
-    const cleanup = () => {
-      const elements = document.querySelectorAll('.framer-motion-elements')
-      elements.forEach(el => {
-        if (el && el.parentNode) {
-          try {
-            el.parentNode.removeChild(el)
-          } catch (error) {
-            console.log('Global cleanup error handled:', error)
-          }
-        }
-      })
-    }
-
-    window.addEventListener('beforeunload', cleanup)
-    return () => {
-      cleanup()
-      window.removeEventListener('beforeunload', cleanup)
-    }
-  }, [])
-
   return (
     <html lang="en">
       <body className={inter.className}>
