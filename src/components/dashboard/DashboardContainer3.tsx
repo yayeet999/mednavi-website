@@ -51,6 +51,7 @@ useEffect(() => {
   return () => {
     setShouldRenderMap(false);
     setIsTransitioning(false);
+    // Additional cleanup if any
   };
 }, []);
 
