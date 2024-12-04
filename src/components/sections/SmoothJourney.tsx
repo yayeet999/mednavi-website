@@ -110,14 +110,17 @@ const SmoothJourney: React.FC = () => {
   }, [isMobile, mounted]);
 
   useEffect(() => {
-    if (isMobile || !mounted) return;
+  if (isMobile || !mounted) return;
 
-    const section = sectionRef.current;
-    if (!section) return;
+  const section = sectionRef.current;
+  if (!section) return;
 
-    section.addEventListener('wheel', handleScroll, { passive: false });
-    return () => section.removeEventListener('wheel', handleScroll);
-  }, [handleScroll, isMobile, mounted]);
+  section.addEventListener('wheel', handleScroll, { passive: false });
+  return () => {
+    section.removeEventListener('wheel', handleScroll);
+    setMounted(false); // Ensure mounted state is reset
+  };
+}, [handleScroll, isMobile, mounted]);
 
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
