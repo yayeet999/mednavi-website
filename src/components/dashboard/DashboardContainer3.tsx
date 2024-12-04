@@ -39,20 +39,20 @@ export const DashboardContainer3: React.FC<DashboardContainer3Props> = ({
   };
 
   useEffect(() => {
-    if (activePage === 'map' && !shouldRenderMap) {
-      const timer = setTimeout(() => {
-        setShouldRenderMap(true);
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [activePage, shouldRenderMap]);
+  if (activePage === 'map' && !shouldRenderMap) {
+    const timer = setTimeout(() => {
+      setShouldRenderMap(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }
+}, [activePage, shouldRenderMap]);
 
-  useEffect(() => {
-    return () => {
-      setShouldRenderMap(false);
-      setIsTransitioning(false);
-    };
-  }, []);
+useEffect(() => {
+  return () => {
+    setShouldRenderMap(false);
+    setIsTransitioning(false);
+  };
+}, []);
 
   return (
     <div className="h-full w-full">
