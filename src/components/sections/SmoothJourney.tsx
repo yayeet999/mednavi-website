@@ -21,43 +21,85 @@ const navigationIcons = [
   { id: 'location', Icon: MapPin }
 ]
 
+const SCROLL_COOLDOWN = 500; // ms between scroll actions
+const ANIMATION_DURATION = 1000; // ms for transitions
+
 const SmoothJourney: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
-  const [isVisible, setIsVisible] = useState(true)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [windowSize, setWindowSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 })
+  const [isVisible, setIsVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const lastScrollTime = useRef<number>(0)
 
   useEffect(() => {
     const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
       setIsMobile(window.innerWidth < 768)
     }
+
+    setMounted(true)
     handleResize()
     window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Cleanup function for animations
   useEffect(() => {
-    const cleanup = () => {
-      if (containerRef.current) {
-        const elements = containerRef.current.querySelectorAll('.framer-motion-elements')
-        elements.forEach(el => {
-          if (el && el.parentNode) {
-            try {
-              el.parentNode.removeChild(el)
-            } catch (error) {
-              console.log('Animation cleanup error handled:', error)
-            }
-          }
-        })
+    if (!isMobile || !mounted) return
+
+    const handleScroll = () => {
+      if (!sectionRef.current) return
+      const rect = sectionRef.current.getBoundingClientRect()
+      setIsVisible(rect.top < window.innerHeight && rect.bottom >= 0)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [isMobile, mounted])
+
+  useEffect(() => {
+    if (isMobile || !mounted) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        setIsVisible(entry.isIntersecting)
+
+        if (entry.isIntersecting && sectionRef.current) {
+          sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      },
+      { threshold: 0.2 }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current)
       }
     }
+  }, [isMobile, mounted])
 
-    return cleanup
-  }, [])
+  const handleScroll = useCallback((e: WheelEvent) => {
+    if (!isVisible || isAnimating || isMobile) return
+
+    const now = Date.now()
+    if (now - lastScrollTime.current < SCROLL_COOLDOWN) return
+    lastScrollTime.current = now
+
+    const delta = Math.sign(e.deltaY)
+    const nextIndex = (currentIndex + delta + stations.length) % stations.length
+    setCurrentIndex(nextIndex)
+  }, [currentIndex, isAnimating, isVisible, isMobile])
 
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return
@@ -77,7 +119,7 @@ const SmoothJourney: React.FC = () => {
     })
 
     setCurrentIndex(index)
-    setTimeout(() => setIsAnimating(false), 1000)
+    setTimeout(() => setIsAnimating(false), ANIMATION_DURATION)
   }, [currentIndex, isAnimating])
 
   const getNextIndex = useCallback(() => (currentIndex + 1) % stations.length, [currentIndex])
@@ -88,7 +130,7 @@ const SmoothJourney: React.FC = () => {
   const navigateToLocation = useCallback(() => navigate(3), [navigate])
 
   return (
-    <div ref={containerRef} className="relative w-full h-[calc(100vh-4rem)] overflow-hidden bg-gray-50">
+    <div ref={sectionRef} className="relative w-full h-[calc(100vh-4rem)] overflow-hidden bg-gray-50">
       <div className="absolute inset-0 flex items-center justify-center">
         <svg className="absolute w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
           {stations.map((_, i) => (
@@ -159,7 +201,7 @@ const SmoothJourney: React.FC = () => {
                   rounded-full transform transition-all duration-300
                   ${i === currentIndex 
                     ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-pulse' 
-                    : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'}
+                    : 'bg-blue-600 hover:bg-blue-700'}
                   disabled:opacity-50
                 `}
                 aria-label={`Navigate to ${nav.id}`}
