@@ -34,87 +34,72 @@ const SmoothJourney: React.FC = () => {
   const lastScrollTime = useRef<number>(0);
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-      setIsMobile(window.innerWidth < 768);
-    };
+  const handleResize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+    setIsMobile(window.innerWidth < 768);
+  };
 
-    setMounted(true);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  setMounted(true);
+  handleResize();
+  window.addEventListener('resize', handleResize);
+  return () => {
+    window.removeEventListener('resize', handleResize);
+    setMounted(false); // Ensure mounted state is reset
+  };
+}, []);
 
-  useEffect(() => {
-    if (!isMobile || !mounted) return;
+useEffect(() => {
+  if (!isMobile || !mounted) return;
 
-    const handleScroll = () => {
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      setIsVisible(rect.top < window.innerHeight && rect.bottom >= 0);
-    };
+  const handleScroll = () => {
+    if (!sectionRef.current) return;
+    const rect = sectionRef.current.getBoundingClientRect();
+    setIsVisible(rect.top < window.innerHeight && rect.bottom >= 0);
+  };
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile, mounted]);
+  handleScroll();
+  window.addEventListener('scroll', handleScroll);
+  return () => window.removeEventListener('scroll', handleScroll);
+}, [isMobile, mounted]);
 
-  useEffect(() => {
-    if (isMobile || !mounted) return;
+useEffect(() => {
+  if (isMobile || !mounted) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        setIsVisible(entry.isIntersecting);
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      setIsVisible(entry.isIntersecting);
 
-        if (entry.isIntersecting && sectionRef.current) {
-          sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (entry.isIntersecting && sectionRef.current) {
+        sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-    };
-  }, [isMobile, mounted]);
+    },
+    { threshold: 0.2 }
+  );
 
-  const handleScroll = useCallback((e: WheelEvent) => {
-    if (!isVisible || isAnimating || isMobile) return;
+  if (sectionRef.current) {
+    observer.observe(sectionRef.current);
+  }
 
-    const now = Date.now();
-    if (now - lastScrollTime.current < SCROLL_COOLDOWN) return;
-    lastScrollTime.current = now;
-
-    const direction = e.deltaY > 0 ? 'down' : 'up';
-    e.preventDefault();
-
-    const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + (direction === 'down' ? 1 : -1)));
-    if (nextIndex !== currentIndex) {
-      setIsAnimating(true);
-      setCurrentIndex(nextIndex);
-      setTimeout(() => setIsAnimating(false), ANIMATION_DURATION);
+  return () => {
+    if (sectionRef.current) {
+      observer.unobserve(sectionRef.current);
     }
-  }, [currentIndex, isAnimating, isVisible, isMobile]);
+  };
+}, [isMobile, mounted]);
 
-  useEffect(() => {
-    if (isMobile || !mounted) return;
+useEffect(() => {
+  if (isMobile || !mounted) return;
 
-    const section = sectionRef.current;
-    if (!section) return;
+  const section = sectionRef.current;
+  if (!section) return;
 
-    section.addEventListener('wheel', handleScroll, { passive: false });
-    return () => section.removeEventListener('wheel', handleScroll);
-  }, [handleScroll, isMobile, mounted]);
+  section.addEventListener('wheel', handleScroll, { passive: false });
+  return () => section.removeEventListener('wheel', handleScroll);
+}, [handleScroll, isMobile, mounted]);
 
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
