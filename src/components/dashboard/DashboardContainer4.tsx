@@ -67,7 +67,10 @@ export const DashboardContainer4: React.FC<DashboardContainer4Props> = ({
   const timer = setTimeout(() => {
     setIsTransitioning(false);
   }, 100);
-  return () => clearTimeout(timer); // Cleanup timeout
+  return () => {
+    clearTimeout(timer);
+    setIsTransitioning(false); // Ensure state is reset
+  };
 };
 
   const handleFiltersChange = (filters: any) => {
