@@ -39,6 +39,30 @@ interface ZipcodeFeature {
   geometry: any;
 }
 
+const CustomLegend = L.Control.extend({
+  options: {
+    position: 'bottomleft'
+  },
+
+  onAdd: function (map: L.Map) {
+    const div = L.DomUtil.create('div', 'bg-white/90 backdrop-blur-sm rounded-lg shadow-sm p-2');
+    
+    ZIPCODE_REGIONS.forEach(region => {
+      const row = `
+        <div class="flex items-center mb-1 last:mb-0">
+          <div class="w-3 h-3 rounded mr-2" style="background-color: ${region.color}"></div>
+          <span class="text-gray-700 text-[11px]">
+            ${region.id} - ${region.name}
+          </span>
+        </div>
+      `;
+      div.innerHTML += row;
+    });
+
+    return div;
+  }
+});
+
 const MapComponent = ({ filteredPatients }: { filteredPatients: Patient[] }) => {
   const map = useMap();
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
@@ -130,7 +154,6 @@ const MapComponent = ({ filteredPatients }: { filteredPatients: Patient[] }) => 
         }
       );
 
-      // Add fade-in animation with delay based on index
       setTimeout(() => {
         marker.addTo(map);
       }, index * 10);
@@ -138,25 +161,8 @@ const MapComponent = ({ filteredPatients }: { filteredPatients: Patient[] }) => 
       return marker;
     });
 
-    // Create legend
-    const legend = L.control({ position: 'bottomleft' });
-    legend.onAdd = () => {
-      const div = L.DomUtil.create('div', 'bg-white/90 backdrop-blur-sm rounded-lg shadow-sm p-2');
-      
-      ZIPCODE_REGIONS.forEach(region => {
-        const row = `
-          <div class="flex items-center mb-1 last:mb-0">
-            <div class="w-3 h-3 rounded mr-2" style="background-color: ${region.color}"></div>
-            <span class="text-gray-700 text-[11px]">
-              ${region.id} - ${region.name}
-            </span>
-          </div>
-        `;
-        div.innerHTML += row;
-      });
-
-      return div;
-    };
+    // Add custom legend
+    const legend = new CustomLegend();
     legend.addTo(map);
 
     // Fit bounds to include all markers
@@ -178,7 +184,7 @@ const MapComponent = ({ filteredPatients }: { filteredPatients: Patient[] }) => 
           map.removeLayer(layer);
         }
       });
-      map.removeControl(legend);
+      legend.remove();
     };
   }, [map, geoJsonData, filteredPatients]);
 
