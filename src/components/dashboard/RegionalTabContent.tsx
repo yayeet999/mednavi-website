@@ -510,6 +510,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
   const [isAnalysisExpanded, setIsAnalysisExpanded] = useState(true);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
 
+  console.log('Selected ZIP:', selectedZip);
+
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
     { id: "patients", icon: Users, label: "Patients" },
