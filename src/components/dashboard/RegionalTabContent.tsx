@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import AnalysisContent from './AnalysisContent';
 
@@ -322,16 +322,16 @@ const MapComponent = ({
     labelsRef.current = [];
 
     const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  maxZoom: 14,
-  minZoom: 11,
-  keepBuffer: 2,
-  updateWhenIdle: true,
-  updateWhenZooming: false,
-  bounds: [
-    [41.85, -88.0],
-    [42.15, -87.5]
-  ]
-}).addTo(map);
+      maxZoom: 14,
+      minZoom: 11,
+      keepBuffer: 2,
+      updateWhenIdle: true,
+      updateWhenZooming: false,
+      bounds: [
+        [41.85, -88.0],
+        [42.15, -87.5]
+      ]
+    }).addTo(map);
 
     const geoJsonLayer = L.geoJSON(geoJsonData, {
       style: (feature: GeoJSON.Feature | undefined) => {
@@ -615,7 +615,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
               [41.85, -88.0],
               [42.15, -87.5]
             ]}
-            maxBoundsViscosity={1.0
+            maxBoundsViscosity={1.0}
           >
             {geoJsonData && (
               <MapComponent
