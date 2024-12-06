@@ -617,7 +617,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="absolute top-4 left-4 right-4 z-10"
+      className="absolute top-4 left-4 right-4 z-50 bg-red-500" // Added bg-red-500 temporarily to test visibility
     >
       <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
         <div className="flex justify-center gap-2">
