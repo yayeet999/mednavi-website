@@ -668,6 +668,12 @@ const RegionalTabContent = forwardRef((props, ref) => {
           </MapContainer>
         </div>
 
+     {console.log('AnimatePresence check:', {
+  selectedZip: selectedZip,
+  isSelectedZipValid: Boolean(selectedZip),
+  iconsExist: Boolean(icons)
+})}
+        
         {isLoading && (
           <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
             <div className="w-4 h-4 border-2 border-blue-600 rounded-full border-t-transparent animate-spin" />
