@@ -535,7 +535,24 @@ const RegionalTabContent = forwardRef((props, ref) => {
     setSelectedIcon(iconId);
     setSelectedSubData(null);
     setIsAnalysisExpanded(true);
-  }, []);
+    
+    // Re-center on selected zip after a short delay to allow for animation
+    if (geoJsonData && selectedZip) {
+      setTimeout(() => {
+        const selectedFeature = geoJsonData.features.find(
+          (f: any) => f.properties?.ZCTA5CE20 === selectedZip
+        );
+        if (selectedFeature) {
+          const bounds = L.geoJSON(selectedFeature).getBounds().pad(0.2);
+          // Access map through MapComponent's useMap hook
+          const map = (document.querySelector('.leaflet-container') as any)?._leaflet_map;
+          if (map) {
+            map.fitBounds(bounds, { duration: 0.5, animate: true, maxZoom: 14 });
+          }
+        }
+      }, 300); // Delay to sync with container animation
+    }
+  }, [geoJsonData, selectedZip]);
 
   const handleSubDataClick = useCallback((subDataId: string) => {
     if (selectedSubData === subDataId) {
