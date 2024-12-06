@@ -342,11 +342,13 @@ const MapComponent = ({
       },
       onEachFeature: (feature: any, layer: L.Layer) => {
         const zipCode = feature.properties?.ZCTA5CE20;
+        // Ensure we attach click handlers if valid zip
         if (zipCode && isValidZipCode(zipCode) && layer instanceof L.Path) {
           zipLayersRef.current[zipCode] = layer;
           layer.options.interactive = true;
           layer.on({
             click: () => {
+              // On polygon click, trigger the handleZipClick action
               if (isValidZipCode(zipCode)) {
                 handleZipClick(zipCode);
               }
@@ -443,7 +445,7 @@ const MapComponent = ({
     const oldZip = previousSelectedZip.current;
     const newZip = selectedZip;
 
-    // Restore old selected zip style
+    // Restore old selected zip style if needed
     if (oldZip && zipLayersRef.current[oldZip]) {
       const oldLayer = zipLayersRef.current[oldZip];
       oldLayer.setStyle({
@@ -480,7 +482,7 @@ const MapComponent = ({
       map.setView([mapCenter.lat, mapCenter.lng], 12, { duration: 0.5, animate: true });
     }
 
-    // Update labels
+    // Update labels for new and old selected zip
     labelsRef.current.forEach(marker => {
       const html = marker.getElement()?.querySelector('div');
       if (!html) return;
