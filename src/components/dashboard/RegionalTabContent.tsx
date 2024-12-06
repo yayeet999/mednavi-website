@@ -307,21 +307,17 @@ const MapComponent = ({
 }) => {
   const map = useMap();
   const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
-  const markersRef = useRef<L.Marker[]>([]);
   const labelsRef = useRef<L.Marker[]>([]);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
 
+  // Load the geoJSON data and tile layer only once
   useEffect(() => {
     if (!map || !geoJsonData) return;
+    // If already initialized, skip
+    if (geoJsonLayerRef.current) return;
 
-    if (geoJsonLayerRef.current) {
-      map.removeLayer(geoJsonLayerRef.current);
-    }
-    markersRef.current.forEach(marker => marker.remove());
-    labelsRef.current.forEach(marker => marker.remove());
-    markersRef.current = [];
-    labelsRef.current = [];
-
-    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    // Add base tile layer once
+    tileLayerRef.current = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 14,
       minZoom: 11,
       keepBuffer: 2,
@@ -333,13 +329,12 @@ const MapComponent = ({
       ]
     }).addTo(map);
 
+    // Create GeoJSON layer once
     const geoJsonLayer = L.geoJSON(geoJsonData, {
-      style: (feature: GeoJSON.Feature | undefined) => {
-        if (!feature) return {};
-        
-        const zipCode = (feature as ZipcodeFeature).properties?.ZCTA5CE20;
+      style: (feature: any) => {
+        const zipCode = feature.properties.ZCTA5CE20;
         const zipData = zipCodes.find(z => z.id === zipCode);
-        
+
         return {
           fillColor: zipData ? (zipCode === selectedZip ? zipData.color : '#E2E8F0') : 'transparent',
           fillOpacity: zipCode === selectedZip ? 0.5 : 0.35,
@@ -348,8 +343,8 @@ const MapComponent = ({
           color: zipCode === selectedZip ? '#1E40AF' : '#94A3B8'
         };
       },
-      onEachFeature: (feature: GeoJSON.Feature, layer: L.Layer) => {
-        const zipCode = (feature as ZipcodeFeature).properties?.ZCTA5CE20;
+      onEachFeature: (feature: any, layer: L.Layer) => {
+        const zipCode = feature.properties.ZCTA5CE20;
         if (zipCodes.some(z => z.id === zipCode)) {
           if (layer instanceof L.Path) {
             layer.on({
@@ -360,7 +355,7 @@ const MapComponent = ({
               },
               mouseover: () => {
                 if (zipCode !== selectedZip) {
-                  layer.setStyle({ 
+                  (layer as L.Path).setStyle({
                     fillOpacity: 0.45,
                     weight: 1.5,
                     color: '#64748B'
@@ -369,7 +364,7 @@ const MapComponent = ({
               },
               mouseout: () => {
                 if (zipCode !== selectedZip) {
-                  layer.setStyle({ 
+                  (layer as L.Path).setStyle({
                     fillOpacity: 0.35,
                     weight: 1,
                     color: '#94A3B8'
@@ -384,83 +379,141 @@ const MapComponent = ({
 
     geoJsonLayerRef.current = geoJsonLayer;
 
+    // Add labels once
     zipCodes.forEach(zipCode => {
       const offset = getZipOffset(zipCode.id);
-      const label = L.marker(
+      const labelIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: `
+          <div style="
+            background-color: ${selectedZip === zipCode.id ? zipCode.color : '#475569'};
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: ${window.innerWidth < 768 ? '10px' : '12px'};
+            font-weight: 600;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+          ">${zipCode.id}</div>
+        `,
+        iconSize: [60, 20],
+        iconAnchor: [30, 10]
+      });
+
+      const marker = L.marker(
         [zipCode.center.lat + offset.lat, zipCode.center.lng + offset.lng],
-        {
-          icon: L.divIcon({
-            className: 'custom-div-icon',
-            html: `
-              <div style="
-                background-color: ${selectedZip === zipCode.id ? zipCode.color : '#475569'};
-                color: white;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: ${window.innerWidth < 768 ? '10px' : '12px'};
-                font-weight: 600;
-                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-                transition: all 0.2s ease;
-              ">${zipCode.id}</div>
-            `,
-            iconSize: [60, 20],
-            iconAnchor: [30, 10]
-          })
-        }
+        { icon: labelIcon }
       ).addTo(map);
-      labelsRef.current.push(label);
+      labelsRef.current.push(marker);
     });
 
     surroundingCities.forEach(city => {
-      const label = L.marker(
-        [city.position.lat, city.position.lng],
-        {
-          icon: L.divIcon({
-            className: 'custom-div-icon',
-            html: `
-              <div style="
-                color: #64748B;
-                font-size: ${window.innerWidth < 768 ? '9px' : '11px'};
-                font-weight: 500;
-                text-align: center;
-              ">${city.name}</div>
-            `,
-            iconSize: [80, 20],
-            iconAnchor: [40, 10]
-          })
-        }
-      ).addTo(map);
-      labelsRef.current.push(label);
+      const labelIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: `
+          <div style="
+            color: #64748B;
+            font-size: ${window.innerWidth < 768 ? '9px' : '11px'};
+            font-weight: 500;
+            text-align: center;
+          ">${city.name}</div>
+        `,
+        iconSize: [80, 20],
+        iconAnchor: [40, 10]
+      });
+
+      const marker = L.marker([city.position.lat, city.position.lng], { icon: labelIcon }).addTo(map);
+      labelsRef.current.push(marker);
     });
 
+    // Initial fit bounds if no selectedZip
+    if (!selectedZip) {
+      map.setView([mapCenter.lat, mapCenter.lng], 12, {
+        duration: 0.5,
+        animate: true
+      });
+    } else {
+      const selectedFeature = geoJsonData.features.find(
+        (f: any) => f.properties.ZCTA5CE20 === selectedZip
+      );
+      if (selectedFeature) {
+        const bounds = L.geoJSON(selectedFeature).getBounds().pad(0.2);
+        map.fitBounds(bounds, {
+          duration: 0.5,
+          animate: true,
+          maxZoom: 14
+        });
+      }
+    }
+  }, [map, geoJsonData, handleZipClick, selectedZip]);
+
+  // Update style on selectedZip change without re-adding everything
+  useEffect(() => {
+    if (!map || !geoJsonData || !geoJsonLayerRef.current) return;
+
+    // Update styles for all features to reflect the new selectedZip
+    geoJsonLayerRef.current.eachLayer(layer => {
+      const feature = (layer as any).feature as GeoJSON.Feature;
+      if (!feature) return;
+      const zipCode = feature.properties.ZCTA5CE20;
+      const zipData = zipCodes.find(z => z.id === zipCode);
+
+      if (layer instanceof L.Path) {
+        if (zipData) {
+          layer.setStyle({
+            fillColor: zipCode === selectedZip ? zipData.color : '#E2E8F0',
+            fillOpacity: zipCode === selectedZip ? 0.5 : 0.35,
+            weight: zipCode === selectedZip ? 2 : 1,
+            opacity: 1,
+            color: zipCode === selectedZip ? '#1E40AF' : '#94A3B8'
+          });
+        } else {
+          layer.setStyle({
+            fillColor: 'transparent',
+            fillOpacity: 0.3,
+            weight: 1,
+            opacity: 1,
+            color: '#94A3B8'
+          });
+        }
+      }
+    });
+
+    // Update labels to highlight selected zip if needed
+    labelsRef.current.forEach(marker => {
+      const html = marker.getElement()?.querySelector('div');
+      if (!html) return;
+      const labelText = html.textContent?.trim();
+      if (labelText && isValidZipCode(labelText)) {
+        const zipData = zipCodes.find(z => z.id === labelText);
+        if (zipData) {
+          html.style.backgroundColor = (selectedZip === labelText) ? zipData.color : '#475569';
+        }
+      }
+    });
+
+    // Adjust map view if selectedZip changes
     if (selectedZip) {
       const selectedFeature = geoJsonData.features.find(
         (f: any) => f.properties.ZCTA5CE20 === selectedZip
       );
       if (selectedFeature) {
-        const bounds = L.geoJSON(selectedFeature).getBounds();
-        const paddedBounds = bounds.pad(0.2);
-        map.fitBounds(paddedBounds, {
+        const bounds = L.geoJSON(selectedFeature).getBounds().pad(0.2);
+        map.fitBounds(bounds, {
           duration: 0.5,
           animate: true,
           maxZoom: 14
         });
       }
     } else {
+      // No selected zip, reset view
       map.setView([mapCenter.lat, mapCenter.lng], 12, {
         duration: 0.5,
         animate: true
       });
     }
 
-    return () => {
-      if (geoJsonLayerRef.current) {
-        map.removeLayer(geoJsonLayerRef.current);
-      }
-      markersRef.current.forEach(marker => marker.remove());
-      labelsRef.current.forEach(marker => marker.remove());
-    };
-  }, [map, geoJsonData, selectedZip, handleZipClick]);
+  }, [map, geoJsonData, selectedZip]);
 
   return null;
 };
