@@ -615,8 +615,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-4 left-4 right-4 z-10 pointer-events-none" 
-              // We disable pointer events here so clicks go through
+              className="absolute top-4 left-4 right-4 z-10 pointer-events-none"
             >
               <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm pointer-events-none">
                 <div className="flex justify-center gap-2">
@@ -629,7 +628,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
                         pointer-events-auto
                         ${selectedIcon === icon.id 
                           ? 'bg-[#052b52] text-white shadow-sm' 
-                          : 'bg-white/80 text-gray-600 hover:bg-white'}`}
+                          : 'bg-white/80 text-gray-600 hover:bg-white'}
+                      `}
                     >
                       <icon.icon className="w-4 h-4" />
                       <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
@@ -780,7 +780,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
           border: none !important;
           box-shadow: none !important;
         }
-        /* Allow clicking through the overlay, except on buttons */
+
+        /* Make the top overlay non-interactive except for buttons */
         .pointer-events-none {
           pointer-events: none;
         }
