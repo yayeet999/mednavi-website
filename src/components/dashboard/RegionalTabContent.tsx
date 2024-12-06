@@ -238,7 +238,7 @@ interface ZipcodeFeature {
   properties: {
     ZCTA5CE20: string;
     [key: string]: any;
-  };
+  } | null;
   geometry: any;
 }
 
@@ -329,10 +329,9 @@ const MapComponent = ({
       ]
     }).addTo(map);
 
-    // Create GeoJSON layer once
     const geoJsonLayer = L.geoJSON(geoJsonData, {
       style: (feature: any) => {
-        const zipCode = feature.properties.ZCTA5CE20;
+        const zipCode = feature.properties?.ZCTA5CE20;
         const zipData = zipCodes.find(z => z.id === zipCode);
 
         return {
@@ -344,7 +343,7 @@ const MapComponent = ({
         };
       },
       onEachFeature: (feature: any, layer: L.Layer) => {
-        const zipCode = feature.properties.ZCTA5CE20;
+        const zipCode = feature.properties?.ZCTA5CE20;
         if (zipCodes.some(z => z.id === zipCode)) {
           if (layer instanceof L.Path) {
             layer.on({
@@ -434,7 +433,7 @@ const MapComponent = ({
       });
     } else {
       const selectedFeature = geoJsonData.features.find(
-        (f: any) => f.properties.ZCTA5CE20 === selectedZip
+        (f: any) => f.properties?.ZCTA5CE20 === selectedZip
       );
       if (selectedFeature) {
         const bounds = L.geoJSON(selectedFeature).getBounds().pad(0.2);
@@ -451,10 +450,10 @@ const MapComponent = ({
   useEffect(() => {
     if (!map || !geoJsonData || !geoJsonLayerRef.current) return;
 
-    // Update styles for all features to reflect the new selectedZip
+    // Update styles
     geoJsonLayerRef.current.eachLayer(layer => {
       const feature = (layer as any).feature as GeoJSON.Feature;
-      if (!feature) return;
+      if (!feature || !feature.properties) return;
       const zipCode = feature.properties.ZCTA5CE20;
       const zipData = zipCodes.find(z => z.id === zipCode);
 
@@ -479,7 +478,7 @@ const MapComponent = ({
       }
     });
 
-    // Update labels to highlight selected zip if needed
+    // Update labels for selected zip
     labelsRef.current.forEach(marker => {
       const html = marker.getElement()?.querySelector('div');
       if (!html) return;
@@ -495,7 +494,7 @@ const MapComponent = ({
     // Adjust map view if selectedZip changes
     if (selectedZip) {
       const selectedFeature = geoJsonData.features.find(
-        (f: any) => f.properties.ZCTA5CE20 === selectedZip
+        (f: any) => f.properties?.ZCTA5CE20 === selectedZip
       );
       if (selectedFeature) {
         const bounds = L.geoJSON(selectedFeature).getBounds().pad(0.2);
