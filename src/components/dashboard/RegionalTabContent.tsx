@@ -595,7 +595,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
       <motion.div 
-        className={`relative bg-gray-50 rounded-xl shadow-sm overflow-hidden
+        className={`relative bg-gray-50 rounded-xl shadow-sm overflow-visible
         ${window.innerWidth >= 768 
           ? 'w-[30%] ml-3 relative' 
           : 'w-[35%] absolute right-0 top-0 h-full'}`}
@@ -617,7 +617,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="absolute top-4 left-4 right-4 z-50 bg-red-500" // Added bg-red-500 temporarily to test visibility
+      className="absolute top-4 left-4 right-4 z-[9999]"
     >
       <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
         <div className="flex justify-center gap-2">
@@ -716,7 +716,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
                       key={option}
                       onClick={() => handleSubDataClick(option)}
                       className={`
-                        w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                        w-[99.5%] md:w/full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
                         text-left rounded-lg transition-colors duration-200 
                         ${selectedSubData === option 
                           ? 'bg-[#052b52] text-white' 
