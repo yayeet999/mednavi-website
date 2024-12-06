@@ -9,6 +9,7 @@ interface ZipCode {
   id: ValidZipCode;
   name: string;
   center: { lat: number; lng: number };
+  color: string;
 }
 
 interface ZipcodeFeature {
@@ -28,230 +29,11 @@ interface Icon {
 
 type ValidZipCode = keyof typeof analysisData;
 
-const analysisData = {
-  "60714": {
-    financial: {
-      monthlyProduction: {
-        regional: {
-          total: 52450,
-          breakdown: {
-            "Aligners": { amount: 18357, percentage: 35 },
-            "Hygiene": { amount: 15735, percentage: 30 },
-            "Root Canals": { amount: 10490, percentage: 20 },
-            "Whitening": { amount: 4196, percentage: 8 },
-            "Veneers": { amount: 3672, percentage: 7 }
-          }
-        },
-        practice: {
-          total: 55800,
-          breakdown: {
-            "Aligners": { amount: 20588, percentage: 37 },
-            "Hygiene": { amount: 16740, percentage: 30 },
-            "Root Canals": { amount: 8928, percentage: 16 },
-            "Whitening": { amount: 5022, percentage: 9 },
-            "Veneers": { amount: 4522, percentage: 8 }
-          }
-        }
-      },
-      insurance: {
-        regional: { public: 42, private: 58 },
-        practice: { public: 45, private: 55 }
-      },
-      growth: {
-        regional: { percentage: 12.4, yoyChange: 2.1 },
-        practice: { percentage: 14.2, yoyChange: 3.5 }
-      }
-    },
-    patients: {
-      activePatients: {
-        regional: { percentage: 78, total: 2450 },
-        practice: { percentage: 82, total: 2547 }
-      }
-    },
-    procedures: {
-      highestVolume: {
-        regional: { name: "Hygiene", data: [245, 268, 255] },
-        practice: { name: "Hygiene", data: [258, 272, 265] }
-      },
-      lowestVolume: {
-        regional: { name: "Root Canals", data: [12, 15, 14] },
-        practice: { name: "Root Canals", data: [11, 13, 12] }
-      },
-      largestProduction: {
-        regional: { name: "Veneers", procedureAvg: 1250, totalAvg: 850 },
-        practice: { name: "Veneers", procedureAvg: 1350, totalAvg: 890 }
-      }
-    }
-  },
-  "60631": {
-    financial: {
-      monthlyProduction: {
-        regional: {
-          total: 48750,
-          breakdown: {
-            "Aligners": { amount: 16575, percentage: 34 },
-            "Hygiene": { amount: 14625, percentage: 30 },
-            "Root Canals": { amount: 9750, percentage: 20 },
-            "Whitening": { amount: 3900, percentage: 8 },
-            "Veneers": { amount: 3900, percentage: 8 }
-          }
-        },
-        practice: {
-          total: 51200,
-          breakdown: {
-            "Aligners": { amount: 17920, percentage: 35 },
-            "Hygiene": { amount: 15360, percentage: 30 },
-            "Root Canals": { amount: 10240, percentage: 20 },
-            "Whitening": { amount: 4096, percentage: 8 },
-            "Veneers": { amount: 3584, percentage: 7 }
-          }
-        }
-      },
-      insurance: {
-        regional: { public: 40, private: 60 },
-        practice: { public: 43, private: 57 }
-      },
-      growth: {
-        regional: { percentage: 11.8, yoyChange: 1.9 },
-        practice: { percentage: 13.5, yoyChange: 3.2 }
-      }
-    },
-    patients: {
-      activePatients: {
-        regional: { percentage: 76, total: 2380 },
-        practice: { percentage: 80, total: 2475 }
-      }
-    },
-    procedures: {
-      highestVolume: {
-        regional: { name: "Hygiene", data: [238, 255, 245] },
-        practice: { name: "Hygiene", data: [248, 262, 255] }
-      },
-      lowestVolume: {
-        regional: { name: "Root Canals", data: [11, 14, 13] },
-        practice: { name: "Root Canals", data: [10, 12, 11] }
-      },
-      largestProduction: {
-        regional: { name: "Veneers", procedureAvg: 1200, totalAvg: 820 },
-        practice: { name: "Veneers", procedureAvg: 1300, totalAvg: 860 }
-      }
-    }
-  },
-  "60656": {
-    financial: {
-      monthlyProduction: {
-        regional: {
-          total: 50600,
-          breakdown: {
-            "Aligners": { amount: 17710, percentage: 35 },
-            "Hygiene": { amount: 15180, percentage: 30 },
-            "Root Canals": { amount: 10120, percentage: 20 },
-            "Whitening": { amount: 4048, percentage: 8 },
-            "Veneers": { amount: 3542, percentage: 7 }
-          }
-        },
-        practice: {
-          total: 53500,
-          breakdown: {
-            "Aligners": { amount: 19260, percentage: 36 },
-            "Hygiene": { amount: 16050, percentage: 30 },
-            "Root Canals": { amount: 10700, percentage: 20 },
-            "Whitening": { amount: 4280, percentage: 8 },
-            "Veneers": { amount: 3210, percentage: 6 }
-          }
-        }
-      },
-      insurance: {
-        regional: { public: 41, private: 59 },
-        practice: { public: 44, private: 56 }
-      },
-      growth: {
-        regional: { percentage: 12.1, yoyChange: 2.0 },
-        practice: { percentage: 13.8, yoyChange: 3.3 }
-      }
-    },
-    patients: {
-      activePatients: {
-        regional: { percentage: 77, total: 2415 },
-        practice: { percentage: 81, total: 2510 }
-      }
-    },
-    procedures: {
-      highestVolume: {
-        regional: { name: "Hygiene", data: [242, 262, 250] },
-        practice: { name: "Hygiene", data: [253, 267, 260] }
-      },
-      lowestVolume: {
-        regional: { name: "Root Canals", data: [12, 15, 14] },
-        practice: { name: "Root Canals", data: [11, 13, 12] }
-      },
-      largestProduction: {
-        regional: { name: "Veneers", procedureAvg: 1225, totalAvg: 835 },
-        practice: { name: "Veneers", procedureAvg: 1325, totalAvg: 875 }
-      }
-    }
-  },
-  "60068": {
-    financial: {
-      monthlyProduction: {
-        regional: {
-          total: 54300,
-          breakdown: {
-            "Aligners": { amount: 19005, percentage: 35 },
-            "Hygiene": { amount: 16290, percentage: 30 },
-            "Root Canals": { amount: 10860, percentage: 20 },
-            "Whitening": { amount: 4344, percentage: 8 },
-            "Veneers": { amount: 3801, percentage: 7 }
-          }
-        },
-        practice: {
-          total: 57100,
-          breakdown: {
-            "Aligners": { amount: 20556, percentage: 36 },
-            "Hygiene": { amount: 17130, percentage: 30 },
-            "Root Canals": { amount: 11420, percentage: 20 },
-            "Whitening": { amount: 4568, percentage: 8 },
-            "Veneers": { amount: 3426, percentage: 6 }
-          }
-        }
-      },
-      insurance: {
-        regional: { public: 43, private: 57 },
-        practice: { public: 46, private: 54 }
-      },
-      growth: {
-        regional: { percentage: 12.7, yoyChange: 2.2 },
-        practice: { percentage: 14.5, yoyChange: 3.6 }
-      }
-    },
-    patients: {
-      activePatients: {
-        regional: { percentage: 79, total: 2485 },
-        practice: { percentage: 83, total: 2584 }
-      }
-    },
-    procedures: {
-      highestVolume: {
-        regional: { name: "Hygiene", data: [248, 270, 258] },
-        practice: { name: "Hygiene", data: [262, 275, 268] }
-      },
-      lowestVolume: {
-        regional: { name: "Root Canals", data: [12, 15, 14] },
-        practice: { name: "Root Canals", data: [11, 13, 12] }
-      },
-      largestProduction: {
-        regional: { name: "Veneers", procedureAvg: 1275, totalAvg: 865 },
-        practice: { name: "Veneers", procedureAvg: 1375, totalAvg: 905 }
-      }
-    }
-  }
-} as const;
-
 const zipCodes: ZipCode[] = [
-  { id: "60714", name: "Niles", center: { lat: 42.0294, lng: -87.7925 } },
-  { id: "60631", name: "Edison Park", center: { lat: 42.0072, lng: -87.8139 } },
-  { id: "60656", name: "Norwood Park", center: { lat: 41.9856, lng: -87.8087 } },
-  { id: "60068", name: "Park Ridge", center: { lat: 42.0111, lng: -87.8406 } }
+  { id: "60714", name: "Niles", center: { lat: 42.0294, lng: -87.7925 }, color: "#1E3A8A" },
+  { id: "60631", name: "Edison Park", center: { lat: 42.0072, lng: -87.8139 }, color: "#2563EB" },
+  { id: "60656", name: "Norwood Park", center: { lat: 41.9856, lng: -87.8087 }, color: "#3B82F6" },
+  { id: "60068", name: "Park Ridge", center: { lat: 42.0111, lng: -87.8406 }, color: "#60A5FA" }
 ];
 
 const surroundingCities = [
@@ -305,112 +87,156 @@ const MapComponent = ({
   geoJsonData: any;
 }) => {
   const map = useMap();
+  const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
+  const labelsRef = useRef<L.Marker[]>([]);
 
   useEffect(() => {
     if (!map || !geoJsonData) return;
 
-    // Clear layers
-    map.eachLayer((layer) => {
-      if (layer instanceof L.GeoJSON || layer instanceof L.Marker) {
-        map.removeLayer(layer);
-      }
-    });
+    // Clear existing layers
+    if (geoJsonLayerRef.current) {
+      map.removeLayer(geoJsonLayerRef.current);
+    }
+    labelsRef.current.forEach(marker => marker.remove());
+    labelsRef.current = [];
 
-    // Base tile layer
-    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19
+    // Add base tile layer with improved performance
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      keepBuffer: 2,
+      updateWhenIdle: true,
+      updateWhenZooming: false
     }).addTo(map);
 
-    // Add GeoJSON layer
+    // Create GeoJSON layer with improved styling
     const geoJsonLayer = L.geoJSON(geoJsonData, {
-  style: (feature: GeoJSON.Feature | undefined) => {
-    if (!feature) return {};
-    
-    const zipCode = (feature as ZipcodeFeature).properties?.ZCTA5CE20;
-    const isValidZip = zipCodes.some(z => z.id === zipCode);
-    
-    return {
-      fillColor: isValidZip ? (zipCode === selectedZip ? '#052b52' : '#CBD5E1') : 'transparent',
-      fillOpacity: 0.3,
-      weight: 0,
-      opacity: 1,
-      color: 'transparent'
-    };
-  },
-  onEachFeature: (feature: GeoJSON.Feature, layer: L.Layer) => {
-    const zipCode = (feature as ZipcodeFeature).properties?.ZCTA5CE20;
-    if (zipCodes.some(z => z.id === zipCode)) {
-      if (layer instanceof L.Path) {
-        layer.on({
-          click: () => {
-            if (isValidZipCode(zipCode)) {
-              handleZipClick(zipCode);
-            }
-          },
-          mouseover: () => {
-            if (zipCode !== selectedZip) {
-              layer.setStyle({ fillColor: '#CBD5E1' });
-            }
-          },
-          mouseout: () => {
-            if (zipCode !== selectedZip) {
-              layer.setStyle({ 
-                fillColor: zipCode === selectedZip ? '#052b52' : '#E2E8F0'
-              });
-            }
+      style: (feature: GeoJSON.Feature | undefined) => {
+        if (!feature) return {};
+        
+        const zipCode = (feature as ZipcodeFeature).properties?.ZCTA5CE20;
+        const zipData = zipCodes.find(z => z.id === zipCode);
+        
+        return {
+          fillColor: zipData ? (zipCode === selectedZip ? zipData.color : '#E2E8F0') : 'transparent',
+          fillOpacity: zipCode === selectedZip ? 0.6 : 0.3,
+          weight: zipCode === selectedZip ? 2 : 1,
+          opacity: 1,
+          color: zipCode === selectedZip ? '#1E40AF' : '#CBD5E1'
+        };
+      },
+      onEachFeature: (feature: GeoJSON.Feature, layer: L.Layer) => {
+        const zipCode = (feature as ZipcodeFeature).properties?.ZCTA5CE20;
+        if (zipCodes.some(z => z.id === zipCode)) {
+          if (layer instanceof L.Path) {
+            layer.on({
+              click: () => {
+                if (isValidZipCode(zipCode)) {
+                  handleZipClick(zipCode);
+                }
+              },
+              mouseover: () => {
+                if (zipCode !== selectedZip) {
+                  layer.setStyle({ 
+                    fillOpacity: 0.5,
+                    fillColor: '#94A3B8'
+                  });
+                }
+              },
+              mouseout: () => {
+                if (zipCode !== selectedZip) {
+                  layer.setStyle({ 
+                    fillOpacity: 0.3,
+                    fillColor: '#E2E8F0'
+                  });
+                }
+              }
+            });
           }
-        });
+        }
       }
-    }
-  }
-}).addTo(map);
+    }).addTo(map);
 
-    // Add labels for zip codes
+    geoJsonLayerRef.current = geoJsonLayer;
+
+    // Add improved labels for zip codes
     zipCodes.forEach(zipCode => {
       const offset = getZipOffset(zipCode.id);
-      const labelIcon = L.divIcon({
-        className: 'custom-div-icon',
-        html: `<div style="
-          color: ${selectedZip === zipCode.id ? '#FFFFFF' : '#666666'};
-          font-size: ${window.innerWidth < 768 ? '8px' : '16px'};
-          font-weight: 500;
-          text-align: center;
-        ">${zipCode.id}</div>`,
-        iconSize: [60, 20],
-        iconAnchor: [30, 10]
-      });
-
-      L.marker(
+      const label = L.marker(
         [zipCode.center.lat + offset.lat, zipCode.center.lng + offset.lng],
-        { icon: labelIcon }
+        {
+          icon: L.divIcon({
+            className: 'custom-div-icon',
+            html: `
+              <div style="
+                background-color: ${selectedZip === zipCode.id ? '#1E40AF' : '#475569'};
+                color: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: ${window.innerWidth < 768 ? '10px' : '12px'};
+                font-weight: 600;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+              ">${zipCode.id}</div>
+            `,
+            iconSize: [60, 20],
+            iconAnchor: [30, 10]
+          })
+        }
       ).addTo(map);
+      labelsRef.current.push(label);
     });
 
-    // Add labels for surrounding cities
+    // Add subtle labels for surrounding cities
     surroundingCities.forEach(city => {
-      const labelIcon = L.divIcon({
-        className: 'custom-div-icon',
-        html: `<div style="
-          color: #999999;
-          font-size: ${window.innerWidth < 768 ? '9px' : '14px'};
-          font-weight: 400;
-          text-align: center;
-        ">${city.name}</div>`,
-        iconSize: [80, 20],
-        iconAnchor: [40, 10]
-      });
-
-      L.marker([city.position.lat, city.position.lng], { icon: labelIcon }).addTo(map);
+      const label = L.marker(
+        [city.position.lat, city.position.lng],
+        {
+          icon: L.divIcon({
+            className: 'custom-div-icon',
+            html: `
+              <div style="
+                color: #94A3B8;
+                font-size: ${window.innerWidth < 768 ? '9px' : '11px'};
+                font-weight: 500;
+                text-align: center;
+              ">${city.name}</div>
+            `,
+            iconSize: [80, 20],
+            iconAnchor: [40, 10]
+          })
+        }
+      ).addTo(map);
+      labelsRef.current.push(label);
     });
+
+    // Set appropriate bounds when a zipcode is selected
+    if (selectedZip) {
+      const selectedFeature = geoJsonData.features.find(
+        (f: any) => f.properties.ZCTA5CE20 === selectedZip
+      );
+      if (selectedFeature) {
+        const bounds = L.geoJSON(selectedFeature).getBounds();
+        map.fitBounds(bounds, {
+          padding: [50, 50],
+          maxZoom: 14,
+          animate: true,
+          duration: 0.5
+        });
+      }
+    } else {
+      // Set default view when no zipcode is selected
+      map.setView([mapCenter.lat, mapCenter.lng], 12, {
+        animate: true,
+        duration: 0.5
+      });
+    }
 
     return () => {
-      map.eachLayer((layer) => {
-        if (layer instanceof L.GeoJSON || layer instanceof L.Marker) {
-          map.removeLayer(layer);
-        }
-      });
-    };
-  }, [map, geoJsonData, selectedZip, handleZipClick]);
+    if (geoJsonLayerRef.current) {
+      map.removeLayer(geoJsonLayerRef.current);
+    }
+    labelsRef.current.forEach(marker => marker.remove());
+  };
+}, [map, geoJsonData, selectedZip, handleZipClick]);
 
   return null;
 };
@@ -422,6 +248,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAnalysisExpanded, setIsAnalysisExpanded] = useState(true);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
+  const mapRef = useRef<L.Map | null>(null);
 
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
@@ -431,32 +258,29 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     cleanup: () => {
-      // No cleanup needed here
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
     }
   }));
 
   const handleZipClick = useCallback((zipId: ValidZipCode) => {
-    setSelectedZip(zipId);
+    setSelectedZip(prev => prev === zipId ? null : zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
     setIsAnalysisExpanded(true);
   }, []);
 
   const handleIconClick = useCallback((iconId: Icon['id']) => {
-    setSelectedIcon(iconId);
+    setSelectedIcon(prev => prev === iconId ? null : iconId);
     setSelectedSubData(null);
     setIsAnalysisExpanded(true);
   }, []);
 
   const handleSubDataClick = useCallback((subDataId: string) => {
-    if (selectedSubData === subDataId) {
-      setSelectedSubData(null);
-      setIsAnalysisExpanded(true);
-    } else {
-      setSelectedSubData(subDataId);
-      setIsAnalysisExpanded(false);
-    }
-  }, [selectedSubData]);
+    setSelectedSubData(prev => prev === subDataId ? null : subDataId);
+    setIsAnalysisExpanded(prev => !prev);
+  }, []);
 
   const getAnalysisOptions = (iconId: Icon['id']) => {
     switch (iconId) {
@@ -470,21 +294,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
         return [];
     }
   };
-
-  const AnalysisContentDisplay = useCallback(() => {
-    if (!selectedSubData || !selectedZip) return null;
-    const data = analysisData[selectedZip];
-    if (!data) return null;
-
-    return (
-      <AnalysisContent
-        selectedIcon={selectedIcon}
-        selectedSubData={selectedSubData}
-        selectedZip={selectedZip}
-        data={data}
-      />
-    );
-  }, [selectedIcon, selectedSubData, selectedZip]);
 
   useEffect(() => {
     const loadGeoJson = async () => {
@@ -501,15 +310,21 @@ const RegionalTabContent = forwardRef((props, ref) => {
     };
 
     loadGeoJson();
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
+    };
   }, []);
 
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
       <motion.div 
         className={`relative bg-gray-50 rounded-xl shadow-sm overflow-hidden
-        ${window.innerWidth >= 768 
-          ? 'w-[30%] ml-3 relative' 
-          : 'w-[35%] absolute right-0 top-0 h-full'}`}
+          ${window.innerWidth >= 768 
+            ? 'w-[30%] ml-3 relative' 
+            : 'w-[35%] absolute right-0 top-0 h-full'}`}
         variants={mapContainerVariants}
         animate={selectedIcon ? {
           width: window.innerWidth >= 768 ? "68%" : "62%",
@@ -539,8 +354,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
                       className={`
                         px-3 py-2 rounded-lg flex items-center transition-all duration-200 
                         ${selectedIcon === icon.id 
-                          ? 'bg-[#052b52] text-white shadow-sm' 
-                          : 'bg-white/80 text-gray-600 hover:bg-white'}`}
+                          ? 'bg-[#1E40AF] text-white shadow-sm transform scale-105' 
+                          : 'bg-white/80 text-gray-600 hover:bg-white hover:shadow-sm'}`}
                     >
                       <icon.icon className="w-4 h-4" />
                       <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
@@ -559,6 +374,9 @@ const RegionalTabContent = forwardRef((props, ref) => {
             className="w-full h-full"
             zoomControl={false}
             attributionControl={false}
+            whenCreated={map => {
+              mapRef.current = map;
+            }}
           >
             {geoJsonData && (
               <MapComponent
@@ -572,7 +390,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
         {isLoading && (
           <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-blue-600 rounded-full border-t-transparent animate-spin" />
+            <div className="w-8 h-8 border-3 border-blue-600 rounded-full border-t-transparent animate-spin" />
           </div>
         )}
       </motion.div>
@@ -590,19 +408,11 @@ const RegionalTabContent = forwardRef((props, ref) => {
             animate="visible"
             exit="hidden"
           >
-            <motion.div 
-              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
-              animate={{ 
-                height: 'auto'
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
+            <div className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}>
               <motion.div 
                 className="relative"
                 layout="position"
-                animate={{
-                  height: selectedSubData ? '42px' : 'auto'
-                }}
+                animate={{ height: selectedSubData ? '42px' : 'auto' }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
                 <AnimatePresence mode="sync">
@@ -611,10 +421,10 @@ const RegionalTabContent = forwardRef((props, ref) => {
                       key={option}
                       onClick={() => handleSubDataClick(option)}
                       className={`
-                        w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                        w-[99.5%] md:w-full mx-[0.25%] md:mx-0 p-2 md:p-3 
                         text-left rounded-lg transition-colors duration-200 
                         ${selectedSubData === option 
-                          ? 'bg-[#052b52] text-white' 
+                          ? 'bg-[#1E40AF] text-white shadow-sm' 
                           : 'bg-white text-gray-600 hover:bg-gray-100'} 
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
                         font-medium`}
@@ -623,7 +433,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
                       animate={{ 
                         y: selectedSubData === option ? -(index * 42) : 0,
                         opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
-                        scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
+                        scale: !selectedSubData || selectedSubData === option ? 1 : 0.95,
                       }}
                       transition={{
                         duration: 0.3,
@@ -637,18 +447,24 @@ const RegionalTabContent = forwardRef((props, ref) => {
               </motion.div>
 
               <AnimatePresence mode="wait">
-                {selectedSubData && (
+                {selectedSubData && selectedZip && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="mt-4"
                   >
-                    <AnalysisContentDisplay />
+                    <AnalysisContent
+                      selectedIcon={selectedIcon}
+                      selectedSubData={selectedSubData}
+                      selectedZip={selectedZip}
+                      data={analysisData[selectedZip]}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -685,6 +501,14 @@ const RegionalTabContent = forwardRef((props, ref) => {
           background: none !important;
           border: none !important;
           box-shadow: none !important;
+        }
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 0.9;
+          }
+          50% {
+            opacity: 0.7;
+          }
         }
       `}</style>
     </div>
