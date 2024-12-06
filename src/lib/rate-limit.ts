@@ -1,4 +1,9 @@
-export function rateLimit({ interval, uniqueTokenPerInterval = 500 }) {
+interface RateLimitConfig {
+  interval: number;
+  uniqueTokenPerInterval?: number;
+}
+
+export function rateLimit({ interval, uniqueTokenPerInterval = 500 }: RateLimitConfig) {
   const tokens = new Map();
   
   return {
