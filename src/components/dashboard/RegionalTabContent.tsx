@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useCallback, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { DollarSign, Users, Stethoscope } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import AnalysisContent from './AnalysisContent';
 
 interface ZipCode {
@@ -275,15 +276,139 @@ function isValidZipCode(zip: string): zip is ValidZipCode {
   return zip in analysisData;
 }
 
+const getZipOffset = (zipId: ValidZipCode) => {
+  const offsets: Record<ValidZipCode, { lat: number; lng: number }> = {
+    '60656': { lat: -0.008, lng: -0.002 },
+    '60714': { lat: -0.0005, lng: -0.014 },
+    '60631': { lat: -0.006, lng: -0.001 },
+    '60068': { lat: 0.002, lng: 0 }
+  };
+  return offsets[zipId];
+};
+
+const MapComponent = ({
+  selectedZip,
+  handleZipClick,
+  geoJsonData
+}: {
+  selectedZip: ValidZipCode | null;
+  handleZipClick: (zipId: ValidZipCode) => void;
+  geoJsonData: any;
+}) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map || !geoJsonData) return;
+
+    // Clear layers
+    map.eachLayer((layer) => {
+      if (layer instanceof L.GeoJSON || layer instanceof L.Marker) {
+        map.removeLayer(layer);
+      }
+    });
+
+    // Base tile layer
+    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // Add GeoJSON layer
+    const geoJsonLayer = L.geoJSON(geoJsonData, {
+      style: (feature) => {
+        const zipCode = feature.properties.ZCTA5CE20;
+        const isValidZip = zipCodes.some(z => z.id === zipCode);
+        
+        return {
+          fillColor: isValidZip ? (zipCode === selectedZip ? '#052b52' : '#CBD5E1') : 'transparent',
+          fillOpacity: 0.3,
+          weight: 0,
+          opacity: 1,
+          color: 'transparent'
+        };
+      },
+      onEachFeature: (feature, layer) => {
+        const zipCode = feature.properties.ZCTA5CE20;
+        if (zipCodes.some(z => z.id === zipCode)) {
+          layer.on({
+            click: () => {
+              if (isValidZipCode(zipCode)) {
+                handleZipClick(zipCode);
+              }
+            },
+            mouseover: () => {
+              if (zipCode !== selectedZip) {
+                layer.setStyle({ fillColor: '#CBD5E1' });
+              }
+            },
+            mouseout: () => {
+              if (zipCode !== selectedZip) {
+                layer.setStyle({ 
+                  fillColor: zipCode === selectedZip ? '#052b52' : '#E2E8F0'
+                });
+              }
+            }
+          });
+        }
+      }
+    }).addTo(map);
+
+    // Add labels for zip codes
+    zipCodes.forEach(zipCode => {
+      const offset = getZipOffset(zipCode.id);
+      const labelIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: `<div style="
+          color: ${selectedZip === zipCode.id ? '#FFFFFF' : '#666666'};
+          font-size: ${window.innerWidth < 768 ? '8px' : '16px'};
+          font-weight: 500;
+          text-align: center;
+        ">${zipCode.id}</div>`,
+        iconSize: [60, 20],
+        iconAnchor: [30, 10]
+      });
+
+      L.marker(
+        [zipCode.center.lat + offset.lat, zipCode.center.lng + offset.lng],
+        { icon: labelIcon }
+      ).addTo(map);
+    });
+
+    // Add labels for surrounding cities
+    surroundingCities.forEach(city => {
+      const labelIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: `<div style="
+          color: #999999;
+          font-size: ${window.innerWidth < 768 ? '9px' : '14px'};
+          font-weight: 400;
+          text-align: center;
+        ">${city.name}</div>`,
+        iconSize: [80, 20],
+        iconAnchor: [40, 10]
+      });
+
+      L.marker([city.position.lat, city.position.lng], { icon: labelIcon }).addTo(map);
+    });
+
+    return () => {
+      map.eachLayer((layer) => {
+        if (layer instanceof L.GeoJSON || layer instanceof L.Marker) {
+          map.removeLayer(layer);
+        }
+      });
+    };
+  }, [map, geoJsonData, selectedZip, handleZipClick]);
+
+  return null;
+};
+
 const RegionalTabContent = forwardRef((props, ref) => {
   const [selectedZip, setSelectedZip] = useState<ValidZipCode | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<Icon['id'] | null>(null);
   const [selectedSubData, setSelectedSubData] = useState<string | null>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [zipDataLayer, setZipDataLayer] = useState<google.maps.Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAnalysisExpanded, setIsAnalysisExpanded] = useState(true);
-  const markersRef = useRef<google.maps.Marker[]>([]);
+  const [geoJsonData, setGeoJsonData] = useState<any>(null);
 
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
@@ -293,162 +418,16 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     cleanup: () => {
-      if (map) {
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = [];
-        
-        if (zipDataLayer) {
-          zipDataLayer.setMap(null);
-        }
-        
-        setMap(null);
-      }
+      // No cleanup needed here
     }
   }));
-
-  const mapOptions = useMemo(() => ({
-    styles: [
-      {
-        featureType: "all",
-        elementType: "labels.text",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "administrative",
-        elementType: "geometry.stroke",
-        stylers: [{ color: "#94A3B8" }]
-      },
-      {
-        featureType: "landscape",
-        elementType: "geometry",
-        stylers: [{ color: "#F8FAFC" }]
-      },
-      {
-        featureType: "road",
-        elementType: "geometry",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "road.highway",
-        elementType: "all",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "transit",
-        elementType: "all",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "water",
-        elementType: "geometry",
-        stylers: [{ color: "#BFDBFE" }]
-      }
-    ],
-    disableDefaultUI: true,
-    zoomControl: true,
-    clickableIcons: false,
-    gestureHandling: window.innerWidth >= 768 ? 'cooperative' : 'greedy',
-    scrollwheel: true,
-    mapTypeControl: false,
-    streetViewControl: false,
-    fullscreenControl: false,
-    scaleControl: false,
-    rotateControl: false,
-    draggableCursor: 'default',
-    draggingCursor: 'grab',
-    preserveDrawingBuffer: false,
-    maxZoom: 18,
-    minZoom: 8
-  }), []);
-
-  const getZipOffset = (zipId: ValidZipCode) => {
-    const offsets: Record<ValidZipCode, { lat: number; lng: number }> = {
-      '60656': { lat: -0.008, lng: -0.002 },
-      '60714': { lat: -0.0005, lng: -0.014 },
-      '60631': { lat: -0.006, lng: -0.001 },
-      '60068': { lat: 0.002, lng: 0 }
-    };
-    return offsets[zipId];
-  };
-
-  const createLabels = useCallback(() => {
-    if (!map) return;
-    
-    markersRef.current.forEach(marker => marker.setMap(null));
-    markersRef.current = [];
-
-    zipCodes.forEach(zipCode => {
-      const offset = getZipOffset(zipCode.id);
-      const marker = new google.maps.Marker({
-        position: {
-          lat: zipCode.center.lat + offset.lat,
-          lng: zipCode.center.lng + offset.lng
-        },
-        map,
-        label: {
-          text: zipCode.id,
-          fontSize: window.innerWidth < 768 ? "8px" : "16px",
-          color: selectedZip === zipCode.id ? "#FFFFFF" : "#666666",
-          fontWeight: "500"
-        },
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 0
-        }
-      });
-      markersRef.current.push(marker);
-    });
-
-    surroundingCities.forEach(city => {
-      const marker = new google.maps.Marker({
-        position: city.position,
-        map,
-        label: {
-          text: city.name,
-          fontSize: window.innerWidth < 768 ? "9px" : "14px",
-          color: "#999999",
-          fontWeight: "400"
-        },
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 0
-        }
-      });
-      markersRef.current.push(marker);
-    });
-  }, [map, selectedZip]);
 
   const handleZipClick = useCallback((zipId: ValidZipCode) => {
     setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
     setIsAnalysisExpanded(true);
-
-    if (map && zipDataLayer) {
-      zipDataLayer.forEach((feature: google.maps.Data.Feature) => {
-        const featureZip = feature.getProperty('ZCTA5CE20') || feature.getProperty('zip');
-        if (featureZip === zipId) {
-          const bounds = new google.maps.LatLngBounds();
-          const geometry = feature.getGeometry();
-          
-          if (geometry) {
-            try {
-              geometry.forEachLatLng((latLng: google.maps.LatLng) => {
-                if (latLng) bounds.extend(latLng);
-              });
-              
-              if (!bounds.isEmpty()) {
-                map.fitBounds(bounds);
-              }
-            } catch (error) {
-              console.error('Error processing geometry:', error);
-            }
-          }
-        }
-      });
-      createLabels();
-    }
-  }, [map, zipDataLayer, createLabels]);
+  }, []);
 
   const handleIconClick = useCallback((iconId: Icon['id']) => {
     setSelectedIcon(iconId);
@@ -479,93 +458,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
     }
   };
 
-  const onMapLoad = useCallback(async (map: google.maps.Map) => {
-    setMap(map);
-    setIsLoading(true);
-    
-    try {
-      const dataLayer = new google.maps.Data({ map });
-      setZipDataLayer(dataLayer);
-
-      const response = await fetch('/chicago-zipcodes.json');
-      if (!response.ok) throw new Error('Failed to fetch GeoJSON data');
-      
-      const geoJson = await response.json();
-      dataLayer.addGeoJson(geoJson);
-
-      dataLayer.addListener('click', (event: google.maps.Data.MouseEvent) => {
-        const zipCode = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
-        if (typeof zipCode === 'string' && isValidZipCode(zipCode)) {
-          handleZipClick(zipCode);
-        }
-      });
-
-      dataLayer.addListener('mouseover', (event: google.maps.Data.MouseEvent) => {
-        const zipCode = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
-        if (zipCodes.some(zip => zip.id === zipCode) && zipCode !== selectedZip) {
-          dataLayer.overrideStyle(event.feature, {
-            fillColor: '#CBD5E1'
-          });
-        }
-      });
-
-      dataLayer.addListener('mouseout', (event: google.maps.Data.MouseEvent) => {
-        const zipCode = event.feature.getProperty('ZCTA5CE20') || event.feature.getProperty('zip');
-        if (zipCode !== selectedZip) {
-          dataLayer.revertStyle(event.feature);
-        }
-      });
-
-      const bounds = new google.maps.LatLngBounds();
-      let hasValidGeometry = false;
-
-      dataLayer.forEach((feature: google.maps.Data.Feature) => {
-        const geometry = feature.getGeometry();
-        if (geometry) {
-          try {
-            geometry.forEachLatLng((latLng: google.maps.LatLng) => {
-              if (latLng) {
-                bounds.extend(latLng);
-                hasValidGeometry = true;
-              }
-            });
-          } catch (error) {
-            console.error('Error processing feature geometry:', error);
-          }
-        }
-      });
-
-      if (hasValidGeometry) {
-        map.fitBounds(bounds);
-      } else {
-        map.setCenter(mapCenter);
-        map.setZoom(12);
-      }
-
-      createLabels();
-
-    } catch (error) {
-      console.error('Error loading map data:', error);
-      map.setCenter(mapCenter);
-      map.setZoom(12);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [handleZipClick, selectedZip, createLabels]);
-
-  useEffect(() => {
-    if (map) {
-      createLabels();
-    }
-  }, [map, selectedZip, createLabels]);
-
-  useEffect(() => {
-    return () => {
-      markersRef.current.forEach(marker => marker.setMap(null));
-      markersRef.current = [];
-    };
-  }, []);
-
   const AnalysisContentDisplay = useCallback(() => {
     if (!selectedSubData || !selectedZip) return null;
     const data = analysisData[selectedZip];
@@ -580,6 +472,23 @@ const RegionalTabContent = forwardRef((props, ref) => {
       />
     );
   }, [selectedIcon, selectedSubData, selectedZip]);
+
+  useEffect(() => {
+    const loadGeoJson = async () => {
+      try {
+        const response = await fetch('/chicago-zipcodes.json');
+        if (!response.ok) throw new Error('Failed to fetch GeoJSON data');
+        const data = await response.json();
+        setGeoJsonData(data);
+      } catch (error) {
+        console.error('Error loading map data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadGeoJson();
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
@@ -614,12 +523,11 @@ const RegionalTabContent = forwardRef((props, ref) => {
                     <button
                       key={icon.id}
                       onClick={() => handleIconClick(icon.id)}
-                      className={
-                        `px-3 py-2 rounded-lg flex items-center transition-all duration-200 
+                      className={`
+                        px-3 py-2 rounded-lg flex items-center transition-all duration-200 
                         ${selectedIcon === icon.id 
                           ? 'bg-[#052b52] text-white shadow-sm' 
-                          : 'bg-white/80 text-gray-600 hover:bg-white'}`
-                      }
+                          : 'bg-white/80 text-gray-600 hover:bg-white'}`}
                     >
                       <icon.icon className="w-4 h-4" />
                       <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
@@ -632,15 +540,21 @@ const RegionalTabContent = forwardRef((props, ref) => {
         </AnimatePresence>
 
         <div className="h-full w-full">
-          <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
-            <GoogleMap
-              mapContainerClassName="w-full h-full"
-              center={mapCenter}
-              zoom={12}
-              options={mapOptions}
-              onLoad={onMapLoad}
-            />
-          </LoadScript>
+          <MapContainer
+            center={[mapCenter.lat, mapCenter.lng]}
+            zoom={12}
+            className="w-full h-full"
+            zoomControl={false}
+            attributionControl={false}
+          >
+            {geoJsonData && (
+              <MapComponent
+                selectedZip={selectedZip}
+                handleZipClick={handleZipClick}
+                geoJsonData={geoJsonData}
+              />
+            )}
+          </MapContainer>
         </div>
 
         {isLoading && (
@@ -653,12 +567,11 @@ const RegionalTabContent = forwardRef((props, ref) => {
       <AnimatePresence>
         {selectedIcon && (
           <motion.div 
-            className={
-              `bg-gray-50 rounded-xl shadow-sm 
+            className={`
+              bg-gray-50 rounded-xl shadow-sm 
               ${window.innerWidth >= 768 
                 ? 'w-[30%] ml-3 relative' 
-                : 'w-[35%] absolute right-0 top-0 h-full'}`
-            }
+                : 'w-[35%] absolute right-0 top-0 h-full'}`}
             variants={sideContainerVariants}
             initial="hidden"
             animate="visible"
@@ -684,15 +597,14 @@ const RegionalTabContent = forwardRef((props, ref) => {
                     <motion.button
                       key={option}
                       onClick={() => handleSubDataClick(option)}
-                      className={
-                        `w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
+                      className={`
+                        w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
                         text-left rounded-lg transition-colors duration-200 
                         ${selectedSubData === option 
                           ? 'bg-[#052b52] text-white' 
                           : 'bg-white text-gray-600 hover:bg-gray-100'} 
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                        font-medium`
-                      }
+                        font-medium`}
                       layout="position"
                       initial={false}
                       animate={{ 
@@ -728,25 +640,40 @@ const RegionalTabContent = forwardRef((props, ref) => {
         )}
       </AnimatePresence>
 
-      <style jsx global>{
-        `.gm-style-cc,
-        .gmnoprint.gm-style-cc,
-        .gm-style-iw-a,
-        .gm-style-iw-t,
-        .gm-style > div:last-child {
-          display: none !important;
+      <style jsx global>{`
+        .leaflet-container {
+          background: #F8FAFC;
+          font-family: inherit;
         }
-        .gm-style a[href^="https://maps.google.com/maps"],
-        .gm-style-pbc {
-          display: none !important;
+        .leaflet-control-zoom {
+          border: none !important;
+          box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1) !important;
         }
-        .gmnoprint:not(.gm-bundled-control) {
-          display: none !important;
+        .leaflet-control-zoom-in,
+        .leaflet-control-zoom-out {
+          background: white !important;
+          border: none !important;
+          color: #1e40af !important;
+          width: 32px !important;
+          height: 32px !important;
+          line-height: 32px !important;
+          font-size: 16px !important;
         }
-        .gm-bundled-control .gmnoprint {
-          display: block !important;
-        }`
-      }</style>
+        .leaflet-control-zoom-in:hover,
+        .leaflet-control-zoom-out:hover {
+          background: #f8fafc !important;
+          color: #1e40af !important;
+        }
+        .custom-div-icon {
+          background: none;
+          border: none;
+        }
+        .leaflet-marker-icon {
+          background: none !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+      `}</style>
     </div>
   );
 });
