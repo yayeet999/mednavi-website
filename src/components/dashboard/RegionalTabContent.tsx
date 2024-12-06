@@ -5,6 +5,227 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import AnalysisContent from './AnalysisContent';
 
+const analysisData = {
+  "60714": {
+    financial: {
+      monthlyProduction: {
+        regional: {
+          total: 52450,
+          breakdown: {
+            "Aligners": { amount: 18357, percentage: 35 },
+            "Hygiene": { amount: 15735, percentage: 30 },
+            "Root Canals": { amount: 10490, percentage: 20 },
+            "Whitening": { amount: 4196, percentage: 8 },
+            "Veneers": { amount: 3672, percentage: 7 }
+          }
+        },
+        practice: {
+          total: 55800,
+          breakdown: {
+            "Aligners": { amount: 20588, percentage: 37 },
+            "Hygiene": { amount: 16740, percentage: 30 },
+            "Root Canals": { amount: 8928, percentage: 16 },
+            "Whitening": { amount: 5022, percentage: 9 },
+            "Veneers": { amount: 4522, percentage: 8 }
+          }
+        }
+      },
+      insurance: {
+        regional: { public: 42, private: 58 },
+        practice: { public: 45, private: 55 }
+      },
+      growth: {
+        regional: { percentage: 12.4, yoyChange: 2.1 },
+        practice: { percentage: 14.2, yoyChange: 3.5 }
+      }
+    },
+    patients: {
+      activePatients: {
+        regional: { percentage: 78, total: 2450 },
+        practice: { percentage: 82, total: 2547 }
+      }
+    },
+    procedures: {
+      highestVolume: {
+        regional: { name: "Hygiene", data: [245, 268, 255] },
+        practice: { name: "Hygiene", data: [258, 272, 265] }
+      },
+      lowestVolume: {
+        regional: { name: "Root Canals", data: [12, 15, 14] },
+        practice: { name: "Root Canals", data: [11, 13, 12] }
+      },
+      largestProduction: {
+        regional: { name: "Veneers", procedureAvg: 1250, totalAvg: 850 },
+        practice: { name: "Veneers", procedureAvg: 1350, totalAvg: 890 }
+      }
+    }
+  },
+  "60631": {
+    financial: {
+      monthlyProduction: {
+        regional: {
+          total: 48750,
+          breakdown: {
+            "Aligners": { amount: 16575, percentage: 34 },
+            "Hygiene": { amount: 14625, percentage: 30 },
+            "Root Canals": { amount: 9750, percentage: 20 },
+            "Whitening": { amount: 3900, percentage: 8 },
+            "Veneers": { amount: 3900, percentage: 8 }
+          }
+        },
+        practice: {
+          total: 51200,
+          breakdown: {
+            "Aligners": { amount: 17920, percentage: 35 },
+            "Hygiene": { amount: 15360, percentage: 30 },
+            "Root Canals": { amount: 10240, percentage: 20 },
+            "Whitening": { amount: 4096, percentage: 8 },
+            "Veneers": { amount: 3584, percentage: 7 }
+          }
+        }
+      },
+      insurance: {
+        regional: { public: 40, private: 60 },
+        practice: { public: 43, private: 57 }
+      },
+      growth: {
+        regional: { percentage: 11.8, yoyChange: 1.9 },
+        practice: { percentage: 13.5, yoyChange: 3.2 }
+      }
+    },
+    patients: {
+      activePatients: {
+        regional: { percentage: 76, total: 2380 },
+        practice: { percentage: 80, total: 2475 }
+      }
+    },
+    procedures: {
+      highestVolume: {
+        regional: { name: "Hygiene", data: [238, 255, 245] },
+        practice: { name: "Hygiene", data: [248, 262, 255] }
+      },
+      lowestVolume: {
+        regional: { name: "Root Canals", data: [11, 14, 13] },
+        practice: { name: "Root Canals", data: [10, 12, 11] }
+      },
+      largestProduction: {
+        regional: { name: "Veneers", procedureAvg: 1200, totalAvg: 820 },
+        practice: { name: "Veneers", procedureAvg: 1300, totalAvg: 860 }
+      }
+    }
+  },
+  "60656": {
+    financial: {
+      monthlyProduction: {
+        regional: {
+          total: 50600,
+          breakdown: {
+            "Aligners": { amount: 17710, percentage: 35 },
+            "Hygiene": { amount: 15180, percentage: 30 },
+            "Root Canals": { amount: 10120, percentage: 20 },
+            "Whitening": { amount: 4048, percentage: 8 },
+            "Veneers": { amount: 3542, percentage: 7 }
+          }
+        },
+        practice: {
+          total: 53500,
+          breakdown: {
+            "Aligners": { amount: 19260, percentage: 36 },
+            "Hygiene": { amount: 16050, percentage: 30 },
+            "Root Canals": { amount: 10700, percentage: 20 },
+            "Whitening": { amount: 4280, percentage: 8 },
+            "Veneers": { amount: 3210, percentage: 6 }
+          }
+        }
+      },
+      insurance: {
+        regional: { public: 41, private: 59 },
+        practice: { public: 44, private: 56 }
+      },
+      growth: {
+        regional: { percentage: 12.1, yoyChange: 2.0 },
+        practice: { percentage: 13.8, yoyChange: 3.3 }
+      }
+    },
+    patients: {
+      activePatients: {
+        regional: { percentage: 77, total: 2415 },
+        practice: { percentage: 81, total: 2510 }
+      }
+    },
+    procedures: {
+      highestVolume: {
+        regional: { name: "Hygiene", data: [242, 262, 250] },
+        practice: { name: "Hygiene", data: [253, 267, 260] }
+      },
+      lowestVolume: {
+        regional: { name: "Root Canals", data: [12, 15, 14] },
+        practice: { name: "Root Canals", data: [11, 13, 12] }
+      },
+      largestProduction: {
+        regional: { name: "Veneers", procedureAvg: 1225, totalAvg: 835 },
+        practice: { name: "Veneers", procedureAvg: 1325, totalAvg: 875 }
+      }
+    }
+  },
+  "60068": {
+    financial: {
+      monthlyProduction: {
+        regional: {
+          total: 54300,
+          breakdown: {
+            "Aligners": { amount: 19005, percentage: 35 },
+            "Hygiene": { amount: 16290, percentage: 30 },
+            "Root Canals": { amount: 10860, percentage: 20 },
+            "Whitening": { amount: 4344, percentage: 8 },
+            "Veneers": { amount: 3801, percentage: 7 }
+          }
+        },
+        practice: {
+          total: 57100,
+          breakdown: {
+            "Aligners": { amount: 20556, percentage: 36 },
+            "Hygiene": { amount: 17130, percentage: 30 },
+            "Root Canals": { amount: 11420, percentage: 20 },
+            "Whitening": { amount: 4568, percentage: 8 },
+            "Veneers": { amount: 3426, percentage: 6 }
+          }
+        }
+      },
+      insurance: {
+        regional: { public: 43, private: 57 },
+        practice: { public: 46, private: 54 }
+      },
+      growth: {
+        regional: { percentage: 12.7, yoyChange: 2.2 },
+        practice: { percentage: 14.5, yoyChange: 3.6 }
+      }
+    },
+    patients: {
+      activePatients: {
+        regional: { percentage: 79, total: 2485 },
+        practice: { percentage: 83, total: 2584 }
+      }
+    },
+    procedures: {
+      highestVolume: {
+        regional: { name: "Hygiene", data: [248, 270, 258] },
+        practice: { name: "Hygiene", data: [262, 275, 268] }
+      },
+      lowestVolume: {
+        regional: { name: "Root Canals", data: [12, 15, 14] },
+        practice: { name: "Root Canals", data: [11, 13, 12] }
+      },
+      largestProduction: {
+        regional: { name: "Veneers", procedureAvg: 1275, totalAvg: 865 },
+        practice: { name: "Veneers", procedureAvg: 1375, totalAvg: 905 }
+      }
+    }
+  }
+} as const;
+
+type ValidZipCode = keyof typeof analysisData;
+
 interface ZipCode {
   id: ValidZipCode;
   name: string;
@@ -26,8 +247,6 @@ interface Icon {
   icon: React.ElementType;
   label: string;
 }
-
-type ValidZipCode = keyof typeof analysisData;
 
 const zipCodes: ZipCode[] = [
   { id: "60714", name: "Niles", center: { lat: 42.0294, lng: -87.7925 }, color: "#1E40AF" },
@@ -94,7 +313,6 @@ const MapComponent = ({
   useEffect(() => {
     if (!map || !geoJsonData) return;
 
-    // Cleanup previous layers
     if (geoJsonLayerRef.current) {
       map.removeLayer(geoJsonLayerRef.current);
     }
@@ -103,7 +321,6 @@ const MapComponent = ({
     markersRef.current = [];
     labelsRef.current = [];
 
-    // Add tile layer with improved performance settings
     const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       keepBuffer: 2,
@@ -111,7 +328,6 @@ const MapComponent = ({
       updateWhenZooming: false
     }).addTo(map);
 
-    // Create and add GeoJSON layer with enhanced styling
     const geoJsonLayer = L.geoJSON(geoJsonData, {
       style: (feature: GeoJSON.Feature | undefined) => {
         if (!feature) return {};
@@ -163,7 +379,6 @@ const MapComponent = ({
 
     geoJsonLayerRef.current = geoJsonLayer;
 
-    // Add enhanced zipcode labels
     zipCodes.forEach(zipCode => {
       const offset = getZipOffset(zipCode.id);
       const label = L.marker(
@@ -191,7 +406,6 @@ const MapComponent = ({
       labelsRef.current.push(label);
     });
 
-    // Add surrounding city labels
     surroundingCities.forEach(city => {
       const label = L.marker(
         [city.position.lat, city.position.lng],
@@ -214,7 +428,6 @@ const MapComponent = ({
       labelsRef.current.push(label);
     });
 
-    // Set appropriate bounds
     if (selectedZip) {
       const selectedFeature = geoJsonData.features.find(
         (f: any) => f.properties.ZCTA5CE20 === selectedZip
