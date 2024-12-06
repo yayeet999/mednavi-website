@@ -11,6 +11,15 @@ interface ZipCode {
   center: { lat: number; lng: number };
 }
 
+interface ZipcodeFeature {
+  type: "Feature";
+  properties: {
+    ZCTA5CE20: string;
+    [key: string]: any;
+  };
+  geometry: any;
+}
+
 interface Icon {
   id: 'financial' | 'patients' | 'procedures';
   icon: React.ElementType;
@@ -314,43 +323,47 @@ const MapComponent = ({
 
     // Add GeoJSON layer
     const geoJsonLayer = L.geoJSON(geoJsonData, {
-      style: (feature) => {
-        const zipCode = feature.properties.ZCTA5CE20;
-        const isValidZip = zipCodes.some(z => z.id === zipCode);
-        
-        return {
-          fillColor: isValidZip ? (zipCode === selectedZip ? '#052b52' : '#CBD5E1') : 'transparent',
-          fillOpacity: 0.3,
-          weight: 0,
-          opacity: 1,
-          color: 'transparent'
-        };
-      },
-      onEachFeature: (feature, layer) => {
-        const zipCode = feature.properties.ZCTA5CE20;
-        if (zipCodes.some(z => z.id === zipCode)) {
-          layer.on({
-            click: () => {
-              if (isValidZipCode(zipCode)) {
-                handleZipClick(zipCode);
-              }
-            },
-            mouseover: () => {
-              if (zipCode !== selectedZip) {
-                layer.setStyle({ fillColor: '#CBD5E1' });
-              }
-            },
-            mouseout: () => {
-              if (zipCode !== selectedZip) {
-                layer.setStyle({ 
-                  fillColor: zipCode === selectedZip ? '#052b52' : '#E2E8F0'
-                });
-              }
+  style: (feature: GeoJSON.Feature | undefined) => {
+    if (!feature) return {};
+    
+    const zipCode = (feature as ZipcodeFeature).properties?.ZCTA5CE20;
+    const isValidZip = zipCodes.some(z => z.id === zipCode);
+    
+    return {
+      fillColor: isValidZip ? (zipCode === selectedZip ? '#052b52' : '#CBD5E1') : 'transparent',
+      fillOpacity: 0.3,
+      weight: 0,
+      opacity: 1,
+      color: 'transparent'
+    };
+  },
+  onEachFeature: (feature: GeoJSON.Feature, layer: L.Layer) => {
+    const zipCode = (feature as ZipcodeFeature).properties?.ZCTA5CE20;
+    if (zipCodes.some(z => z.id === zipCode)) {
+      if (layer instanceof L.Path) {
+        layer.on({
+          click: () => {
+            if (isValidZipCode(zipCode)) {
+              handleZipClick(zipCode);
             }
-          });
-        }
+          },
+          mouseover: () => {
+            if (zipCode !== selectedZip) {
+              layer.setStyle({ fillColor: '#CBD5E1' });
+            }
+          },
+          mouseout: () => {
+            if (zipCode !== selectedZip) {
+              layer.setStyle({ 
+                fillColor: zipCode === selectedZip ? '#052b52' : '#E2E8F0'
+              });
+            }
+          }
+        });
       }
-    }).addTo(map);
+    }
+  }
+}).addTo(map);
 
     // Add labels for zip codes
     zipCodes.forEach(zipCode => {
