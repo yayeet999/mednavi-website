@@ -200,6 +200,13 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
         className="w-full h-full"
         zoomControl={false}
         attributionControl={false}
+        minZoom={11}
+        maxZoom={14}
+        maxBounds={[
+          [41.85, -88.0],
+          [42.15, -87.5]
+        ]}
+        maxBoundsViscosity={1.0}
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
