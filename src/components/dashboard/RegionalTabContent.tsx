@@ -30,7 +30,7 @@ interface Icon {
 type ValidZipCode = keyof typeof analysisData;
 
 const zipCodes: ZipCode[] = [
-  { id: "60714", name: "Niles", center: { lat: 42.0294, lng: -87.7925 }, color: "#1E3A8A" },
+  { id: "60714", name: "Niles", center: { lat: 42.0294, lng: -87.7925 }, color: "#1E40AF" },
   { id: "60631", name: "Edison Park", center: { lat: 42.0072, lng: -87.8139 }, color: "#2563EB" },
   { id: "60656", name: "Norwood Park", center: { lat: 41.9856, lng: -87.8087 }, color: "#3B82F6" },
   { id: "60068", name: "Park Ridge", center: { lat: 42.0111, lng: -87.8406 }, color: "#60A5FA" }
@@ -88,27 +88,30 @@ const MapComponent = ({
 }) => {
   const map = useMap();
   const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
+  const markersRef = useRef<L.Marker[]>([]);
   const labelsRef = useRef<L.Marker[]>([]);
 
   useEffect(() => {
     if (!map || !geoJsonData) return;
 
-    // Clear existing layers
+    // Cleanup previous layers
     if (geoJsonLayerRef.current) {
       map.removeLayer(geoJsonLayerRef.current);
     }
+    markersRef.current.forEach(marker => marker.remove());
     labelsRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
     labelsRef.current = [];
 
-    // Add base tile layer with improved performance
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    // Add tile layer with improved performance settings
+    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       keepBuffer: 2,
       updateWhenIdle: true,
       updateWhenZooming: false
     }).addTo(map);
 
-    // Create GeoJSON layer with improved styling
+    // Create and add GeoJSON layer with enhanced styling
     const geoJsonLayer = L.geoJSON(geoJsonData, {
       style: (feature: GeoJSON.Feature | undefined) => {
         if (!feature) return {};
@@ -118,10 +121,10 @@ const MapComponent = ({
         
         return {
           fillColor: zipData ? (zipCode === selectedZip ? zipData.color : '#E2E8F0') : 'transparent',
-          fillOpacity: zipCode === selectedZip ? 0.6 : 0.3,
+          fillOpacity: zipCode === selectedZip ? 0.5 : 0.35,
           weight: zipCode === selectedZip ? 2 : 1,
           opacity: 1,
-          color: zipCode === selectedZip ? '#1E40AF' : '#CBD5E1'
+          color: zipCode === selectedZip ? '#1E40AF' : '#94A3B8'
         };
       },
       onEachFeature: (feature: GeoJSON.Feature, layer: L.Layer) => {
@@ -137,16 +140,18 @@ const MapComponent = ({
               mouseover: () => {
                 if (zipCode !== selectedZip) {
                   layer.setStyle({ 
-                    fillOpacity: 0.5,
-                    fillColor: '#94A3B8'
+                    fillOpacity: 0.45,
+                    weight: 1.5,
+                    color: '#64748B'
                   });
                 }
               },
               mouseout: () => {
                 if (zipCode !== selectedZip) {
                   layer.setStyle({ 
-                    fillOpacity: 0.3,
-                    fillColor: '#E2E8F0'
+                    fillOpacity: 0.35,
+                    weight: 1,
+                    color: '#94A3B8'
                   });
                 }
               }
@@ -158,7 +163,7 @@ const MapComponent = ({
 
     geoJsonLayerRef.current = geoJsonLayer;
 
-    // Add improved labels for zip codes
+    // Add enhanced zipcode labels
     zipCodes.forEach(zipCode => {
       const offset = getZipOffset(zipCode.id);
       const label = L.marker(
@@ -168,13 +173,14 @@ const MapComponent = ({
             className: 'custom-div-icon',
             html: `
               <div style="
-                background-color: ${selectedZip === zipCode.id ? '#1E40AF' : '#475569'};
+                background-color: ${selectedZip === zipCode.id ? zipCode.color : '#475569'};
                 color: white;
                 padding: 4px 8px;
                 border-radius: 4px;
                 font-size: ${window.innerWidth < 768 ? '10px' : '12px'};
                 font-weight: 600;
                 box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                transition: all 0.2s ease;
               ">${zipCode.id}</div>
             `,
             iconSize: [60, 20],
@@ -185,7 +191,7 @@ const MapComponent = ({
       labelsRef.current.push(label);
     });
 
-    // Add subtle labels for surrounding cities
+    // Add surrounding city labels
     surroundingCities.forEach(city => {
       const label = L.marker(
         [city.position.lat, city.position.lng],
@@ -194,7 +200,7 @@ const MapComponent = ({
             className: 'custom-div-icon',
             html: `
               <div style="
-                color: #94A3B8;
+                color: #64748B;
                 font-size: ${window.innerWidth < 768 ? '9px' : '11px'};
                 font-weight: 500;
                 text-align: center;
@@ -208,35 +214,35 @@ const MapComponent = ({
       labelsRef.current.push(label);
     });
 
-    // Set appropriate bounds when a zipcode is selected
+    // Set appropriate bounds
     if (selectedZip) {
       const selectedFeature = geoJsonData.features.find(
         (f: any) => f.properties.ZCTA5CE20 === selectedZip
       );
       if (selectedFeature) {
         const bounds = L.geoJSON(selectedFeature).getBounds();
-        map.fitBounds(bounds, {
-          padding: [50, 50],
-          maxZoom: 14,
+        const paddedBounds = bounds.pad(0.2);
+        map.fitBounds(paddedBounds, {
+          duration: 0.5,
           animate: true,
-          duration: 0.5
+          maxZoom: 14
         });
       }
     } else {
-      // Set default view when no zipcode is selected
       map.setView([mapCenter.lat, mapCenter.lng], 12, {
-        animate: true,
-        duration: 0.5
+        duration: 0.5,
+        animate: true
       });
     }
 
     return () => {
-    if (geoJsonLayerRef.current) {
-      map.removeLayer(geoJsonLayerRef.current);
-    }
-    labelsRef.current.forEach(marker => marker.remove());
-  };
-}, [map, geoJsonData, selectedZip, handleZipClick]);
+      if (geoJsonLayerRef.current) {
+        map.removeLayer(geoJsonLayerRef.current);
+      }
+      markersRef.current.forEach(marker => marker.remove());
+      labelsRef.current.forEach(marker => marker.remove());
+    };
+  }, [map, geoJsonData, selectedZip, handleZipClick]);
 
   return null;
 };
@@ -248,7 +254,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAnalysisExpanded, setIsAnalysisExpanded] = useState(true);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
-  const mapRef = useRef<L.Map | null>(null);
 
   const icons: Icon[] = [
     { id: "financial", icon: DollarSign, label: "Financial" },
@@ -258,29 +263,32 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     cleanup: () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-      }
+      // No cleanup needed here
     }
   }));
 
   const handleZipClick = useCallback((zipId: ValidZipCode) => {
-    setSelectedZip(prev => prev === zipId ? null : zipId);
+    setSelectedZip(zipId);
     setSelectedIcon(null);
     setSelectedSubData(null);
     setIsAnalysisExpanded(true);
   }, []);
 
   const handleIconClick = useCallback((iconId: Icon['id']) => {
-    setSelectedIcon(prev => prev === iconId ? null : iconId);
+    setSelectedIcon(iconId);
     setSelectedSubData(null);
     setIsAnalysisExpanded(true);
   }, []);
 
   const handleSubDataClick = useCallback((subDataId: string) => {
-    setSelectedSubData(prev => prev === subDataId ? null : subDataId);
-    setIsAnalysisExpanded(prev => !prev);
-  }, []);
+    if (selectedSubData === subDataId) {
+      setSelectedSubData(null);
+      setIsAnalysisExpanded(true);
+    } else {
+      setSelectedSubData(subDataId);
+      setIsAnalysisExpanded(false);
+    }
+  }, [selectedSubData]);
 
   const getAnalysisOptions = (iconId: Icon['id']) => {
     switch (iconId) {
@@ -294,6 +302,21 @@ const RegionalTabContent = forwardRef((props, ref) => {
         return [];
     }
   };
+
+  const AnalysisContentDisplay = useCallback(() => {
+    if (!selectedSubData || !selectedZip) return null;
+    const data = analysisData[selectedZip];
+    if (!data) return null;
+
+    return (
+      <AnalysisContent
+        selectedIcon={selectedIcon}
+        selectedSubData={selectedSubData}
+        selectedZip={selectedZip}
+        data={data}
+      />
+    );
+  }, [selectedIcon, selectedSubData, selectedZip]);
 
   useEffect(() => {
     const loadGeoJson = async () => {
@@ -310,21 +333,15 @@ const RegionalTabContent = forwardRef((props, ref) => {
     };
 
     loadGeoJson();
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-      }
-    };
   }, []);
 
   return (
     <div className="w-full h-full flex flex-col md:flex-row relative">
       <motion.div 
         className={`relative bg-gray-50 rounded-xl shadow-sm overflow-hidden
-          ${window.innerWidth >= 768 
-            ? 'w-[30%] ml-3 relative' 
-            : 'w-[35%] absolute right-0 top-0 h-full'}`}
+        ${window.innerWidth >= 768 
+          ? 'w-[30%] ml-3 relative' 
+          : 'w-[35%] absolute right-0 top-0 h-full'}`}
         variants={mapContainerVariants}
         animate={selectedIcon ? {
           width: window.innerWidth >= 768 ? "68%" : "62%",
@@ -354,8 +371,8 @@ const RegionalTabContent = forwardRef((props, ref) => {
                       className={`
                         px-3 py-2 rounded-lg flex items-center transition-all duration-200 
                         ${selectedIcon === icon.id 
-                          ? 'bg-[#1E40AF] text-white shadow-sm transform scale-105' 
-                          : 'bg-white/80 text-gray-600 hover:bg-white hover:shadow-sm'}`}
+                          ? 'bg-[#052b52] text-white shadow-sm' 
+                          : 'bg-white/80 text-gray-600 hover:bg-white'}`}
                     >
                       <icon.icon className="w-4 h-4" />
                       <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
@@ -374,9 +391,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
             className="w-full h-full"
             zoomControl={false}
             attributionControl={false}
-            whenCreated={map => {
-              mapRef.current = map;
-            }}
           >
             {geoJsonData && (
               <MapComponent
@@ -390,7 +404,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
 
         {isLoading && (
           <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
-            <div className="w-8 h-8 border-3 border-blue-600 rounded-full border-t-transparent animate-spin" />
+            <div className="w-4 h-4 border-2 border-blue-600 rounded-full border-t-transparent animate-spin" />
           </div>
         )}
       </motion.div>
@@ -408,11 +422,19 @@ const RegionalTabContent = forwardRef((props, ref) => {
             animate="visible"
             exit="hidden"
           >
-            <div className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}>
+            <motion.div 
+              className={`${window.innerWidth >= 768 ? 'p-4' : 'p-1.5'} h-full`}
+              animate={{ 
+                height: 'auto'
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
               <motion.div 
                 className="relative"
                 layout="position"
-                animate={{ height: selectedSubData ? '42px' : 'auto' }}
+                animate={{
+                  height: selectedSubData ? '42px' : 'auto'
+                }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
                 <AnimatePresence mode="sync">
@@ -421,10 +443,10 @@ const RegionalTabContent = forwardRef((props, ref) => {
                       key={option}
                       onClick={() => handleSubDataClick(option)}
                       className={`
-                        w-[99.5%] md:w-full mx-[0.25%] md:mx-0 p-2 md:p-3 
+                        w-[99.5%] md:w-full ml-[0.25%] mr-[0.25%] md:mx-0 p-2 md:p-3 
                         text-left rounded-lg transition-colors duration-200 
                         ${selectedSubData === option 
-                          ? 'bg-[#1E40AF] text-white shadow-sm' 
+                          ? 'bg-[#052b52] text-white' 
                           : 'bg-white text-gray-600 hover:bg-gray-100'} 
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
                         font-medium`}
@@ -433,7 +455,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
                       animate={{ 
                         y: selectedSubData === option ? -(index * 42) : 0,
                         opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
-                        scale: !selectedSubData || selectedSubData === option ? 1 : 0.95,
+                        scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
                       }}
                       transition={{
                         duration: 0.3,
@@ -447,24 +469,18 @@ const RegionalTabContent = forwardRef((props, ref) => {
               </motion.div>
 
               <AnimatePresence mode="wait">
-                {selectedSubData && selectedZip && (
+                {selectedSubData && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="mt-4"
                   >
-                    <AnalysisContent
-                      selectedIcon={selectedIcon}
-                      selectedSubData={selectedSubData}
-                      selectedZip={selectedZip}
-                      data={analysisData[selectedZip]}
-                    />
+                    <AnalysisContentDisplay />
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -501,14 +517,6 @@ const RegionalTabContent = forwardRef((props, ref) => {
           background: none !important;
           border: none !important;
           box-shadow: none !important;
-        }
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 0.9;
-          }
-          50% {
-            opacity: 0.7;
-          }
         }
       `}</style>
     </div>
