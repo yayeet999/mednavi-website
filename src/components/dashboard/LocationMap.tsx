@@ -1,26 +1,23 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import React, { useState, useCallback, useEffect } from 'react';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import { PRACTICE_LOCATION, Patient } from '../../types/patientData';
-
-interface LocationMapProps {
-  filteredPatients: Patient[];
-}
 
 const ZIPCODE_REGIONS = [
   { 
     id: "60714", 
     name: "Niles", 
-    color: "#1E40AF", // Darker blue
+    color: "#1E40AF",
   },
   { 
     id: "60631", 
     name: "Edison Park", 
-    color: "#2563EB", // Darker blue
+    color: "#2563EB",
   },
   { 
     id: "60656", 
     name: "Norwood Park", 
-    color: "#60A5FA", // Slightly darker blue
+    color: "#60A5FA",
   },
   { 
     id: "60068", 
@@ -29,252 +26,217 @@ const ZIPCODE_REGIONS = [
   }
 ];
 
-const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
-  const practiceMarkerRef = useRef<google.maps.Marker | null>(null);
-  const zipDataLayerRef = useRef<google.maps.Data | null>(null);
+interface LocationMapProps {
+  filteredPatients: Patient[];
+}
 
-  const mapOptions = {
-    styles: [
-      {
-        featureType: "all",
-        elementType: "labels.text",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "administrative",
-        elementType: "geometry.stroke",
-        stylers: [{ color: "#94A3B8" }]
-      },
-      {
-        featureType: "landscape",
-        elementType: "geometry",
-        stylers: [{ color: "#F8FAFC" }]
-      },
-      {
-        featureType: "road",
-        elementType: "geometry",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "road.highway",
-        elementType: "all",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "transit",
-        elementType: "all",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "water",
-        elementType: "geometry",
-        stylers: [{ color: "#BFDBFE" }]
+const MapComponent = ({ filteredPatients }: { filteredPatients: Patient[] }) => {
+  const map = useMap();
+  const [geoJsonData, setGeoJsonData] = useState<any>(null);
+
+  useEffect(() => {
+    const loadGeoJson = async () => {
+      try {
+        const response = await fetch('/chicago-zipcodes.json');
+        if (!response.ok) throw new Error('Failed to fetch GeoJSON data');
+        const data = await response.json();
+        setGeoJsonData(data);
+      } catch (error) {
+        console.error('Error loading zipcode regions:', error);
       }
-    ],
-    disableDefaultUI: true,
-    zoomControl: true,
-    clickableIcons: false,
-    gestureHandling: window.innerWidth >= 768 ? 'cooperative' : 'greedy',
-    scrollwheel: true,
-    mapTypeControl: false,
-    streetViewControl: false,
-    fullscreenControl: false,
-    scaleControl: false,
-    rotateControl: false,
-    draggableCursor: 'default',
-    draggingCursor: 'grab',
-    maxZoom: 18,
-    minZoom: 8
-  };
+    };
 
-  const clearMarkers = useCallback(() => {
-    markersRef.current.forEach(marker => marker.setMap(null));
-    markersRef.current = [];
+    loadGeoJson();
   }, []);
 
-  const createPracticeMarker = useCallback((map: google.maps.Map) => {
-    if (practiceMarkerRef.current) {
-      practiceMarkerRef.current.setMap(null);
-    }
+  useEffect(() => {
+    if (!map || !geoJsonData) return;
 
-    practiceMarkerRef.current = new google.maps.Marker({
-      position: PRACTICE_LOCATION,
-      map,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 12,
-        fillColor: '#1E40AF',
-        fillOpacity: 1,
-        strokeColor: '#FFFFFF',
-        strokeWeight: 2,
-      },
-      title: PRACTICE_LOCATION.name,
-      zIndex: 1000
+    // Clear existing layers
+    map.eachLayer((layer) => {
+      if (layer instanceof L.GeoJSON || layer instanceof L.Marker) {
+        map.removeLayer(layer);
+      }
     });
 
-    const infoWindow = new google.maps.InfoWindow({
-      content: `
-        <div class="p-2">
-          <div class="font-semibold text-gray-900">Your Dental Practice Location</div>
-          <div class="text-sm text-gray-600">${PRACTICE_LOCATION.address}</div>
-        </div>
-      `
+    // Add base tile layer
+    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // Add GeoJSON layer for zipcodes
+    const geoJsonLayer = L.geoJSON(geoJsonData, {
+      style: (feature) => {
+        const zipCode = feature.properties.ZCTA5CE20;
+        const region = ZIPCODE_REGIONS.find(r => r.id === zipCode);
+        
+        return {
+          fillColor: region ? region.color : 'transparent',
+          fillOpacity: 0.3,
+          weight: 0,
+          opacity: 1,
+          color: 'transparent'
+        };
+      }
+    }).addTo(map);
+
+    // Create practice location marker
+    const practiceIcon = L.divIcon({
+      className: 'practice-marker',
+      html: `<div class="w-6 h-6 rounded-full bg-blue-700 border-2 border-white shadow-lg"></div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
 
-    practiceMarkerRef.current.addListener('click', () => {
-      infoWindow.open(map, practiceMarkerRef.current);
-    });
-  }, []);
+    const practiceMarker = L.marker(
+      [PRACTICE_LOCATION.lat, PRACTICE_LOCATION.lng],
+      { icon: practiceIcon, zIndexOffset: 1000 }
+    ).bindPopup(`
+      <div class="p-2">
+        <div class="font-semibold text-gray-900">Your Dental Practice Location</div>
+        <div class="text-sm text-gray-600">${PRACTICE_LOCATION.address}</div>
+      </div>
+    `).addTo(map);
 
-  const createPatientMarkers = useCallback((map: google.maps.Map) => {
-    clearMarkers();
-
-    const markers = filteredPatients.map(patient => {
-      const marker = new google.maps.Marker({
-        position: patient.location,
-        map,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 6,
-          fillColor: patient.status === 'Active' ? '#FB923C' : '#FDBA74',
-          fillOpacity: 0.7,
-          strokeColor: '#FFFFFF',
-          strokeWeight: 1,
-        }
+    // Create patient markers with animation
+    const patientMarkers = filteredPatients.map((patient, index) => {
+      const patientIcon = L.divIcon({
+        className: 'patient-marker',
+        html: `<div class="w-3 h-3 rounded-full ${
+          patient.status === 'Active' 
+            ? 'bg-orange-400' 
+            : 'bg-orange-300'
+        } border border-white opacity-70 shadow-sm animate-fade-in"></div>`,
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
       });
+
+      const marker = L.marker(
+        [patient.location.lat, patient.location.lng],
+        { 
+          icon: patientIcon,
+          zIndexOffset: index
+        }
+      );
+
+      // Add fade-in animation with delay based on index
+      setTimeout(() => {
+        marker.addTo(map);
+      }, index * 10);
 
       return marker;
     });
 
-    markersRef.current = markers;
-  }, [filteredPatients, clearMarkers]);
-
-  const setupZipCodeRegions = useCallback(async (map: google.maps.Map) => {
-    if (zipDataLayerRef.current) {
-      zipDataLayerRef.current.setMap(null);
-    }
-
-    try {
-      const response = await fetch('/chicago-zipcodes.json');
-      if (!response.ok) throw new Error('Failed to fetch GeoJSON data');
+    // Create legend
+    const legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = () => {
+      const div = L.DomUtil.create('div', 'bg-white/90 backdrop-blur-sm rounded-lg shadow-sm p-2');
       
-      const geoJson = await response.json();
-      
-      const dataLayer = new google.maps.Data({ map });
-      zipDataLayerRef.current = dataLayer;
-      
-      dataLayer.addGeoJson(geoJson);
-
-      dataLayer.setStyle(feature => {
-        const zipCode = feature.getProperty('ZCTA5CE20');
-        const region = ZIPCODE_REGIONS.find(r => r.id === zipCode);
-        
-        if (region) {
-          return {
-            fillColor: region.color,
-            fillOpacity: 0.3,
-            strokeWeight: 0,
-            strokeColor: 'transparent',
-            visible: true
-          };
-        }
-        
-        return {
-          visible: false
-        };
+      ZIPCODE_REGIONS.forEach(region => {
+        const row = `
+          <div class="flex items-center mb-1 last:mb-0">
+            <div class="w-3 h-3 rounded mr-2" style="background-color: ${region.color}"></div>
+            <span class="text-gray-700 text-[11px]">
+              ${region.id} - ${region.name}
+            </span>
+          </div>
+        `;
+        div.innerHTML += row;
       });
 
-    } catch (error) {
-      console.error('Error loading zipcode regions:', error);
-    }
-  }, []);
+      return div;
+    };
+    legend.addTo(map);
 
-  const createLegend = useCallback((map: google.maps.Map) => {
-    const legend = document.createElement('div');
-    legend.className = 'bg-white/90 backdrop-blur-sm rounded-lg shadow-sm';
-    
-    if (window.innerWidth < 768) {
-      legend.style.padding = '4px';
-      legend.style.margin = '4px';
-    } else {
-      legend.style.padding = '8px';
-      legend.style.margin = '10px';
-    }
-
-    ZIPCODE_REGIONS.forEach(region => {
-      const item = document.createElement('div');
-      item.className = 'flex items-center mb-1 last:mb-0';
-
-      const color = document.createElement('div');
-      if (window.innerWidth < 768) {
-        color.className = 'w-2 h-2 rounded-sm mr-1';
-      } else {
-        color.className = 'w-3 h-3 rounded mr-2';
-      }
-      color.style.backgroundColor = region.color;
-
-      const text = document.createElement('span');
-      text.className = 'text-gray-700';
-      if (window.innerWidth < 768) {
-        text.style.fontSize = '8px';
-      } else {
-        text.style.fontSize = '11px';
-      }
-      text.textContent = `${region.id} - ${region.name}`;
-
-      item.appendChild(color);
-      item.appendChild(text);
-      legend.appendChild(item);
+    // Fit bounds to include all markers
+    const bounds = L.latLngBounds([PRACTICE_LOCATION]);
+    filteredPatients.forEach(patient => {
+      bounds.extend([patient.location.lat, patient.location.lng]);
+    });
+    map.fitBounds(bounds, { 
+      padding: [50, 50],
+      animate: true,
+      duration: 1
     });
 
-    map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
-  }, []);
-
-  const onMapLoad = useCallback(async (map: google.maps.Map) => {
-    setMap(map);
-    createPracticeMarker(map);
-
-    const bounds = new google.maps.LatLngBounds();
-    bounds.extend(PRACTICE_LOCATION);
-    filteredPatients.forEach(patient => bounds.extend(patient.location));
-    map.fitBounds(bounds);
-
-    await setupZipCodeRegions(map);
-    createPatientMarkers(map);
-    createLegend(map);
-  }, [createPracticeMarker, createPatientMarkers, setupZipCodeRegions, createLegend, filteredPatients]);
-
-  useEffect(() => {
-    if (map) {
-      createPatientMarkers(map);
-    }
-  }, [map, filteredPatients, createPatientMarkers]);
-
-  useEffect(() => {
     return () => {
-      clearMarkers();
-      if (practiceMarkerRef.current) {
-        practiceMarkerRef.current.setMap(null);
-      }
-      if (zipDataLayerRef.current) {
-        zipDataLayerRef.current.setMap(null);
-      }
+      map.eachLayer((layer) => {
+        if (layer instanceof L.GeoJSON || layer instanceof L.Marker) {
+          map.removeLayer(layer);
+        }
+      });
+      map.removeControl(legend);
     };
-  }, [clearMarkers]);
+  }, [map, geoJsonData, filteredPatients]);
 
+  return null;
+};
+
+const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
   return (
     <div className="w-full h-full">
-      <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY || ''}>
-        <GoogleMap
-          mapContainerClassName="w-full h-full"
-          center={PRACTICE_LOCATION}
-          zoom={12}
-          options={mapOptions}
-          onLoad={onMapLoad}
+      <MapContainer
+        center={[PRACTICE_LOCATION.lat, PRACTICE_LOCATION.lng]}
+        zoom={12}
+        className="w-full h-full"
+        zoomControl={false}
+        attributionControl={false}
+      >
+        <TileLayer
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          maxZoom={19}
         />
-      </LoadScript>
+        <MapComponent filteredPatients={filteredPatients} />
+      </MapContainer>
+
+      <style jsx global>{`
+        .leaflet-container {
+          background: #F8FAFC;
+          font-family: inherit;
+        }
+        .leaflet-control-zoom {
+          border: none !important;
+          box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1) !important;
+        }
+        .leaflet-control-zoom-in,
+        .leaflet-control-zoom-out {
+          background: white !important;
+          border: none !important;
+          color: #1e40af !important;
+          width: 32px !important;
+          height: 32px !important;
+          line-height: 32px !important;
+          font-size: 16px !important;
+        }
+        .leaflet-control-zoom-in:hover,
+        .leaflet-control-zoom-out:hover {
+          background: #f8fafc !important;
+          color: #1e40af !important;
+        }
+        .leaflet-marker-icon {
+          background: none !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+        .practice-marker,
+        .patient-marker {
+          background: none;
+          border: none;
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+          to {
+            opacity: 0.7;
+            transform: scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 };
