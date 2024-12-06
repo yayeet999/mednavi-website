@@ -233,15 +233,6 @@ interface ZipCode {
   color: string;
 }
 
-interface ZipcodeFeature {
-  type: "Feature";
-  properties: {
-    ZCTA5CE20: string;
-    [key: string]: any;
-  } | null;
-  geometry: any;
-}
-
 interface Icon {
   id: 'financial' | 'patients' | 'procedures';
   icon: React.ElementType;
@@ -624,9 +615,10 @@ const RegionalTabContent = forwardRef((props, ref) => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-4 left-4 right-4 z-10"
+              className="absolute top-4 left-4 right-4 z-10 pointer-events-none" 
+              // We disable pointer events here so clicks go through
             >
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm pointer-events-none">
                 <div className="flex justify-center gap-2">
                   {icons.map((icon) => (
                     <button
@@ -634,6 +626,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
                       onClick={() => handleIconClick(icon.id)}
                       className={`
                         px-3 py-2 rounded-lg flex items-center transition-all duration-200 
+                        pointer-events-auto
                         ${selectedIcon === icon.id 
                           ? 'bg-[#052b52] text-white shadow-sm' 
                           : 'bg-white/80 text-gray-600 hover:bg-white'}`}
@@ -786,6 +779,13 @@ const RegionalTabContent = forwardRef((props, ref) => {
           background: none !important;
           border: none !important;
           box-shadow: none !important;
+        }
+        /* Allow clicking through the overlay, except on buttons */
+        .pointer-events-none {
+          pointer-events: none;
+        }
+        .pointer-events-auto {
+          pointer-events: auto;
         }
       `}</style>
     </div>
