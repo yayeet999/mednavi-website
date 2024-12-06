@@ -30,6 +30,15 @@ interface LocationMapProps {
   filteredPatients: Patient[];
 }
 
+interface ZipcodeFeature {
+  type: "Feature";
+  properties: {
+    ZCTA5CE20: string;
+    [key: string]: any;
+  };
+  geometry: any;
+}
+
 const MapComponent = ({ filteredPatients }: { filteredPatients: Patient[] }) => {
   const map = useMap();
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
@@ -66,8 +75,10 @@ const MapComponent = ({ filteredPatients }: { filteredPatients: Patient[] }) => 
 
     // Add GeoJSON layer for zipcodes
     const geoJsonLayer = L.geoJSON(geoJsonData, {
-      style: (feature) => {
-        const zipCode = feature.properties.ZCTA5CE20;
+      style: (feature: GeoJSON.Feature | undefined) => {
+        if (!feature) return {};
+        
+        const zipCode = (feature as ZipcodeFeature).properties?.ZCTA5CE20;
         const region = ZIPCODE_REGIONS.find(r => r.id === zipCode);
         
         return {
@@ -149,7 +160,9 @@ const MapComponent = ({ filteredPatients }: { filteredPatients: Patient[] }) => 
     legend.addTo(map);
 
     // Fit bounds to include all markers
-    const bounds = L.latLngBounds([PRACTICE_LOCATION]);
+    const bounds = L.latLngBounds([
+      [PRACTICE_LOCATION.lat, PRACTICE_LOCATION.lng]
+    ]);
     filteredPatients.forEach(patient => {
       bounds.extend([patient.location.lat, patient.location.lng]);
     });
