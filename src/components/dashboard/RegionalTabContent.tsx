@@ -309,14 +309,12 @@ const MapComponent = ({
   const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
   const labelsRef = useRef<L.Marker[]>([]);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
-
-  // Store references from zipCode to its polygon layer
   const zipLayersRef = useRef<Record<string, L.Path>>({});
   const previousSelectedZip = useRef<ValidZipCode | null>(null);
 
   useEffect(() => {
     if (!map || !geoJsonData) return;
-    if (geoJsonLayerRef.current) return; // Only load once
+    if (geoJsonLayerRef.current) return; // Only once
 
     tileLayerRef.current = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 14,
@@ -344,8 +342,9 @@ const MapComponent = ({
       },
       onEachFeature: (feature: any, layer: L.Layer) => {
         const zipCode = feature.properties?.ZCTA5CE20;
-        if (zipCode && zipCodes.some(z => z.id === zipCode) && layer instanceof L.Path) {
+        if (zipCode && isValidZipCode(zipCode) && layer instanceof L.Path) {
           zipLayersRef.current[zipCode] = layer;
+          layer.options.interactive = true;
           layer.on({
             click: () => {
               if (isValidZipCode(zipCode)) {
@@ -438,27 +437,25 @@ const MapComponent = ({
     }
   }, [map, geoJsonData, handleZipClick, selectedZip]);
 
-  // Update style on selectedZip change without looping entire layer
+  // Update style on selectedZip change
   useEffect(() => {
     if (!map || !geoJsonData) return;
-    // Only update changed polygons
     const oldZip = previousSelectedZip.current;
     const newZip = selectedZip;
 
+    // Restore old selected zip style
     if (oldZip && zipLayersRef.current[oldZip]) {
       const oldLayer = zipLayersRef.current[oldZip];
-      const oldData = zipCodes.find(z => z.id === oldZip);
-      if (oldData) {
-        oldLayer.setStyle({
-          fillColor: '#E2E8F0',
-          fillOpacity: 0.35,
-          weight: 1,
-          opacity: 1,
-          color: '#94A3B8'
-        });
-      }
+      oldLayer.setStyle({
+        fillColor: '#E2E8F0',
+        fillOpacity: 0.35,
+        weight: 1,
+        opacity: 1,
+        color: '#94A3B8'
+      });
     }
 
+    // Highlight new selected zip
     if (newZip && zipLayersRef.current[newZip]) {
       const newLayer = zipLayersRef.current[newZip];
       const newData = zipCodes.find(z => z.id === newZip);
@@ -470,7 +467,6 @@ const MapComponent = ({
           opacity: 1,
           color: '#1E40AF'
         });
-        // Fit bounds for new selection
         const selectedFeature = geoJsonData.features.find(
           (f: any) => f.properties?.ZCTA5CE20 === newZip
         );
@@ -484,7 +480,7 @@ const MapComponent = ({
       map.setView([mapCenter.lat, mapCenter.lng], 12, { duration: 0.5, animate: true });
     }
 
-    // Update labels only for changed zips
+    // Update labels
     labelsRef.current.forEach(marker => {
       const html = marker.getElement()?.querySelector('div');
       if (!html) return;
@@ -503,7 +499,7 @@ const MapComponent = ({
 
     previousSelectedZip.current = newZip;
 
-    // Invalidate size after potential animation changes to ensure tiles load smoothly
+    // Invalidate size after changes
     setTimeout(() => {
       map.invalidateSize();
     }, 500);
