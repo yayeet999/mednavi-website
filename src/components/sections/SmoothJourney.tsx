@@ -319,7 +319,7 @@ const SmoothJourney: React.FC = () => {
             transition={{ delay: 4.2 }} // Starts right after first text finishes
             className="text-base md:text-[15px] font-semibold text-[#0A2544]"
           >
-            {[..."Here you can quickly see key performance indicators (KPIs) like patient count, revenue trends, and new patient growth—clearly visualizing the health of your practice."].map((char, index) => (
+            {Array.from("Here you can quickly see key performance indicators (KPIs) like patient count, revenue trends, and new patient growth—clearly visualizing the health of your practice.").map((char, index) => (
               <motion.span
                 key={index}
                 initial={{ opacity: 0 }}
