@@ -41,11 +41,16 @@ interface ZipcodeFeature {
 
 const CustomLegend = L.Control.extend({
   options: {
-    position: 'bottomleft'
+    position: typeof window !== 'undefined' && window.innerWidth >= 768 ? 'bottomright' : 'bottomleft'
   },
 
   onAdd: function (map: L.Map) {
-    const div = L.DomUtil.create('div', 'bg-white/90 backdrop-blur-sm rounded-lg shadow-sm p-2');
+    const div = L.DomUtil.create('div', 'legend-container');
+    
+    // Add class based on screen size
+    if (typeof window !== 'undefined') {
+      div.className = `legend-container ${window.innerWidth >= 768 ? 'desktop-legend' : ''}`;
+    }
     
     ZIPCODE_REGIONS.forEach(region => {
       const row = `
@@ -260,6 +265,22 @@ const LocationMap: React.FC<LocationMapProps> = ({ filteredPatients }) => {
           to {
             opacity: 0.7;
             transform: scale(1);
+          }
+        }
+        
+        /* Legend Styles */
+        .legend-container {
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(4px);
+          border-radius: 0.5rem;
+          padding: 0.5rem;
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        @media (min-width: 768px) {
+          .desktop-legend {
+            margin-right: 1rem !important;
+            margin-bottom: 1rem !important;
           }
         }
       `}</style>

@@ -189,6 +189,9 @@ export const DashboardContainer: React.FC<DashboardContainerProps> = ({ onNaviga
                             stroke="#103d68" 
                             strokeWidth={2}
                             dot={true}
+                            animationBegin={300}
+                            animationDuration={1500}
+                            animationEasing="ease-out"
                           />
                         </LineChart>
                       </ResponsiveContainer>
@@ -211,8 +214,8 @@ export const DashboardContainer: React.FC<DashboardContainerProps> = ({ onNaviga
                               outerRadius="85%"
                               paddingAngle={2}
                               dataKey="value"
-                              animationBegin={0}
-                              animationDuration={1000}
+                              animationBegin={300}
+                              animationDuration={1500}
                               animationEasing="ease-out"
                             >
                               {donutData.map((entry, index) => (
@@ -247,7 +250,14 @@ export const DashboardContainer: React.FC<DashboardContainerProps> = ({ onNaviga
                             axisLine={false}
                             tickLine={false}
                           />
-                          <Bar dataKey="value" fill="#103d68" radius={[0, 2, 2, 0]} />
+                          <Bar 
+                            dataKey="value" 
+                            fill="#103d68" 
+                            radius={[0, 2, 2, 0]}
+                            animationBegin={300}
+                            animationDuration={1500}
+                            animationEasing="ease-out"
+                          />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -271,9 +281,30 @@ export const DashboardContainer: React.FC<DashboardContainerProps> = ({ onNaviga
                             axisLine={false}
                             tickLine={false}
                           />
-                          <Bar dataKey="new" fill="#103d68" radius={[2, 2, 0, 0]} />
-                          <Bar dataKey="returning" fill="#40C4FF" radius={[2, 2, 0, 0]} />
-                          <Bar dataKey="referred" fill="#E5F9FD" radius={[2, 2, 0, 0]} />
+                          <Bar 
+                            dataKey="new" 
+                            fill="#103d68" 
+                            radius={[2, 2, 0, 0]}
+                            animationBegin={300}
+                            animationDuration={1500}
+                            animationEasing="ease-out"
+                          />
+                          <Bar 
+                            dataKey="returning" 
+                            fill="#40C4FF" 
+                            radius={[2, 2, 0, 0]}
+                            animationBegin={600}
+                            animationDuration={1500}
+                            animationEasing="ease-out"
+                          />
+                          <Bar 
+                            dataKey="referred" 
+                            fill="#E5F9FD" 
+                            radius={[2, 2, 0, 0]}
+                            animationBegin={900}
+                            animationDuration={1500}
+                            animationEasing="ease-out"
+                          />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>

@@ -5,6 +5,7 @@ import DashboardContainer from '@/components/dashboard/DashboardContainer';
 import DashboardContainer2 from '@/components/dashboard/DashboardContainer2';
 import DashboardContainer3 from '@/components/dashboard/DashboardContainer3';
 import DashboardContainer4 from '@/components/dashboard/DashboardContainer4';
+import { motion } from 'framer-motion';
 
 const stations = [
   { id: 1, x: 400, y: 300 },
@@ -279,6 +280,63 @@ const SmoothJourney: React.FC = () => {
           }
         }
       `}</style>
+
+      {/* Add welcome text here */}
+      <div 
+        className={`
+          absolute z-30 transition-all duration-1000
+          md:left-[calc(50%-695px)] md:top-[45%] md:transform md:-translate-y-1/2 md:text-left
+          ${currentIndex === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}
+          ${isMobile ? 'bottom-24 left-1/2 -translate-x-1/2 text-center w-full px-4' : 'w-60'}
+          bg-white bg-opacity-10 p-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.06)]
+        `}
+      >
+        <div className="flex flex-col gap-6">
+          <motion.h2
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+            className="text-base md:text-[15px] font-semibold text-[#0A2544]"
+          >
+            {[..."Welcome to MedNavi – your one-stop dashboard for tracking every aspect of your dental practice."].map((char, index) => (
+              <motion.span
+                key={index}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: 0.45, // Slightly faster
+                  delay: 1.5 + index * 0.018, // Slightly faster character delay
+                  ease: [0.2, 0.65, 0.3, 0.9]
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 4.2 }} // Starts right after first text finishes
+            className="text-base md:text-[15px] font-semibold text-[#0A2544]"
+          >
+            {[..."Here you can quickly see key performance indicators (KPIs) like patient count, revenue trends, and new patient growth—clearly visualizing the health of your practice."].map((char, index) => (
+              <motion.span
+                key={index}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: 0.45, // Slightly faster
+                  delay: 4.2 + index * 0.018, // Slightly faster character delay
+                  ease: [0.2, 0.65, 0.3, 0.9]
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </motion.p>
+        </div>
+      </div>
     </div>
   );
 };

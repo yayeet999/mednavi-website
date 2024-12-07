@@ -268,7 +268,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
 
   return (
     <div className="flex-1 overflow-y-auto pr-1 md:pr-3 h-full flex flex-col">
-      <div className="w-full flex gap-1 md:gap-2 px-2 md:px-4 mb-3">
+      <div className="w-full flex gap-1 md:gap-2 px-2 md:px-4 mb-2.5 md:mb-3">
         <div className="flex-1 min-w-0 rounded-lg border border-blue-100/50 shadow-sm p-1 md:p-1.5 bg-blue-50/20 h-[50px] md:h-[77px] animate-[slide-up_1.7s_ease-out]">
           <div className="text-xs text-blue-900/70 font-medium mb-0.5 md:mb-0.5 min-h-[20px] md:min-h-[22px] flex flex-col justify-center">
             <span className="text-[6.7px] md:text-[13px] leading-[1.1] md:leading-normal block">Total Active</span>
@@ -326,7 +326,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
         </div>
       </div>
 
-<div className="flex gap-1 md:gap-2 px-1 md:px-3 mb-2 h-[70px] md:h-[80px]">
+<div className="flex gap-1 md:gap-2 px-1 md:px-3 mb-1 h-[70px] md:h-[80px]">
         <div className="flex-1 animate-[fade-in_1.7s_ease-out]">
           <GrowthRateIndicator />
         </div>
@@ -524,11 +524,17 @@ const PracticeTabContent = () => {
         </div>
 
         <div className="flex-1 overflow-hidden bg-[#103d68] mt-1 md:mt-2">
-          <TabsContent value="demographics" className="h-full m-0">
+          <TabsContent 
+            value="demographics" 
+            className="h-full m-0 overflow-y-hidden"
+          >
             <DemographicsContent />
           </TabsContent>
 
-          <TabsContent value="financials" className="h-full m-0">
+          <TabsContent 
+            value="financials" 
+            className="h-full m-0 overflow-y-hidden"
+          >
             <FinancialsContent />
           </TabsContent>
         </div>

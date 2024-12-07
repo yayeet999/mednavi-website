@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useAnimation } from 'framer-motion'
 import { Send, X, Bot } from 'lucide-react'
 
 interface Message {
@@ -15,10 +15,41 @@ export default function ChatBot() {
   const [isLoading, setIsLoading] = useState(false)
   const [totalInteractions, setTotalInteractions] = useState(0)
   const [lastInteractionTime, setLastInteractionTime] = useState(Date.now())
+  const [hasShownWelcome, setHasShownWelcome] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const controls = useAnimation()
+
+  useEffect(() => {
+    const animateButton = async () => {
+      if (!isOpen) {
+        await controls.start({
+          scale: [1, 1.1, 1],
+          y: [0, -5, 0],
+          transition: {
+            duration: 1.2,
+            ease: "easeInOut",
+          }
+        })
+      }
+    }
+
+    const intervalId = setInterval(animateButton, 10000) // Every 10 seconds
+    animateButton()
+    return () => clearInterval(intervalId)
+  }, [isOpen, controls])
 
   const toggleChat = () => {
-    setIsOpen(prev => !prev)
+    const newIsOpen = !isOpen
+    setIsOpen(newIsOpen)
+    
+    // Show welcome message when opening chat for the first time
+    if (newIsOpen && !hasShownWelcome) {
+      setMessages([{
+        role: 'assistant',
+        content: "Hi! I'm your MedNavi Assistant, ready to help you optimize your dental practice. What questions can I answer for you?"
+      }])
+      setHasShownWelcome(true)
+    }
   }
 
   const scrollToBottom = () => {
@@ -36,6 +67,7 @@ export default function ChatBot() {
       if (Date.now() - lastInteractionTime > 600000) { // 10 minutes
         setMessages([])
         setTotalInteractions(0)
+        setHasShownWelcome(false) // Reset welcome message after inactivity
       }
     }, 600000)
 
@@ -104,7 +136,11 @@ export default function ChatBot() {
       <motion.button
         onClick={toggleChat}
         className="fixed bottom-4 right-4 bg-blue-600 text-white p-4 rounded-full shadow-xl hover:bg-blue-700 transition-colors z-50"
-        whileHover={{ scale: 1.05 }}
+        animate={controls}
+        whileHover={{ 
+          scale: 1.05,
+          transition: { duration: 0.2 }
+        }}
         whileTap={{ scale: 0.95 }}
       >
         <Bot className="w-7 h-7" strokeWidth={2.5} />

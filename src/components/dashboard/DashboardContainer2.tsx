@@ -261,7 +261,7 @@ export const DashboardContainer2: React.FC<DashboardContainer2Props> = ({ onNavi
             )}
             
             {activePage === 'practice' && (
-              <div className="w-full h-full bg-white rounded-lg">
+              <div className="w-full h-[280px] md:h-full bg-white rounded-lg">
                 <PracticeTabContent />
               </div>
             )}

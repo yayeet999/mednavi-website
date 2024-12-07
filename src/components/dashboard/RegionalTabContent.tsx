@@ -629,36 +629,37 @@ const RegionalTabContent = forwardRef((props, ref) => {
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <AnimatePresence>
-  {selectedZip && (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="absolute top-4 left-4 right-4 z-[9999]"
-    >
-      <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
-        <div className="flex justify-center gap-2">
-          {icons.map((icon) => (
-            <button
-              key={icon.id}
-              onClick={() => handleIconClick(icon.id)}
-              className={`
-                px-3 py-2 rounded-lg flex items-center transition-all duration-200 
-                pointer-events-auto
-                ${selectedIcon === icon.id 
-                  ? 'bg-[#052b52] text-white shadow-sm' 
-                  : 'bg-white/80 text-gray-600 hover:bg-white'}
-              `}
+          {selectedZip && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute top-4 left-4 right-4 z-[9999]"
             >
-              <icon.icon className="w-4 h-4" />
-              <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-sm">
+                <div className="flex justify-center gap-2">
+                  {icons.map((icon, index) => (
+                    <button
+                      key={icon.id}
+                      onClick={() => handleIconClick(icon.id)}
+                      className={`
+                        px-3 py-2 rounded-lg flex items-center transition-all duration-200 
+                        pointer-events-auto
+                        ${selectedIcon === icon.id 
+                          ? 'bg-[#052b52] text-white shadow-sm' 
+                          : 'bg-white/80 text-gray-600 hover:bg-white'}
+                        ${index > 0 ? 'mt-2 md:mt-0' : ''}
+                      `}
+                    >
+                      <icon.icon className="w-4 h-4" />
+                      <span className="ml-2 text-xs font-medium md:inline hidden">{icon.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="h-full w-full">
           <MapContainer
@@ -739,11 +740,15 @@ const RegionalTabContent = forwardRef((props, ref) => {
                           ? 'bg-[#052b52] text-white' 
                           : 'bg-white text-gray-600 hover:bg-gray-100'} 
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                        font-medium`}
+                        font-medium
+                        ${index > 0 ? 'mt-1' : ''}`}
                       layout="position"
                       initial={false}
                       animate={{ 
-                        y: selectedSubData === option ? -(index * 42) : 0,
+                        y: selectedSubData === option ? 
+                          (option === 'Avg Active Patient %' ? -32 : 
+                           option === 'Most Apts/Age Group' ? -75 : 
+                           -(index * 42)) : 0,
                         opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
                         scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
                       }}
