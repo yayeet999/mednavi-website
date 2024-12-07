@@ -298,15 +298,14 @@ const SmoothJourney: React.FC = () => {
             transition={{ delay: 1.5 }}
             className="text-base md:text-[15px] font-semibold text-[#0A2544]"
           >
-            {[..."Welcome to MedNavi – your one-stop dashboard for tracking every aspect of your dental practice."].map((char, index) => (
+            {Array.from("Welcome to MedNavi – your one-stop dashboard for tracking every aspect of your dental practice.").map((char, index) => (
               <motion.span
                 key={index}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{
-                  duration: 0.45, // Slightly faster
-                  delay: 1.5 + index * 0.018, // Slightly faster character delay
-                  ease: [0.2, 0.65, 0.3, 0.9]
+                  duration: 0.25,
+                  delay: index * 0.02
                 }}
               >
                 {char}
