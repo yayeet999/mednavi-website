@@ -21,7 +21,6 @@ const navigationIcons = [
   { id: 'location', Icon: MapPin }
 ];
 
-const SCROLL_COOLDOWN = 500; // ms between scroll actions
 const ANIMATION_DURATION = 1000; // ms for transitions
 
 const SmoothJourney: React.FC = () => {
@@ -32,7 +31,6 @@ const SmoothJourney: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const lastScrollTime = useRef<number>(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -50,7 +48,7 @@ const SmoothJourney: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!isMobile || !mounted) return;
+    if (!mounted) return;
 
     const handleScroll = () => {
       if (!sectionRef.current) return;
@@ -61,61 +59,7 @@ const SmoothJourney: React.FC = () => {
     handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile, mounted]);
-
-  useEffect(() => {
-    if (isMobile || !mounted) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        setIsVisible(entry.isIntersecting);
-
-        if (entry.isIntersecting && sectionRef.current) {
-          sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, [isMobile, mounted]);
-
-  const handleScroll = useCallback((e: WheelEvent) => {
-    if (!isVisible || isAnimating || isMobile) return;
-
-    const now = Date.now();
-    if (now - lastScrollTime.current < SCROLL_COOLDOWN) return;
-    lastScrollTime.current = now;
-
-    const direction = e.deltaY > 0 ? 'down' : 'up';
-    e.preventDefault();
-
-    const nextIndex = Math.max(0, Math.min(stations.length - 1, currentIndex + (direction === 'down' ? 1 : -1)));
-    if (nextIndex !== currentIndex) {
-      setIsAnimating(true);
-      setCurrentIndex(nextIndex);
-      setTimeout(() => setIsAnimating(false), ANIMATION_DURATION);
-    }
-  }, [currentIndex, isAnimating, isVisible, isMobile]);
-
-  useEffect(() => {
-    if (isMobile || !mounted) return;
-
-    const section = sectionRef.current;
-    if (!section) return;
-
-    section.addEventListener('wheel', handleScroll, { passive: false });
-    return () => section.removeEventListener('wheel', handleScroll);
-  }, [handleScroll, isMobile, mounted]);
+  }, [mounted]);
 
   const navigate = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
@@ -238,19 +182,27 @@ const SmoothJourney: React.FC = () => {
           {navigationIcons.map((nav, i) => {
             const { Icon } = nav;
             return (
-              <button
+              <motion.button
                 key={i}
                 onClick={() => navigate(i)}
                 disabled={isAnimating}
                 className={`
                   flex items-center justify-center
-                  ${isMobile ? 'w-10 h-10' : 'w-6 h-6'}
-                  rounded-full transform transition-all duration-300 will-change-transform
+                  ${isMobile ? 'w-10 h-10' : 'w-12 h-12'}
+                  rounded-full transform will-change-transform
                   ${i === currentIndex 
-                    ? 'bg-blue-800 scale-110 ring-4 ring-blue-300 animate-[pulse_3s_ease-in-out_infinite]' 
+                    ? 'bg-blue-800 ring-4 ring-blue-300' 
                     : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'}
-                  disabled:opacity-50
                 `}
+                animate={i === currentIndex ? {
+                  scale: [1, 1.1, 1],
+                  transition: {
+                    duration: 0.84,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    repeatDelay: 0.28
+                  }
+                } : {}}
                 style={{
                   WebkitTapHighlightColor: 'transparent'
                 }}
@@ -258,25 +210,23 @@ const SmoothJourney: React.FC = () => {
                 aria-current={i === currentIndex ? 'true' : 'false'}
               >
                 <Icon 
-                  size={isMobile ? 20 : 14} 
+                  size={isMobile ? 20 : 24} 
                   className={`transform transition-colors duration-300
-                             ${i === currentIndex ? 'text-white' : 'text-white/90'}`}
+                             ${i === currentIndex ? 'text-white' : 'text-white'}`}
                 />
-              </button>
+              </motion.button>
             )
           })}
         </div>
       )}
 
       <style jsx>{`
-        @keyframes pulse {
+        @keyframes verySlow {
           0%, 100% {
-            transform: scale(1.1);
-            opacity: 1;
+            transform: scale(1.0);
           }
           50% {
-            transform: scale(1.15);
-            opacity: 0.8;
+            transform: scale(1.1);
           }
         }
       `}</style>

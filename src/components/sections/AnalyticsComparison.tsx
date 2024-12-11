@@ -3,17 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  Tooltip,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  ResponsiveContainer
 } from 'recharts';
-import { Users, BarChart2, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
@@ -32,24 +27,6 @@ interface SliderProps {
   defaultValue: number;
   isReverse?: boolean;
 }
-
-const demographicsData = [
-  { month: 'Jan', patients: 120, newPatients: 25 },
-  { month: 'Feb', patients: 150, newPatients: 30 },
-  { month: 'Mar', patients: 180, newPatients: 35 },
-  { month: 'Apr', patients: 170, newPatients: 28 },
-  { month: 'May', patients: 190, newPatients: 40 },
-  { month: 'Jun', patients: 210, newPatients: 45 }
-];
-
-const revenueData = [
-  { month: 'Jan', revenue: 45000, collections: 42000 },
-  { month: 'Feb', revenue: 48000, collections: 45000 },
-  { month: 'Mar', revenue: 52000, collections: 49000 },
-  { month: 'Apr', revenue: 49000, collections: 47000 },
-  { month: 'May', revenue: 55000, collections: 52000 },
-  { month: 'Jun', revenue: 58000, collections: 55000 }
-];
 
 const CustomSlider = ({ 
   label, 
@@ -140,26 +117,8 @@ const MiniDashboard = () => {
   return (
     <Card className="w-full max-w-6xl mx-auto bg-gray-50">
       <CardContent className="p-6">
-        <Tabs defaultValue="demographics" className="w-full">
+        <Tabs defaultValue="growth" className="w-full">
           <TabsList className="flex w-full h-12 mb-6 bg-slate-900 p-1 rounded-xl overflow-hidden">
-            <TabsTrigger 
-              value="demographics"
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-gray-400 rounded-lg transition-all duration-200
-                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200
-                lg:gap-2 lg:text-base sm:text-sm sm:gap-0"
-            >
-              <Users className="w-4 h-4 lg:block hidden" />
-              <span>Demographics</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="revenue"
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-gray-400 rounded-lg transition-all duration-200
-                data-[state=active]:bg-white data-[state=active]:text-blue-900 hover:text-gray-200
-                lg:gap-2 lg:text-base sm:text-sm sm:gap-0"
-            >
-              <BarChart2 className="w-4 h-4 lg:block hidden" />
-              <span>Revenue</span>
-            </TabsTrigger>
             <TabsTrigger 
               value="growth"
               className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-gray-400 rounded-lg transition-all duration-200
@@ -170,50 +129,6 @@ const MiniDashboard = () => {
               <span>Growth Potential</span>
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="demographics">
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard title="Total Patients" value="1,020" trend={12} />
-                <StatCard title="New Patients" value="203" trend={8} />
-                <StatCard title="Total Active Patients" value="78%" trend={5} />
-                <StatCard title="Unscheduled Active" value="22%" trend={-3} />
-              </div>
-              <div className="bg-white p-4 rounded-lg shadow-md h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={demographicsData}>
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="patients" stroke="#2563eb" strokeWidth={2} />
-                    <Line type="monotone" dataKey="newPatients" stroke="#16a34a" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="revenue">
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard title="Monthly Revenue" value="$58,000" trend={15} />
-                <StatCard title="Collections" value="$55,000" trend={10} />
-                <StatCard title="Avg Revenue/Patient" value="$285" trend={7} />
-                <StatCard title="Avg Profit/Patient" value="$180" trend={4} />
-              </div>
-              <div className="bg-white p-4 rounded-lg shadow-md h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={revenueData}>
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="revenue" stroke="#2563eb" strokeWidth={2} />
-                    <Line type="monotone" dataKey="collections" stroke="#16a34a" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </TabsContent>
 
           <TabsContent value="growth">
             <div>

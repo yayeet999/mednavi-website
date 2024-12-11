@@ -1,4 +1,5 @@
 'use client'
+
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -38,63 +39,69 @@ export default function Hero() {
         }}
       />
 
-      {/* Data visualization elements */}
+      {/* Data Visualization: Tooth + Arcs */}
       <div className="absolute right-0 inset-y-0 flex flex-col items-end justify-center pr-36 space-y-10">
-        {/* Pie Chart */}
         <motion.svg
-          className="w-56 h-56 opacity-25 hidden lg:block"
-          viewBox="0 0 100 100"
+          className="w-64 h-64 opacity-25 hidden lg:block"
+          viewBox="0 0 200 200"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          <motion.circle
-            cx="50"
-            cy="50"
-            r="45"
-            fill="none"
-            stroke="rgba(30, 58, 138, 0.2)"
-            strokeWidth="10"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 2, ease: "easeInOut" }}
-          />
-          <motion.path
-            d="M50,50 L50,5 A45,45 0 0,1 95,50 Z"
-            fill="rgba(30, 58, 138, 0.15)"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          />
-        </motion.svg>
-
-        {/* Bar Chart */}
-        <motion.svg
-          className="w-64 h-40 opacity-25 hidden md:block"
-          viewBox="0 0 240 150"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        >
-          {[40, 80, 110, 130, 150].map((height, i) => (
-            <motion.rect
-              key={i}
-              x={20 + i * 50}
-              y={150 - height}
-              width="30"
-              height={height}
+          {/* Group for arcs and tooth silhouette */}
+          <motion.g
+            initial={{ rotate: 0 }}
+            animate={{ rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, repeatType: "mirror" }}
+          >
+            {/* Central tooth silhouette (simplified) */}
+            <motion.path
+              d="M100,80 
+                 c-10,-20 -30,-20 -40,0 
+                 c-5,10 -5,25 0,35 
+                 c5,10 10,20 20,20 
+                 c10,0 15,-10 20,-20 
+                 c5,-10 5,-25 0,-35 
+                 c-10,-20 -30,-20 -40,0z"
               fill="rgba(30, 58, 138, 0.2)"
-              rx="4"
-              initial={{ scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{
-                delay: i * 0.1,
-                duration: 1,
-                ease: "easeOut"
-              }}
-              style={{ transformOrigin: 'bottom' }}
+              initial={{ scale: 0.9 }}
+              animate={{ scale: [0.9, 1, 0.95, 1] }}
+              transition={{ duration: 5, repeat: Infinity, repeatType: "mirror" }}
+              transform="translate(40,30)"
             />
-          ))}
+
+            {/* Arcs representing data */}
+            {/* Outer Arc */}
+            <motion.path
+              d="M50,100 a50,50 0 0,1 100,0"
+              fill="none"
+              stroke="rgba(30,58,138,0.2)"
+              strokeWidth="4"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+            />
+            {/* Middle Arc */}
+            <motion.path
+              d="M60,100 a40,40 0 0,1 80,0"
+              fill="none"
+              stroke="rgba(30,58,138,0.15)"
+              strokeWidth="3"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 2, ease: "easeInOut", delay: 0.5 }}
+            />
+            {/* Inner Arc */}
+            <motion.path
+              d="M70,100 a30,30 0 0,1 60,0"
+              fill="none"
+              stroke="rgba(30,58,138,0.1)"
+              strokeWidth="2"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 2, ease: "easeInOut", delay: 1 }}
+            />
+          </motion.g>
         </motion.svg>
       </div>
 

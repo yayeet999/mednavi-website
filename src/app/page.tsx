@@ -2,10 +2,8 @@
 import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import Hero from '@/components/sections/Hero'
-import Description from '@/components/sections/Description'
 import KeyFeatures from '@/components/sections/KeyFeatures'
-import Features from '@/components/sections/Features'
-import AnalyticsComparison from '@/components/sections/AnalyticsComparison'
+import CommandCenter from '@/components/sections/CommandCenter'
 
 // Dynamically import SmoothJourney with no SSR
 const SmoothJourney = dynamic(
@@ -46,19 +44,13 @@ export default function Home() {
         <Hero />
       </motion.section>
       <motion.section variants={sectionVariants}>
-        <Description />
+        <KeyFeatures />
       </motion.section>
       <motion.section variants={sectionVariants}>
         <SmoothJourney />
       </motion.section>
       <motion.section variants={sectionVariants}>
-        <KeyFeatures />
-      </motion.section>
-      <motion.section variants={sectionVariants}>
-        <AnalyticsComparison />
-      </motion.section>
-      <motion.section variants={sectionVariants}>
-        <Features />
+        <CommandCenter />
       </motion.section>
     </motion.div>
   )
