@@ -8,6 +8,13 @@ interface RenderAIMessageProps {
   onSuggestionClick: (suggestion: string) => void;
 }
 
+interface Metric {
+  label: string;
+  value: string;
+  trend?: string;
+  benchmark?: string;
+}
+
 export const renderUserMessage = (msg: ConversationMessage) => (
   <div className="flex items-start space-x-3 mb-4">
     <div className="flex-shrink-0">
@@ -53,7 +60,7 @@ export const renderAIMessage = ({ msg, onSuggestionClick }: RenderAIMessageProps
         {/* Metrics */}
         {metrics && metrics.length > 0 && (
           <div className="grid grid-cols-3 gap-3">
-            {metrics.map((metric, idx) => (
+            {metrics.map((metric: Metric, idx: number) => (
               <div key={idx} className="bg-white border border-gray-200 rounded-lg p-3">
                 <p className="text-xs text-gray-500">{metric.label}</p>
                 <div className="flex items-baseline space-x-2 mt-1">
@@ -79,7 +86,7 @@ export const renderAIMessage = ({ msg, onSuggestionClick }: RenderAIMessageProps
           <div className="bg-blue-50 rounded-lg p-3">
             <h4 className="text-sm font-medium text-blue-900 mb-2">Key Insights</h4>
             <ul className="space-y-1">
-              {insights.map((insight, idx) => (
+              {insights.map((insight: string, idx: number) => (
                 <li key={idx} className="text-sm text-blue-800 flex items-start">
                   <span className="mr-2">•</span>
                   <span>{insight}</span>
@@ -94,7 +101,7 @@ export const renderAIMessage = ({ msg, onSuggestionClick }: RenderAIMessageProps
           <div>
             <h4 className="text-xs font-medium text-gray-700 mb-2">Suggested Actions</h4>
             <div className="flex flex-wrap gap-2">
-              {suggestions.map((suggestion, idx) => (
+              {suggestions.map((suggestion: string, idx: number) => (
                 <button
                   key={idx}
                   onClick={() => onSuggestionClick(suggestion)}
