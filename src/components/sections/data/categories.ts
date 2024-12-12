@@ -1,6 +1,7 @@
 import { BeakerIcon, CurrencyDollarIcon, CogIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { CategoryDefinition } from '../types/commandCenter.types';
 
-export const categories = [
+export const categories: CategoryDefinition[] = [
   {
     key: 'procedural',
     title: 'Clinical Performance',
@@ -41,12 +42,13 @@ export const categories = [
         'Wait times below industry average',
         'Strong first-time fix rate'
       ],
-      recommendations: [
+      suggestions: [
         'Maintain high success standards',
         'Continue staff training program',
         'Monitor patient satisfaction'
       ]
-    }
+    },
+    refinedAIResponses: {}
   },
   {
     key: 'financial',
@@ -90,12 +92,13 @@ export const categories = [
         'Collection efficiency is high.',
         'Insurance claims processed faster than industry average.'
       ],
-      recommendations: [
+      suggestions: [
         'Maintain collection efficiency',
         'Monitor claim processing',
         'Review growth trends'
       ]
-    }
+    },
+    refinedAIResponses: {}
   },
   {
     key: 'operations',
@@ -137,12 +140,13 @@ export const categories = [
         'Equipment downtime is minimal',
         'Short wait times enhance patient satisfaction'
       ],
-      recommendations: [
+      suggestions: [
         'Optimize staff scheduling',
         'Analyze equipment maintenance logs',
         'Correlate utilization with satisfaction'
       ]
-    }
+    },
+    refinedAIResponses: {}
   },
   {
     key: 'patients',
@@ -184,11 +188,12 @@ export const categories = [
         'Strong retention rates maintained',
         'Referral program showing results'
       ],
-      recommendations: [
+      suggestions: [
         'Continue satisfaction surveys',
         'Enhance referral program',
         'Monitor feedback trends'
       ]
-    }
+    },
+    refinedAIResponses: {}
   }
 ]; 
