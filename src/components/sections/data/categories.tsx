@@ -1,4 +1,5 @@
-import { Stethoscope, DollarSign, Settings, Smile } from 'lucide-react';
+import { DollarSign, Settings, Users } from 'lucide-react';
+import { TbDental } from 'react-icons/tb';
 import { CategoryDefinition } from '../types/commandCenter.types';
 
 export const COLORS = ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd'];
@@ -6,11 +7,12 @@ export const COLORS = ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd'];
 export const categories: CategoryDefinition[] = [
   {
     key: 'procedural',
-    label: 'Procedural Metrics',
-    icon: <Stethoscope className="w-6 h-6 text-blue-600" aria-label="Procedural Metrics" />,
+    title: 'Procedural Metrics',
+    description: 'Track and analyze dental procedures',
+    icon: <TbDental className="w-6 h-6 text-blue-600" aria-label="Procedural Metrics" />,
     userPrompt: "Show me procedural performance insights",
     initialAIResponse: {
-      summary: "Your procedural metrics indicate high treatment success rates and a balanced distribution across preventive, restorative, and cosmetic procedures.",
+      summary: "Your procedural metrics indicate high treatment success rates and a balanced distribution across preventive, restorative, and cosmetic procedures!",
       chartType: 'pie',
       chartData: [
         { name: 'Preventive', value: 45 },
@@ -27,99 +29,17 @@ export const categories: CategoryDefinition[] = [
         "Preventive procedures form the bulk of treatments.",
         "Restorative treatments show above-average success rates.",
         "Cosmetic procedures present a growth opportunity."
-      ],
-      suggestions: [
-        "Compare success rates over last quarter",
-        "Focus on improving cosmetic uptake",
-        "Analyze procedure-specific profit margins"
       ]
-    },
-    refinedAIResponses: {
-      "Compare success rates over last quarter": {
-        summary: "Compared to last quarter, success rates improved across all procedures, with cosmetic treatments showing the largest gain.",
-        chartType: 'bar',
-        chartData: [
-          { category: 'Preventive', lastQ: 92, thisQ: 94 },
-          { category: 'Restorative', lastQ: 88, thisQ: 90 },
-          { category: 'Cosmetic', lastQ: 75, thisQ: 83 },
-          { category: 'Orthodontic', lastQ: 80, thisQ: 85 }
-        ],
-        metrics: [
-          { label: "Overall Success Increase", value: "+4%", trend: "+4%", benchmark: "Industry +2%" },
-          { label: "Cosmetic Growth", value: "+8%", trend: "+8%", benchmark: "+5%" },
-          { label: "Patient Satisfaction", value: "95%", trend: "+3%", benchmark: "92%" }
-        ],
-        insights: [
-          "Cosmetic segment sees significant improvement.",
-          "Preventive care remains consistently high-performing.",
-          "Shorter patient wait times correlate with higher satisfaction."
-        ],
-        suggestions: [
-          "Drill down into cosmetic factors",
-          "Assess impact of staff training",
-          "View seasonal trends"
-        ]
-      },
-      "Focus on improving cosmetic uptake": {
-        summary: "To boost cosmetic procedure uptake, consider promotional packages, personalized treatment plans, and timely follow-ups.",
-        chartType: 'line',
-        chartData: [
-          { month: 'Jan', cosmetic: 40 },
-          { month: 'Feb', cosmetic: 42 },
-          { month: 'Mar', cosmetic: 45 },
-          { month: 'Apr', cosmetic: 50 },
-          { month: 'May', cosmetic: 55 }
-        ],
-        metrics: [
-          { label: "Current Cosmetic Share", value: "15%", trend: "+5%", benchmark: "Avg 10%" },
-          { label: "Potential Increase", value: "+10%", trend: "+10%", benchmark: "Goal 25%" },
-          { label: "ROI Projection", value: "High", trend: "+", benchmark: "Baseline" }
-        ],
-        insights: [
-          "Promotions during peak seasons drive interest.",
-          "Educating patients on procedure benefits boosts acceptance.",
-          "Loyalty programs increase repeat cosmetic treatments."
-        ],
-        suggestions: [
-          "Explore patient feedback data",
-          "Identify top-performing staff",
-          "Check insurance coverage patterns"
-        ]
-      },
-      "Analyze procedure-specific profit margins": {
-        summary: "Profit margins are highest in restorative and cosmetic procedures. Adjusting pricing or promoting these services could improve profitability.",
-        chartType: 'bar',
-        chartData: [
-          { category: 'Preventive', profit: 20 },
-          { category: 'Restorative', profit: 35 },
-          { category: 'Cosmetic', profit: 40 },
-          { category: 'Orthodontic', profit: 25 }
-        ],
-        metrics: [
-          { label: "Highest Margin", value: "Cosmetic", trend: "+10%", benchmark: "Restorative" },
-          { label: "Revenue/Procedure", value: "$850 avg", trend: "+5%", benchmark: "$800" },
-          { label: "Margin Stability", value: "Stable", trend: "0%", benchmark: "Baseline" }
-        ],
-        insights: [
-          "Cosmetic procedures yield highest margins.",
-          "Restorative also profitable; consider package deals.",
-          "Preventive drives volume but offers lower margin."
-        ],
-        suggestions: [
-          "Optimize pricing strategies",
-          "Correlate margins with patient demographics",
-          "Project long-term profit trends"
-        ]
-      }
     }
   },
   {
     key: 'financial',
-    label: 'Financial Insights',
+    title: 'Financial Insights',
+    description: 'Monitor revenue and financial metrics',
     icon: <DollarSign className="w-6 h-6 text-blue-600" aria-label="Financial Insights" />,
     userPrompt: "Show me financial performance insights",
     initialAIResponse: {
-      summary: "Your financial metrics indicate steady revenue growth, improving insurance claim turnaround, and strong collection rates.",
+      summary: "Your financial metrics indicate steady revenue growth, improving insurance claim turnaround, and strong collection rates!",
       chartType: 'line',
       chartData: [
         { month: 'Jan', revenue: 200000 },
@@ -137,54 +57,25 @@ export const categories: CategoryDefinition[] = [
         "Revenue growth outpacing benchmark.",
         "Collection efficiency is high.",
         "Insurance claims processed faster than industry average."
-      ],
-      suggestions: [
-        "Break down revenue by service type",
-        "Analyze overhead reduction",
-        "Forecast next quarter revenue"
       ]
-    },
-    refinedAIResponses: {
-      "Break down revenue by service type": {
-        summary: "Restorative and cosmetic treatments drive the most revenue. Preventive adds volume but yields lower returns.",
-        chartType: 'pie',
-        chartData: [
-          { name: 'Preventive', value: 25 },
-          { name: 'Restorative', value: 35 },
-          { name: 'Cosmetic', value: 30 },
-          { name: 'Other', value: 10 }
-        ],
-        metrics: [
-          { label: "Cosmetic Revenue Share", value: "30%", trend: "+5%", benchmark: "25%" },
-          { label: "Restorative Share", value: "35%", trend: "+2%", benchmark: "30%" },
-          { label: "Preventive Yield", value: "Low", trend: "0%", benchmark: "Baseline" }
-        ],
-        insights: [
-          "Cosmetic and restorative are key profit drivers.",
-          "Optimize preventive pricing for better margins.",
-          "Consider focusing marketing on cosmetic services."
-        ],
-        suggestions: [
-          "Check patient demographic segmentation",
-          "Compare YOY growth in each category",
-          "Identify cost-saving opportunities"
-        ]
-      }
     }
   },
   {
     key: 'operations',
-    label: 'Operations & Efficiency',
+    title: 'Operations & Efficiency',
+    description: 'Monitor operational efficiency',
     icon: <Settings className="w-6 h-6 text-blue-600" aria-label="Operations & Efficiency" />,
     userPrompt: "Show me operational efficiency insights",
     initialAIResponse: {
-      summary: "Operations are streamlined, with efficient staff utilization, short patient wait times, and minimal equipment downtime.",
-      chartType: 'bar',
+      summary: "Operations are streamlined, with efficient staff utilization, short patient wait times, and minimal equipment downtime!",
+      chartType: 'line',
       chartData: [
-        { category: 'Staff Utilization', value: 90 },
-        { category: 'Chair Utilization', value: 85 },
-        { category: 'Equipment Uptime', value: 95 },
-        { category: 'Wait Times', value: 10 }
+        { month: 'Jan', ratio: 12, demand: 'high' },
+        { month: 'Feb', ratio: 10, demand: 'medium' },
+        { month: 'Mar', ratio: 8, demand: 'low' },
+        { month: 'Apr', ratio: 15, demand: 'high' },
+        { month: 'May', ratio: 14, demand: 'high' },
+        { month: 'Jun', ratio: 9, demand: 'medium' }
       ],
       metrics: [
         { label: "Staff Utilization", value: "90%", trend: "+5%", benchmark: "85%" },
@@ -195,46 +86,72 @@ export const categories: CategoryDefinition[] = [
         "High staff and chair utilization rates.",
         "Equipment downtime is minimal.",
         "Short wait times enhance patient satisfaction."
-      ],
-      suggestions: [
-        "Optimize staff scheduling",
-        "Analyze equipment maintenance logs",
-        "Correlate utilization with patient satisfaction"
       ]
-    },
-    refinedAIResponses: {}
+    }
   },
   {
     key: 'patients',
-    label: 'Patient Engagement',
-    icon: <Smile className="w-6 h-6 text-blue-600" aria-label="Patient Engagement" />,
-    userPrompt: "Show me patient engagement insights",
+    title: 'Patient Population',
+    description: 'Analyze your patient demographics',
+    icon: <Users className="w-6 h-6 text-blue-600" aria-label="Patient Population" />,
+    userPrompt: "Analyze my practice's patient population",
     initialAIResponse: {
-      summary: "Patients show high satisfaction and strong follow-up compliance. Loyalty programs and preventive reminders boost revisits.",
-      chartType: 'line',
+      summary: "An analysis of your practice's patient population can unlock valuable insights such as popular procedures per age group and potentially underrepresented demographics!",
+      chartType: 'bar',
       chartData: [
-        { month: 'Jan', satisfaction: 88 },
-        { month: 'Feb', satisfaction: 89 },
-        { month: 'Mar', satisfaction: 91 },
-        { month: 'Apr', satisfaction: 92 },
-        { month: 'May', satisfaction: 93 }
+        { 
+          month: 'Jan',
+          maleAdult: 25,
+          maleChild: 10,
+          femaleAdult: 30,
+          femaleChild: 12
+        },
+        { 
+          month: 'Feb',
+          maleAdult: 28,
+          maleChild: 15,
+          femaleAdult: 32,
+          femaleChild: 14
+        },
+        { 
+          month: 'Mar',
+          maleAdult: 30,
+          maleChild: 12,
+          femaleAdult: 35,
+          femaleChild: 15
+        },
+        { 
+          month: 'Apr',
+          maleAdult: 32,
+          maleChild: 14,
+          femaleAdult: 38,
+          femaleChild: 16
+        },
+        { 
+          month: 'May',
+          maleAdult: 35,
+          maleChild: 16,
+          femaleAdult: 40,
+          femaleChild: 18
+        },
+        { 
+          month: 'Jun',
+          maleAdult: 38,
+          maleChild: 18,
+          femaleAdult: 42,
+          femaleChild: 20
+        }
       ],
       metrics: [
-        { label: "Satisfaction Rate", value: "93%", trend: "+5%", benchmark: "85%" },
-        { label: "Follow-up Compliance", value: "90%", trend: "+4%", benchmark: "80%" },
-        { label: "Loyalty Program Uptake", value: "60%", trend: "+10%", benchmark: "50%" }
+        { label: "Age Group 25-34", value: "35%", trend: "+8%", benchmark: "30%" },
+        { label: "New Patients", value: "42/mo", trend: "+12%", benchmark: "35/mo" },
+        { label: "Patient Retention", value: "88%", trend: "+3%", benchmark: "82%" }
       ],
       insights: [
-        "Steady improvement in patient satisfaction.",
-        "Effective follow-ups increase revisit rates.",
-        "Loyalty programs drive repeat appointments."
-      ],
-      suggestions: [
-        "Drill into loyalty program demographics",
-        "Compare satisfaction by treatment type",
-        "Assess impact of follow-up reminders on revenue"
+        "Millennials form the largest patient segment.",
+        "Senior demographic shows growth potential.",
+        "Family units drive recurring visits."
       ]
-    },
-    refinedAIResponses: {}
+    }
   }
 ]; 

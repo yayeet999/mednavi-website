@@ -33,7 +33,7 @@ export const renderUserMessage = (msg: ConversationMessage) => (
 export const renderAIMessage = ({ msg, onSuggestionClick }: RenderAIMessageProps) => {
   if (!msg?.data) return null;
 
-  const { summary, chartData, chartType, metrics, insights, suggestions } = msg.data;
+  const { summary, chartData, chartType, metrics, insights } = msg.data;
 
   return (
     <div className="flex items-start space-x-3">
@@ -93,24 +93,6 @@ export const renderAIMessage = ({ msg, onSuggestionClick }: RenderAIMessageProps
                 </li>
               ))}
             </ul>
-          </div>
-        )}
-
-        {/* Suggestions */}
-        {suggestions && suggestions.length > 0 && (
-          <div>
-            <h4 className="text-xs font-medium text-gray-700 mb-2">Suggested Actions</h4>
-            <div className="flex flex-wrap gap-2">
-              {suggestions.map((suggestion: string, idx: number) => (
-                <button
-                  key={idx}
-                  onClick={() => onSuggestionClick(suggestion)}
-                  className="px-3 py-1.5 text-xs bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
           </div>
         )}
       </div>

@@ -740,7 +740,7 @@ const RegionalTabContent = forwardRef((props, ref) => {
                           ? 'bg-[#052b52] text-white' 
                           : 'bg-white text-gray-600 hover:bg-gray-100'} 
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
-                        font-medium
+                        font-medium relative
                         ${index > 0 ? 'mt-1' : ''}`}
                       layout="position"
                       initial={false}
@@ -757,7 +757,14 @@ const RegionalTabContent = forwardRef((props, ref) => {
                         ease: "easeInOut"
                       }}
                     >
-                      {option}
+                      <div className="flex flex-col">
+                        <span className="text-[9px] md:text-[10px] opacity-60 mb-0.5">
+                          {selectedIcon === 'financial' ? 'Financial Metric' :
+                           selectedIcon === 'patients' ? 'Patient Metric' :
+                           selectedIcon === 'procedures' ? 'Procedure Metric' : ''}
+                        </span>
+                        <span>{option}</span>
+                      </div>
                     </motion.button>
                   ))}
                 </AnimatePresence>
