@@ -1,3 +1,4 @@
+import React from 'react';
 import { BeakerIcon, CurrencyDollarIcon, CogIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import { CategoryDefinition } from '../types/commandCenter.types';
 
@@ -6,7 +7,7 @@ export const categories: CategoryDefinition[] = [
     key: 'procedural',
     title: 'Clinical Performance',
     description: 'Track procedure success rates and patient outcomes',
-    icon: <BeakerIcon className="w-4 h-4" />,
+    icon: React.createElement(BeakerIcon, { className: "w-4 h-4" }),
     userPrompt: 'Show me clinical performance metrics',
     initialAIResponse: {
       summary: 'Clinical metrics show strong performance across all procedure types with high success rates.',
@@ -54,7 +55,7 @@ export const categories: CategoryDefinition[] = [
     key: 'financial',
     title: 'Financial Analytics',
     description: 'Monitor revenue and financial trends',
-    icon: <CurrencyDollarIcon className="w-4 h-4" />,
+    icon: React.createElement(CurrencyDollarIcon, { className: "w-4 h-4" }),
     userPrompt: 'Show me financial performance metrics',
     initialAIResponse: {
       summary: 'Your financial metrics indicate steady revenue growth, improving insurance claim turnaround, and strong collection rates.',
@@ -104,7 +105,7 @@ export const categories: CategoryDefinition[] = [
     key: 'operations',
     title: 'Practice Operations',
     description: 'Track efficiency and resource usage',
-    icon: <CogIcon className="w-4 h-4" />,
+    icon: React.createElement(CogIcon, { className: "w-4 h-4" }),
     userPrompt: 'Show me operational efficiency insights',
     initialAIResponse: {
       summary: 'Operations are streamlined, with efficient staff utilization, short patient wait times, and minimal equipment downtime.',
@@ -152,7 +153,7 @@ export const categories: CategoryDefinition[] = [
     key: 'patients',
     title: 'Patient Analytics',
     description: 'Monitor satisfaction and retention',
-    icon: <UserGroupIcon className="w-4 h-4" />,
+    icon: React.createElement(UserGroupIcon, { className: "w-4 h-4" }),
     userPrompt: 'Show me patient satisfaction metrics',
     initialAIResponse: {
       summary: 'Patient satisfaction metrics show high overall satisfaction and strong retention rates.',

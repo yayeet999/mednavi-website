@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export type ConversationRole = 'user' | 'ai';
 
 export interface ConversationMessage {
@@ -24,7 +26,7 @@ export interface CategoryDefinition {
   key: string;
   title: string;
   description: string;
-  icon: JSX.Element;
+  icon: ReactNode;
   userPrompt: string;
   initialAIResponse: RefinedResponse;
   refinedAIResponses?: Record<string, RefinedResponse>;
