@@ -143,7 +143,7 @@ const renderAnalysisReport = (category: string | null) => {
       <TypeAnimation
         sequence={[selectedReport.title]}
         wrapper="h2"
-        speed={100}
+        speed={99}
         cursor={false}
         className="text-xl font-semibold text-gray-900"
       />
@@ -151,7 +151,7 @@ const renderAnalysisReport = (category: string | null) => {
       <TypeAnimation
         sequence={[selectedReport.summary]}
         wrapper="p"
-        speed={100}
+        speed={99}
         cursor={false}
         className="text-sm text-gray-600"
       />
@@ -165,7 +165,7 @@ const renderAnalysisReport = (category: string | null) => {
             <TypeAnimation
               sequence={[section.title]}
               wrapper="h3"
-              speed={100}
+              speed={99}
               cursor={false}
               className="text-lg font-medium text-gray-900 mb-2"
             />
@@ -176,7 +176,7 @@ const renderAnalysisReport = (category: string | null) => {
                   <TypeAnimation
                     sequence={[leftColumn.join('\n')]}
                     wrapper="div"
-                    speed={100}
+                    speed={99}
                     cursor={false}
                     className="text-sm text-gray-700 whitespace-pre-line"
                   />
@@ -185,7 +185,7 @@ const renderAnalysisReport = (category: string | null) => {
                   <TypeAnimation
                     sequence={[rightColumn.join('\n')]}
                     wrapper="div"
-                    speed={100}
+                    speed={99}
                     cursor={false}
                     className="text-sm text-gray-700 whitespace-pre-line"
                   />
@@ -195,7 +195,7 @@ const renderAnalysisReport = (category: string | null) => {
               <TypeAnimation
                 sequence={[section.content]}
                 wrapper="div"
-                speed={100}
+                speed={99}
                 cursor={false}
                 className="text-sm text-gray-700 whitespace-pre-line"
               />

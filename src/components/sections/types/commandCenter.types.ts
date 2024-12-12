@@ -22,11 +22,12 @@ export interface RefinedResponse {
 
 export interface CategoryDefinition {
   key: string;
-  label: string;
+  title: string;
+  description: string;
   icon: JSX.Element;
   userPrompt: string;
   initialAIResponse: RefinedResponse;
-  refinedAIResponses: Record<string, RefinedResponse>;
+  refinedAIResponses?: Record<string, RefinedResponse>;
 }
 
 export type AnimationPhase = 'initial' | 'dropping' | 'docking' | 'final'; 
