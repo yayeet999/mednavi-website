@@ -1,51 +1,215 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { motion, useInView } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Bot } from 'lucide-react';
+import { TypeAnimation } from 'react-type-animation';
 import { categories } from './data/categories';
 import { renderAIMessage, renderUserMessage } from './components/MessageComponents';
-import { AnimationPhase, ConversationMessage } from './types/commandCenter.types';
+import { ConversationMessage } from './types/commandCenter.types';
+
+const CONTAINER_HEIGHT = 'calc(100vh - 240px)';
+
+const formatBulletPoints = (content: string): { leftColumn: string[], rightColumn: string[] } => {
+  if (!content.includes('•')) return { leftColumn: [], rightColumn: [] };
+
+  const bullets = content
+    .split('\n')
+    .filter(line => line.trim().startsWith('•'))
+    .map(line => line.trim());
+
+  const midPoint = Math.ceil(bullets.length / 2);
+  
+  return {
+    leftColumn: bullets.slice(0, midPoint),
+    rightColumn: bullets.slice(midPoint)
+  };
+};
+
+const renderAnalysisReport = (category: string | null) => {
+  if (!category) return null;
+
+  const reports = {
+    financial: {
+      title: "Dental Practice Financial Performance Analysis",
+      summary: "Comprehensive analysis of practice financial metrics, revenue streams, and growth opportunities.",
+      sections: [
+        {
+          title: "Executive Summary",
+          content: "The dental practice demonstrates strong financial performance with a 15.2% year-over-year revenue growth. Monthly revenue averages $125.8K, with consistent growth in high-value procedures and efficient insurance claim processing."
+        },
+        {
+          title: "Revenue Analysis",
+          content: "Primary revenue streams show healthy diversification:\n• Preventive Care: 35% of revenue\n• Restorative Procedures: 30%\n• Cosmetic Treatments: 25%\n• Specialty Services: 10%\n\nThe practice maintains an impressive 98% collection rate, significantly above the industry average of 94%."
+        },
+        {
+          title: "Cost Management",
+          content: "Operating expenses are well-controlled:\n• Staff Costs: 28% of revenue\n• Supplies: 12%\n• Equipment: 15%\n• Overhead: 20%\n\nCost per patient acquisition shows a 10% reduction from previous year."
+        },
+        {
+          title: "Insurance and Claims",
+          content: "Insurance claim efficiency metrics:\n• Average claim processing time: 2 days\n• Clean claim submission rate: 96%\n• Claim rejection rate: < 2%\n• Insurance AR days: 15 (industry best practice)"
+        },
+        {
+          title: "Growth Opportunities",
+          content: "Key areas for financial optimization:\n1. Expand cosmetic service offerings (projected 30% margin increase)\n2. Implement membership program for fee-for-service patients\n3. Optimize procedure mix for higher profitability\n4. Enhance automated billing processes"
+        }
+      ]
+    },
+    patients: {
+      title: "Patient Engagement and Satisfaction Analysis",
+      summary: "In-depth evaluation of patient metrics, satisfaction levels, and engagement strategies.",
+      sections: [
+        {
+          title: "Executive Summary",
+          content: "Patient satisfaction metrics show exceptional performance with a 93% satisfaction rate. Active patient base has grown by 8.3% year-over-year, with strong retention and referral rates."
+        },
+        {
+          title: "Patient Demographics",
+          content: "Patient population analysis:\n• Total Active Patients: 3,450\n• Age Distribution: 25-35 (30%), 36-50 (45%), 51+ (25%)\n• Insurance Type: PPO (60%), Fee-for-service (25%), Other (15%)\n• Average Patient Lifetime: 7.2 years"
+        },
+        {
+          title: "Satisfaction Metrics",
+          content: "Key satisfaction indicators:\n• Overall Satisfaction: 93%\n• Treatment Satisfaction: 95%\n• Staff Interaction: 97%\n• Scheduling Ease: 92%\n• Facility Rating: 94%"
+        },
+        {
+          title: "Patient Engagement",
+          content: "Engagement strategy effectiveness:\n• Appointment Reminder Response: 89%\n• Newsletter Open Rate: 45%\n• Patient Portal Usage: 78%\n• Review Response Rate: 65%\n• Social Media Engagement: 40%"
+        },
+        {
+          title: "Retention Analysis",
+          content: "Patient retention metrics:\n1. Annual Retention Rate: 85%\n2. Preventive Care Compliance: 82%\n3. Treatment Plan Acceptance: 75%\n4. Referral Rate: 45%"
+        }
+      ]
+    },
+    operations: {
+      title: "Operational Efficiency and Workflow Analysis",
+      summary: "Detailed assessment of practice operations, workflow optimization, and resource utilization.",
+      sections: [
+        {
+          title: "Executive Summary",
+          content: "Practice operations demonstrate strong efficiency metrics with 90% chair utilization and minimal patient wait times. Staff productivity and equipment utilization exceed industry benchmarks."
+        },
+        {
+          title: "Resource Utilization",
+          content: "Key utilization metrics:\n• Chair Utilization: 90%\n• Staff Productivity: 95%\n• Equipment Usage: 85%\n• Supply Management: 92% efficiency\n• Facility Space Usage: 88%"
+        },
+        {
+          title: "Workflow Efficiency",
+          content: "Operational workflow analysis:\n• Average Patient Wait Time: 8 minutes\n• Treatment Room Turnover: 12 minutes\n• Patient Check-in Time: 3 minutes\n• Procedure Scheduling Accuracy: 96%"
+        },
+        {
+          title: "Staff Performance",
+          content: "Staff efficiency indicators:\n• Provider Productivity: 95%\n• Support Staff Efficiency: 92%\n• Training Completion Rate: 100%\n• Cross-training Level: 85%"
+        },
+        {
+          title: "Technology Integration",
+          content: "System utilization metrics:\n1. Digital Records Adoption: 100%\n2. Automated Scheduling: 95%\n3. Digital Imaging Usage: 100%\n4. Practice Management Software: 90%"
+        }
+      ]
+    },
+    procedural: {
+      title: "Procedural Analytics and Treatment Efficiency",
+      summary: "Comprehensive analysis of procedure mix, treatment outcomes, and clinical efficiency.",
+      sections: [
+        {
+          title: "Executive Summary",
+          content: "Procedure analytics show optimal mix of preventive and restorative treatments, with high success rates and efficient delivery. Treatment acceptance rates exceed industry standards."
+        },
+        {
+          title: "Procedure Mix Analysis",
+          content: "Treatment distribution:\n• Preventive: 45%\n• Restorative: 30%\n• Cosmetic: 15%\n• Specialty: 10%\n\nAll categories show positive growth trends and high patient satisfaction."
+        },
+        {
+          title: "Clinical Outcomes",
+          content: "Success metrics by procedure type:\n• Restorative Procedures: 98%\n• Endodontic Treatments: 95%\n• Implant Success Rate: 97%\n• Periodontal Treatments: 94%"
+        },
+        {
+          title: "Treatment Planning",
+          content: "Planning effectiveness:\n• Treatment Acceptance Rate: 85%\n• Plan Completion Rate: 80%\n• Average Treatment Duration: -10% vs benchmark\n• Follow-up Compliance: 88%"
+        },
+        {
+          title: "Quality Metrics",
+          content: "Quality assurance measures:\n• Infection Control Compliance: 100%\n• Procedure Documentation: 98%\n• Patient Safety Incidents: 0\n• Clinical Guidelines Adherence: 100%"
+        }
+      ]
+    }
+  };
+
+  const selectedReport = reports[category as keyof typeof reports];
+  if (!selectedReport) return null;
+
+  return (
+    <div className="space-y-4 px-2" key={`report-container-${category}`}>
+      <TypeAnimation
+        sequence={[selectedReport.title]}
+        wrapper="h2"
+        speed={100}
+        cursor={false}
+        className="text-xl font-semibold text-gray-900"
+      />
+      
+      <TypeAnimation
+        sequence={[selectedReport.summary]}
+        wrapper="p"
+        speed={100}
+        cursor={false}
+        className="text-sm text-gray-600"
+      />
+      
+      {selectedReport.sections.map((section, index) => {
+        const hasBullets = section.content.includes('•');
+        const { leftColumn, rightColumn } = hasBullets ? formatBulletPoints(section.content) : { leftColumn: [], rightColumn: [] };
+        
+        return (
+          <div key={`${category}-section-${index}`} className="bg-white rounded-lg border border-gray-200 p-3">
+            <TypeAnimation
+              sequence={[section.title]}
+              wrapper="h3"
+              speed={100}
+              cursor={false}
+              className="text-lg font-medium text-gray-900 mb-2"
+            />
+            
+            {hasBullets ? (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <TypeAnimation
+                    sequence={[leftColumn.join('\n')]}
+                    wrapper="div"
+                    speed={100}
+                    cursor={false}
+                    className="text-sm text-gray-700 whitespace-pre-line"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <TypeAnimation
+                    sequence={[rightColumn.join('\n')]}
+                    wrapper="div"
+                    speed={100}
+                    cursor={false}
+                    className="text-sm text-gray-700 whitespace-pre-line"
+                  />
+                </div>
+              </div>
+            ) : (
+              <TypeAnimation
+                sequence={[section.content]}
+                wrapper="div"
+                speed={100}
+                cursor={false}
+                className="text-sm text-gray-700 whitespace-pre-line"
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export default function CommandCenter() {
-  const [animationPhase, setAnimationPhase] = useState<AnimationPhase>('initial');
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
-
-  const [quickOptions, setQuickOptions] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (isInView) {
-      setAnimationPhase('dropping');
-      setTimeout(() => {
-        setAnimationPhase('docking');
-        setTimeout(() => {
-          setAnimationPhase('final');
-        }, 800);
-      }, 1200);
-    }
-  }, [isInView]);
-
-  useEffect(() => {
-    if (!activeCategory) {
-      setQuickOptions([]);
-      return;
-    }
-
-    const category = categories.find(c => c.key === activeCategory);
-    if (!category) return;
-
-    const options: Record<string, string[]> = {
-      procedural: ['View Success Rates', 'Patient Wait Times', 'Treatment Distribution', 'Staff Performance'],
-      financial: ['Revenue Breakdown', 'Cost Analysis', 'Insurance Claims', 'Payment Trends'],
-      operations: ['Staff Scheduling', 'Equipment Status', 'Resource Utilization', 'Efficiency Metrics'],
-      patients: ['Satisfaction Scores', 'Appointment Analytics', 'Retention Rates', 'Feedback Analysis']
-    };
-
-    setQuickOptions(options[activeCategory] || []);
-  }, [activeCategory]);
 
   const handleCategoryClick = useCallback((catKey: string) => {
     const category = categories.find(c => c.key === catKey);
@@ -57,11 +221,11 @@ export default function CommandCenter() {
       role: 'user',
       content: category.userPrompt
     };
+
     const aiMsg: ConversationMessage = {
       role: 'ai',
-      data: {
-        ...category.initialAIResponse
-      }
+      content: '',
+      data: category.initialAIResponse
     };
 
     setConversation([userMsg, aiMsg]);
@@ -72,263 +236,87 @@ export default function CommandCenter() {
     const category = categories.find(c => c.key === activeCategory);
     if (!category) return;
 
-    const refinedResponse = category.refinedAIResponses[suggestion];
+    const refinedResponse = category.refinedAIResponses?.[suggestion];
     if (!refinedResponse) {
       const aiMsg: ConversationMessage = { 
-        role: 'ai', 
+        role: 'ai',
+        content: '',
         data: { 
-          summary: "No further data for that suggestion.", 
+          summary: "No further data for that suggestion.",
           chartType: null,
-          chartData: [] 
+          chartData: [],
+          metrics: [],
+          insights: [],
+          suggestions: []
         } 
       };
       setConversation(prev => [...prev, aiMsg]);
       return;
     }
 
-    const userMsg: ConversationMessage = { role: 'user', content: suggestion };
-    const aiMsg: ConversationMessage = { role: 'ai', data: refinedResponse };
-    setConversation(prev => [...prev, userMsg, aiMsg]);
+    const aiMsg: ConversationMessage = {
+      role: 'ai',
+      content: '',
+      data: refinedResponse
+    };
+    setConversation(prev => [...prev, aiMsg]);
   }, [activeCategory]);
 
-  const robotVariants = {
-    initial: { y: -80, opacity: 0, scale: 1 },
-    dropping: { 
-      y: -40, opacity: 1, scale: 1,
-      transition: { type: "spring", stiffness: 200, damping: 25, duration: 1 }
-    },
-    docking: {
-      y: 0, opacity: 1, scale: 1,
-      transition: { type: "spring", stiffness: 250, damping: 30, duration: 1.2 }
-    },
-    final: { y: 0, opacity: 1, scale: 1 }
-  };
-
-  const memoizedCategories = useMemo(() => categories, []);
-
   return (
-    <div ref={sectionRef} className="relative w-full pt-[10.4vh] pb-8 bg-white overflow-hidden">
-      <div className="w-full flex items-center justify-center text-center px-5 lg:px-4">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={animationPhase === 'final' ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5 }}
-          className="hidden lg:block absolute inset-x-16 top-10 bottom-4 rounded-2xl border border-blue-100/50 bg-gradient-to-b from-white/50 to-blue-50/20 backdrop-blur-sm"
-        >
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={animationPhase === 'final' ? { opacity: 0.1 } : { opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,transparent,black)]"
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={animationPhase === 'final' ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 1 }}
-            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-300/10 rounded-2xl"
-          />
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-3 mt-2 mb-4 max-w-[90rem] mx-auto relative lg:px-2 lg:py-3">
-          {/* Left Panel */}
-          <div className="lg:col-span-5 space-y-6 lg:pr-2 w-full">
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg border border-white/20 p-6 pt-12 relative w-full">
-              {/* Robot and Chat Area */}
-              <div className="flex items-start space-x-4 mb-6">
-                {/* Robot */}
-                <motion.div
-                  variants={robotVariants}
-                  initial="initial"
-                  animate={animationPhase}
-                  className="flex-shrink-0"
-                >
-                  <div className="relative">
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={animationPhase === 'final' ? { opacity: 0.2 } : { opacity: 0 }}
-                      transition={{ duration: 0.5 }}
-                      className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full blur-xl animate-pulse"
-                    />
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={animationPhase === 'final' ? { opacity: 0.1 } : { opacity: 0 }}
-                      transition={{ duration: 0.5 }}
-                      className="absolute -inset-8 bg-gradient-to-r from-blue-400 to-blue-300 rounded-full blur-2xl animate-pulse-slow"
-                    />
-                    <div className="relative p-4 bg-white rounded-full shadow-2xl">
-                      <div className="relative z-10">
-                        <Bot className="w-10 h-10 text-blue-600" />
-                      </div>
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={animationPhase === 'final' ? { opacity: 1 } : { opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="absolute inset-0 rounded-full border-2 border-blue-200 animate-spin-slow"
-                      />
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={animationPhase === 'final' ? { opacity: 1 } : { opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="absolute -inset-2 rounded-full border border-blue-100 animate-reverse-spin"
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Chat Messages Container */}
-                <div className="flex flex-col space-y-3 mt-2 w-full">
-                  {/* Robot's Welcome Message */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={animationPhase === 'final' ? { opacity: 1, y: 0, scale: 1 } : {}}
-                    transition={{ 
-                      duration: 0.5,
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 25,
-                      delay: 0.2
-                    }}
-                    className="max-w-[70%] ml-3"
-                  >
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.2 }}
-                      className="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl rounded-tl-none text-sm shadow-md relative overflow-hidden"
-                    >
-                      <motion.div
-                        initial={{ x: "-100%" }}
-                        animate={{ x: "100%" }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                      />
-                      {!conversation.length ? (
-                        "Hi, what can I help you with today?"
-                      ) : (
-                        "Sure, I can help with that."
-                      )}
-                    </motion.div>
-                  </motion.div>
-
-                  {/* User's Message */}
-                  {conversation[0]?.role === 'user' && conversation[0]?.content && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ 
-                        duration: 0.4,
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 25,
-                        delay: 0.1
-                      }}
-                      className="max-w-[70%] self-end"
-                    >
-                      <motion.div 
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-tr-none text-sm shadow-md relative overflow-hidden"
-                      >
-                        <motion.div
-                          initial={{ x: "-100%" }}
-                          animate={{ x: "100%" }}
-                          transition={{ duration: 0.8, ease: "easeOut" }}
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                        />
-                        {conversation[0].content}
-                      </motion.div>
-                    </motion.div>
-                  )}
-                </div>
+    <div className="w-full max-w-[1400px] mx-auto px-4 py-8">
+      <div className="grid grid-cols-12 gap-6">
+        {/* Left Panel - Chat Interface */}
+        <div className="col-span-5">
+          <div className="bg-white rounded-xl shadow-md border-2 border-gray-200 h-[CONTAINER_HEIGHT]">
+            <div className="flex flex-col h-full">
+              {/* Header */}
+              <div className="flex items-center gap-2 p-4 border-b border-gray-200">
+                <Bot className="w-5 h-5 text-blue-500" />
+                <h2 className="font-medium">Practice Analytics</h2>
               </div>
 
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">AI-Powered Analytics</h3>
-              <p className="text-sm text-gray-500 mb-4">
-                Select a category to see tailored insights. Interact with suggestions to refine the analysis.
-              </p>
-
-              <div className="space-y-3">
-                {memoizedCategories.map(c => (
-                  <motion.div
-                    key={c.key}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleCategoryClick(c.key)}
-                    className={`group relative p-4 rounded-xl cursor-pointer transition-all
-                      ${activeCategory === c.key 
-                        ? 'bg-blue-50/80 shadow-md' 
-                        : 'bg-white/50 hover:bg-white/80 hover:shadow-md'
-                      }`}
+              {/* Categories */}
+              <div className="grid grid-cols-2 gap-2 p-4">
+                {categories.map((category) => (
+                  <button
+                    key={category.key}
+                    onClick={() => handleCategoryClick(category.key)}
+                    className={`flex flex-col items-start p-3 rounded-lg border transition-colors ${
+                      activeCategory === category.key
+                        ? 'bg-blue-50 border-blue-200'
+                        : 'bg-white border-gray-200 hover:border-blue-200'
+                    }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`
-                        p-2 rounded-lg transition-colors
-                        ${activeCategory === c.key 
-                          ? 'bg-blue-500 text-white' 
-                          : 'bg-blue-50 text-blue-500 group-hover:bg-blue-100'
-                        }`}
-                      >
-                        {c.icon}
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-900">{c.label}</h4>
-                        <p className="text-xs text-gray-500 mt-0.5">Click to explore</p>
-                      </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      {category.icon}
+                      <span className="text-sm font-medium">{category.title}</span>
                     </div>
-                    {activeCategory === c.key && (
-                      <motion.div
-                        layoutId="activeIndicator"
-                        className="absolute inset-0 border-2 border-blue-500 rounded-xl pointer-events-none"
-                        initial={false}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                      />
-                    )}
-                  </motion.div>
+                    <span className="mt-1 text-xs text-gray-500">{category.description}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Conversation */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {conversation.map((msg, idx) => (
+                  <div key={idx}>
+                    {msg.role === 'user' 
+                      ? renderUserMessage(msg)
+                      : renderAIMessage({ msg, onSuggestionClick: handleSuggestionClick })}
+                  </div>
                 ))}
               </div>
             </div>
-
-            {quickOptions.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg border border-white/20 p-6"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Suggested Actions</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {quickOptions.map((option, index) => (
-                    <motion.button
-                      key={index}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-3 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl text-left transition-colors"
-                      onClick={() => handleSuggestionClick(option)}
-                    >
-                      {option}
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
           </div>
+        </div>
 
-          {/* Right Panel */}
-          <div className="lg:col-span-7 lg:pl-2 w-full">
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg border border-white/20 p-6 pb-8 min-h-[600px] w-full">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">AI-Generated Insights</h3>
-              <div className="space-y-6">
-                {conversation.map((msg, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="flex flex-col gap-6"
-                  >
-                    {msg.role === 'ai' && msg.data && renderAIMessage(msg.data, handleSuggestionClick)}
-                  </motion.div>
-                ))}
+        {/* Right Panel - Analysis Report */}
+        <div className="col-span-7">
+          <div className="bg-white rounded-xl shadow-md border-2 border-gray-200 h-[CONTAINER_HEIGHT]">
+            <div className="flex flex-col h-full">
+              {/* Report Content */}
+              <div className="flex-1 overflow-y-auto p-4">
+                {renderAnalysisReport(activeCategory)}
               </div>
             </div>
           </div>
