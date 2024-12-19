@@ -742,13 +742,11 @@ const RegionalTabContent = forwardRef((props, ref) => {
                         ${window.innerWidth >= 768 ? 'text-xs' : 'text-[8.5px]'}
                         font-medium relative
                         ${index > 0 ? 'mt-1' : ''}`}
-                      layout="position"
-                      initial={false}
                       animate={{ 
                         y: selectedSubData === option ? 
-                          (option === 'Avg Active Patient %' ? -32 : 
-                           option === 'Most Apts/Age Group' ? -75 : 
-                           -(index * 42)) : 0,
+                          (option === 'Avg Active Patient %' ? -62 : 
+                           option === 'Most Apts/Age Group' ? -125 : 
+                           -(index * 62)) : 0,
                         opacity: !selectedSubData || selectedSubData === option ? 1 : 0,
                         scaleY: !selectedSubData || selectedSubData === option ? 1 : 0,
                       }}

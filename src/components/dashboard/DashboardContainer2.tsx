@@ -146,7 +146,7 @@ export const DashboardContainer2: React.FC<DashboardContainer2Props> = ({ onNavi
                   {/* Revenue Trends */}
                   <div className="bg-white rounded-lg p-2 md:p-3 shadow-sm w-[101.5%] md:w-auto h-[85px] md:h-[120px]">
                     <h3 className="text-[#103d68] text-[10px] md:text-sm mb-1">Revenue Trends</h3>
-                    <div className="h-[60px] md:h-[95px]">
+                    <div className="h-[60px] md:h-[90px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={revenueData} margin={{ top: 5, right: 10, bottom: 0, left: 5 }}>
                           <XAxis 
