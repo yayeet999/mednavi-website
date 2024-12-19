@@ -246,38 +246,43 @@ const VolumeLineChart: React.FC<{
 
   return (
     <div className="flex flex-col items-center w-full h-full">
-      <div className="relative h-[65px] md:h-[81px] w-[130%] md:w-[105%] pt-2"> 
-        <div className="absolute left-[-14%] md:left-[-2%] w-full h-full">
+      <div className="relative h-[65px] md:h-[71px] w-[130%] md:w-[135%] pt-2"> 
+        <div className="absolute left-[-14%] md:left-[-15%] w-full h-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={chartData}
-              margin={isDesktop ? { top: 0, right: 10, bottom: 0, left: -20 } : { top: 0, right: 10, bottom: 0, left: -20 }}
+              margin={isDesktop ? { top: 5, right: 15, bottom: 0, left: 40 } : { top: 0, right: 10, bottom: 0, left: 35 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" horizontal={true} vertical={false} />
               <XAxis 
                 dataKey="month" 
-                tick={{ fontSize: 7 }}
+                tick={{ fontSize: 4.5, fill: "#0f172a" }}
                 stroke="#64748b"
+                axisLine={false}
+                tickLine={false}
               />
               <YAxis 
-                tick={{ fontSize: 7 }}
+                tick={{ fontSize: 4.5, fill: "#0f172a" }}
                 stroke="#64748b"
+                axisLine={false}
+                tickLine={false}
+                domain={[0, 'dataMax + 2']}
               />
               <Tooltip content={<CustomTooltip />} />
               <Line
                 type="monotone"
                 dataKey="value"
                 stroke="#1E40AF"
-                strokeWidth={2}
-                dot={{ fill: '#1E40AF', r: 3 }}
-                activeDot={{ r: 4, fill: '#3B82F6' }}
+                strokeWidth={1.5}
+                dot={{ fill: '#1E40AF', r: 2.5, strokeWidth: 0 }}
+                activeDot={{ r: 3, fill: '#3B82F6' }}
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <p className="text-[9px] md:text-[12px] text-gray-700 font-medium -mt-1.5">
+        <p className="text-[8px] md:text-[9px] text-gray-800 font-medium -mt-1.5">
           {isDesktop ? (
             <span className="inline-block whitespace-nowrap">{`${title}: ${procedureName}`}</span>
           ) : (
@@ -299,16 +304,16 @@ const LargestProductionChart: React.FC<{
   isDesktop: boolean;
 }> = ({ data, title, isDesktop }) => {
   return (
-    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[100px]`}>
+    <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} items-center w-full h-full min-h-[57px]`}>
       <div className="w-full text-center">
-        <p className="text-[11px] text-gray-600 font-medium">{title}</p>
-        <p className="text-[12.5px] md:text-[14px] font-semibold text-gray-800 mt-2">
+        <p className="text-[10px] text-gray-600 font-medium">{title}</p>
+        <p className="text-[12.5px] md:text-[11.9px] font-semibold text-gray-800 mt-2">
           {data.name}
         </p>
-        <p className="text-[9.5px] md:text-[12px] mt-1 text-gray-700">
+        <p className="text-[9.5px] md:text-[10.2px] mt-1 text-gray-700">
           Procedure Avg: ${data.procedureAvg}
         </p>
-        <p className="text-[9.5px] md:text-[12px] text-gray-700">
+        <p className="text-[9.5px] md:text-[10.2px] text-gray-700">
           Total Avg: ${data.totalAvg}
         </p>
       </div>
@@ -701,7 +706,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             {/* Procedures Section */}
             {selectedIcon === 'procedures' && selectedSubData === 'Highest Vol Procedure' && (
               <>
-                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-0.5 shadow-sm w-full h-[120px] md:h-[71px]">
                   <VolumeLineChart
                     data={data.procedures.highestVolume.regional.data}
                     title="Regional Average"
@@ -709,7 +714,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
                     isDesktop={isDesktop}
                   />
                 </div>
-                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-0.5 shadow-sm w-full h-[120px] md:h-[71px]">
                   <VolumeLineChart
                     data={data.procedures.highestVolume.practice.data}
                     title="Your Practice"
@@ -722,14 +727,14 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
             {selectedIcon === 'procedures' && selectedSubData === 'Largest Avg Production' && (
               <>
-                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full min-h-[85px]">
                   <LargestProductionChart
                     data={data.procedures.largestProduction.regional}
                     title="Regional Average"
                     isDesktop={isDesktop}
                   />
                 </div>
-                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full min-h-[85px]">
                   <LargestProductionChart
                     data={data.procedures.largestProduction.practice}
                     title="Your Practice"
@@ -741,7 +746,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
             {selectedIcon === 'procedures' && selectedSubData === 'Lowest Vol Procedure' && (
               <>
-                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-0.5 shadow-sm w-full">
                   <VolumeLineChart
                     data={data.procedures.lowestVolume.regional.data}
                     title="Regional Average"
@@ -749,7 +754,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
                     isDesktop={isDesktop}
                   />
                 </div>
-                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-1 shadow-sm w-full">
+                <div className="bg-white rounded-lg px-2 py-1 md:px-2 md:py-0.5 shadow-sm w-full">
                   <VolumeLineChart
                     data={data.procedures.lowestVolume.practice.data}
                     title="Your Practice"
